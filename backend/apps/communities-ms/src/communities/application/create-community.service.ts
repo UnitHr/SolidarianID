@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Result } from '@common-lib/common-lib/core/logic/Result';
+import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
 import { CommunityRepository } from '../repo/community.repository';
 import { Status } from '../domain/Status';
-import { Result } from '@common-lib/common-lib/core/logic/Result';
-import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 
 @Injectable()
 export class CreateCommunityService {

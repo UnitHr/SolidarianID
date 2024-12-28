@@ -3,12 +3,12 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
+import ODS from '@common-lib/common-lib/common/ods';
 import { CauseRepository } from '../cause.repository';
 import { Cause } from '../domain';
 import { CauseService } from './cause.service';
 import { CauseMapper } from '../cause.mapper';
 import { CauseDto } from '../dto/cause.dto';
-import ODS from '@common-lib/common-lib/common/ods';
 
 @Injectable()
 export class CauseServiceImpl implements CauseService {

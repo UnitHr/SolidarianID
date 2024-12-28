@@ -1,8 +1,8 @@
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from './domain';
 import { UserProfileDto } from './dto/user-profile.dto';
 import * as Persistence from './infra/persistence';
 import { UserBirthDate } from './domain/UserBirthDate';
-import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 
 export class UserMapper {
   static toDomain(raw: Persistence.User): Domain.User {

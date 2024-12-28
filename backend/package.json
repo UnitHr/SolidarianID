@@ -105,7 +105,8 @@
       "ts"
     ],
     "testMatch": [
-      "<rootDir>/apps/*/test/**/*.spec.ts"
+      "<rootDir>/apps/**/test/**/*.(spec|test).ts",
+      "<rootDir>/apps/**/src/**/*.(spec|test).ts"
     ],
     "transform": {
       "^.+\\.(t|j)s$": [

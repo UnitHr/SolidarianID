@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { CommunityModule } from './communities/community.module';
 import { CauseModule } from './causes/cause.module';
 import { ActionModule } from './actions/action.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { envs } from './config';
 
 @Module({

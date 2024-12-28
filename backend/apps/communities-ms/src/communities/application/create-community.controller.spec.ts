@@ -2,15 +2,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { left, right } from '@common-lib/common-lib/core/logic/Either';
+import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { CreateCommunityController } from './create-community.controller';
 import { CreateCommunityService } from './create-community.service';
 import * as Domain from '../domain';
 import { Ods } from '../domain/Ods';
 import { Status } from '../domain/Status';
 import * as Exceptions from '../exceptions';
-import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
-import { left, right } from '@common-lib/common-lib/core/logic/Either';
-import { Result } from '@common-lib/common-lib/core/logic/Result';
 
 describe('CreateCommunityController', () => {
   let controller: CreateCommunityController;
@@ -110,7 +110,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
       expect(mockResponse.json).toHaveBeenCalledWith({
         data: {
@@ -143,7 +143,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
       expect(mockResponse.json).toHaveBeenCalledWith({
         errors: { message: mockException.errorValue().message },
@@ -163,7 +163,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
       expect(mockResponse.json).toHaveBeenCalledWith({
         data: mockCreateCommunityRequests.map((request) => ({
@@ -189,7 +189,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.CREATED);
       expect(mockResponse.location).toHaveBeenCalledWith(
         `/communities/${mockCommunity.id.toString()}`,
@@ -211,7 +211,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
       expect(mockResponse.json).toHaveBeenCalledWith({
         errors: { message: mockException.errorValue().message },
@@ -231,7 +231,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
       expect(mockResponse.json).toHaveBeenCalledWith({
         errors: { message: mockException.errorValue().message },
@@ -250,7 +250,7 @@ describe('CreateCommunityController', () => {
         mockResponse,
       );
 
-      expect(result);
+      expect(result).toBeDefined();
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
     });
   });

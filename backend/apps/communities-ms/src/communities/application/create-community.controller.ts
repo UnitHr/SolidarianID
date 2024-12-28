@@ -10,11 +10,11 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Utils } from '@common-lib/common-lib/common/utils';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import * as Exceptions from '../exceptions';
 import { QueryPaginationDto } from '../dto/query-pagination.dto';
 import { CreateCommunityService } from './create-community.service';
-import { Utils } from '@common-lib/common-lib/common/utils';
 
 @Controller('communities/create-request')
 export class CreateCommunityController {

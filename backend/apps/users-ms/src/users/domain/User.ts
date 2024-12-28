@@ -1,9 +1,9 @@
-import { UserBirthDate } from './UserBirthDate';
-import { MissingUserPropertiesError } from '../exceptions/missing-user-properties.error';
 import {
   Entity,
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
+import { UserBirthDate } from './UserBirthDate';
+import { MissingUserPropertiesError } from '../exceptions/missing-user-properties.error';
 
 export interface UserProps {
   firstName: string;

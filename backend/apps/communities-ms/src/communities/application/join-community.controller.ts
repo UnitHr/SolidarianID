@@ -10,12 +10,12 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Utils } from '@common-lib/common-lib/common/utils';
 import { JoinCommunityService } from './join-community.service';
 import { QueryPaginationDto } from '../dto/query-pagination.dto';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import { JoinCommunityDto } from '../dto/join-community.dto';
-import { Utils } from '@common-lib/common-lib/common/utils';
 
 @Controller('communities/join-request')
 export class JoinCommunityController {

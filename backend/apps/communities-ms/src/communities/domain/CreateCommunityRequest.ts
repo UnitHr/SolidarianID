@@ -1,10 +1,10 @@
-import { Ods } from './Ods';
-import { Status } from './Status';
-import { CauseEndDate } from './CauseEndDate';
 import {
   Entity,
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
+import { Ods } from './Ods';
+import { Status } from './Status';
+import { CauseEndDate } from './CauseEndDate';
 
 interface CreateCommunityRequestProps {
   userId: string; // This is the user that is creating the community

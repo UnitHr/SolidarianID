@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import axios from 'axios';
+import { Profile } from 'passport';
 import { Strategy } from 'passport-github';
+
+interface GithubUser {
+  email: string;
+}
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
@@ -17,8 +22,8 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   async validate(
     accessToken: string,
     refreshToken: string,
-    profile: any,
-    done: Function,
+    profile: Profile,
+    done: (err: Error | null, user?: GithubUser) => void,
   ) {
     const { emails } = profile;
 
@@ -32,9 +37,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       });
 
       // Find the primary email in the list
-      const primaryEmail = emailData.data.find(
-        (email) => email.primary && email.verified,
-      );
+      const primaryEmail = emailData.data.find((e) => e.primary && e.verified);
       if (primaryEmail) {
         email = primaryEmail.email;
       }
@@ -44,10 +47,11 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       return done(new Error('GitHub account does not provide an email'), null);
     }
 
-    const user = {
+    const user: GithubUser = {
       email,
     };
 
     done(null, user);
+    return user;
   }
 }

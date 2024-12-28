@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { CommunitiesMsModule } from './communities-ms.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { CommunitiesMsModule } from './communities-ms.module';
 import { envs } from './config';
 
 async function bootstrap() {

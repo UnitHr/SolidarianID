@@ -1,0 +1,8 @@
+### Actualizar información del usuario
+PATCH http://localhost:3001/users/{replace-with-id}
+Content-Type: application/json
+Authorization: Bearer {replace-with-token}
+{
+  "email": "newemail@example.com",
+  "bio": "Updated bio"
+}

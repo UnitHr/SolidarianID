@@ -1,0 +1,52 @@
+# Base URL
+@baseUrl = http://localhost:3001
+
+### Success Case: Create a new user
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "birthDate": "1990-01-01",
+  "email": "jack.doe@example.com",
+  "password": "123456",
+  "bio": "Hello, I'm Jane Doe!",
+  "showAge": true,
+  "showEmail": false,
+  "role": "user"
+}
+
+### Success Case: Create a new user without bio
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "firstName": "Jack",
+  "lastName": "Doe",
+  "birthDate": "1980-01-01",
+  "email": "jack.doe@example.com",
+  "password":"123456",
+  "showAge": false,
+  "showEmail": true,
+  "role": "user"
+}
+
+### Error Case: Create user with an already registered email (expected: 404 ...)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "birthDate": "1992-01-01",
+  "email": "john.doe@example.com",
+  "password": "123456",
+  "bio": "Hello, I'm John Doe!",
+  "showAge": true,
+  "showEmail": false,
+  "role": "user"
+}
+
+
+

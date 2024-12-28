@@ -1,0 +1,137 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Test, TestingModule } from '@nestjs/testing';
+import { CommunityService } from './community.service';
+import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
+import { Status } from '../domain/Status';
+import * as Domain from '../domain';
+import { Ods } from '../domain/Ods';
+import { CommunityRepository } from '../repo/community.repository';
+import * as Exceptions from '../exceptions';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+
+describe('CommunityService', () => {
+  let service: CommunityService;
+
+  const mockProps = {
+    userId: 'f50e799b-7a27-4666-a831-bd7552c0632d',
+    communityName: 'CommunityA',
+    communityDescription: 'This is the description of the community',
+    causeTitle: 'This is the title of the cause',
+    causeDescription: 'This is the description of the cause',
+    causeEndDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+    causeOds: [Ods.NoPoverty, Ods.ZeroHunger],
+  };
+
+  const mockCreateCommunityRequest = Domain.CreateCommunityRequest.create(
+    {
+      userId: mockProps.userId,
+      communityName: mockProps.communityName,
+      communityDescription: mockProps.communityDescription,
+      causeTitle: mockProps.causeTitle,
+      causeDescription: mockProps.causeDescription,
+      causeEndDate: Domain.CauseEndDate.create(
+        mockProps.causeEndDate,
+      ).getValue(),
+      causeOds: mockProps.causeOds,
+      status: Status.Pending,
+    },
+    new UniqueEntityID('5ee7a693-a93e-4b6d-bd7e-4bafd1046db3'),
+  );
+
+  const mockCommunity = Domain.Community.create(
+    {
+      adminId: '45a9b29c-c428-4ff8-a0ca-91b9f334faae',
+      name: 'CommunityA',
+      description: 'This is the description of the community',
+      members: [],
+      causes: [],
+    },
+    new UniqueEntityID('ae6bd5eb-aa53-4247-8c2c-c7fa7373ac68'),
+  );
+
+  const mockCreateCommunityRequestRepository = {
+    save: jest.fn(),
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  const mockCommunityRepository = {
+    save: jest.fn(),
+    findByName: jest.fn(),
+    findById: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        CommunityService,
+        {
+          provide: CreateCommunityRequestRepository,
+          useValue: mockCreateCommunityRequestRepository,
+        },
+        {
+          provide: CommunityRepository,
+          useValue: mockCommunityRepository,
+        },
+      ],
+    }).compile();
+
+    service = module.get<CommunityService>(CommunityService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('createCommunityRequest', () => {
+    it('should return the created community request', async () => {
+      mockCreateCommunityRequestRepository.save.mockReturnValue(
+        mockCreateCommunityRequest,
+      );
+
+      const result = await service.createCommunityRequest(mockProps);
+
+      expect(result.value.getValue()).toEqual(mockCreateCommunityRequest);
+      expect(mockCreateCommunityRequestRepository.save).toHaveBeenCalled();
+    });
+
+    it('should return a CommunityNameIsTaken error', async () => {
+      mockCommunityRepository.findByName.mockReturnValue(mockCommunity);
+
+      const result = await service.createCommunityRequest(mockProps);
+
+      expect(result.value).toEqual(
+        Exceptions.CommunityNameIsTaken.create(mockProps.communityName),
+      );
+      expect(mockCommunityRepository.findByName).toHaveBeenCalled();
+    });
+  });
+
+  describe('getCommunity', () => {
+    it('should return the community', async () => {
+      mockCommunityRepository.findById.mockReturnValue(mockCommunity);
+
+      const result = await service.getCommunity(mockCommunity.id.toString());
+
+      expect(result.value.getValue()).toEqual(mockCommunity);
+      expect(mockCommunityRepository.findById).toHaveBeenCalled();
+    });
+
+    it('should return a CommunityNotFound error', async () => {
+      mockCommunityRepository.findById.mockReturnValue(null);
+
+      const result = await service.getCommunity(mockCommunity.id.toString());
+
+      expect(result.value).toEqual(
+        Exceptions.CommunityNotFound.create(mockCommunity.id.toString()),
+      );
+      expect(mockCommunityRepository.findById).toHaveBeenCalled();
+    });
+  });
+});

@@ -1,0 +1,18 @@
+### Login success
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "username": "jack.doe@example.com",
+  "password": "123456"
+}
+
+### Login failed
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "username": "jack.doe@example.com",
+  "password": "12345"
+}
+

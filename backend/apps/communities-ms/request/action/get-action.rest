@@ -1,0 +1,2 @@
+### Obtener una acción
+GET http://localhost:3002/actions/58d38935-a104-4332-b33c-d2dcb06b7a6e

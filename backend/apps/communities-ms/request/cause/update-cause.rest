@@ -1,0 +1,8 @@
+### Updates a cause
+PATCH http://localhost:3002/causes/1
+Content-Type: application/json
+
+{
+  "description": "Actualización de la descripción de la causa.",
+  "ods": [12, 14]
+}

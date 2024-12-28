@@ -1,8 +1,50 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/api-gateway/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/api-gateway",
+  "projects": {
+    "api-gateway": {
+      "type": "application",
+      "root": "apps/api-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/api-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+      }
+    },
+    "users-ms": {
+      "type": "application",
+      "root": "apps/users-ms",
+      "entryFile": "main",
+      "sourceRoot": "apps/users-ms/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/users-ms/tsconfig.app.json"
+      }
+    },
+    "communities-ms": {
+      "type": "application",
+      "root": "apps/communities-ms",
+      "entryFile": "main",
+      "sourceRoot": "apps/communities-ms/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/communities-ms/tsconfig.app.json"
+      }
+    },
+    "common-lib": {
+      "type": "library",
+      "root": "libs/common-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/common-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common-lib/tsconfig.lib.json"
+      }
+    }
   }
 }

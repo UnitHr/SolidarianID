@@ -1,0 +1,5 @@
+### Get details of a cause
+GET http://localhost:3002/causes/1
+
+### Get all causes of a community
+GET http://localhost:3002/causes/community/1

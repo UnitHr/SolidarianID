@@ -1,0 +1,3 @@
+### Get user profile, requires authentication
+GET http://localhost:3001/users/{replace-with-id}
+Authorization: Bearer {replace-with-token}

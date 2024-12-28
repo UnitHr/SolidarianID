@@ -1,0 +1,10 @@
+### Create Cause
+POST http://localhost:3002/causes
+Content-Type: application/json
+
+{
+  "title": "Salvar los Océanos",
+  "description": "Iniciativa para reducir la contaminación marina y proteger los ecosistemas submarinos.",
+  "communityId": "1",
+  "ods": [13, 14] 
+}

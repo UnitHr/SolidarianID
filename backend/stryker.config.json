@@ -8,6 +8,7 @@
   "coverageAnalysis": "perTest",
   "mutate": [
     "apps/*/src/**/*.ts",
+    "libs/*/src/**/*.ts",
     "!apps/*/src/**/*.spec.ts",
     "!apps/*/src/**/*.test.ts",
     "!apps/*/src/**/*.module.ts",

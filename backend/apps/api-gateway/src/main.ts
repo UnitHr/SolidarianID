@@ -10,6 +10,6 @@ async function bootstrap() {
 
   // Start the application
   await app.listen(envs.apiGatewayPort);
-  logger.log(`Backend is running on: ${await app.getUrl()}`);
+  logger.log(`Gateway is running on: ${await app.getUrl()}`);
 }
 bootstrap();

@@ -20,6 +20,6 @@ async function bootstrap() {
 
   // Start the application
   await app.listen(envs.communitiesMsPort);
-  logger.log(`Backend is running on: ${await app.getUrl()}`);
+  logger.log(`communities-ms is running on: ${await app.getUrl()}`);
 }
 bootstrap();

@@ -20,6 +20,6 @@ async function bootstrap() {
 
   // Start the application
   await app.listen(envs.usersMsPort);
-  logger.log(`Backend is running on: ${await app.getUrl()}`);
+  logger.log(`users-ms is running on: ${await app.getUrl()}`);
 }
 bootstrap();

@@ -32,7 +32,7 @@ export class CauseController {
     return this.causeService.getCauseDetails(id);
   }
 
-  @Get('community/:communityId')
+  @Get('community/:communityId') // TODO: Review modeling, this should be something like /communities/:communityId/causes, should this be in Community module?
   findByCommunity(@Param('communityId') communityId: string) {
     return this.causeService.listCausesByCommunity(communityId);
   }

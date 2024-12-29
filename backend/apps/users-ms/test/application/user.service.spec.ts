@@ -203,4 +203,41 @@ describe('UserServiceImpl', () => {
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
     });
   });
+
+  describe('getUserByEmail', () => {
+    it('should return the user if email exists', async () => {
+      // Arrange
+      const existingUser = {
+        id: '1234',
+        email: 'john.doe@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+      } as unknown as User;
+      userRepositoryMock.findByEmail.mockResolvedValue(existingUser);
+
+      // Act
+      const result = await userService.getUserByEmail('john.doe@example.com');
+
+      // Assert
+      expect(result).toEqual(existingUser);
+      expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
+        'john.doe@example.com',
+      );
+    });
+
+    it('should throw UserNotFoundError if email does not exist', async () => {
+      // Arrange
+      userRepositoryMock.findByEmail.mockResolvedValue(null);
+
+      // Act
+      await expect(
+        userService.getUserByEmail('john.doe@example.com'),
+      ).rejects.toThrow(UserNotFoundError);
+
+      // Assert
+      expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
+        'john.doe@example.com',
+      );
+    });
+  });
 });

@@ -1,3 +1,4 @@
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { UserServiceImpl } from '@users-ms/users/application/user.service.impl';
 import { User } from '@users-ms/users/domain';
 import {
@@ -13,6 +14,24 @@ describe('UserServiceImpl', () => {
   let userService: UserServiceImpl;
   let userRepositoryMock: jest.Mocked<UserRepository>;
 
+  const createMockId = (id: string = 'default-id'): UniqueEntityID => {
+    return new UniqueEntityID(id);
+  };
+
+  const createMockUser = (overrides: Partial<User> = {}): User => {
+    const userId = overrides.id ?? createMockId();
+    return {
+      id: userId,
+      firstName: 'Default',
+      lastName: 'User',
+      email: 'default.user@example.com',
+      bio: 'Default bio',
+      birthDate: new Date('1990-01-01'),
+      updateProfile: jest.fn(),
+      ...overrides,
+    } as User;
+  };
+
   beforeEach(() => {
     userRepositoryMock = {
       findByEmail: jest.fn(),
@@ -27,11 +46,10 @@ describe('UserServiceImpl', () => {
   describe('createUser', () => {
     it('should create a new user successfully', async () => {
       // Arrange
-      userRepositoryMock.findByEmail.mockResolvedValue(null);
-
-      userRepositoryMock.save.mockResolvedValue({
-        id: '1234',
-      } as unknown as User);
+      userRepositoryMock.findByEmail.mockResolvedValueOnce(null);
+      userRepositoryMock.save.mockResolvedValueOnce(
+        createMockUser({ id: createMockId('1234') }),
+      );
 
       // Act
       const userId = await userService.createUser(
@@ -51,16 +69,16 @@ describe('UserServiceImpl', () => {
       expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
         'john.doe@example.com',
       );
-      expect(userRepositoryMock.save).toHaveBeenCalled();
+      expect(userRepositoryMock.save).toHaveBeenCalledTimes(1);
     });
 
     it('should throw EmailAlreadyInUseError if email is already in use', async () => {
       // Arrange
-      userRepositoryMock.findByEmail.mockResolvedValue({
-        email: 'john.doe@example.com',
-      } as User);
+      userRepositoryMock.findByEmail.mockResolvedValueOnce(
+        createMockUser({ email: 'john.doe@example.com' }),
+      );
 
-      // Act
+      // Act & Assert
       await expect(
         userService.createUser(
           'John',
@@ -75,7 +93,6 @@ describe('UserServiceImpl', () => {
         ),
       ).rejects.toThrow(EmailAlreadyInUseError);
 
-      // Assert
       expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
         'john.doe@example.com',
       );
@@ -86,13 +103,12 @@ describe('UserServiceImpl', () => {
   describe('updateUser', () => {
     it('should update a user profile successfully', async () => {
       // Arrange
-      const existingUser = {
-        id: '1234',
+      const existingUser = createMockUser({
+        id: createMockId('1234'),
         email: 'old.email@example.com',
-        updateProfile: jest.fn(),
-      } as unknown as User;
-      userRepositoryMock.findById.mockResolvedValue(existingUser);
-      userRepositoryMock.findByEmail.mockResolvedValue(null);
+      });
+      userRepositoryMock.findById.mockResolvedValueOnce(existingUser);
+      userRepositoryMock.findByEmail.mockResolvedValueOnce(null);
 
       // Act
       await userService.updateUser(
@@ -115,33 +131,31 @@ describe('UserServiceImpl', () => {
 
     it('should throw UserNotFoundError if user does not exist', async () => {
       // Arrange
-      userRepositoryMock.findById.mockResolvedValue(null);
+      userRepositoryMock.findById.mockResolvedValueOnce(null);
 
-      // Act
+      // Act & Assert
       await expect(
         userService.updateUser('1234', 'new.email@example.com', 'Updated bio'),
       ).rejects.toThrow(UserNotFoundError);
 
-      // Assert
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
       expect(userRepositoryMock.findByEmail).not.toHaveBeenCalled();
       expect(userRepositoryMock.save).not.toHaveBeenCalled();
     });
 
-    it('should throw EmailUpdateConflictError if the email is the same', async () => {
+    it('should throw EmailUpdateConflictError if the email is the same as current', async () => {
       // Arrange
-      const existingUser = {
-        id: '1234',
+      const existingUser = createMockUser({
+        id: createMockId('1234'),
         email: 'new.email@example.com',
-      } as unknown as User;
-      userRepositoryMock.findById.mockResolvedValue(existingUser);
+      });
+      userRepositoryMock.findById.mockResolvedValueOnce(existingUser);
 
-      // Act
+      // Act & Assert
       await expect(
         userService.updateUser('1234', 'new.email@example.com', 'Updated bio'),
       ).rejects.toThrow(EmailUpdateConflictError);
 
-      // Assert
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
       expect(userRepositoryMock.findByEmail).not.toHaveBeenCalled();
       expect(userRepositoryMock.save).not.toHaveBeenCalled();
@@ -149,21 +163,20 @@ describe('UserServiceImpl', () => {
 
     it('should throw EmailAlreadyInUseError if email is already used by another user', async () => {
       // Arrange
-      const existingUser = {
-        id: '1234',
+      const existingUser = createMockUser({
+        id: createMockId('1234'),
         email: 'old.email@example.com',
-      } as unknown as User;
-      userRepositoryMock.findById.mockResolvedValue(existingUser);
-      userRepositoryMock.findByEmail.mockResolvedValue({
-        email: 'new.email@example.com',
-      } as User);
+      });
+      userRepositoryMock.findById.mockResolvedValueOnce(existingUser);
+      userRepositoryMock.findByEmail.mockResolvedValueOnce(
+        createMockUser({ email: 'new.email@example.com' }),
+      );
 
-      // Act
+      // Act & Assert
       await expect(
         userService.updateUser('1234', 'new.email@example.com', 'Updated bio'),
       ).rejects.toThrow(EmailAlreadyInUseError);
 
-      // Assert
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
       expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
         'new.email@example.com',
@@ -175,12 +188,12 @@ describe('UserServiceImpl', () => {
   describe('getUserProfile', () => {
     it('should return the user profile if user exists', async () => {
       // Arrange
-      const existingUser = {
-        id: '1234',
+      const existingUser = createMockUser({
+        id: createMockId('1234'),
         firstName: 'John',
         lastName: 'Doe',
-      } as unknown as User;
-      userRepositoryMock.findById.mockResolvedValue(existingUser);
+      });
+      userRepositoryMock.findById.mockResolvedValueOnce(existingUser);
 
       // Act
       const result = await userService.getUserProfile('1234');
@@ -192,14 +205,13 @@ describe('UserServiceImpl', () => {
 
     it('should throw UserNotFoundError if user does not exist', async () => {
       // Arrange
-      userRepositoryMock.findById.mockResolvedValue(null);
+      userRepositoryMock.findById.mockResolvedValueOnce(null);
 
-      // Act
+      // Act & Assert
       await expect(userService.getUserProfile('1234')).rejects.toThrow(
         UserNotFoundError,
       );
 
-      // Assert
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
     });
   });
@@ -207,13 +219,13 @@ describe('UserServiceImpl', () => {
   describe('getUserByEmail', () => {
     it('should return the user if email exists', async () => {
       // Arrange
-      const existingUser = {
-        id: '1234',
+      const existingUser = createMockUser({
+        id: createMockId('1234'),
         email: 'john.doe@example.com',
         firstName: 'John',
         lastName: 'Doe',
-      } as unknown as User;
-      userRepositoryMock.findByEmail.mockResolvedValue(existingUser);
+      });
+      userRepositoryMock.findByEmail.mockResolvedValueOnce(existingUser);
 
       // Act
       const result = await userService.getUserByEmail('john.doe@example.com');
@@ -227,14 +239,13 @@ describe('UserServiceImpl', () => {
 
     it('should throw UserNotFoundError if email does not exist', async () => {
       // Arrange
-      userRepositoryMock.findByEmail.mockResolvedValue(null);
+      userRepositoryMock.findByEmail.mockResolvedValueOnce(null);
 
-      // Act
+      // Act & Assert
       await expect(
         userService.getUserByEmail('john.doe@example.com'),
       ).rejects.toThrow(UserNotFoundError);
 
-      // Assert
       expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
         'john.doe@example.com',
       );

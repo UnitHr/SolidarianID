@@ -11,14 +11,7 @@ import { envs } from './config';
     MongooseModule.forRootAsync({
       useFactory: () => ({
         // Configuation from .env file
-        uri: [
-          'mongodb://',
-          envs.mongoHost,
-          ':',
-          envs.mongoPort,
-          '/',
-          envs.mongoDb,
-        ].join(''),
+        uri: envs.mongoUri,
       }),
     }),
     // Import modules

@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   // Start the application
-  await app.listen(envs.usersMsPort);
+  await app.listen(envs.usersMsPort, envs.usersMsHost);
   logger.log(`users-ms is running on: ${await app.getUrl()}`);
 }
 bootstrap();

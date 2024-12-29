@@ -1,12 +1,15 @@
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+import * as dotenvExpand from 'dotenv-expand';
 import * as joi from 'joi';
+
+const env = dotenv.config({ path: './apps/communities-ms/.env' });
+dotenvExpand.expand(env);
 
 interface EnvVars {
   NODE_ENV: string;
+  COMMUNITIES_MS_HOST: string;
   COMMUNITIES_MS_PORT: number;
-  MONGO_HOST: string;
-  MONGO_PORT: number;
-  MONGO_DB: string;
+  MONGO_URI: string;
 }
 
 const envsSchema = joi
@@ -15,10 +18,9 @@ const envsSchema = joi
       .string()
       .valid('development', 'production', 'test')
       .required(),
+    COMMUNITIES_MS_HOST: joi.string().required(),
     COMMUNITIES_MS_PORT: joi.number().required(),
-    MONGO_HOST: joi.string().required(),
-    MONGO_PORT: joi.number().required(),
-    MONGO_DB: joi.string().required(),
+    MONGO_URI: joi.string().required(),
   })
   .unknown(true);
 
@@ -31,8 +33,7 @@ const envVars: EnvVars = value;
 
 export const envs = {
   nodeEnv: envVars.NODE_ENV,
+  communitiesMsHost: envVars.COMMUNITIES_MS_HOST,
   communitiesMsPort: envVars.COMMUNITIES_MS_PORT,
-  mongoHost: envVars.MONGO_HOST,
-  mongoPort: envVars.MONGO_PORT,
-  mongoDb: envVars.MONGO_DB,
+  mongoUri: envVars.MONGO_URI,
 };

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { envs } from '@users-ms/config';
 import axios from 'axios';
 import { Profile } from 'passport';
 import { Strategy } from 'passport-github';
@@ -10,11 +11,13 @@ interface GithubUser {
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
+  private readonly githubApiEmailsUrl = 'https://api.github.com/user/emails';
+
   constructor() {
     super({
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/auth/github/callback',
+      clientID: envs.githubClientId,
+      clientSecret: envs.githubClientSecret,
+      callbackURL: envs.githubCallbackUrl,
       scope: ['user:email'],
     });
   }
@@ -30,7 +33,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     let email = emails && emails.length > 0 ? emails[0].value : null;
 
     if (!email) {
-      const emailData = await axios.get('https://api.github.com/user/emails', {
+      const emailData = await axios.get(this.githubApiEmailsUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
+import { envs } from '@users-ms/config';
 import { AuthController } from './application/auth.controller';
 import { AuthService } from './application/auth.service';
 import { AuthGuard } from './infra/auth.guard';
@@ -12,7 +13,7 @@ import { UserModule } from '../users/user.module';
     UserModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET || 'secret',
+      secret: envs.jwtSecret,
       signOptions: { expiresIn: '1h' },
     }),
   ],

@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   // Start the application
-  await app.listen(envs.communitiesMsPort);
+  await app.listen(envs.communitiesMsPort, envs.communitiesMsHost);
   logger.log(`communities-ms is running on: ${await app.getUrl()}`);
 }
 bootstrap();

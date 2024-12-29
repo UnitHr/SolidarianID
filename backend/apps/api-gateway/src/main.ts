@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Start the application
-  await app.listen(envs.apiGatewayPort);
+  await app.listen(envs.apiGatewayPort, envs.apiGatewayHost);
   logger.log(`Gateway is running on: ${await app.getUrl()}`);
 }
 bootstrap();

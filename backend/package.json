@@ -65,6 +65,9 @@
     "@nestjs/cli": "^10.4.9",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
+    "@stryker-mutator/core": "^8.7.1",
+    "@stryker-mutator/jest-runner": "^8.7.1",
+    "@stryker-mutator/typescript-checker": "^8.7.1",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.2",
@@ -106,8 +109,7 @@
       "ts"
     ],
     "testMatch": [
-      "<rootDir>/apps/**/test/**/*.(spec|test).ts",
-      "<rootDir>/apps/**/src/**/*.(spec|test).ts"
+      "<rootDir>/apps/**/test/**/*.(spec|test).ts"
     ],
     "transform": {
       "^.+\\.(t|j)s$": [

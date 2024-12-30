@@ -11,10 +11,18 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@api-gateway/*": ["apps/api-gateway/src/*"],
-      "@communities-ms/*": ["apps/communities-ms/src/*"],
-      "@users-ms/*": ["apps/users-ms/src/*"],
-      "@common-lib/common-lib/*": ["libs/common-lib/src/*"]
+      "@api-gateway/*": [
+        "apps/api-gateway/src/*"
+      ],
+      "@communities-ms/*": [
+        "apps/communities-ms/src/*"
+      ],
+      "@users-ms/*": [
+        "apps/users-ms/src/*"
+      ],
+      "@common-lib/common-lib/*": [
+        "libs/common-lib/src/*"
+      ]
     },
     "incremental": true,
     "skipLibCheck": true,

@@ -9,9 +9,9 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { Public } from '../interface/public.decorator';
 
 @Controller('auth')
 export class AuthController {

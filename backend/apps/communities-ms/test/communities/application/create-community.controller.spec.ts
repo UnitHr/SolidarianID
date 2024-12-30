@@ -5,12 +5,12 @@ import { Response } from 'express';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
-import { CreateCommunityController } from './create-community.controller';
-import { CreateCommunityService } from './create-community.service';
-import * as Domain from '../domain';
-import { Ods } from '../domain/Ods';
-import { Status } from '../domain/Status';
-import * as Exceptions from '../exceptions';
+import { CreateCommunityController } from '../../../src/communities/application/create-community.controller';
+import { CreateCommunityService } from '../../../src/communities/application/create-community.service';
+import * as Domain from '../../../src/communities/domain';
+import { Ods } from '../../../src/communities/domain/Ods';
+import { Status } from '../../../src/communities/domain/Status';
+import * as Exceptions from '../../../src/communities/exceptions';
 
 describe('CreateCommunityController', () => {
   let controller: CreateCommunityController;

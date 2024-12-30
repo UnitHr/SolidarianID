@@ -1,0 +1,7 @@
+### Create Cause
+POST http://localhost:3002/communities
+Content-Type: application/json
+Authorization: Bearer {replace-with-token}
+{
+
+}

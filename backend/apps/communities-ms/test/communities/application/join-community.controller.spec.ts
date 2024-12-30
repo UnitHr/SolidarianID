@@ -5,11 +5,11 @@ import { HttpStatus } from '@nestjs/common';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
-import { JoinCommunityController } from './join-community.controller';
-import { JoinCommunityService } from './join-community.service';
-import * as Domain from '../domain';
-import { Status } from '../domain/Status';
-import * as Exceptions from '../exceptions';
+import { JoinCommunityController } from '../../../src/communities/application/join-community.controller';
+import { JoinCommunityService } from '../../../src/communities/application/join-community.service';
+import * as Domain from '../../../src/communities/domain';
+import { Status } from '../../../src/communities/domain/Status';
+import * as Exceptions from '../../../src/communities/exceptions';
 
 describe('JoinCommunityController', () => {
   const mockJoinCommunityRequest = Domain.JoinCommunityRequest.create(

@@ -10,6 +10,7 @@ interface EnvVars {
   COMMUNITIES_MS_HOST: string;
   COMMUNITIES_MS_PORT: number;
   MONGO_URI: string;
+  JWT_SECRET: string;
 }
 
 const envsSchema = joi
@@ -21,6 +22,7 @@ const envsSchema = joi
     COMMUNITIES_MS_HOST: joi.string().required(),
     COMMUNITIES_MS_PORT: joi.number().required(),
     MONGO_URI: joi.string().required(),
+    JWT_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -36,4 +38,5 @@ export const envs = {
   communitiesMsHost: envVars.COMMUNITIES_MS_HOST,
   communitiesMsPort: envVars.COMMUNITIES_MS_PORT,
   mongoUri: envVars.MONGO_URI,
+  jwtSecret: envVars.JWT_SECRET,
 };

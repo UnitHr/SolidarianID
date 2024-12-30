@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Test, TestingModule } from '@nestjs/testing';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
-import { CommunityService } from './community.service';
-import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
-import { Status } from '../domain/Status';
-import * as Domain from '../domain';
-import { Ods } from '../domain/Ods';
-import { CommunityRepository } from '../repo/community.repository';
-import * as Exceptions from '../exceptions';
+import { CommunityService } from '../../../src/communities/application/community.service';
+import { CreateCommunityRequestRepository } from '../../../src/communities/repo/create-community.repository';
+import { Status } from '../../../src/communities/domain/Status';
+import * as Domain from '../../../src/communities/domain';
+import { Ods } from '../../../src/communities/domain/Ods';
+import { CommunityRepository } from '../../../src/communities/repo/community.repository';
+import * as Exceptions from '../../../src/communities/exceptions';
 
 describe('CommunityService', () => {
   let service: CommunityService;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateCommunityService } from './create-community.service';
-import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
-import { CommunityRepository } from '../repo/community.repository';
+import { CreateCommunityService } from '../../../src/communities/application/create-community.service';
+import { CreateCommunityRequestRepository } from '../../../src/communities/repo/create-community.repository';
+import { CommunityRepository } from '../../../src/communities/repo/community.repository';
 
 describe('CreateCommunityService', () => {
   let service: CreateCommunityService;

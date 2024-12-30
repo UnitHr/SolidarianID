@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { UsersProxyMiddleware } from './middlewares/users-proxy.middleware';
 import { CommunitiesProxyMiddleware } from './middlewares/communities-proxy.middleware';
+import { StatisticsProxyMiddleware } from './middlewares/statistics-proxy.middleware';
 
 @Module({})
 export class AppModule implements NestModule {
@@ -21,6 +22,12 @@ export class AppModule implements NestModule {
       .forRoutes(
         { path: 'api/v1/communities', method: RequestMethod.ALL },
         { path: 'api/v1/communities/*', method: RequestMethod.ALL },
+      );
+    consumer
+      .apply(StatisticsProxyMiddleware)
+      .forRoutes(
+        { path: 'api/v1/statistics', method: RequestMethod.ALL },
+        { path: 'api/v1/statistics/*', method: RequestMethod.ALL },
       );
   }
 }

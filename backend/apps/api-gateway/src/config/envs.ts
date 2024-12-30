@@ -11,6 +11,7 @@ interface EnvVars {
   API_GATEWAY_PORT: number;
   USERS_MS_URL: string;
   COMMUNITIES_MS_URL: string;
+  STATISTICS_MS_URL: string;
 }
 
 const envsSchema = joi
@@ -23,6 +24,7 @@ const envsSchema = joi
     API_GATEWAY_PORT: joi.number().required(),
     USERS_MS_URL: joi.string().required(),
     COMMUNITIES_MS_URL: joi.string().required(),
+    STATISTICS_MS_URL: joi.string().required(),
   })
   .unknown(true);
 
@@ -39,4 +41,5 @@ export const envs = {
   apiGatewayPort: envVars.API_GATEWAY_PORT,
   usersMsUrl: envVars.USERS_MS_URL,
   communitiesMsUrl: envVars.COMMUNITIES_MS_URL,
+  statisticsMsUrl: envVars.STATISTICS_MS_URL,
 };

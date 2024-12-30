@@ -5,6 +5,7 @@
       SolidarianID
     </a>
     <ul class='flex space-x-4'>
+      {{#if (eq activePage 'home')}}
       <li>
         <a href='/login' class='hover:underline'>
           Login
@@ -15,6 +16,12 @@
           Register
         </a>
       </li>
+      <li>
+        <a href='/validation' class='hover:underline'>
+          Administrador Dashboard
+        </a>
+      </li>
+      {{/if}}
     </ul>
   </nav>
 </header>

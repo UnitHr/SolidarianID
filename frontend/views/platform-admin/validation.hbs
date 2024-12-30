@@ -1,0 +1,23 @@
+<section>
+  <div class="bg-white shadow-md rounded-lg p-4">
+    <h2 class="text-lg font-semibold mb-4">Pending Request</h2>
+    <div class="space-y-4 max-h-64 overflow-y-auto">
+      {{#each request}}
+      <div class="flex items-center justify-between border border-gray-300 rounded-md p-3">
+        <div class="flex items-center space-x-3">
+          <input type="checkbox" id="request-{{this.id}}" class="h-4 w-4">
+          <label for="request-{{this.id}}" class="text-sm font-medium">{{this.description}}</label>
+        </div>
+        <button class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-4 rounded-md">
+          Reject
+        </button>
+      </div>
+      {{/each}}
+    </div>
+    <div class="text-center mt-6">
+      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md">
+        Validate
+      </button>
+    </div>
+  </div>
+</section>

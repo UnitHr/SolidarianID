@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}} - Solidarian ID</title>
     <link href="/css/styles.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
-    {{> navbar}}
 
+{{> navbar}}
+{{#if (eq activePage 'admin')}}
+{{>adminnavbar}}
+{{/if}}
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
     <main class="flex-grow container mx-auto px-4 py-8">
         {{{body}}}
     </main>
-
-    {{> footer}}
 </body>
+
+{{> footer}}
+
 </html>

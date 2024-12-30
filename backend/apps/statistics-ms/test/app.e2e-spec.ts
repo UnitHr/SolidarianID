@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { StatisticsMsModule } from './../src/statistics-ms.module';
+import { StatisticsMsModule } from '../src/statistics-ms.module';
 
 describe('StatisticsMsController (e2e)', () => {
   let app: INestApplication;

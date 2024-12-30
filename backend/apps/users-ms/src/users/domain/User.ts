@@ -4,13 +4,14 @@ import {
 } from '@common-lib/common-lib/core/domain/Entity';
 import { UserBirthDate } from './UserBirthDate';
 import { MissingUserPropertiesError } from '../exceptions/missing-user-properties.error';
+import { UserPassword } from './Password';
 
 export interface UserProps {
   firstName: string;
   lastName: string;
   birthDate: UserBirthDate;
   email: string;
-  password: string;
+  password: UserPassword;
   bio?: string;
   showAge: boolean;
   showEmail: boolean;
@@ -43,10 +44,10 @@ export class User extends Entity<UserProps> {
   }
 
   get password(): string {
-    return this.props.password;
+    return this.props.password.value;
   }
 
-  set password(password: string) {
+  set password(password: UserPassword) {
     this.props.password = password;
   }
 
@@ -79,8 +80,8 @@ export class User extends Entity<UserProps> {
   }
 
   public static create(props: UserProps, id?: UniqueEntityID): User {
-    const { firstName, lastName, birthDate, email } = props;
-    if (!firstName || !lastName || !birthDate || !email) {
+    const { firstName, lastName, birthDate, email, password } = props;
+    if (!firstName || !lastName || !birthDate || !email || !password) {
       throw new MissingUserPropertiesError();
     }
     return new User(props, id);
@@ -94,5 +95,9 @@ export class User extends Entity<UserProps> {
     if (updateData.bio !== undefined) {
       this.props.bio = updateData.bio.trim() || 'No bio available';
     }
+  }
+
+  public async isValidPassword(password: string): Promise<boolean> {
+    return this.props.password.compare(password);
   }
 }

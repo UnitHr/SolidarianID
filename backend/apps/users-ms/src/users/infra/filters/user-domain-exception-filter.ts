@@ -12,6 +12,7 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
+import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { Response } from 'express';
 import {
   EmailAlreadyInUseError,
@@ -19,13 +20,12 @@ import {
   InvalidDateProvidedError,
   MissingUserPropertiesError,
   UnderageUserError,
-  UserNotFoundError,
 } from '../../exceptions';
 
 type ExceptionConstructor = new (...args: unknown[]) => Error;
 
 @Catch(
-  UserNotFoundError,
+  EntityNotFoundError,
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
   MissingUserPropertiesError,
@@ -37,7 +37,7 @@ export class UserDomainExceptionFilter implements ExceptionFilter {
     ExceptionConstructor,
     HttpStatus
   >([
-    [UserNotFoundError, HttpStatus.NOT_FOUND],
+    [EntityNotFoundError, HttpStatus.NOT_FOUND],
     [EmailAlreadyInUseError, HttpStatus.CONFLICT],
     [EmailUpdateConflictError, HttpStatus.CONFLICT],
     [MissingUserPropertiesError, HttpStatus.BAD_REQUEST],

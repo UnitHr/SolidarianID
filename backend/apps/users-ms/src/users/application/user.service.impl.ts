@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { UserRepository } from '../user.repository';
 import { User } from '../domain';
 import { UserService } from './user.service';
 import { UserBirthDate } from '../domain/UserBirthDate';
 import {
-  UserNotFoundError,
   EmailUpdateConflictError,
   EmailAlreadyInUseError,
 } from '../exceptions';
+import { UserPassword } from '../domain/Password';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
-  private readonly saltRounds = 10; // Número de rondas para el hashing
-
   constructor(private readonly userRepository: UserRepository) {}
 
   async createUser(
@@ -28,13 +26,16 @@ export class UserServiceImpl implements UserService {
     role: string,
   ): Promise<string> {
     // Check if the email is already in use
-    const userWithEmail = await this.userRepository.findByEmail(email);
-    if (userWithEmail && userWithEmail.email === email) {
+    try {
+      await this.userRepository.findByEmail(email);
+      // If the email is found, then it is already in use
       throw new EmailAlreadyInUseError(email);
+    } catch (error) {
+      // If the error is not an EntityNotFoundError, then throw it
+      if (!(error instanceof EntityNotFoundError)) {
+        throw error;
+      }
     }
-    // TODO: VALIDACIÓN DE CONTRASEÑA
-
-    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
 
     // Create the new user
     const user = User.create({
@@ -42,7 +43,7 @@ export class UserServiceImpl implements UserService {
       lastName,
       birthDate: UserBirthDate.create(birthDate),
       email,
-      password: hashedPassword,
+      password: await UserPassword.create(password),
       bio,
       showAge,
       showEmail,
@@ -59,9 +60,6 @@ export class UserServiceImpl implements UserService {
   async updateUser(id: string, email: string, bio: string): Promise<void> {
     // Find the existing user
     const existingUser = await this.userRepository.findById(id);
-    if (!existingUser) {
-      throw new UserNotFoundError();
-    }
 
     // Check if the email is different
     if (existingUser.email === email) {
@@ -69,9 +67,15 @@ export class UserServiceImpl implements UserService {
     }
 
     // Check if the email is already in use
-    const emailExists = await this.userRepository.findByEmail(email);
-    if (emailExists && emailExists.email === email) {
+    try {
+      await this.userRepository.findByEmail(email);
+      // If the email is found, then it is already in use
       throw new EmailAlreadyInUseError(email);
+    } catch (error) {
+      // If the error is not an EntityNotFoundError, then throw it
+      if (!(error instanceof EntityNotFoundError)) {
+        throw error;
+      }
     }
 
     // Update the user
@@ -80,22 +84,10 @@ export class UserServiceImpl implements UserService {
   }
 
   async getUserProfile(id: string): Promise<User> {
-    const user = await this.userRepository.findById(id);
-
-    if (!user) {
-      throw new UserNotFoundError();
-    }
-
-    return user;
+    return this.userRepository.findById(id);
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findByEmail(email);
-
-    if (!user) {
-      throw new UserNotFoundError();
-    }
-
-    return user;
+    return this.userRepository.findByEmail(email);
   }
 }

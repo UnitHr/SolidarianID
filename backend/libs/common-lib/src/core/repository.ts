@@ -9,7 +9,5 @@
 export abstract class Repository<T> {
   abstract save(entity: T): Promise<T>;
 
-  abstract delete(id: string): Promise<void>;
-
   abstract findById(id: string): Promise<T>;
 }

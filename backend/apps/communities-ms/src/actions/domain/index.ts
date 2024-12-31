@@ -3,15 +3,21 @@
  * @module modules/actions/domain
  */
 
-import { Action, ActionProps } from './Action';
-import { EconomicAction, EconomicActionProps } from './EconomicAction';
-import { FoodAction, FoodActionProps } from './FoodAction';
-import { VolunteerAction, VolunteerActionProps } from './VolunteerAction';
+import { Action } from './Action';
+import { EconomicAction } from './EconomicAction';
+import { GoodsCollectionAction } from './GoodsCollectionAction';
+import { VolunteerAction } from './VolunteerAction';
 
-export { Action, EconomicAction, FoodAction, VolunteerAction };
+import { Contribution } from './contributions/Contribution';
+import { EconomicContribution } from './contributions/EconomicContribution';
+import { GoodsContribution } from './contributions/GoodsContribution';
+import { VolunteerContribution } from './contributions/VolunteerContribution';
+
+export { Action, EconomicAction, GoodsCollectionAction, VolunteerAction };
+
 export {
-  ActionProps,
-  EconomicActionProps,
-  FoodActionProps,
-  VolunteerActionProps,
+  Contribution,
+  EconomicContribution,
+  GoodsContribution,
+  VolunteerContribution,
 };

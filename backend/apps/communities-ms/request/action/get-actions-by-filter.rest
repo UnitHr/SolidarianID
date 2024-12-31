@@ -1,0 +1,5 @@
+### Obtain the list of actions by a Cause given its id
+GET http://localhost:3002/actions/cause/cause-001
+
+### Obtain the paginated list of all actions
+GET http://localhost:3002/actions?page=2&size=1

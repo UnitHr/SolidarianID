@@ -1,16 +1,18 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { Action, ActionProps } from './Action';
+import { VolunteerContribution } from './contributions/VolunteerContribution';
 
 export interface VolunteerActionProps extends ActionProps {
   targetVolunteers: number;
-  currentVolunteers: number;
+  currentVolunteers?: number;
   location: string;
   date: Date;
 }
 
 export class VolunteerAction extends Action {
-  constructor(props: VolunteerActionProps) {
-    super(props, new UniqueEntityID(props.id));
+  constructor(props: VolunteerActionProps, id?: UniqueEntityID) {
+    super(props, id);
+    this.currentVolunteers = props.currentVolunteers ?? 0;
   }
 
   get targetVolunteers(): number {
@@ -65,7 +67,16 @@ export class VolunteerAction extends Action {
   }
 
   /* eslint-disable class-methods-use-this */
-  create(props: VolunteerActionProps): Action {
+  public static create(props: VolunteerActionProps, id?: string): Action {
+    if (id !== undefined)
+      return new VolunteerAction(props, new UniqueEntityID(id));
     return new VolunteerAction(props);
+  }
+
+  contribute(contribution: VolunteerContribution): void {
+    this.addContribution(contribution);
+    console.log(`CONTRIBUTE IN VOLUNTEER ${contribution}`);
+
+    this.currentVolunteers += contribution.volunteerNumber;
   }
 }

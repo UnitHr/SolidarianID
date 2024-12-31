@@ -4,5 +4,7 @@
  */
 
 import { Action } from './Action';
+import { Contribution } from './Contribution';
 
 export { Action };
+export { Contribution };

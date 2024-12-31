@@ -8,7 +8,7 @@ import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { JoinCommunityController } from '../../../src/communities/application/join-community.controller';
 import { JoinCommunityService } from '../../../src/communities/application/join-community.service';
 import * as Domain from '../../../src/communities/domain';
-import { Status } from '../../../src/communities/domain/Status';
+import { StatusRequest } from '../../../src/communities/domain/StatusRequest';
 import * as Exceptions from '../../../src/communities/exceptions';
 
 describe('JoinCommunityController', () => {
@@ -16,7 +16,7 @@ describe('JoinCommunityController', () => {
     {
       userId: 'ce16ca5e-7009-43da-acc8-36e355334069',
       communityId: '2c67f581-0a47-4f8e-a11e-5a9f73e47d23',
-      status: Status.Pending,
+      status: StatusRequest.Pending,
     },
     new UniqueEntityID('5cec8c12-9950-4108-aea1-e1691019bfbc'),
   );
@@ -26,7 +26,7 @@ describe('JoinCommunityController', () => {
       {
         userId: 'ce16ca5e-7009-43da-acc8-36e355334069',
         communityId: '2c67f581-0a47-4f8e-a11e-5a9f73e47d23',
-        status: Status.Pending,
+        status: StatusRequest.Pending,
       },
       new UniqueEntityID('4b0ba582-80af-463e-9323-81cc967af545'),
     ),
@@ -34,7 +34,7 @@ describe('JoinCommunityController', () => {
       {
         userId: 'ce16ca5e-7009-43da-acc8-36e355334069',
         communityId: '2c67f581-0a47-4f8e-a11e-5a9f73e47d23',
-        status: Status.Pending,
+        status: StatusRequest.Pending,
       },
       new UniqueEntityID('4b0ba582-80af-463e-9323-81cc967af545'),
     ),
@@ -49,7 +49,7 @@ describe('JoinCommunityController', () => {
   const mockJoinCommunityService = {
     getJoinCommunityRequest: jest.fn(),
     getJoinCommunityRequests: jest.fn(),
-    acceptJoinCommunityRequest: jest.fn(),
+    validateJoinCommunityRequest: jest.fn(),
     joinCommunityRequest: jest.fn(),
   };
 
@@ -139,14 +139,14 @@ describe('JoinCommunityController', () => {
       });
     });
 
-    describe('acceptJoinCommunityRequest', () => {
+    describe('validateJoinCommunityRequest', () => {
       it('should accept the request', async () => {
-        mockJoinCommunityService.acceptJoinCommunityRequest.mockReturnValue(
+        mockJoinCommunityService.validateJoinCommunityRequest.mockReturnValue(
           right(Result.ok<void>()),
         );
-        const mockValidateDto = { status: Status.Approved };
+        const mockValidateDto = { status: StatusRequest.Approved };
 
-        const result = await controller.acceptJoinCommunityRequest(
+        const result = await controller.validateJoinCommunityRequest(
           mockJoinCommunityRequest.id.toString(),
           mockValidateDto,
           mockResponse,
@@ -157,12 +157,15 @@ describe('JoinCommunityController', () => {
       });
 
       it('should denied the request', async () => {
-        mockJoinCommunityService.acceptJoinCommunityRequest.mockReturnValue(
+        mockJoinCommunityService.validateJoinCommunityRequest.mockReturnValue(
           right(Result.ok<void>()),
         );
-        const mockValidateDto = { status: Status.Denied, comment: 'Comment' };
+        const mockValidateDto = {
+          status: StatusRequest.Denied,
+          comment: 'Comment',
+        };
 
-        const result = await controller.acceptJoinCommunityRequest(
+        const result = await controller.validateJoinCommunityRequest(
           mockJoinCommunityRequest.id.toString(),
           mockValidateDto,
           mockResponse,
@@ -176,12 +179,12 @@ describe('JoinCommunityController', () => {
         const mockException = Exceptions.JoinCommunityRequestNotFound.create(
           mockJoinCommunityRequest.id.toString(),
         );
-        mockJoinCommunityService.acceptJoinCommunityRequest.mockReturnValue(
+        mockJoinCommunityService.validateJoinCommunityRequest.mockReturnValue(
           left(mockException),
         );
-        const mockValidateDto = { status: Status.Approved };
+        const mockValidateDto = { status: StatusRequest.Approved };
 
-        const result = await controller.acceptJoinCommunityRequest(
+        const result = await controller.validateJoinCommunityRequest(
           mockJoinCommunityRequest.id.toString(),
           mockValidateDto,
           mockResponse,
@@ -196,12 +199,12 @@ describe('JoinCommunityController', () => {
 
       it('should return a CommentIsMandatory exception', async () => {
         const mockException = Exceptions.CommentIsMandatory.create();
-        mockJoinCommunityService.acceptJoinCommunityRequest.mockReturnValue(
+        mockJoinCommunityService.validateJoinCommunityRequest.mockReturnValue(
           left(mockException),
         );
-        const mockValidateDto = { status: Status.Denied };
+        const mockValidateDto = { status: StatusRequest.Denied };
 
-        const result = await controller.acceptJoinCommunityRequest(
+        const result = await controller.validateJoinCommunityRequest(
           mockJoinCommunityRequest.id.toString(),
           mockValidateDto,
           mockResponse,

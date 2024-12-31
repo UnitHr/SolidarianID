@@ -13,7 +13,7 @@ import {
 import { Response, Request } from 'express';
 import { Utils } from '@common-lib/common-lib/common/utils';
 import { JoinCommunityService } from './join-community.service';
-import { QueryPaginationDto } from '../dto/query-pagination.dto';
+import { QueryPaginationDto } from '../../../../../libs/common-lib/src/dto/query-pagination.dto';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import { JoinCommunityDto } from '../dto/join-community.dto';

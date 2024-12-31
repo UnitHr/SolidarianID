@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
+import { CauseEndDate } from '@communities-ms/causes/domain/CauseEndDate';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
 import { CommunityRepository } from '../repo/community.repository';
-import { Status } from '../domain/Status';
-import { Ods } from '../domain/Ods';
+import { StatusRequest } from '../domain/StatusRequest';
 
 @Injectable()
 export class CommunityService {
@@ -34,14 +34,14 @@ export class CommunityService {
     causeTitle: string;
     causeDescription: string;
     causeEndDate: Date;
-    causeOds: Ods[];
+    causeOds: number[];
   }): Promise<
     Either<
       Exceptions.CommunityNameIsTaken,
       Result<Domain.CreateCommunityRequest>
     >
   > {
-    const causeEndOrError = Domain.CauseEndDate.create(
+    const causeEndOrError = CauseEndDate.create(
       createCommunityRequest.causeEndDate,
     );
 
@@ -73,7 +73,7 @@ export class CommunityService {
         causeDescription: createCommunityRequest.causeDescription,
         causeEndDate: causeEndOrError.getValue(),
         causeOds: createCommunityRequest.causeOds,
-        status: Status.Pending,
+        status: StatusRequest.Pending,
       }),
     );
     console.log(newRequest);

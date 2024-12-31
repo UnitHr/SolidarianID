@@ -4,7 +4,6 @@ import {
   ExecutionContext,
   Get,
   HttpStatus,
-  // Headers,
   Param,
   ParseUUIDPipe,
   Post,
@@ -12,6 +11,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
+import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
@@ -30,15 +30,17 @@ export class CommunityController {
 
   @Post()
   async createCommunityRequest(
-    @Req() request: Request,
+    // @Headers('authorization') authHeader: string,
     @Body() createCommunityDto: CreateCommunityDto,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
-    // Extract the token from the authorization header
+    // Get the user ID from the request
+    const userId = (req as any).user.sub.value;
 
     // Create the community request
     const result = await this.communityService.createCommunityRequest({
-      userId: '1',
+      userId: '123',
       communityName: createCommunityDto.name,
       communityDescription: createCommunityDto.description,
       causeTitle: createCommunityDto.cause.title,
@@ -73,13 +75,14 @@ export class CommunityController {
         return;
       }
 
-      const location = `/communities/create-request/${request.getValue().id.toString()}`;
+      const location = `/communities/creation-requests/${request.getValue().id.toString()}`;
       res.status(HttpStatus.CREATED);
       res.location(location);
       res.send();
     }
   }
 
+  @Public()
   @Public()
   @Get(':id')
   async getCommunity(

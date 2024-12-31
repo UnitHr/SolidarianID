@@ -49,7 +49,6 @@ module.exports = {
         allowAfterThis: true,
       },
     ],
-    'no-console': 'off', // Disable the rule for console.log
     'dot-notation': 'off', // Disable the rule for dot notation
     'class-methods-use-this': 'off', // Disable the rule for class methods
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],

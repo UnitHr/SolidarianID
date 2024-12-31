@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { FirstCauseDto } from './first-cause.dto';
+import { CreateCauseDto } from '@communities-ms/communities/dto/create-cause.dto';
 
 export class CreateCommunityDto {
   @IsString({ message: 'The name must be a string' })
@@ -13,6 +13,6 @@ export class CreateCommunityDto {
 
   @ValidateNested({ message: 'The cause must be a valid object' })
   @IsNotEmpty({ message: 'The cause cannot be empty' })
-  @Type(() => FirstCauseDto)
-  cause: FirstCauseDto;
+  @Type(() => CreateCauseDto)
+  cause: CreateCauseDto;
 }

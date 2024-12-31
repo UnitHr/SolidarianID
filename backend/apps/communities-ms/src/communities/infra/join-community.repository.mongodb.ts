@@ -44,11 +44,6 @@ export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestR
       .then(() => this.findById(entity.id.toString()));
   }
 
-  delete(id: string): Promise<void> {
-    this.joinCommunityModel.deleteMany({ id });
-    return Promise.resolve();
-  }
-
   findAll(
     offset: number,
     limit: number,

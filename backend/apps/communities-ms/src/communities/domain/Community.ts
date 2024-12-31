@@ -2,6 +2,7 @@ import {
   Entity,
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
+import { MissingPropertiesError } from '../exceptions';
 
 interface CommunityProps {
   adminId: string;
@@ -53,6 +54,18 @@ export class Community extends Entity<CommunityProps> {
   }
 
   static create(props: CommunityProps, id?: UniqueEntityID): Community {
+    const { adminId, name, description, members, causes } = props;
+    if (!adminId || !name || !description || !members || !causes) {
+      MissingPropertiesError.create();
+    }
     return new Community(props, id);
+  }
+
+  addMember(memberId: string): void {
+    this.props.members.push(memberId);
+  }
+
+  addCause(causeId: string): void {
+    this.props.causes.push(causeId);
   }
 }

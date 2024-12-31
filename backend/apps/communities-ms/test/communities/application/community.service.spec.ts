@@ -3,9 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { CommunityService } from '../../../src/communities/application/community.service';
 import { CreateCommunityRequestRepository } from '../../../src/communities/repo/create-community.repository';
-import { Status } from '../../../src/communities/domain/Status';
+import { StatusRequest } from '../../../src/communities/domain/StatusRequest';
 import * as Domain from '../../../src/communities/domain';
-import { Ods } from '../../../src/communities/domain/Ods';
+import { Ods } from '../../../../../libs/common-lib/src/common/Ods';
 import { CommunityRepository } from '../../../src/communities/repo/community.repository';
 import * as Exceptions from '../../../src/communities/exceptions';
 
@@ -33,7 +33,7 @@ describe('CommunityService', () => {
         mockProps.causeEndDate,
       ).getValue(),
       causeOds: mockProps.causeOds,
-      status: Status.Pending,
+      status: StatusRequest.Pending,
     },
     new UniqueEntityID('5ee7a693-a93e-4b6d-bd7e-4bafd1046db3'),
   );

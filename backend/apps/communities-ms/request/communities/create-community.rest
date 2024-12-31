@@ -1,7 +1,15 @@
 ### Create Cause
 POST http://localhost:3002/communities
 Content-Type: application/json
-Authorization: Bearer {replace-with-token}
-{
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJiZjZmODlkMy02ZGQzLTRiOTEtOTU3Yy0xMWJhMjA3ZTRjMjQifSwiZW1haWwiOiJqYWNrLmRvZUBleGFtcGxlLmNvbSIsInJvbGVzIjoidXNlciIsImlhdCI6MTczNTU3NjIyMywiZXhwIjoxNzM1NTc5ODIzfQ.Be_HWI5L71_RCle90avopXaVSKDAJWhW4eo4ca0cfiE
 
+{
+  "name": "Mi nueva comunidad",
+  "description": "Una descripción breve de la comunidad",
+  "cause": {
+    "title": "Causa principal",
+    "description": "Descripción de la causa principal",
+    "end": "2025-12-31T23:59:59.000Z",
+    "ods": ["NoPoverty", "ZeroHunger"]
+  }
 }

@@ -13,10 +13,10 @@ import { Response } from 'express';
 import { Utils } from '@common-lib/common-lib/common/utils';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import * as Exceptions from '../exceptions';
-import { QueryPaginationDto } from '../dto/query-pagination.dto';
+import { QueryPaginationDto } from '../../../../../libs/common-lib/src/dto/query-pagination.dto';
 import { CreateCommunityService } from './create-community.service';
 
-@Controller('communities/create-request')
+@Controller('communities/creation-requests')
 export class CreateCommunityController {
   constructor(
     private readonly createCommunityService: CreateCommunityService,

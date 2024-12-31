@@ -35,7 +35,6 @@ export class CreateCommunityRequestRepositoryMongoDb extends CreateCommunityRequ
     const document = CreateCommunityRequestMapper.toPersistence(entity);
 
     if (!!existsRequest === false) {
-      console.log(document);
       return this.joinCommunityModel
         .create(document)
         .then((doc) => CreateCommunityRequestMapper.toDomain(doc));
@@ -43,11 +42,6 @@ export class CreateCommunityRequestRepositoryMongoDb extends CreateCommunityRequ
     return this.joinCommunityModel
       .updateOne({ id: entity.id.toString() }, document)
       .then(() => this.findById(entity.id.toString()));
-  }
-
-  delete(id: string): Promise<void> {
-    this.joinCommunityModel.deleteMany({ id });
-    return Promise.resolve();
   }
 
   findAll(

@@ -5,7 +5,7 @@ import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
 import { CommunityRepository } from '../repo/community.repository';
-import { Status } from '../domain/Status';
+import { StatusRequest } from '../domain/StatusRequest';
 
 @Injectable()
 export class CreateCommunityService {
@@ -63,9 +63,9 @@ export class CreateCommunityService {
     }
 
     switch (status) {
-      case Status.Approved: {
+      case StatusRequest.Approved: {
         // Update the request
-        createCommunityRequest.status = Status.Approved;
+        createCommunityRequest.status = StatusRequest.Approved;
 
         // Save the request
         this.createCommunityRequestRepository.save(createCommunityRequest);
@@ -86,10 +86,10 @@ export class CreateCommunityService {
         return right(Result.ok(newCommunity));
       }
 
-      case Status.Denied:
+      case StatusRequest.Denied:
         if (comment) {
           // Update the request
-          createCommunityRequest.status = Status.Denied;
+          createCommunityRequest.status = StatusRequest.Denied;
           createCommunityRequest.comment = comment;
 
           // Save the request

@@ -1,5 +1,3 @@
-import { Ods } from '../Ods';
-
 export class NewCommunityCreated {
   public readonly instance: Date = new Date();
 
@@ -7,6 +5,6 @@ export class NewCommunityCreated {
     public readonly causeTitle: string,
     public readonly causeDescription: string,
     public readonly causeEndDate: Date,
-    public readonly causeOds: Ods[],
+    public readonly causeOds: number[],
   ) {}
 }

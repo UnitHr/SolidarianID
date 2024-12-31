@@ -51,9 +51,4 @@ export class CommunityRepositoryMongoDb extends CommunityRepository {
       .updateOne({ id: entity.id.toString() }, document)
       .then(() => this.findById(entity.id.toString()));
   }
-
-  delete(id: string): Promise<void> {
-    this.communityModel.deleteMany({ id });
-    return Promise.resolve();
-  }
 }

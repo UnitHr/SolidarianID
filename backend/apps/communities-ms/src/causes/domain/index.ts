@@ -4,5 +4,6 @@
  */
 
 import { Cause } from './Cause';
+import { CauseEndDate } from './CauseEndDate';
 
-export { Cause };
+export { Cause, CauseEndDate };

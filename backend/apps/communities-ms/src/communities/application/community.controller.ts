@@ -3,36 +3,35 @@ import {
   Controller,
   Get,
   HttpStatus,
-  // Headers,
   Param,
   ParseUUIDPipe,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
-// import { JwtService } from '@nestjs/jwt';
+import { Response, Request } from 'express';
+import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
 
 @Controller('communities')
 export class CommunityController {
-  constructor(
-    private readonly communityService: CommunityService,
-    // private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly communityService: CommunityService) {}
+
+  // TODO: Implement GET /communities to list all communities with pagination and filtering
 
   @Post()
   async createCommunityRequest(
-    // @Headers('authorization') authHeader: string,
     @Body() createCommunityDto: CreateCommunityDto,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
-    // const token = authHeader.split(' ')[1];
-    // const payload = this.jwtService.decode(token);
+    // Get the user ID from the request
+    const userId = (req as any).user.sub.value;
 
     const result = await this.communityService.createCommunityRequest({
-      userId: '123',
+      userId,
       communityName: createCommunityDto.name,
       communityDescription: createCommunityDto.description,
       causeTitle: createCommunityDto.cause.title,
@@ -62,12 +61,13 @@ export class CommunityController {
         return;
       }
 
-      const location = `/communities/create-request/${request.getValue().id.toString()}`;
+      const location = `/communities/creation-requests/${request.getValue().id.toString()}`;
       res.status(HttpStatus.CREATED);
       res.location(location);
     }
   }
 
+  @Public()
   @Get(':id')
   async getCommunity(
     @Param('id', ParseUUIDPipe) id: string,

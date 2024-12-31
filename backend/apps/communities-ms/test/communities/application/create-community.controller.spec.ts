@@ -8,8 +8,8 @@ import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { CreateCommunityController } from '../../../src/communities/application/create-community.controller';
 import { CreateCommunityService } from '../../../src/communities/application/create-community.service';
 import * as Domain from '../../../src/communities/domain';
-import { Ods } from '../../../src/communities/domain/Ods';
-import { Status } from '../../../src/communities/domain/Status';
+import { Ods } from '../../../../../libs/common-lib/src/common/Ods';
+import { StatusRequest } from '../../../src/communities/domain/StatusRequest';
 import * as Exceptions from '../../../src/communities/exceptions';
 
 describe('CreateCommunityController', () => {
@@ -45,7 +45,7 @@ describe('CreateCommunityController', () => {
       mockCreateCommunityDto.cause.end,
     ).getValue(),
     causeOds: mockCreateCommunityDto.cause.ods,
-    status: Status.Pending,
+    status: StatusRequest.Pending,
   };
 
   const mockCreateCommunityRequest = Domain.CreateCommunityRequest.create(
@@ -181,7 +181,7 @@ describe('CreateCommunityController', () => {
       mockCreateCommunityService.validateCreateCommunityRequest.mockReturnValue(
         right(Result.ok(mockCommunity)),
       );
-      const mockValidateDto = { status: Status.Approved };
+      const mockValidateDto = { status: StatusRequest.Approved };
 
       const result = await controller.validateCreateCommunityRequest(
         mockCreateCommunityRequest.id.toString(),
@@ -203,7 +203,7 @@ describe('CreateCommunityController', () => {
       mockCreateCommunityService.validateCreateCommunityRequest.mockReturnValue(
         left(mockException),
       );
-      const mockValidateDto = { status: Status.Approved };
+      const mockValidateDto = { status: StatusRequest.Approved };
 
       const result = await controller.validateCreateCommunityRequest(
         mockCreateCommunityRequest.id.toString(),
@@ -223,7 +223,7 @@ describe('CreateCommunityController', () => {
       mockCreateCommunityService.validateCreateCommunityRequest.mockReturnValue(
         left(mockException),
       );
-      const mockValidateDto = { status: Status.Denied };
+      const mockValidateDto = { status: StatusRequest.Denied };
 
       const result = await controller.validateCreateCommunityRequest(
         mockCreateCommunityRequest.id.toString(),
@@ -242,7 +242,10 @@ describe('CreateCommunityController', () => {
       mockCreateCommunityService.validateCreateCommunityRequest.mockReturnValue(
         right(Result.ok<void>()),
       );
-      const mockValidateDto = { status: Status.Denied, comment: 'Comment' };
+      const mockValidateDto = {
+        status: StatusRequest.Denied,
+        comment: 'Comment',
+      };
 
       const result = await controller.validateCreateCommunityRequest(
         mockCreateCommunityRequest.id.toString(),

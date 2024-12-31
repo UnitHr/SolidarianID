@@ -1,7 +1,6 @@
+import { StatusRequest } from '@communities-ms/communities/domain/StatusRequest';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Ods } from '../../domain/Ods';
-import { Status } from '../../domain/Status';
 
 export type CreateCommunityRequestDocument =
   // eslint-disable-next-line no-use-before-define
@@ -26,11 +25,11 @@ export class CreateCommunityRequest {
     title: string;
     description: string;
     end: Date;
-    ods: Ods[];
+    ods: number[];
   };
 
-  @Prop({ type: String, enum: Status })
-  status: Status;
+  @Prop({ type: String, enum: StatusRequest })
+  status: StatusRequest;
 
   @Prop()
   comment?: string;

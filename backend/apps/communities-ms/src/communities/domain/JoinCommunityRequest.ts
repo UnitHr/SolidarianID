@@ -2,12 +2,13 @@ import {
   Entity,
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
-import { Status } from './Status';
+import { StatusRequest } from './StatusRequest';
+import { MissingPropertiesError } from '../exceptions';
 
 interface JoinCommunityRequestProps {
-  userId: string; // This is the user that is trying to join to the community
-  communityId: string; // This is the community that the user is trying to join
-  status: Status;
+  userId: string;
+  communityId: string;
+  status: StatusRequest;
   comment?: string;
 }
 
@@ -17,15 +18,14 @@ export class JoinCommunityRequest extends Entity<JoinCommunityRequestProps> {
   }
 
   get id(): UniqueEntityID {
-    // eslint-disable-next-line no-underscore-dangle
-    return this._id;
+    return this.id;
   }
 
-  get status(): Status {
+  get status(): StatusRequest {
     return this.props.status;
   }
 
-  set status(status: Status) {
+  set status(status: StatusRequest) {
     this.props.status = status;
   }
 
@@ -57,6 +57,10 @@ export class JoinCommunityRequest extends Entity<JoinCommunityRequestProps> {
     props: JoinCommunityRequestProps,
     id?: UniqueEntityID,
   ): JoinCommunityRequest {
+    const { userId, communityId, status } = props;
+    if (!userId || !communityId || !status) {
+      MissingPropertiesError.create();
+    }
     return new JoinCommunityRequest(props, id);
   }
 }

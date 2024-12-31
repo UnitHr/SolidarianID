@@ -2,9 +2,9 @@ import {
   Entity,
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
-import { Ods } from './Ods';
-import { Status } from './Status';
-import { CauseEndDate } from './CauseEndDate';
+import { CauseEndDate } from '../../causes/domain/CauseEndDate';
+import { StatusRequest } from './StatusRequest';
+import { MissingPropertiesError } from '../exceptions';
 
 interface CreateCommunityRequestProps {
   userId: string; // This is the user that is creating the community
@@ -13,8 +13,8 @@ interface CreateCommunityRequestProps {
   causeTitle: string;
   causeDescription: string;
   causeEndDate: CauseEndDate;
-  causeOds: Ods[];
-  status: Status;
+  causeOds: number[];
+  status: StatusRequest;
   comment?: string;
 }
 
@@ -24,8 +24,7 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
   }
 
   get id(): UniqueEntityID {
-    // eslint-disable-next-line no-underscore-dangle
-    return this._id;
+    return this.id;
   }
 
   get communityName(): string {
@@ -48,15 +47,15 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
     return this.props.causeEndDate;
   }
 
-  get causeOds(): Ods[] {
+  get causeOds(): number[] {
     return this.props.causeOds;
   }
 
-  get status(): Status {
+  get status(): StatusRequest {
     return this.props.status;
   }
 
-  set status(status: Status) {
+  set status(status: StatusRequest) {
     this.props.status = status;
   }
 
@@ -80,6 +79,29 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
     props: CreateCommunityRequestProps,
     id?: UniqueEntityID,
   ): CreateCommunityRequest {
+    const {
+      userId,
+      communityName,
+      communityDescription,
+      causeTitle,
+      causeDescription,
+      causeEndDate,
+      causeOds,
+      status,
+    } = props;
+    if (
+      !userId ||
+      !communityName ||
+      !communityDescription ||
+      !causeTitle ||
+      !causeDescription ||
+      !causeEndDate ||
+      !causeOds ||
+      !status
+    ) {
+      MissingPropertiesError.create();
+    }
+
     return new CreateCommunityRequest(props, id);
   }
 }

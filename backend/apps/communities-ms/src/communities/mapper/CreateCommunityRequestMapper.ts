@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { CauseEndDate } from '@communities-ms/causes/domain/CauseEndDate';
 import * as Domain from '../domain';
 import * as Persistence from '../infra/persistence';
 
@@ -13,7 +14,7 @@ export class CreateCommunityRequestMapper {
         communityDescription: raw.description,
         causeTitle: raw.cause.title,
         causeDescription: raw.cause.description,
-        causeEndDate: Domain.CauseEndDate.create(raw.cause.end).getValue(),
+        causeEndDate: CauseEndDate.create(raw.cause.end).getValue(),
         causeOds: raw.cause.ods,
         status: raw.status,
         comment: raw.comment,

@@ -4,8 +4,8 @@ import { Result } from '@common-lib/common-lib/core/logic/Result';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CommunityRepository } from '../repo/community.repository';
-import { Status } from '../domain/Status';
 import { JoinCommunityRequestRepository } from '../repo/join-community.repository';
+import { StatusRequest } from '../domain/StatusRequest';
 
 @Injectable()
 export class JoinCommunityService {
@@ -46,7 +46,7 @@ export class JoinCommunityService {
 
     if (!!joinCommunityRequestAlreadyExists === true) {
       switch (joinCommunityRequestAlreadyExists.status) {
-        case Status.Pending:
+        case StatusRequest.Pending:
           return left(
             Exceptions.JoinCommunityRequestAlreadyExists.create(
               joinCommunityRequest.communityId,
@@ -55,7 +55,7 @@ export class JoinCommunityService {
           );
 
         // Check if the user is already a member of the community
-        case Status.Approved:
+        case StatusRequest.Approved:
           return left(
             Exceptions.UserIsAlreadyMember.create(
               joinCommunityRequest.communityId,
@@ -64,7 +64,7 @@ export class JoinCommunityService {
           );
 
         // Check if the user is not allowed to join the community
-        case Status.Denied:
+        case StatusRequest.Denied:
           return left(
             Exceptions.JoinCommunityRequestDenied.create(
               joinCommunityRequest.communityId,
@@ -80,7 +80,7 @@ export class JoinCommunityService {
     const newRequest = Domain.JoinCommunityRequest.create({
       userId: joinCommunityRequest.userId,
       communityId: joinCommunityRequest.communityId,
-      status: Status.Pending,
+      status: StatusRequest.Pending,
     });
     this.joinCommunityRequestRepository.save(newRequest);
 
@@ -118,7 +118,7 @@ export class JoinCommunityService {
     return right(Result.ok(joinCommunityRequest));
   }
 
-  async acceptJoinCommunityRequest(
+  async validateJoinCommunityRequest(
     requestId: string,
     status: string,
     comment?: string,
@@ -137,9 +137,9 @@ export class JoinCommunityService {
     }
 
     switch (status) {
-      case Status.Approved:
+      case StatusRequest.Approved:
         // Update the request
-        joinCommunityRequest.status = Status.Approved;
+        joinCommunityRequest.status = StatusRequest.Approved;
 
         // Save the request
         this.joinCommunityRequestRepository.save(joinCommunityRequest);
@@ -148,10 +148,10 @@ export class JoinCommunityService {
 
         break;
 
-      case Status.Denied:
+      case StatusRequest.Denied:
         if (comment) {
           // Update the request
-          joinCommunityRequest.status = Status.Denied;
+          joinCommunityRequest.status = StatusRequest.Denied;
           joinCommunityRequest.comment = comment;
 
           // Save the request

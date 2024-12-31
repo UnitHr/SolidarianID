@@ -1,12 +1,9 @@
-import { CauseDto } from '../dto/cause.dto';
+import { Cause } from '../domain';
 
 export abstract class CauseService {
-  abstract createCause(
-    title: string,
-    description: string,
-    communityId: string,
-    ods: number[],
-  ): Promise<{ id: string }>;
+  abstract getAllCauses(): Promise<Cause[]>;
+
+  abstract getCause(id: string): Promise<Cause>;
 
   abstract updateCause(
     id: string,
@@ -14,7 +11,11 @@ export abstract class CauseService {
     ods?: number[],
   ): Promise<void>;
 
-  abstract getCauseDetails(id: string): Promise<CauseDto>;
+  abstract getCauseActions(id: string): Promise<string[]>;
 
-  abstract listCausesByCommunity(communityId: string): Promise<CauseDto[]>;
+  abstract createCauseAction(id: string, description: string): Promise<void>;
+
+  abstract getCauseSupporters(id: string): Promise<string[]>;
+
+  abstract addCauseSupporter(id: string, userId: string): Promise<void>;
 }

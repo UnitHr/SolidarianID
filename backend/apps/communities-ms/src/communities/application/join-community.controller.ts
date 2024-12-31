@@ -12,7 +12,7 @@ import {
 import { Response } from 'express';
 import { Utils } from '@common-lib/common-lib/common/utils';
 import { JoinCommunityService } from './join-community.service';
-import { QueryPaginationDto } from '../dto/query-pagination.dto';
+import { QueryPaginationDto } from '../../../../../libs/common-lib/src/dto/query-pagination.dto';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import { JoinCommunityDto } from '../dto/join-community.dto';
@@ -61,7 +61,7 @@ export class JoinCommunityController {
     }
   }
 
-  @Get('')
+  @Get()
   async getJoinCommunityRequests(
     @Query() query: QueryPaginationDto,
     @Res() res: Response,
@@ -128,7 +128,7 @@ export class JoinCommunityController {
   }
 
   @Post(':id')
-  async acceptJoinCommunityRequest(
+  async validateJoinCommunityRequest(
     // @Headers('authorization') authHeader: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
@@ -137,7 +137,7 @@ export class JoinCommunityController {
     // const token = authHeader.split(' ')[1];
     // const payload = this.jwtService.decode(token);
 
-    const result = await this.joinCommunityService.acceptJoinCommunityRequest(
+    const result = await this.joinCommunityService.validateJoinCommunityRequest(
       id,
       validateCommunityDto.status,
       validateCommunityDto.comment,

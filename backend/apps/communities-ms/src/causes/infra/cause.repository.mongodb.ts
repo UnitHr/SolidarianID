@@ -15,12 +15,20 @@ export class CauseRepositoryMongoDB extends CauseRepository {
     super();
   }
 
+  getAllCauses(): Promise<Domain.Cause[]> {
+    return this.causeModel
+      .find()
+      .exec()
+      .then((docs) => docs.map(CauseMapper.toDomain));
+  }
+
   save = async (entity: Domain.Cause): Promise<Domain.Cause> => {
     return this.causeModel
       .create(CauseMapper.toPersistence(entity))
       .then((doc) => CauseMapper.toDomain(doc));
   };
 
+  // TODO: Review if we can update using the save method
   update = async (entity: Domain.Cause): Promise<Domain.Cause> => {
     return this.causeModel
       .findOneAndUpdate(
@@ -45,7 +53,10 @@ export class CauseRepositoryMongoDB extends CauseRepository {
       .then((docs) => docs.map(CauseMapper.toDomain));
   }
 
-  async delete(id: string): Promise<void> {
-    await this.causeModel.deleteOne({ id }).exec();
+  findAll(): Promise<Domain.Cause[]> {
+    return this.causeModel
+      .find()
+      .exec()
+      .then((docs) => docs.map(CauseMapper.toDomain));
   }
 }

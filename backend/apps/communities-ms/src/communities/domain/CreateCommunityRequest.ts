@@ -24,7 +24,7 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
   }
 
   get id(): UniqueEntityID {
-    return this.id;
+    return this._id;
   }
 
   get communityName(): string {

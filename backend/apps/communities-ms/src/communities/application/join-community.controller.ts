@@ -19,11 +19,8 @@ import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import { JoinCommunityDto } from '../dto/join-community.dto';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
-import * as jwt from 'jsonwebtoken'; 
-import { envs } from '@communities-ms/config';
-import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 
-@Controller('communities/join-request')
+@Controller('communities/join-requests')
 export class JoinCommunityController {
   constructor(private readonly joinCommunityService: JoinCommunityService) {}
 
@@ -35,10 +32,10 @@ export class JoinCommunityController {
     @Res() res: Response,
   ) {
     // Extract the token from the authorization header
-    const payload = this.getTokenPayload(req);
+    const userId = (req as any).user.sub.value;
 
     const result =
-      await this.joinCommunityService.joinCommunityRequest(payload.sub.toString(), joinCommunityDto.communityId);
+      await this.joinCommunityService.joinCommunityRequest(userId, joinCommunityDto.communityId);
 
     if (result.isLeft()) {
       const error = result.value;
@@ -47,25 +44,35 @@ export class JoinCommunityController {
         case Exceptions.CommunityNotFound:
           res.status(HttpStatus.NOT_FOUND);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         case Exceptions.JoinCommunityRequestAlreadyExists:
           res.status(HttpStatus.CONFLICT);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         case Exceptions.UserIsAlreadyMember:
           res.status(HttpStatus.CONFLICT);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+          return;
+        case Exceptions.JoinCommunityRequestDenied:
+          res.status(HttpStatus.CONFLICT);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
       const request = result.value.getValue();
 
-      const location = `/communities/join-request/${request.id.toString()}`;
+      const location = `/communities/join-requests/${request.id.toString()}`;
       res.status(HttpStatus.CREATED);
       res.location(location);
+      res.send();
     }
   }
 
@@ -78,14 +85,15 @@ export class JoinCommunityController {
     @Res() res: Response,
   ) {
     // Extract the token from the authorization header
-    const payload = this.getTokenPayload(req);
+    const userId = (req as any).user.sub.value;
     
     // Check if the user is an admin of the community
-    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(payload.sub.toString(), joinCommunityDto.communityId);
+    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(userId, joinCommunityDto.communityId);
 
     if(isCommunityAdmin.isLeft()) {
       res.status(HttpStatus.UNAUTHORIZED);
       res.json({ errors: { message: isCommunityAdmin.value.errorValue().message } });
+      res.send();
       return;
     }
 
@@ -100,6 +108,7 @@ export class JoinCommunityController {
     if (results.isFailure) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR);
       res.json({ errors: { message: results.getValue } });
+      res.send();
       return;
     }
 
@@ -109,13 +118,14 @@ export class JoinCommunityController {
       .map((request) => ({ id: request.id.toString() }));
 
     const links = Utils.getPaginationLinks(
-      'communities/join-request',
+      'communities/join-requests',
       offset,
       limit,
     );
 
     res.status(HttpStatus.OK);
     res.json({ data, links });
+    res.send();
   }
 
   @Roles(Role.Admin)
@@ -126,14 +136,15 @@ export class JoinCommunityController {
     @Res() res: Response,
   ) {
     // Extract the token from the authorization header
-    const payload = this.getTokenPayload(req);
+    const userId = (req as any).user.sub.value;
     
     // Check if the user is an admin of the community
-    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(payload.sub.toString(), id);
+    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(userId, id);
 
     if(isCommunityAdmin.isLeft()) {
       res.status(HttpStatus.UNAUTHORIZED);
       res.json({ errors: { message: isCommunityAdmin.value.errorValue().message } });
+      res.send();
       return;
     }
 
@@ -148,10 +159,12 @@ export class JoinCommunityController {
         case Exceptions.JoinCommunityRequestNotFound:
           res.status(HttpStatus.NOT_FOUND);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
       const request = result.value.getValue();
@@ -167,29 +180,31 @@ export class JoinCommunityController {
           comment: request.comment,
         },
       });
+      res.send();
     }
   }
 
   @Roles(Role.Admin)
   @Post(':id')
-  async acceptJoinCommunityRequest(
+  async validateJoinCommunityRequest(
     @Req() req: Request,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
   ) {
     // Check if the user is an admin of the community
-    const payload = this.getTokenPayload(req);
-    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(payload.sub.toString(), id);
+    const userId = (req as any).user.sub.value;
+    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(userId, id);
 
     if(isCommunityAdmin.isLeft()) {
       res.status(HttpStatus.UNAUTHORIZED);
       res.json({ errors: { message: isCommunityAdmin.value.errorValue().message } });
+      res.send();
       return;
     }
 
     // Call the service to accept the request
-    const result = await this.joinCommunityService.acceptJoinCommunityRequest(
+    const result = await this.joinCommunityService.validateJoinCommunityRequest(
       id,
       validateCommunityDto.status,
       validateCommunityDto.comment,
@@ -203,25 +218,22 @@ export class JoinCommunityController {
         case Exceptions.JoinCommunityRequestNotFound:
           res.status(HttpStatus.NOT_FOUND);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         case Exceptions.CommentIsMandatory:
           res.status(HttpStatus.BAD_REQUEST);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
       // Return the success
       res.status(HttpStatus.CREATED);
+      res.send();
     }
-  }
-
-  private getTokenPayload(req: Request): {sub: UniqueEntityID, email: string, roles: string} {
-    // Extract the token from the authorization header
-    const authHeader = req.headers['authorization'];
-    const token = authHeader.split(' ')[1];
-    return jwt.verify(token, envs.jwtSecret) as unknown as {sub: UniqueEntityID, email: string, roles: string};
   }
 }

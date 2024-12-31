@@ -41,6 +41,7 @@ export class CommunityService {
       Result<Domain.CreateCommunityRequest>
     >
   > {
+    console.log("Llega aquí")
     const causeEndOrError = CauseEndDate.create(
       createCommunityRequest.causeEndDate,
     );
@@ -76,7 +77,7 @@ export class CommunityService {
         status: StatusRequest.Pending,
       }),
     );
-    console.log(newRequest);
+    
     // Return the request object
     return right(Result.ok(newRequest));
   }

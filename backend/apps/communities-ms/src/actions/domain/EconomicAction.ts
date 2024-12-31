@@ -1,14 +1,16 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { Action, ActionProps } from './Action';
+import { EconomicContribution } from './contributions/EconomicContribution';
 
 export interface EconomicActionProps extends ActionProps {
   targetAmount: number;
-  currentAmount: number;
+  currentAmount?: number;
 }
 
 export class EconomicAction extends Action {
-  constructor(props: EconomicActionProps) {
-    super(props, new UniqueEntityID(props.id));
+  constructor(props: EconomicActionProps, id?: UniqueEntityID) {
+    super(props, id);
+    this.currentAmount = props.currentAmount ?? 0;
   }
 
   get targetAmount(): number {
@@ -51,7 +53,21 @@ export class EconomicAction extends Action {
   }
 
   /* eslint-disable class-methods-use-this */
-  create(props: EconomicActionProps): Action {
+  public static create(
+    props: EconomicActionProps,
+    id?: string,
+  ): EconomicAction {
+    if (id !== undefined)
+      return new EconomicAction(props, new UniqueEntityID(id));
     return new EconomicAction(props);
+  }
+
+  contribute(contribution: EconomicContribution): void {
+    if (this.status === 'pending') this.status = 'in_progress';
+    this.addContribution(contribution);
+
+    this.currentAmount += contribution.donatedAmount;
+
+    if (this.currentAmount >= this.targetAmount) this.status = 'completed';
   }
 }

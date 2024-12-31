@@ -2,7 +2,7 @@
 @baseUrl = http://localhost:3002
 
 ### Success Case: Create a new economic action
-POST {{baseUrl}}/actions
+POST {{baseUrl}}/actions/economic
 Content-Type: application/json
 
 {
@@ -13,22 +13,22 @@ Content-Type: application/json
   "targetAmount": 5000
 }
 
-### Success case: Create a new food action
-POST {{baseUrl}}/actions
+### Success case: Create a new goods collection action
+POST {{baseUrl}}/actions/goodsCollection
 Content-Type: application/json
 
 {
-  "type": "food",
+  "type": "goodsCollection",
   "title": "Food Aid for Communities in Somalia",
   "description": "Providing essential food supplies to families in drought-affected regions of Somalia to combat hunger and malnutrition.",
   "causeId": "cause-001",
-  "foodType": "Maize Meal",
+  "goodType": "Maize Meal",
   "quantity": 100,
   "unit": "kg"
 }
 
 ### Success case: Create a new volunteer action
-POST {{baseUrl}}/actions
+POST {{baseUrl}}/actions/volunteer
 Content-Type: application/json
 
 {

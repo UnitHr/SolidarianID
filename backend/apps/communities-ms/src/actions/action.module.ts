@@ -7,6 +7,8 @@ import { ActionRepository } from './action.repository';
 import { ActionServiceImpl } from './application/action.service.impl';
 import { ActionRepositoryMongoDB } from './infra/action.repository.mongodb';
 import { ActionSchema } from './infra/persistence/Action';
+import { ContributionService } from './application/contribution.service';
+import { ContributionServiceImpl } from './application/contribution.service.impl';
 
 @Module({
   imports: [
@@ -22,6 +24,10 @@ import { ActionSchema } from './infra/persistence/Action';
     {
       provide: ActionService,
       useClass: ActionServiceImpl,
+    },
+    {
+      provide: ContributionService,
+      useClass: ContributionServiceImpl,
     },
     {
       provide: ActionRepository,

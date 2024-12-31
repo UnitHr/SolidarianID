@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import {
   IsDateString,
   IsNotEmpty,
@@ -21,14 +22,16 @@ export class CreateActionDto {
   @IsString()
   @IsNotEmpty()
   causeId: string;
+}
 
-  @IsOptional()
+export class CreateEconomicActionDto extends CreateActionDto {
   @IsNumber()
-  targetAmount?: number;
+  targetAmount: number;
+}
 
-  @IsOptional()
+export class CreateGoodsCollectionActionDto extends CreateActionDto {
   @IsString()
-  foodType?: string;
+  goodType: string;
 
   @IsOptional()
   @IsNumber()
@@ -40,17 +43,22 @@ export class CreateActionDto {
 
   @IsOptional()
   @IsNumber()
-  targetVolunteers?: number;
+  collectQuantity?: number;
+}
+
+export class CreateVolunteerActionDto extends CreateActionDto {
+  @IsNumber()
+  targetVolunteers: number;
+
+  @IsString()
+  location: string;
 
   @IsOptional()
   @IsNumber()
-  collectQuantity?: number;
+  currentVolunteers?: number;
 
-  @IsOptional()
-  @IsString()
-  location?: string;
-
-  @IsOptional()
   @IsDateString()
-  date?: Date;
+  date: Date;
 }
+
+// export class UpdateTalDto extends PartialType(CreateActionDto) {}

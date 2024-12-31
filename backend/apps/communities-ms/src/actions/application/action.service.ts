@@ -1,21 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { ActionDto } from '../dto/action.dto';
-import { CreateActionDto } from '../dto/create-action.dto';
+import { Action } from '../domain/Action';
 import { UpdateActionDto } from '../dto/update-action.dto';
 
-// TODO: addapt to DDD
 @Injectable()
 export abstract class ActionService {
-  abstract createAction(
-    createActionDto: CreateActionDto,
+  abstract createEconomicAction(
+    title,
+    description,
+    causeId,
+    targetAmount,
   ): Promise<{ id: string }>;
 
-  abstract updateAction(
-    id: string,
-    updateActionDto: UpdateActionDto,
-  ): Promise<void>;
+  abstract createGoodsCollectionAction(
+    title,
+    description,
+    causeId,
+    goodType,
+    quantity,
+    unit,
+  ): Promise<{ id: string }>;
 
-  abstract getActionDetails(id: string): Promise<ActionDto>;
+  abstract createVolunteerAction(
+    title,
+    description,
+    causeId,
+    targetVolunteers,
+    location,
+    date,
+  ): Promise<{ id: string }>;
 
-  abstract listActionsByCause(causeId: string): Promise<ActionDto[]>;
+  abstract updateAction(id: string, updateActionDto: UpdateActionDto);
+
+  abstract getActionDetails(id: string): Promise<Action>;
+
+  abstract getAllActions(offset: number, limit: number): Promise<Action[]>;
+
+  abstract getPaginatedActions(
+    offset: number,
+    limit: number,
+  ): Promise<{ data: Action[]; total: number }>;
+
+  abstract listActionsByCause(causeId: string): Promise<Action[]>;
 }

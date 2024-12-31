@@ -1,57 +1,69 @@
 import { error } from 'console';
-import * as Domain from './domain';
-import { ActionFactory } from './domain/ActionFactory';
-import { ActionDto } from './dto/action.dto';
-import * as Persistence from './infra/persistence';
-import { ActionDocument } from './infra/persistence/Action';
+import * as Domain from '../domain';
+import { ActionDto } from '../dto/action.dto';
+import * as Persistence from '../infra/persistence';
+import { ContributionMapper } from './contribution.mapper';
 
 export class ActionMapper {
-  static toDomain(document: ActionDocument): Domain.Action {
+  static toDomain(document: Persistence.Action): Domain.Action {
     const { id, status, title, description, causeId } = document;
-    if ('type' in document) {
-      if (document.type === 'economic') {
-        return ActionFactory.createAction('economic', {
-          id,
-          status,
-          title,
-          description,
-          causeId,
+
+    const mappedContributions = document.contributions
+      ? document.contributions.map(ContributionMapper.toDomain)
+      : undefined;
+
+    const commonProps = {
+      id,
+      status,
+      title,
+      description,
+      causeId,
+      contributions: mappedContributions,
+    };
+
+    if (document.type === 'economic') {
+      return Domain.EconomicAction.create(
+        {
+          ...commonProps,
           targetAmount: document.targetAmount,
           currentAmount: document.currentAmount,
-        });
-      }
-      if (document.type === 'food') {
-        return ActionFactory.createAction('food', {
-          id,
-          status,
-          title,
-          description,
-          causeId,
-          foodType: document.foodType,
+        },
+        id,
+      );
+    }
+    if (document.type === 'goodsCollection') {
+      return Domain.GoodsCollectionAction.create(
+        {
+          ...commonProps,
+          goodType: document.goodType,
           quantity: document.quantity,
           unit: document.unit,
           collectedQuantity: document.collectedQuantity,
-        });
-      }
-      if (document.type === 'volunteer') {
-        return ActionFactory.createAction('volunteer', {
-          id,
-          status,
-          title,
-          description,
-          causeId,
-          targetVolunteers: document.targetVolunteers,
-          currentVolunteers: document.currentVolunteers,
-          location: document.location,
-          date: document.date,
-        });
-      }
+        },
+        id,
+      );
     }
-
-    throw error(`Unknown action type: ${document.constructor.name}`);
+    if (document.type === 'volunteer') {
+      return Domain.VolunteerAction.create(
+        {
+          ...commonProps,
+          targetVolunteers: document.targetVolunteers,
+          location: document.location,
+          currentVolunteers: document.currentVolunteers,
+          date: document.date,
+        },
+        id,
+      );
+    }
+    // TODO: return something (lint)
+    throw error(`Unknown action type: ${document.type}`);
   }
 
   static toPersistence(action: Domain.Action): Persistence.Action {
+    const mappedContributions = action.contributions
+      ? action.contributions.map(ContributionMapper.toPersistence)
+      : undefined;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const commonProps: any = {
       id: action.id.toString(),
@@ -59,6 +71,7 @@ export class ActionMapper {
       title: action.title,
       description: action.description,
       causeId: action.causeId,
+      contributions: mappedContributions,
     };
 
     if (action instanceof Domain.EconomicAction) {
@@ -69,11 +82,11 @@ export class ActionMapper {
         currentAmount: action.currentAmount,
       };
     }
-    if (action instanceof Domain.FoodAction) {
+    if (action instanceof Domain.GoodsCollectionAction) {
       return {
         ...commonProps,
-        type: 'food',
-        foodType: action.foodType,
+        type: 'goodsCollection',
+        goodType: action.goodType,
         quantity: action.quantity,
         unit: action.unit,
         collectedQuantity: action.collectedQuantity,
@@ -108,9 +121,9 @@ export class ActionMapper {
         currentAmount: action.currentAmount,
       });
     }
-    if (action instanceof Domain.FoodAction) {
+    if (action instanceof Domain.GoodsCollectionAction) {
       return Object.assign(commonProps, {
-        foodType: action.foodType,
+        goodType: action.goodType,
         quantity: action.quantity,
         unit: action.unit,
         collectedQuantity: action.collectedQuantity,

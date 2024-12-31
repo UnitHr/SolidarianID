@@ -10,6 +10,20 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@api-gateway/*": [
+        "apps/api-gateway/src/*"
+      ],
+      "@communities-ms/*": [
+        "apps/communities-ms/src/*"
+      ],
+      "@users-ms/*": [
+        "apps/users-ms/src/*"
+      ],
+      "@common-lib/common-lib/*": [
+        "libs/common-lib/src/*"
+      ]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -17,9 +31,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@common-lib/common-lib": ["libs/common-lib/src"],
-      "@common-lib/common-lib/*": ["libs/common-lib/src/*"]
-    }
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   }
 }

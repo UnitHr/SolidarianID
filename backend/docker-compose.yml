@@ -2,18 +2,18 @@ services:
   postgres:
     image: postgres:latest
     ports:
-      - '${POSTGRES_PORT}:5432'
+      - '5432:5432'
     env_file:
-      - .env
+      - ./apps/users-ms/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   mongo:
     image: mongo:latest
     ports:
-      - '${MONGO_PORT}:27017'
+      - '27017:27017'
     env_file:
-      - .env
+      - ./apps/communities-ms/.env
     volumes:
       - mongo_data:/data/db
 

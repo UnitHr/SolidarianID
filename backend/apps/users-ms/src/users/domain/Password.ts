@@ -1,22 +1,38 @@
+import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
+import * as bcrypt from 'bcrypt';
+import {
+  PASSWORD_HASH_SALT_ROUNDS,
+  PASSWORD_PATTERN,
+} from '@common-lib/common-lib/common/constant';
 import { InvalidPasswordError } from '../exceptions/invalid-password.error';
 
 interface UserpasswordProps {
   password: string;
 }
 
-export class UserPassword {
-  private constructor(private props: UserpasswordProps) {}
+export class UserPassword extends ValueObject<UserpasswordProps> {
+  private constructor(props: UserpasswordProps) {
+    super(props);
+  }
 
-  get password(): string {
+  get value(): string {
     return this.props.password;
   }
 
-  public static create(password: string): UserPassword {
-    const pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-    if (!pattern.test(password)) {
+  public static async create(value: string): Promise<UserPassword> {
+    if (!PASSWORD_PATTERN.test(value)) {
       throw new InvalidPasswordError();
     }
-    return new UserPassword({ password });
+
+    const hashedPassword = await bcrypt.hash(value, PASSWORD_HASH_SALT_ROUNDS);
+    return new UserPassword({ password: hashedPassword });
+  }
+
+  public static fromHashedPassword(value: string): UserPassword {
+    return new UserPassword({ password: value });
+  }
+
+  public async compare(hashedPassword: string): Promise<boolean> {
+    return bcrypt.compare(this.value, hashedPassword);
   }
 }

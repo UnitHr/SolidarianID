@@ -1,25 +1,28 @@
 import {
   Body,
   Controller,
+  ExecutionContext,
   Get,
   HttpStatus,
-  // Headers,
   Param,
   ParseUUIDPipe,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
-// import { JwtService } from '@nestjs/jwt';
+import { Response, Request } from 'express';
+import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
+import { Query } from 'mysql2/typings/mysql/lib/protocol/sequences/Query';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { Utils } from '@common-lib/common-lib/common/utils';
 
 @Controller('communities')
 export class CommunityController {
   constructor(
     private readonly communityService: CommunityService,
-    // private readonly jwtService: JwtService,
   ) {}
 
   @Post()
@@ -27,12 +30,14 @@ export class CommunityController {
     // @Headers('authorization') authHeader: string,
     @Body() createCommunityDto: CreateCommunityDto,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
-    // const token = authHeader.split(' ')[1];
-    // const payload = this.jwtService.decode(token);
+    // Get the user ID from the request
+    const userId = (req as any).user.sub.value;
 
+    // Create the community request
     const result = await this.communityService.createCommunityRequest({
-      userId: '123',
+      userId: userId,
       communityName: createCommunityDto.name,
       communityDescription: createCommunityDto.description,
       causeTitle: createCommunityDto.cause.title,
@@ -44,40 +49,93 @@ export class CommunityController {
     if (result.isLeft()) {
       const error = result.value;
 
+      // Handle the error
       switch (error.constructor) {
         case Exceptions.CommunityNameIsTaken:
           res.status(HttpStatus.CONFLICT);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
+      // Return the location of the created resource
       const request = result.value;
 
       if (request.isFailure) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);
         res.json({ errors: { message: request.errorValue() } });
+        res.send();
         return;
       }
 
-      const location = `/communities/create-request/${request.getValue().id.toString()}`;
+      const location = `/communities/creation-requests/${request.getValue().id.toString()}`;
       res.status(HttpStatus.CREATED);
       res.location(location);
+      res.send();
     }
   }
 
+  @Public()
   @Get(':id')
   async getCommunity(
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ) {
+    // Get the community
     const result = await this.communityService.getCommunity(id);
 
     if (result.isLeft()) {
       const error = result.value;
 
+      // Handle the error
+      switch (error.constructor) {
+        case Exceptions.CommunityNotFound:
+          res.status(HttpStatus.NOT_FOUND);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+          return;
+        default:
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+      }
+    } else {
+      // Return the community
+      const community = result.value.getValue();
+
+      res.status(HttpStatus.OK);
+      res.json({
+        data: {
+          id: community.id.toString(),
+          adminId: community.adminId,
+          name: community.name,
+          description: community.description,
+        },
+      });
+      res.send();
+    }
+  }
+
+  @Public()
+  @Get(':id/members')
+  async getCommunityMembers(
+    @Body() query: QueryPaginationDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const { offset = 0, limit = 10 } = query;
+
+    // Get the community
+    const result = await this.communityService.getCommunity(id);
+
+    if (result.isLeft()) {
+      const error = result.value;
+
+      // Handle the error
       switch (error.constructor) {
         case Exceptions.CommunityNotFound:
           res.status(HttpStatus.NOT_FOUND);
@@ -88,18 +146,70 @@ export class CommunityController {
           res.json({ errors: { message: error.errorValue().message } });
       }
     } else {
+      // Return the community
       const community = result.value.getValue();
 
+      const links = Utils.getPaginationLinks(
+        'communities/creation-requests',
+        offset,
+        limit,
+      );
+
+      const data = {
+        id: community.id.toString(),
+        members: community.members.slice(offset, offset + limit),
+      };
+
       res.status(HttpStatus.OK);
-      res.json({
-        data: {
-          id: community.id.toString(),
-          adminId: community.adminId,
-          name: community.name,
-          description: community.description,
-          members: community.members,
-          causes: community.causes,
-        },
+      res.json({data, links
+      });
+    }
+  }
+
+  @Public()
+  @Get(':id/causes')
+  async getCommunityCauses(
+    @Body() query: QueryPaginationDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const { offset = 0, limit = 10 } = query;
+
+    // Get the community
+    const result = await this.communityService.getCommunity(id);
+
+    if (result.isLeft()) {
+      const error = result.value;
+
+      // Handle the error
+      switch (error.constructor) {
+        case Exceptions.CommunityNotFound:
+          res.status(HttpStatus.NOT_FOUND);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+          return;
+        default:
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+      }
+    } else {
+      // Return the community
+      const community = result.value.getValue();
+
+      const links = Utils.getPaginationLinks(
+        'communities/creation-requests',
+        offset,
+        limit,
+      );
+
+      const data = {
+        id: community.id.toString(),
+        members: community.causes.slice(offset, offset + limit),
+      };
+
+      res.status(HttpStatus.OK);
+      res.json({data, links
       });
     }
   }

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { CommunitiesMsModule } from './communities-ms.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { CommunitiesMsModule } from './communities-ms.module';
 import { envs } from './config';
 
 async function bootstrap() {
@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   // Start the application
-  await app.listen(envs.communitiesMsPort);
-  logger.log(`Backend is running on: ${await app.getUrl()}`);
+  await app.listen(envs.communitiesMsPort, envs.communitiesMsHost);
+  logger.log(`communities-ms is running on: ${await app.getUrl()}`);
 }
 bootstrap();

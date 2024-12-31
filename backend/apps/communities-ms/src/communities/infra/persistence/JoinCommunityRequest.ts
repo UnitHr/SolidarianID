@@ -1,6 +1,6 @@
+import { StatusRequest } from '@communities-ms/communities/domain/StatusRequest';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Status } from '../../domain/Status';
 
 export type JoinCommunityRequestDocument =
   // eslint-disable-next-line no-use-before-define
@@ -17,8 +17,8 @@ export class JoinCommunityRequest {
   @Prop()
   communityId: string;
 
-  @Prop({ type: String, enum: Status })
-  status: Status;
+  @Prop({ type: String, enum: StatusRequest })
+  status: StatusRequest;
 
   @Prop()
   comment?: string;

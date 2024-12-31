@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
+import { AppModule } from './app.module';
 import { envs } from './config';
 
 async function bootstrap() {
@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Start the application
-  await app.listen(envs.apiGatewayPort);
-  logger.log(`Backend is running on: ${await app.getUrl()}`);
+  await app.listen(envs.apiGatewayPort, envs.apiGatewayHost);
+  logger.log(`Gateway is running on: ${await app.getUrl()}`);
 }
 bootstrap();

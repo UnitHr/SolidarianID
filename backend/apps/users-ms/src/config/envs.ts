@@ -1,8 +1,13 @@
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+import * as dotenvExpand from 'dotenv-expand';
 import * as joi from 'joi';
+
+const env = dotenv.config({ path: './apps/users-ms/.env' });
+dotenvExpand.expand(env);
 
 interface EnvVars {
   NODE_ENV: string;
+  USERS_MS_HOST: string;
   USERS_MS_PORT: number;
   POSTGRES_HOST: string;
   POSTGRES_PORT: number;
@@ -12,6 +17,7 @@ interface EnvVars {
   JWT_SECRET: string;
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
+  GITHUB_CALLBACK_URL: string;
 }
 
 const envsSchema = joi
@@ -20,6 +26,7 @@ const envsSchema = joi
       .string()
       .valid('development', 'production', 'test')
       .required(),
+    USERS_MS_HOST: joi.string().required(),
     USERS_MS_PORT: joi.number().required(),
     POSTGRES_HOST: joi.string().required(),
     POSTGRES_PORT: joi.number().required(),
@@ -29,6 +36,7 @@ const envsSchema = joi
     JWT_SECRET: joi.string().required(),
     GITHUB_CLIENT_ID: joi.string().required(),
     GITHUB_CLIENT_SECRET: joi.string().required(),
+    GITHUB_CALLBACK_URL: joi.string().required(),
   })
   .unknown(true);
 
@@ -41,6 +49,7 @@ const envVars: EnvVars = value;
 
 export const envs = {
   nodeEnv: envVars.NODE_ENV,
+  usersMsHost: envVars.USERS_MS_HOST,
   usersMsPort: envVars.USERS_MS_PORT,
   postgresHost: envVars.POSTGRES_HOST,
   postgresPort: envVars.POSTGRES_PORT,
@@ -50,4 +59,5 @@ export const envs = {
   jwtSecret: envVars.JWT_SECRET,
   githubClientId: envVars.GITHUB_CLIENT_ID,
   githubClientSecret: envVars.GITHUB_CLIENT_SECRET,
+  githubCallbackUrl: envVars.GITHUB_CALLBACK_URL,
 };

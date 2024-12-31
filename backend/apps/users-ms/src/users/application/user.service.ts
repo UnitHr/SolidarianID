@@ -1,6 +1,5 @@
 import { User } from '../domain';
 
-// TODO: Add tests
 export abstract class UserService {
   abstract createUser(
     firstName: string,

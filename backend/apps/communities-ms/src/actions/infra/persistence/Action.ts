@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-// import { ObjectId } from 'mongodb';
+import { Contribution, ContributionSchema } from './Contribution';
 
 @Schema({ discriminatorKey: 'type' })
 export class Action {
@@ -11,7 +10,7 @@ export class Action {
   status: 'pending' | 'in_progress' | 'completed';
 
   @Prop({ required: true })
-  type: 'economic' | 'food' | 'volunteer';
+  type: 'economic' | 'goodsCollection' | 'volunteer';
 
   @Prop({ required: true })
   title: string;
@@ -22,6 +21,9 @@ export class Action {
   @Prop({ required: true })
   causeId: string;
 
+  @Prop({ type: [ContributionSchema], default: [] })
+  contributions: Contribution[];
+
   @Prop({ required: false })
   targetAmount?: number;
 
@@ -29,7 +31,7 @@ export class Action {
   currentAmount?: number;
 
   @Prop({ required: false })
-  foodType?: string;
+  goodType?: string;
 
   @Prop({ required: false })
   quantity?: number;
@@ -54,5 +56,3 @@ export class Action {
 }
 
 export const ActionSchema = SchemaFactory.createForClass(Action);
-
-export type ActionDocument = HydratedDocument<Action>;

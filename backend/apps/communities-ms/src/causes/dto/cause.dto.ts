@@ -5,5 +5,9 @@ export class CauseDto {
 
   description: string;
 
+  ods: number[];
+
+  endDate: Date;
+
   communityId: string;
 }

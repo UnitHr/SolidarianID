@@ -10,13 +10,13 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Utils } from '@common-lib/common-lib/common/utils';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import * as Exceptions from '../exceptions';
-import { QueryPaginationDto } from '../dto/query-pagination.dto';
+import { QueryPaginationDto } from '../../../../../libs/common-lib/src/dto/query-pagination.dto';
 import { CreateCommunityService } from './create-community.service';
-import { Utils } from '@common-lib/common-lib/common/utils';
 
-@Controller('communities/create-request')
+@Controller('communities/creation-requests')
 export class CreateCommunityController {
   constructor(
     private readonly createCommunityService: CreateCommunityService,
@@ -37,6 +37,7 @@ export class CreateCommunityController {
     if (results.isFailure) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR);
       res.json({ errors: { message: results.getValue } });
+      res.send();
       return;
     }
 
@@ -45,13 +46,14 @@ export class CreateCommunityController {
       .map((request) => ({ id: request.id.toString() }));
 
     const links = Utils.getPaginationLinks(
-      'communities/create-request',
+      'communities/creation-requests',
       offset,
       limit,
     );
 
     res.status(HttpStatus.OK);
     res.json({ data, links });
+    res.send();
   }
 
   @Get(':id')
@@ -69,10 +71,12 @@ export class CreateCommunityController {
         case Exceptions.CreateCommunityRequestNotFound:
           res.status(HttpStatus.NOT_FOUND);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
       const request = result.value.getValue();
@@ -94,19 +98,16 @@ export class CreateCommunityController {
           comment: request.comment,
         },
       });
+      res.send();
     }
   }
 
   @Post(':id')
   async validateCreateCommunityRequest(
-    // @Headers('authorization') authHeader: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
-  ) {
-    // const token = authHeader.split(' ')[1];
-    // const payload = this.jwtService.decode(token);
-
+  ) {   
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,
@@ -121,26 +122,31 @@ export class CreateCommunityController {
         case Exceptions.CreateCommunityRequestNotFound:
           res.status(HttpStatus.NOT_FOUND);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         case Exceptions.CommentIsMandatory:
           res.status(HttpStatus.BAD_REQUEST);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
       const newCommunity = result.value.getValue();
 
       if (!newCommunity) {
         res.status(HttpStatus.OK);
+        res.send();
         return;
       }
 
       const location = `/communities/${newCommunity.id.toString()}`;
       res.status(HttpStatus.CREATED);
       res.location(location);
+      res.send();
     }
   }
 }

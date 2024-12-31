@@ -1,8 +1,8 @@
 import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
-import { InvalidDateProvidedError } from '../exceptions/invalid-date-provided.error';
-import { UnderageUserError } from '../exceptions/under-age-user.error';
 import { Utils } from '@common-lib/common-lib/common/utils';
 import { AGE_OF_MAJORITY } from '@common-lib/common-lib/common/constant';
+import { InvalidDateProvidedError } from '../exceptions/invalid-date-provided.error';
+import { UnderageUserError } from '../exceptions/under-age-user.error';
 
 interface UserBirthDateProps {
   value: Date;

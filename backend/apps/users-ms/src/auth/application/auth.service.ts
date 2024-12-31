@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-
 export abstract class AuthService {
   abstract signIn(
     email: string,

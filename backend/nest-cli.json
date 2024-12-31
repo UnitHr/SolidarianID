@@ -45,6 +45,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common-lib/tsconfig.lib.json"
       }
+    },
+    "statistics-ms": {
+      "type": "application",
+      "root": "apps/statistics-ms",
+      "entryFile": "main",
+      "sourceRoot": "apps/statistics-ms/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/statistics-ms/tsconfig.app.json"
+      }
     }
   }
 }

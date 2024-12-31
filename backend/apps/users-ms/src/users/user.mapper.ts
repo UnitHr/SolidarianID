@@ -1,8 +1,9 @@
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from './domain';
 import { UserProfileDto } from './dto/user-profile.dto';
 import * as Persistence from './infra/persistence';
 import { UserBirthDate } from './domain/UserBirthDate';
-import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { UserPassword } from './domain/Password';
 
 export class UserMapper {
   static toDomain(raw: Persistence.User): Domain.User {
@@ -10,6 +11,7 @@ export class UserMapper {
       {
         ...raw,
         birthDate: UserBirthDate.create(new Date(raw.birthDate)),
+        password: UserPassword.fromHashedPassword(raw.password),
       },
       new UniqueEntityID(raw.id),
     );

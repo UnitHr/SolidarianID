@@ -1,11 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../users/application/user.service';
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthServiceImpl implements AuthService {
+  logger = new Logger(AuthServiceImpl.name);
+
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
@@ -15,36 +16,38 @@ export class AuthServiceImpl implements AuthService {
     email: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.userService.getUserByEmail(email);
+    try {
+      const user = await this.userService.getUserByEmail(email);
 
-    if (!user) {
+      if (!user.isValidPassword(password)) {
+        throw new UnauthorizedException('Invalid password');
+      }
+
+      // Payload for the JWT
+      const payload = { sub: user.id, email: user.email, roles: user.role };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (error) {
+      this.logger.error('Error signing in', error);
       throw new UnauthorizedException('Invalid email');
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
-    }
-
-    // Payload for the JWT
-    const payload = { sub: user.id, email: user.email, roles: user.role };
-
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 
   async signOauth2(email: string): Promise<{ access_token: string }> {
-    const user = await this.userService.getUserByEmail(email);
-    if (!user) {
-      throw new UnauthorizedException('Invalid autentication');
-    }
-    // Payload for the JWT
-    const payload = { sub: user.id, email: user.email, roles: user.role };
+    try {
+      const user = await this.userService.getUserByEmail(email);
 
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+      // Payload for the JWT
+      const payload = { sub: user.id, email: user.email, roles: user.role };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (error) {
+      this.logger.error('Error signing in', error);
+      throw new UnauthorizedException('Email not registered');
+    }
   }
 }

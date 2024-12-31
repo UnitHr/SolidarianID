@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { UsersMsModule } from './users-ms.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { UsersMsModule } from './users-ms.module';
 import { envs } from './config';
 
 async function bootstrap() {
@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   // Start the application
-  await app.listen(envs.usersMsPort);
-  logger.log(`Backend is running on: ${await app.getUrl()}`);
+  await app.listen(envs.usersMsPort, envs.usersMsHost);
+  logger.log(`users-ms is running on: ${await app.getUrl()}`);
 }
 bootstrap();

@@ -1,12 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { Repository as TypeOrmRepository } from 'typeorm/repository/Repository';
 import { UserMapper } from '../user.mapper';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
 import { UserRepository } from '../user.repository';
 
-// TODO:  review the null return pattern, maybe use a Result type or exceptions
 @Injectable()
 export class UserRepositoryTypeOrm extends UserRepository {
   constructor(
@@ -18,12 +18,18 @@ export class UserRepositoryTypeOrm extends UserRepository {
 
   async findById(id: string): Promise<Domain.User> {
     const user = await this.userRepository.findOneBy({ id });
-    return user ? UserMapper.toDomain(user) : null;
+    if (!user) {
+      throw new EntityNotFoundError(`User with id ${id} not found`);
+    }
+    return UserMapper.toDomain(user);
   }
 
   async findByEmail(email: string): Promise<Domain.User> {
     const user = await this.userRepository.findOneBy({ email });
-    return user ? UserMapper.toDomain(user) : null;
+    if (!user) {
+      throw new EntityNotFoundError(`User with email ${email} not found`);
+    }
+    return UserMapper.toDomain(user);
   }
 
   save = (entity: Domain.User): Promise<Domain.User> => {
@@ -31,8 +37,4 @@ export class UserRepositoryTypeOrm extends UserRepository {
       .save(UserMapper.toPersistence(entity))
       .then((user) => UserMapper.toDomain(user));
   };
-
-  async delete(id: string): Promise<void> {
-    await this.userRepository.delete(id);
-  }
 }

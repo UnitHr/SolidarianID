@@ -6,6 +6,8 @@ import { JoinCommunityRequestAlreadyExists } from './JoinCommunityRequestAlready
 import { JoinCommunityRequestDenied } from './JoinCommunityRequestDenied';
 import { UserIsAlreadyMember } from './UserIsAlreadyMember';
 import { JoinCommunityRequestNotFound } from './JoinCommunityRequestNotFound';
+import { MissingPropertiesError } from './MissingPropertiesError';
+import { UserIsNotCommunityAdmin } from './UserIsNotCommunityAdmin';
 
 export {
   CommunityNameIsTaken,
@@ -16,4 +18,6 @@ export {
   JoinCommunityRequestDenied,
   UserIsAlreadyMember,
   JoinCommunityRequestNotFound,
+  MissingPropertiesError,
+  UserIsNotCommunityAdmin
 };

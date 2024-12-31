@@ -3,7 +3,8 @@ import {
   IsString,
   IsNotEmpty,
   IsArray,
-  IsNumber,
+  ArrayNotEmpty,
+  IsPositive,
 } from 'class-validator';
 
 export class UpdateCauseDto {
@@ -13,8 +14,8 @@ export class UpdateCauseDto {
   description?: string;
 
   @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  @IsNotEmpty({ each: true })
+  @IsArray({ message: 'ODS must be an array' })
+  @ArrayNotEmpty({ message: 'ODS cannot be empty' })
+  @IsPositive({ each: true, message: 'ODS must be a number' })
   ods?: number[];
 }

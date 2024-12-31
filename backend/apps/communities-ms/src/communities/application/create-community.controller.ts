@@ -99,14 +99,10 @@ export class CreateCommunityController {
 
   @Post(':id')
   async validateCreateCommunityRequest(
-    // @Headers('authorization') authHeader: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
-  ) {
-    // const token = authHeader.split(' ')[1];
-    // const payload = this.jwtService.decode(token);
-
+  ) {   
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,

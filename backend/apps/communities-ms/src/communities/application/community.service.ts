@@ -76,7 +76,7 @@ export class CommunityService {
         status: Status.Pending,
       }),
     );
-
+    console.log(newRequest);
     // Return the request object
     return right(Result.ok(newRequest));
   }

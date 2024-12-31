@@ -14,10 +14,8 @@ export class JoinCommunityService {
     private readonly communityRepository: CommunityRepository,
   ) {}
 
-  async joinCommunityRequest(joinCommunityRequest: {
-    userId: string;
-    communityId: string;
-  }): Promise<
+  async joinCommunityRequest(userId: string, communityId: string
+  ): Promise<
     Either<
       | Exceptions.JoinCommunityRequestAlreadyExists
       | Exceptions.JoinCommunityRequestDenied
@@ -28,20 +26,20 @@ export class JoinCommunityService {
   > {
     // Check if the communityId is valid
     const community = await this.communityRepository.findById(
-      joinCommunityRequest.communityId,
+      communityId,
     );
 
     if (!!community === false) {
       return left(
-        Exceptions.CommunityNotFound.create(joinCommunityRequest.communityId),
+        Exceptions.CommunityNotFound.create(communityId),
       );
     }
 
     // Check if the request already exists
     const joinCommunityRequestAlreadyExists =
       await this.joinCommunityRequestRepository.findByUserIdAndCommunityId(
-        joinCommunityRequest.userId,
-        joinCommunityRequest.communityId,
+        userId,
+        communityId,
       );
 
     if (!!joinCommunityRequestAlreadyExists === true) {
@@ -49,8 +47,8 @@ export class JoinCommunityService {
         case Status.Pending:
           return left(
             Exceptions.JoinCommunityRequestAlreadyExists.create(
-              joinCommunityRequest.communityId,
-              joinCommunityRequest.userId,
+              communityId,
+              userId,
             ),
           );
 
@@ -58,8 +56,8 @@ export class JoinCommunityService {
         case Status.Approved:
           return left(
             Exceptions.UserIsAlreadyMember.create(
-              joinCommunityRequest.communityId,
-              joinCommunityRequest.userId,
+              communityId,
+              userId,
             ),
           );
 
@@ -67,8 +65,8 @@ export class JoinCommunityService {
         case Status.Denied:
           return left(
             Exceptions.JoinCommunityRequestDenied.create(
-              joinCommunityRequest.communityId,
-              joinCommunityRequest.userId,
+              communityId,
+              userId,
             ),
           );
         default:
@@ -78,8 +76,8 @@ export class JoinCommunityService {
 
     // Create the new request
     const newRequest = Domain.JoinCommunityRequest.create({
-      userId: joinCommunityRequest.userId,
-      communityId: joinCommunityRequest.communityId,
+      userId: userId,
+      communityId: communityId,
       status: Status.Pending,
     });
     this.joinCommunityRequestRepository.save(newRequest);
@@ -167,5 +165,15 @@ export class JoinCommunityService {
     }
 
     return right(Result.ok<void>());
+  }
+
+  async isCommunityAdmin(userId: string, communityId: string): Promise<Either<Exceptions.UserIsNotCommunityAdmin, Result<boolean>>> {
+    const result = await this.communityRepository.isCommunityAdmin(userId, communityId);
+
+    if(result === false){
+      return left(Exceptions.UserIsNotCommunityAdmin.create(communityId, userId));
+    }
+
+    return right(Result.ok(true));
   }
 }

@@ -25,6 +25,16 @@ export class CommunityRepositoryMongoDb extends CommunityRepository {
     return null;
   }
 
+  async isCommunityAdmin(userId: string, communityId: string): Promise<boolean> {
+    const existsCommunity = await this.communityModel.findOne({adminId: userId, id: communityId});
+
+    if (!!existsCommunity === true) {
+      return true;
+    }
+
+    return false;
+  }
+
   async findById(id: string): Promise<Domain.Community> {
     const existsCommunity = await this.communityModel.findOne({ id });
 

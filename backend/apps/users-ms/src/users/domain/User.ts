@@ -5,6 +5,10 @@ import {
 import { UserBirthDate } from './UserBirthDate';
 import { MissingUserPropertiesError } from '../exceptions/missing-user-properties.error';
 import { UserPassword } from './Password';
+import {
+  UserAlreadyFollowedError,
+  UserCannotFollowSelfError,
+} from '../exceptions';
 
 export interface UserProps {
   firstName: string;
@@ -16,6 +20,7 @@ export interface UserProps {
   showAge: boolean;
   showEmail: boolean;
   role: string;
+  followers?: User[];
 }
 
 export class User extends Entity<UserProps> {
@@ -79,12 +84,16 @@ export class User extends Entity<UserProps> {
     return this.birthDate.age;
   }
 
+  get followers(): User[] {
+    return this.props.followers;
+  }
+
   public static create(props: UserProps, id?: UniqueEntityID): User {
     const { firstName, lastName, birthDate, email, password } = props;
     if (!firstName || !lastName || !birthDate || !email || !password) {
       throw new MissingUserPropertiesError();
     }
-    return new User(props, id);
+    return new User({ ...props, followers: props.followers ?? [] }, id);
   }
 
   public updateProfile(updateData: Partial<UserProps>): void {
@@ -99,5 +108,16 @@ export class User extends Entity<UserProps> {
 
   public async isValidPassword(password: string): Promise<boolean> {
     return this.props.password.compare(password);
+  }
+
+  public followUser(followed: User) {
+    if (this.equals(followed)) {
+      throw new UserCannotFollowSelfError();
+    }
+    if (followed.props.followers.find((user) => user.equals(this))) {
+      throw new UserAlreadyFollowedError(followed.id.toString());
+    }
+    // TODO: Emit event
+    followed.props.followers.push(this);
   }
 }

@@ -25,8 +25,8 @@ Content-Type: application/json
   "firstName": "Jack",
   "lastName": "Doe",
   "birthDate": "1980-01-01",
-  "email": "jack.doe@example.com",
-  "password":"123456",
+  "email": "jack1.doe@example.com",
+  "password":"123456Test*",
   "showAge": false,
   "showEmail": true,
   "role": "user"

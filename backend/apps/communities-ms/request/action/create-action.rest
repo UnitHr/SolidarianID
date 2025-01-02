@@ -2,7 +2,7 @@
 @baseUrl = http://localhost:3002
 
 ### Success Case: Create a new economic action
-POST {{baseUrl}}/actions/economic
+POST {{baseUrl}}/actions
 Content-Type: application/json
 
 {
@@ -10,25 +10,26 @@ Content-Type: application/json
   "title": "Money for the Fire victims",
   "description": "Raising funds to provide financial help for families who lost their homes and livelihoods during the fire.",
   "causeId": "cause-123",
-  "targetAmount": 5000
+  "target": 5000,
+  "unit": "euros"
 }
 
 ### Success case: Create a new goods collection action
-POST {{baseUrl}}/actions/goodsCollection
+POST {{baseUrl}}/actions
 Content-Type: application/json
 
 {
-  "type": "goodsCollection",
+  "type": "goods_collection",
   "title": "Food Aid for Communities in Somalia",
   "description": "Providing essential food supplies to families in drought-affected regions of Somalia to combat hunger and malnutrition.",
   "causeId": "cause-001",
-  "goodType": "Maize Meal",
-  "quantity": 100,
-  "unit": "kg"
+  "target": 5000,
+  "unit": "kg",
+  "goodType": "Maize Meal"
 }
 
 ### Success case: Create a new volunteer action
-POST {{baseUrl}}/actions/volunteer
+POST {{baseUrl}}/actions
 Content-Type: application/json
 
 {
@@ -36,7 +37,8 @@ Content-Type: application/json
   "title": "Volunteer Help at Concert for Valencia Flood Relief.",
   "description": "Volunteers assist in organizing and managing a solidarity concert to raise funds for communities affected by the floods in Valencia, ensuring smooth event logistics and donations.",
   "causeId": "cause-002",
-  "targetVolunteers": 30,
+  "target": 5000,
+  "unit": "hours",
   "location": "Catedral de Murcia",
   "date": "2025-01-24"
 }

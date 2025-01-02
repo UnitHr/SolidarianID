@@ -3,14 +3,16 @@ import {
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
 
-export interface ContributionProps {
+interface ContributionProps {
   userId: string;
 
   actionId: string;
 
   date: Date;
 
-  description?: string;
+  amount: number;
+
+  unit: string;
 }
 
 export class Contribution extends Entity<ContributionProps> {
@@ -34,8 +36,20 @@ export class Contribution extends Entity<ContributionProps> {
     return this.props.date;
   }
 
-  get description(): string {
-    return this.props.description;
+  get amount(): number {
+    return this.props.amount;
+  }
+
+  set amount(value: number) {
+    this.props.amount = value;
+  }
+
+  get unit(): string {
+    return this.props.unit;
+  }
+
+  set unit(value: string) {
+    this.props.unit = value;
   }
 
   public static create(props: ContributionProps, id?: string): Contribution {

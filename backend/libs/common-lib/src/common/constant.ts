@@ -1,6 +1,8 @@
 /**
- * This file contains constant values used throughout the application.
- * These constants are intended to be used globally to ensure consistency.
+ * @file This module exports various constants used across the application.
+ * @module common/constants
+ *
+ * @description This module provides a collection of constants used throughout the application.
  */
 
 export const AGE_OF_MAJORITY = 18; // The age of majority in years

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions';
 import { CauseRepository } from '../cause.repository';
 import { CauseMapper } from '../cause.mapper';
+import { CauseFilter, CauseSort } from './filters/cause-query.builder';
 import * as Domain from '../domain';
 import * as Persistence from './persistence';
 
@@ -46,8 +47,8 @@ export class CauseRepositoryMongoDB extends CauseRepository {
     return CauseMapper.toDomain(cause);
   }
 
-  async findAll(): Promise<Domain.Cause[]> {
-    const causes = await this.causeModel.find().exec();
+  async findAll(filter: CauseFilter, sort: CauseSort): Promise<Domain.Cause[]> {
+    const causes = await this.causeModel.find(filter).sort(sort).exec();
     return causes.map(CauseMapper.toDomain);
   }
 }

@@ -2,13 +2,14 @@
 @baseUrl = http://localhost:3002
 
 ### Success Case: Create a new economic action
-PATCH {{baseUrl}}/actions/3e6cd96b-cce5-4f6e-9604-b97402b2c2f3
+PATCH {{baseUrl}}/actions/a30d65d3-fcbf-428c-a85d-c7e514c28714
 Content-Type: application/json
 
 {
   // "location": "Calle Mayor, 8",
   // "targetVolunteers": 1
   // "targetAmount": 2
-  "foodType": "Chickpeas"
+  // "foodType": "Chickpeas"
+  "targetAmount": 10
   // "unit": "kg"
 }

@@ -1,40 +1,13 @@
 # Base URL
 @baseUrl = http://localhost:3002
 
-### Success Case: Create a new economic contribution to an Action
-PATCH  {{baseUrl}}/actions/66db58cf-52d5-4281-95aa-73b4e7a19ca9/contribute/economic
+### Success Case: Create a new contribution to an Action
+PATCH  {{baseUrl}}/actions/868fea09-8fe4-4e08-840f-24384382dc34/contribute
 Content-Type: application/json
 
 {
   "userId": "1",
   "date": "2025-01-24",
-  "description": "Economic Contribution to action...",
-  "donatedAmount": 50
-}
-
-### Success Case: Create a new goodsCollection contribution to an Action
-PATCH  {{baseUrl}}/actions/395a13a8-ff91-42f5-b019-820a4635ba12/contribute/goodsCollection
-Content-Type: application/json
-
-{
-  "userId": "1",
-  "date": "2025-01-24",
-  "description": "Economic Contribution to action...",
-  "goodType": "clothes",
-  "donatedQuantity": 2,
-  "unit": "bags"
-}
-
-### Success Case: Create a new volunteer contribution to an Action
-PATCH  {{baseUrl}}/actions/fd574977-6dbe-41e1-ae61-e635b52203c3/contribute/volunteer
-Content-Type: application/json
-
-{
-  "userId": "1",
-  "date": "2025-01-24",
-  "description": "Economic Contribution to action...",
-  "volunteerNumber": 2,
-  "hoursContributed": 12,
-  "task": "Pick up garbage from the beach",
-  "location": "Blue beach"
+  "amount": 50,
+  "unit": "euros"
 }

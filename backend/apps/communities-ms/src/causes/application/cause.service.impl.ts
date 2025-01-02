@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { CauseSortBy, SortDirection } from '@common-lib/common-lib/common/enum';
 import { CauseRepository } from '../cause.repository';
 import { CauseService } from './cause.service';
 import { Cause, CauseEndDate } from '../domain';
+import { CauseQueryBuilder } from '../infra/filters/cause-query.builder';
 
 @Injectable()
 export class CauseServiceImpl implements CauseService {
@@ -10,8 +12,25 @@ export class CauseServiceImpl implements CauseService {
 
   logger = new Logger(CauseServiceImpl.name);
 
-  getAllCauses(): Promise<Cause[]> {
-    return this.causeRepository.findAll();
+  getAllCauses(
+    odsFilter?: ODSEnum[],
+    nameFilter?: string,
+    sortBy?: CauseSortBy,
+    sortDirection?: SortDirection,
+  ): Promise<Cause[]> {
+    // Create a new query builder
+    const queryBuilder = new CauseQueryBuilder();
+
+    // Build the filter options
+    const filter = queryBuilder
+      .addOdsFilter(odsFilter)
+      .addNameFilter(nameFilter)
+      .buildFilter();
+
+    // Build the sort options
+    const sort = queryBuilder.addSort(sortBy, sortDirection).buildSort();
+
+    return this.causeRepository.findAll(filter, sort);
   }
 
   async createCause(

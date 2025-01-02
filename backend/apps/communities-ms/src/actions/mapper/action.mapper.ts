@@ -1,12 +1,23 @@
 import { error } from 'console';
 import * as Domain from '../domain';
+import { ActionType } from '../domain/ActionType';
 import { ActionDto } from '../dto/action.dto';
 import * as Persistence from '../infra/persistence';
 import { ContributionMapper } from './contribution.mapper';
 
 export class ActionMapper {
   static toDomain(document: Persistence.Action): Domain.Action {
-    const { id, status, title, description, causeId } = document;
+    const {
+      id,
+      status,
+      title,
+      description,
+      causeId,
+      type,
+      target,
+      unit,
+      achieved,
+    } = document;
 
     const mappedContributions = document.contributions
       ? document.contributions.map(ContributionMapper.toDomain)
@@ -18,38 +29,35 @@ export class ActionMapper {
       title,
       description,
       causeId,
+      type,
       contributions: mappedContributions,
+      target,
+      unit,
+      achieved,
     };
 
-    if (document.type === 'economic') {
+    if (document.type === ActionType.ECONOMIC) {
       return Domain.EconomicAction.create(
         {
           ...commonProps,
-          targetAmount: document.targetAmount,
-          currentAmount: document.currentAmount,
         },
         id,
       );
     }
-    if (document.type === 'goodsCollection') {
+    if (document.type === ActionType.GOODS_COLLECTION) {
       return Domain.GoodsCollectionAction.create(
         {
           ...commonProps,
           goodType: document.goodType,
-          quantity: document.quantity,
-          unit: document.unit,
-          collectedQuantity: document.collectedQuantity,
         },
         id,
       );
     }
-    if (document.type === 'volunteer') {
+    if (document.type === ActionType.VOLUNTEER) {
       return Domain.VolunteerAction.create(
         {
           ...commonProps,
-          targetVolunteers: document.targetVolunteers,
           location: document.location,
-          currentVolunteers: document.currentVolunteers,
           date: document.date,
         },
         id,
@@ -71,33 +79,27 @@ export class ActionMapper {
       title: action.title,
       description: action.description,
       causeId: action.causeId,
+      type: action.type,
       contributions: mappedContributions,
+      target: action.target,
+      unit: action.unit,
+      achieved: action.achieved,
     };
 
     if (action instanceof Domain.EconomicAction) {
       return {
         ...commonProps,
-        type: 'economic',
-        targetAmount: action.targetAmount,
-        currentAmount: action.currentAmount,
       };
     }
     if (action instanceof Domain.GoodsCollectionAction) {
       return {
         ...commonProps,
-        type: 'goodsCollection',
         goodType: action.goodType,
-        quantity: action.quantity,
-        unit: action.unit,
-        collectedQuantity: action.collectedQuantity,
       };
     }
     if (action instanceof Domain.VolunteerAction) {
       return {
         ...commonProps,
-        type: 'volunteer',
-        targetVolunteers: action.targetVolunteers,
-        currentVolunteers: action.currentVolunteers,
         location: action.location,
         date: action.date,
       };
@@ -109,30 +111,25 @@ export class ActionMapper {
   static toDTO(action: Domain.Action): ActionDto {
     const commonProps: ActionDto = {
       id: action.id.toString(),
-      status: action.status,
-      type: action.getType(),
+      status: action.status.toString(),
+      type: action.type,
       title: action.title,
       description: action.description,
       causeId: action.causeId,
+      target: action.target,
+      unit: action.unit,
+      achieved: action.achieved,
     };
     if (action instanceof Domain.EconomicAction) {
-      return Object.assign(commonProps, {
-        targetAmount: action.targetAmount,
-        currentAmount: action.currentAmount,
-      });
+      return Object.assign(commonProps);
     }
     if (action instanceof Domain.GoodsCollectionAction) {
       return Object.assign(commonProps, {
         goodType: action.goodType,
-        quantity: action.quantity,
-        unit: action.unit,
-        collectedQuantity: action.collectedQuantity,
       });
     }
     if (action instanceof Domain.VolunteerAction) {
       return Object.assign(commonProps, {
-        targetVolunteers: action.targetVolunteers,
-        currentVolunteers: action.currentVolunteers,
         location: action.location,
         date: action.date,
       });

@@ -37,7 +37,7 @@ module.exports = {
     },
   },
   rules: {
-    'prettier/prettier': 'error', // Apply Prettier as an ESLint rule
+    'prettier/prettier': ['error', { endOfLine: 'auto' }], // Apply Prettier as an ESLint rule
     'no-useless-constructor': 'off', // For dependency injection
     'no-empty-function': ['error', { allow: ['constructors'] }], // Allow empty constructors; for dependency injection
     'import/extensions': 'off', // Disable the rule for file extensions

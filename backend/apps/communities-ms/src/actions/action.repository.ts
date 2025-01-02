@@ -4,7 +4,7 @@ import * as Domain from './domain';
 export abstract class ActionRepository extends Repository<Domain.Action> {
   abstract count(): Promise<number>;
 
-  abstract update(entity: Domain.Action): Promise<Domain.Action>;
+  // abstract update(entity: Domain.Action): Promise<Domain.Action>;
 
   abstract findAll(offset: number, limit: number): Promise<Domain.Action[]>;
 

@@ -19,27 +19,16 @@ export class UpdateActionDto {
 
   @IsOptional()
   @IsNumber()
-  targetAmount?: number;
+  amount?: number;
 
   @IsOptional()
   @IsString()
   foodType?: string;
 
-  @IsOptional()
-  @IsNumber()
-  quantity?: number;
-
+  /*
   @IsOptional()
   @IsString()
-  unit?: string;
-
-  @IsOptional()
-  @IsNumber()
-  targetVolunteers?: number;
-
-  @IsOptional()
-  @IsNumber()
-  collectQuantity?: number;
+  unit?: string; */
 
   @IsOptional()
   @IsString()

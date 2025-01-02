@@ -7,17 +7,16 @@ import { Action } from './Action';
 import { EconomicAction } from './EconomicAction';
 import { GoodsCollectionAction } from './GoodsCollectionAction';
 import { VolunteerAction } from './VolunteerAction';
+import { ActionStatus } from './ActionStatus';
 
-import { Contribution } from './contributions/Contribution';
-import { EconomicContribution } from './contributions/EconomicContribution';
-import { GoodsContribution } from './contributions/GoodsContribution';
-import { VolunteerContribution } from './contributions/VolunteerContribution';
-
-export { Action, EconomicAction, GoodsCollectionAction, VolunteerAction };
+import { Contribution } from './Contribution';
 
 export {
-  Contribution,
-  EconomicContribution,
-  GoodsContribution,
-  VolunteerContribution,
+  Action,
+  EconomicAction,
+  GoodsCollectionAction,
+  VolunteerAction,
+  ActionStatus,
 };
+
+export { Contribution };

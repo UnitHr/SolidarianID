@@ -2,91 +2,44 @@ import { Injectable } from '@nestjs/common';
 import { ActionService } from './action.service';
 import { Action, ActionProps } from '../domain/Action';
 import { ActionRepository } from '../action.repository';
-import {
-  EconomicAction,
-  GoodsCollectionAction,
-  VolunteerAction,
-} from '../domain';
+import { ActionStatus, Contribution } from '../domain';
 import { UpdateActionDto } from '../dto/update-action.dto';
 import * as Exceptions from '../exceptions';
+import { ActionFactory } from '../domain/ActionFactory';
 
 @Injectable()
 export class ActionServiceImpl implements ActionService {
   constructor(private readonly actionRepository: ActionRepository) {}
 
-  async createEconomicAction(
+  async createAction(
+    type,
     title,
     description,
     causeId,
-    targetAmount,
-  ): Promise<{ id: string }> {
-    // Check for duplicate
-    const isDuplicate = await this.duplicateCheck(causeId, title);
-    if (isDuplicate) {
-      Exceptions.ActionTitleConflictException.create(title);
-    }
-
-    // Create the new action
-    const action = EconomicAction.create({
-      title,
-      description,
-      causeId,
-      targetAmount,
-    });
-
-    // Save the new action in the repository
-    const savedAction = await this.actionRepository.save(action);
-
-    return { id: savedAction.id.toString() };
-  }
-
-  async createGoodsCollectionAction(
-    title,
-    description,
-    causeId,
-    goodType,
-    quantity,
+    target,
     unit,
-  ): Promise<{ id: string }> {
-    // Check for duplicate
-    this.duplicateCheck(causeId, title);
-
-    // Create the new action
-    const action = GoodsCollectionAction.create({
-      title,
-      description,
-      causeId,
-      goodType,
-      quantity,
-      unit,
-    });
-
-    // Save the new action in the repository
-    const savedAction = await this.actionRepository.save(action);
-
-    return { id: savedAction.id.toString() };
-  }
-
-  async createVolunteerAction(
-    title,
-    description,
-    causeId,
-    targetVolunteers,
+    goodType,
     location,
     date,
   ): Promise<{ id: string }> {
     // Check for duplicate
-    this.duplicateCheck(causeId, title);
+    const isDuplicate = await this.duplicateCheck(causeId, title);
+    if (isDuplicate) {
+      throw new Exceptions.ActionTitleConflictException(title);
+    }
 
     // Create the new action
-    const action = VolunteerAction.create({
+    const action = ActionFactory.createAction(
+      type,
       title,
       description,
       causeId,
-      targetVolunteers,
+      target,
+      unit,
+      goodType,
       location,
       date,
-    });
+    );
 
     // Save the new action in the repository
     const savedAction = await this.actionRepository.save(action);
@@ -99,14 +52,14 @@ export class ActionServiceImpl implements ActionService {
     const action = await this.actionRepository.findById(id);
 
     if (!action) {
-      Exceptions.ActionNotFoundException.create(id);
+      throw new Exceptions.ActionNotFoundException(id);
     }
 
     // Update action fields
     action.update(updateActionDto as unknown as ActionProps);
 
     // Update the action in the repository
-    await this.actionRepository.update(action);
+    await this.actionRepository.save(action);
   }
 
   async getActionDetails(id: string): Promise<Action> {
@@ -114,7 +67,7 @@ export class ActionServiceImpl implements ActionService {
     const action = await this.actionRepository.findById(id);
 
     if (!action) {
-      Exceptions.ActionNotFoundException.create(id);
+      throw new Exceptions.ActionNotFoundException(id);
     }
 
     return action;
@@ -141,7 +94,7 @@ export class ActionServiceImpl implements ActionService {
     const actions = await this.actionRepository.findByCauseId(causeId);
 
     if (!actions) {
-      Exceptions.InvalidCauseIdException.create(causeId);
+      throw new Exceptions.InvalidCauseIdException(causeId);
     }
 
     return actions;
@@ -155,5 +108,42 @@ export class ActionServiceImpl implements ActionService {
     );
 
     return !!actionWithTitle;
+  }
+
+  async makeContribution(
+    userId: string,
+    actionId: string,
+    date: Date,
+    amount: number,
+    unit: string,
+  ): Promise<{ id: string }> {
+    // Find the action by Id
+    const action = await this.actionRepository.findById(actionId);
+
+    if (!action) {
+      throw new Exceptions.ActionNotFoundException(actionId);
+    }
+
+    if (action.unit !== unit) {
+      throw new Exceptions.InvalidContributionUnitException(actionId, unit);
+    }
+
+    // Check the action is not completed
+    if (action.status === ActionStatus.completed) {
+      throw new Exceptions.CompletedActionException(actionId);
+    }
+
+    const contribution = Contribution.create({
+      userId,
+      actionId,
+      date,
+      amount,
+      unit,
+    });
+
+    action.contribute(contribution);
+    await this.actionRepository.save(action);
+
+    return { id: contribution.id.toString() };
   }
 }

@@ -15,6 +15,19 @@ export class ActionRepositoryMongoDB extends ActionRepository {
     super();
   }
 
+  async save(entity: Domain.Action): Promise<Domain.Action> {
+    const persistenceAction = ActionMapper.toPersistence(entity);
+
+    const doc = await this.actionModel
+      .findOneAndUpdate({ id: persistenceAction.id }, persistenceAction, {
+        upsert: true,
+        new: true,
+      })
+      .exec();
+    return ActionMapper.toDomain(doc);
+  }
+
+  /*
   save = async (entity: Domain.Action): Promise<Domain.Action> => {
     return this.actionModel
       .create(ActionMapper.toPersistence(entity))
@@ -29,7 +42,7 @@ export class ActionRepositoryMongoDB extends ActionRepository {
         { new: true },
       )
       .then((doc) => ActionMapper.toDomain(doc));
-  };
+  }; */
 
   async findById(id: string): Promise<Domain.Action | null> {
     const action = await this.actionModel.findOne({ id }).exec();

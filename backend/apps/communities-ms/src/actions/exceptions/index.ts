@@ -1,15 +1,13 @@
 import { ActionNotFoundException } from './ActionNotFoundException';
 import { ActionTitleConflictException } from './ActionTitleConflictException';
 import { InvalidCauseIdException } from './InvalidCauseIdException';
-import { InvalidContributionTypeException } from './InvalidContributionTypeException';
+import { InvalidContributionUnitException } from './InvalidContributionUnitException';
 import { CompletedActionException } from './CompletedActionException';
-import { InvalidSearchException } from './InvalidSearchException';
 
 export {
   ActionNotFoundException,
   ActionTitleConflictException,
   InvalidCauseIdException,
-  InvalidContributionTypeException,
+  InvalidContributionUnitException,
   CompletedActionException,
-  InvalidSearchException,
 };

@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Res,
   HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
@@ -15,8 +16,10 @@ import { userIdDto } from '@common-lib/common-lib/dto/user-id.dto';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
+import { CauseDomainExceptionFilter } from '../infra/filters/cause-domain-exception-filter';
 
 @Controller('causes')
+@UseFilters(CauseDomainExceptionFilter)
 export class CauseController {
   constructor(private readonly causeService: CauseService) {}
 

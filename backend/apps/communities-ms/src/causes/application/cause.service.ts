@@ -10,6 +10,7 @@ export abstract class CauseService {
     ods: ODSEnum[],
     endDate: Date,
     communityId: string,
+    createdBy: string,
   ): Promise<string>;
 
   abstract validateCauseEndDate(endDate: Date): boolean;

@@ -26,7 +26,7 @@ export class CreateCommunityRequest {
       title: { type: String, required: true },
       description: { type: String, required: true },
       end: { type: Date, required: true },
-      ods: { type: Number, required: true, enum: ODSEnum },
+      ods: { type: [Number], required: true, enum: ODSEnum },
     },
   })
   cause: {

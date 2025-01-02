@@ -81,7 +81,7 @@ export class CommunityService {
         causeDescription: createCommunityRequest.causeDescription,
         causeEndDate: createCommunityRequest.causeEndDate,
         causeOds: createCommunityRequest.causeOds,
-        status: StatusRequest.Pending,
+        status: StatusRequest.PENDING,
       }),
     );
 

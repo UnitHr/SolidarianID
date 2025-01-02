@@ -12,4 +12,10 @@ export class CauseDto {
   endDate: Date;
 
   communityId: string;
+
+  createdBy: string;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }

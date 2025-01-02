@@ -42,7 +42,7 @@ export class JoinCommunityService {
 
     if (!!joinCommunityRequestAlreadyExists === true) {
       switch (joinCommunityRequestAlreadyExists.status) {
-        case StatusRequest.Pending:
+        case StatusRequest.PENDING:
           return left(
             Exceptions.JoinCommunityRequestAlreadyExists.create(
               communityId,
@@ -51,13 +51,13 @@ export class JoinCommunityService {
           );
 
         // Check if the user is already a member of the community
-        case StatusRequest.Approved:
+        case StatusRequest.APPROVED:
           return left(
             Exceptions.UserIsAlreadyMember.create(communityId, userId),
           );
 
         // Check if the user is not allowed to join the community
-        case StatusRequest.Denied:
+        case StatusRequest.DENIED:
           return left(
             Exceptions.JoinCommunityRequestDenied.create(communityId, userId),
           );
@@ -70,7 +70,7 @@ export class JoinCommunityService {
     const newRequest = Domain.JoinCommunityRequest.create({
       userId,
       communityId,
-      status: StatusRequest.Pending,
+      status: StatusRequest.PENDING,
     });
     this.joinCommunityRequestRepository.save(newRequest);
 
@@ -127,9 +127,9 @@ export class JoinCommunityService {
     }
 
     switch (status) {
-      case StatusRequest.Approved:
+      case StatusRequest.APPROVED:
         // Update the request
-        joinCommunityRequest.status = StatusRequest.Approved;
+        joinCommunityRequest.status = StatusRequest.APPROVED;
 
         // Save the request
         this.joinCommunityRequestRepository.save(joinCommunityRequest);
@@ -138,10 +138,10 @@ export class JoinCommunityService {
 
         break;
 
-      case StatusRequest.Denied:
+      case StatusRequest.DENIED:
         if (comment) {
           // Update the request
-          joinCommunityRequest.status = StatusRequest.Denied;
+          joinCommunityRequest.status = StatusRequest.DENIED;
           joinCommunityRequest.comment = comment;
 
           // Save the request

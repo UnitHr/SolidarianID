@@ -78,7 +78,7 @@ export class JoinCommunityController {
     }
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @Get('')
   async getJoinCommunityRequests(
     @Req() req: Request,
@@ -135,7 +135,7 @@ export class JoinCommunityController {
     res.send();
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @Get(':id')
   async getJoinCommunityRequest(
     @Req() req: Request,
@@ -196,7 +196,7 @@ export class JoinCommunityController {
     }
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @Post(':id')
   async validateJoinCommunityRequest(
     @Req() req: Request,

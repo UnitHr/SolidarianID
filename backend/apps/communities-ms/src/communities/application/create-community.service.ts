@@ -65,9 +65,9 @@ export class CreateCommunityService {
     }
 
     switch (status) {
-      case StatusRequest.Approved: {
+      case StatusRequest.APPROVED: {
         // Update the request
-        createCommunityRequest.status = StatusRequest.Approved;
+        createCommunityRequest.status = StatusRequest.APPROVED;
 
         // Save the request
         this.createCommunityRequestRepository.save(createCommunityRequest);
@@ -88,6 +88,7 @@ export class CreateCommunityService {
           createCommunityRequest.causeOds,
           createCommunityRequest.causeEndDate,
           newCommunity.id.toString(),
+          createCommunityRequest.userId,
         );
 
         // Add the cause to the community
@@ -100,10 +101,10 @@ export class CreateCommunityService {
         return right(Result.ok(newCommunity));
       }
 
-      case StatusRequest.Denied:
+      case StatusRequest.DENIED:
         if (comment) {
           // Update the request
-          createCommunityRequest.status = StatusRequest.Denied;
+          createCommunityRequest.status = StatusRequest.DENIED;
           createCommunityRequest.comment = comment;
 
           // Save the request

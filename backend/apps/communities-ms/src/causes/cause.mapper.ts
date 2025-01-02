@@ -9,8 +9,16 @@ export class CauseMapper {
   static toDomain(raw: Persistence.Cause): Domain.Cause {
     return Domain.Cause.create(
       {
-        ...raw,
+        title: raw.title,
+        description: raw.description,
+        ods: raw.ods,
         endDate: CauseEndDate.create(raw.endDate),
+        communityId: raw.communityId,
+        actionsIds: raw.actionsIds || [],
+        supportersIds: raw.supportersIds || [],
+        createdBy: raw.createdBy,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     );
@@ -26,6 +34,7 @@ export class CauseMapper {
       communityId: cause.communityId,
       actionsIds: cause.actionsIds,
       supportersIds: cause.supportersIds,
+      createdBy: cause.createdBy,
     };
   }
 
@@ -37,6 +46,9 @@ export class CauseMapper {
       ods: mapODSEnumListToDetails(cause.ods),
       endDate: cause.endDate.value,
       communityId: cause.communityId,
+      createdBy: cause.createdBy,
+      createdAt: cause.createdAt,
+      updatedAt: cause.updatedAt,
     };
   }
 }

@@ -20,6 +20,7 @@ export class CauseServiceImpl implements CauseService {
     ods: ODSEnum[],
     endDate: Date,
     communityId: string,
+    createdBy: string,
   ): Promise<string> {
     // Create a new cause
     const cause = Cause.create({
@@ -28,6 +29,7 @@ export class CauseServiceImpl implements CauseService {
       ods,
       endDate: CauseEndDate.create(endDate),
       communityId,
+      createdBy,
     });
 
     // Create the new cause and save it

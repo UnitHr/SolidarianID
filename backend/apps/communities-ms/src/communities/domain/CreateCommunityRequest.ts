@@ -7,7 +7,7 @@ import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
 
 interface CreateCommunityRequestProps {
-  userId: string; // This is the user that is creating the community
+  userId: string;
   communityName: string;
   communityDescription: string;
   causeTitle: string;

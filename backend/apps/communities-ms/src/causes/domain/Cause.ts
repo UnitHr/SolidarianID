@@ -18,6 +18,9 @@ export interface CauseProps {
   communityId: string;
   actionsIds?: string[];
   supportersIds?: string[];
+  createdBy: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Cause extends Entity<CauseProps> {
@@ -61,9 +64,28 @@ export class Cause extends Entity<CauseProps> {
     return [...this.props.supportersIds];
   }
 
+  get createdBy(): string {
+    return this.props.createdBy;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
   public static create(props: CauseProps, id?: UniqueEntityID): Cause {
-    const { title, description, ods, endDate, communityId } = props;
-    if (!title || !description || !ods || !endDate || !communityId) {
+    const { title, description, ods, endDate, communityId, createdBy } = props;
+    if (
+      !title ||
+      !description ||
+      !ods ||
+      !endDate ||
+      !communityId ||
+      !createdBy
+    ) {
       throw new MissingPropertiesError('[Cause] Properties are missing.');
     }
 
@@ -71,6 +93,8 @@ export class Cause extends Entity<CauseProps> {
       ...props,
       actionsIds: props.actionsIds || [],
       supportersIds: props.supportersIds || [],
+      createdAt: props.createdAt ?? new Date(),
+      updatedAt: props.updatedAt ?? new Date(),
     };
 
     return new Cause(defaultProps, id);

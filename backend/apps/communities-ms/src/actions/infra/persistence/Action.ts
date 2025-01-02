@@ -1,3 +1,5 @@
+import { ActionStatus } from '@communities-ms/actions/domain';
+import { ActionType } from '@communities-ms/actions/domain/ActionType';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Contribution, ContributionSchema } from './Contribution';
 
@@ -6,11 +8,11 @@ export class Action {
   @Prop()
   id: string;
 
-  @Prop({ required: true })
-  status: 'pending' | 'in_progress' | 'completed';
+  @Prop({ type: String, enum: ActionStatus })
+  status: ActionStatus;
 
-  @Prop({ required: true })
-  type: 'economic' | 'goodsCollection' | 'volunteer';
+  @Prop({ type: String, enum: ActionType })
+  type: ActionType;
 
   @Prop({ required: true })
   title: string;
@@ -24,29 +26,17 @@ export class Action {
   @Prop({ type: [ContributionSchema], default: [] })
   contributions: Contribution[];
 
-  @Prop({ required: false })
-  targetAmount?: number;
+  @Prop({ required: true })
+  target: number;
 
-  @Prop({ required: false })
-  currentAmount?: number;
+  @Prop({ required: true })
+  unit: string;
+
+  @Prop({ required: true })
+  achieved: number;
 
   @Prop({ required: false })
   goodType?: string;
-
-  @Prop({ required: false })
-  quantity?: number;
-
-  @Prop({ required: false })
-  unit?: string;
-
-  @Prop({ required: false })
-  collectedQuantity?: number;
-
-  @Prop({ required: false })
-  targetVolunteers?: number;
-
-  @Prop({ required: false })
-  currentVolunteers?: number;
 
   @Prop({ required: false })
   location?: string;

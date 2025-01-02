@@ -17,7 +17,7 @@ import { UpdateActionDto } from '../dto/update-action.dto';
 import { CreateActionDto } from '../dto/create-action.dto';
 import { ActionMapper } from '../mapper/action.mapper';
 import { QueryPaginationDto } from '../dto/query-pagination.dto';
-import { PaginatedResponse } from '../dto/PaginatedResponse';
+import { PaginatedResponse } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { ActionDto } from '../dto/action.dto';
 import { CreateContributionDto } from '../dto/create-contribution.dto';
 import { ActionDomainExceptionFilter } from '../infra/filters/action-domain-exception.filter';
@@ -64,85 +64,6 @@ export class ActionController {
       .json({ id: result.id });
   }
 
-  /*
-  @Public()
-  @Post('economic')
-  async createEconomicAction(
-    @Body() createActionDto: CreateEconomicActionDto,
-    @Res() res: Response,
-  ) {
-    const { title, description, causeId, target } = createActionDto;
-
-    const type = ActionType.ECONOMIC;
-
-    const result = await this.actionService.createEconomicAction(
-      title,
-      description,
-      causeId,
-      type,
-      target,
-    );
-
-    const locationUrl = `/actions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  }
-
-  @Public()
-  @Post('goodsCollection')
-  async createGoodsCollectionAction(
-    @Body() createActionDto: CreateGoodsCollectionActionDto,
-    @Res() res: Response,
-  ) {
-    const { title, description, causeId, target, goodType } = createActionDto;
-
-    const type = ActionType.GOODS_COLLECTION;
-
-    const result = await this.actionService.createGoodsCollectionAction(
-      title,
-      description,
-      causeId,
-      type,
-      target,
-      goodType,
-    );
-
-    const locationUrl = `/actions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  }
-
-  @Public()
-  @Post('volunteer')
-  async createVolunteerAction(
-    @Body() createActionDto: CreateVolunteerActionDto,
-    @Res() res: Response,
-  ) {
-    const { title, description, causeId, target, location, date } =
-      createActionDto;
-    const type = ActionType.VOLUNTEER;
-
-    const result = await this.actionService.createVolunteerAction(
-      title,
-      description,
-      causeId,
-      type,
-      target,
-      location,
-      date,
-    );
-
-    const locationUrl = `/actions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  } */
-
   @Public()
   @Patch(':id')
   async update(
@@ -162,14 +83,9 @@ export class ActionController {
     res.status(HttpStatus.OK).json([action]);
   }
 
-  // TODO: find by filters
-
   @Public()
   @Get()
-  async findAll(
-    @Query() query: QueryPaginationDto,
-    // @Res() res: Response,
-  ) {
+  async findAll(@Query() query: QueryPaginationDto) {
     const page = query.page || 1;
     const size = query.size || 10;
 
@@ -181,19 +97,14 @@ export class ActionController {
       limit,
     );
 
-    const paginatedResponse: PaginatedResponse<ActionDto> = {
-      data: data.map((action) => ActionMapper.toDTO(action)),
-      pagination: {
-        totalItems: total,
-        totalPages: Math.ceil(total / size),
-        currentPage: page,
-        pageSize: size,
-      },
-    };
+    const paginatedResponse = new PaginatedResponse(
+      data.map((action) => ActionMapper.toDTO(action)),
+      total,
+      page,
+      size,
+    );
 
     return paginatedResponse;
-
-    // res.status(HttpStatus.OK).json(paginatedResponse);
   }
 
   @Get('cause/:causeId')

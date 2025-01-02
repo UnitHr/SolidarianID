@@ -1,8 +1,14 @@
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { CauseSortBy, SortDirection } from '@common-lib/common-lib/common/enum';
 import { Cause } from '../domain';
 
 export abstract class CauseService {
-  abstract getAllCauses(): Promise<Cause[]>;
+  abstract getAllCauses(
+    odsFilter?: ODSEnum[],
+    nameFilter?: string,
+    sortBy?: CauseSortBy,
+    sortDirection?: SortDirection,
+  ): Promise<Cause[]>;
 
   abstract createCause(
     title: string,

@@ -8,7 +8,7 @@ import { CauseRepository } from './cause.repository';
 import { CauseService } from './application/cause.service';
 import { CauseRepositoryMongoDB } from './infra/cause.repository.mongodb';
 import { CauseSchema } from './infra/persistence/Cause';
-import { CauseDomainExceptionFilter } from './infra/filters/cause-domain-exception-filter';
+import { CauseDomainExceptionFilter } from './infra/filters/cause-domain-exception.filter';
 
 @Module({
   imports: [

@@ -9,6 +9,7 @@ import {
   Res,
   HttpStatus,
   UseFilters,
+  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
@@ -16,7 +17,8 @@ import { userIdDto } from '@common-lib/common-lib/dto/user-id.dto';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
-import { CauseDomainExceptionFilter } from '../infra/filters/cause-domain-exception-filter';
+import { CauseDomainExceptionFilter } from '../infra/filters/cause-domain-exception.filter';
+import { FindCausesDto } from '../dto/find-causes.dto';
 
 @Controller('causes')
 @UseFilters(CauseDomainExceptionFilter)
@@ -25,8 +27,18 @@ export class CauseController {
 
   @Public()
   @Get()
-  async findAll(@Res() res: Response): Promise<void> {
-    const causes = await this.causeService.getAllCauses();
+  async findAll(
+    @Query() query: FindCausesDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const { ods, name, sortBy, sortDirection } = query;
+
+    const causes = await this.causeService.getAllCauses(
+      ods,
+      name,
+      sortBy,
+      sortDirection,
+    );
 
     const causesDto = causes.map(CauseMapper.toDTO);
     res.status(HttpStatus.OK).json(causesDto);

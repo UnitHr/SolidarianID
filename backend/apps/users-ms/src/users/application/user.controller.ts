@@ -15,7 +15,7 @@ import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserDomainExceptionFilter } from '../infra/filters/user-domain-exception-filter';
+import { UserDomainExceptionFilter } from '../infra/filters/user-domain-exception.filter';
 import { UserMapper } from '../user.mapper';
 
 @Controller('users')

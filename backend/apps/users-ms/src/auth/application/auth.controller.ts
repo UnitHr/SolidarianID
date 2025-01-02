@@ -12,8 +12,9 @@ import {
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { env } from 'process';
 
-@Controller('auth')
+@Controller('users/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -30,6 +31,7 @@ export class AuthController {
   githubLogin() {
     // necessary as the starting point of the authentication
     // left empty
+    console.log('env.GITHUB_CLIENT_ID', env.GITHUB_CLIENT_ID);
   }
 
   @Public()

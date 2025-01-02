@@ -19,7 +19,9 @@ export class AuthServiceImpl implements AuthService {
     try {
       const user = await this.userService.getUserByEmail(email);
 
-      if (!user.isValidPassword(password)) {
+      const isPasswordValid = await user.isValidPassword(password);
+
+      if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid password');
       }
 

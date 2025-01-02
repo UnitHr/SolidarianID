@@ -20,7 +20,7 @@ async function bootstrap() {
   // Set default layout
   app.set('view options', { layout: 'layouts/main' });
 
-  await app.listen(3001); // TODO: Load port from .env file
+  await app.listen(3005); // TODO: Load port from .env file
   console.log(`Frontend is running on: ${await app.getUrl()}`);
 }
 bootstrap();

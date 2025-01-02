@@ -32,7 +32,7 @@ export class UserPassword extends ValueObject<UserpasswordProps> {
     return new UserPassword({ password: value });
   }
 
-  public async compare(hashedPassword: string): Promise<boolean> {
-    return bcrypt.compare(this.value, hashedPassword);
+  public async compare(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.value);
   }
 }

@@ -7,6 +7,8 @@ import { AuthService } from './application/auth.service';
 import { AuthGuard } from '../../../../libs/common-lib/src/auth/auth.guard';
 import { AuthServiceImpl } from './application/auth.service.impl';
 import { UserModule } from '../users/user.module';
+import { GithubStrategy } from './infra/github.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { UserModule } from '../users/user.module';
       secret: envs.jwtSecret,
       signOptions: { expiresIn: '1h' },
     }),
+    PassportModule.register({ defaultStrategy: 'github' }),
   ],
   controllers: [AuthController],
   providers: [
@@ -27,6 +30,7 @@ import { UserModule } from '../users/user.module';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    GithubStrategy,
   ],
 })
 export class AuthModule {}

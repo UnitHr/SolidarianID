@@ -1,3 +1,5 @@
+import { ODSDetail } from '@common-lib/common-lib/common/ods';
+
 export class CauseDto {
   id: string;
 
@@ -5,7 +7,7 @@ export class CauseDto {
 
   description: string;
 
-  ods: number[];
+  ods: ODSDetail[];
 
   endDate: Date;
 

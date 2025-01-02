@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CauseModule } from '@communities-ms/causes/cause.module';
 import { CommunityController } from './application/community.controller';
 import {
   CreateCommunityRequest,
@@ -24,6 +25,7 @@ import { JoinCommunityController } from './application/join-community.controller
 
 @Module({
   imports: [
+    CauseModule,
     MongooseModule.forFeature([
       {
         name: CreateCommunityRequest.name,

@@ -14,7 +14,9 @@ export class JoinCommunityService {
     private readonly communityRepository: CommunityRepository,
   ) {}
 
-  async joinCommunityRequest(userId: string, communityId: string
+  async joinCommunityRequest(
+    userId: string,
+    communityId: string,
   ): Promise<
     Either<
       | Exceptions.JoinCommunityRequestAlreadyExists
@@ -25,14 +27,10 @@ export class JoinCommunityService {
     >
   > {
     // Check if the communityId is valid
-    const community = await this.communityRepository.findById(
-      communityId,
-    );
+    const community = await this.communityRepository.findById(communityId);
 
     if (!!community === false) {
-      return left(
-        Exceptions.CommunityNotFound.create(communityId),
-      );
+      return left(Exceptions.CommunityNotFound.create(communityId));
     }
 
     // Check if the request already exists
@@ -55,19 +53,13 @@ export class JoinCommunityService {
         // Check if the user is already a member of the community
         case StatusRequest.Approved:
           return left(
-            Exceptions.UserIsAlreadyMember.create(
-              communityId,
-              userId,
-            ),
+            Exceptions.UserIsAlreadyMember.create(communityId, userId),
           );
 
         // Check if the user is not allowed to join the community
         case StatusRequest.Denied:
           return left(
-            Exceptions.JoinCommunityRequestDenied.create(
-              communityId,
-              userId,
-            ),
+            Exceptions.JoinCommunityRequestDenied.create(communityId, userId),
           );
         default:
           break;
@@ -76,8 +68,8 @@ export class JoinCommunityService {
 
     // Create the new request
     const newRequest = Domain.JoinCommunityRequest.create({
-      userId: userId,
-      communityId: communityId,
+      userId,
+      communityId,
       status: StatusRequest.Pending,
     });
     this.joinCommunityRequestRepository.save(newRequest);
@@ -167,11 +159,19 @@ export class JoinCommunityService {
     return right(Result.ok<void>());
   }
 
-  async isCommunityAdmin(userId: string, communityId: string): Promise<Either<Exceptions.UserIsNotCommunityAdmin, Result<boolean>>> {
-    const result = await this.communityRepository.isCommunityAdmin(userId, communityId);
+  async isCommunityAdmin(
+    userId: string,
+    communityId: string,
+  ): Promise<Either<Exceptions.UserIsNotCommunityAdmin, Result<boolean>>> {
+    const result = await this.communityRepository.isCommunityAdmin(
+      userId,
+      communityId,
+    );
 
-    if(result === false){
-      return left(Exceptions.UserIsNotCommunityAdmin.create(communityId, userId));
+    if (result === false) {
+      return left(
+        Exceptions.UserIsNotCommunityAdmin.create(communityId, userId),
+      );
     }
 
     return right(Result.ok(true));

@@ -1,3 +1,4 @@
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { Type } from 'class-transformer';
 import {
   IsString,
@@ -5,7 +6,7 @@ import {
   IsNotEmpty,
   IsDate,
   ArrayNotEmpty,
-  IsPositive,
+  IsEnum,
 } from 'class-validator';
 
 export class CreateCauseDto {
@@ -22,8 +23,8 @@ export class CreateCauseDto {
   @Type(() => Date)
   end: Date;
 
-  @IsArray({ message: 'ODS must be an array' })
-  @ArrayNotEmpty({ message: 'ODS cannot be empty' })
-  @IsPositive({ each: true, message: 'ODS must be a number' })
-  ods: number[];
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsEnum(ODSEnum, { each: true })
+  ods?: ODSEnum[];
 }

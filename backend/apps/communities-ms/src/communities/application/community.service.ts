@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
-import { CauseEndDate } from '@communities-ms/causes/domain/CauseEndDate';
+import { CauseService } from '@communities-ms/causes/application/cause.service';
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
@@ -13,6 +14,7 @@ export class CommunityService {
   constructor(
     private readonly createCommunityRequestRepository: CreateCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
+    private readonly causeService: CauseService,
   ) {}
 
   async getCommunity(
@@ -34,21 +36,26 @@ export class CommunityService {
     causeTitle: string;
     causeDescription: string;
     causeEndDate: Date;
-    causeOds: number[];
+    causeOds: ODSEnum[];
   }): Promise<
     Either<
       Exceptions.CommunityNameIsTaken,
       Result<Domain.CreateCommunityRequest>
     >
   > {
-    console.log("Llega aquí")
-    const causeEndOrError = CauseEndDate.create(
-      createCommunityRequest.causeEndDate,
-    );
-
     // If the cause end date is invalid, return the error
-    if (causeEndOrError.isFailure) {
-      return right(Result.fail(causeEndOrError.errorValue()));
+    if (
+      !this.causeService.validateCauseEndDate(
+        createCommunityRequest.causeEndDate,
+      )
+    ) {
+      return right(
+        Result.fail(
+          Exceptions.InvalidDateProvided.create(
+            createCommunityRequest.causeEndDate,
+          ),
+        ),
+      );
     }
 
     // Check if the community name is already taken
@@ -72,12 +79,12 @@ export class CommunityService {
         communityDescription: createCommunityRequest.communityDescription,
         causeTitle: createCommunityRequest.causeTitle,
         causeDescription: createCommunityRequest.causeDescription,
-        causeEndDate: causeEndOrError.getValue(),
+        causeEndDate: createCommunityRequest.causeEndDate,
         causeOds: createCommunityRequest.causeOds,
         status: StatusRequest.Pending,
       }),
     );
-    
+
     // Return the request object
     return right(Result.ok(newRequest));
   }

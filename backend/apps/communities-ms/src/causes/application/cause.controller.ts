@@ -6,7 +6,12 @@ import {
   Param,
   Post,
   ParseUUIDPipe,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
+import { Response } from 'express';
+import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
+import { userIdDto } from '@common-lib/common-lib/dto/user-id.dto';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
@@ -15,51 +20,74 @@ import { CauseMapper } from '../cause.mapper';
 export class CauseController {
   constructor(private readonly causeService: CauseService) {}
 
+  @Public()
   @Get()
-  async findAll() {
+  async findAll(@Res() res: Response): Promise<void> {
     const causes = await this.causeService.getAllCauses();
-    return causes.map(CauseMapper.toDTO);
+
+    const causesDto = causes.map(CauseMapper.toDTO);
+    res.status(HttpStatus.OK).json(causesDto);
   }
 
+  @Public()
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const cause = await this.causeService.getCause(id);
-    return CauseMapper.toDTO(cause);
+
+    const causeDto = CauseMapper.toDTO(cause);
+    res.status(HttpStatus.OK).json(causeDto);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCauseDto: UpdateCauseDto,
+    @Res() res: Response,
   ) {
-    return this.causeService.updateCause(
+    await this.causeService.updateCause(
       id,
       updateCauseDto.description,
       updateCauseDto.ods,
     );
+
+    const locationUrl = `/causes/${id}`;
+    res.status(HttpStatus.NO_CONTENT).location(locationUrl).send();
   }
 
+  @Public()
   @Get(':id/actions')
-  getActions(@Param('id', ParseUUIDPipe) id: string) {
-    return this.causeService.getCauseActions(id);
+  getActions(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const actionsIds = this.causeService.getCauseActions(id);
+
+    res.status(HttpStatus.OK).json(actionsIds);
   }
 
-  // TODO: Review later
+  // TODO: Implement this method
   @Post(':id/actions')
-  createAction(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() action: { description: string },
-  ) {
-    return this.causeService.createCauseAction(id, action.description);
+  async createAction() {
+    return this.causeService.addCauseAction();
   }
 
+  @Public()
   @Get(':id/supporters')
-  getSupporters(@Param('id', ParseUUIDPipe) id: string) {
-    return this.causeService.getCauseSupporters(id);
+  getSupporters(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const supportersIds = this.causeService.getCauseSupporters(id);
+
+    res.status(HttpStatus.OK).json(supportersIds);
   }
 
   @Post(':id/supporters')
-  addSupporter(@Param('id') id: string, @Body() userId: string) {
-    return this.causeService.addCauseSupporter(id, userId);
+  async addSupporter(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() userDto: userIdDto,
+    @Res() res: Response,
+  ) {
+    await this.causeService.addCauseSupporter(id, userDto.userId);
+
+    const locationUrl = `/causes/${id}/supporters/${userDto.userId}`;
+    res
+      .status(HttpStatus.CREATED)
+      .location(locationUrl)
+      .json({ causeId: id, userId: userDto.userId });
   }
 }

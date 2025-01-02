@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Utils } from '@common-lib/common-lib/common/utils';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
+import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { JoinCommunityService } from './join-community.service';
 import { QueryPaginationDto } from '../../../../../libs/common-lib/src/dto/query-pagination.dto';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import { JoinCommunityDto } from '../dto/join-community.dto';
-import { Role } from '@common-lib/common-lib/auth/role/role.enum';
-import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 
 @Controller('communities/join-requests')
 export class JoinCommunityController {
@@ -34,8 +34,10 @@ export class JoinCommunityController {
     // Extract the token from the authorization header
     const userId = (req as any).user.sub.value;
 
-    const result =
-      await this.joinCommunityService.joinCommunityRequest(userId, joinCommunityDto.communityId);
+    const result = await this.joinCommunityService.joinCommunityRequest(
+      userId,
+      joinCommunityDto.communityId,
+    );
 
     if (result.isLeft()) {
       const error = result.value;
@@ -86,13 +88,18 @@ export class JoinCommunityController {
   ) {
     // Extract the token from the authorization header
     const userId = (req as any).user.sub.value;
-    
-    // Check if the user is an admin of the community
-    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(userId, joinCommunityDto.communityId);
 
-    if(isCommunityAdmin.isLeft()) {
+    // Check if the user is an admin of the community
+    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
+      userId,
+      joinCommunityDto.communityId,
+    );
+
+    if (isCommunityAdmin.isLeft()) {
       res.status(HttpStatus.UNAUTHORIZED);
-      res.json({ errors: { message: isCommunityAdmin.value.errorValue().message } });
+      res.json({
+        errors: { message: isCommunityAdmin.value.errorValue().message },
+      });
       res.send();
       return;
     }
@@ -137,13 +144,18 @@ export class JoinCommunityController {
   ) {
     // Extract the token from the authorization header
     const userId = (req as any).user.sub.value;
-    
-    // Check if the user is an admin of the community
-    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(userId, id);
 
-    if(isCommunityAdmin.isLeft()) {
+    // Check if the user is an admin of the community
+    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
+      userId,
+      id,
+    );
+
+    if (isCommunityAdmin.isLeft()) {
       res.status(HttpStatus.UNAUTHORIZED);
-      res.json({ errors: { message: isCommunityAdmin.value.errorValue().message } });
+      res.json({
+        errors: { message: isCommunityAdmin.value.errorValue().message },
+      });
       res.send();
       return;
     }
@@ -194,11 +206,16 @@ export class JoinCommunityController {
   ) {
     // Check if the user is an admin of the community
     const userId = (req as any).user.sub.value;
-    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(userId, id);
+    const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
+      userId,
+      id,
+    );
 
-    if(isCommunityAdmin.isLeft()) {
+    if (isCommunityAdmin.isLeft()) {
       res.status(HttpStatus.UNAUTHORIZED);
-      res.json({ errors: { message: isCommunityAdmin.value.errorValue().message } });
+      res.json({
+        errors: { message: isCommunityAdmin.value.errorValue().message },
+      });
       res.send();
       return;
     }

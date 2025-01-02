@@ -28,5 +28,6 @@ import { CauseSchema } from './infra/persistence/Cause';
       useClass: CauseRepositoryMongoDB,
     },
   ],
+  exports: [CauseService],
 })
 export class CauseModule {}

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  ExecutionContext,
   Get,
   HttpStatus,
   Param,
@@ -12,18 +11,15 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { Utils } from '@common-lib/common-lib/common/utils';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
-import { Query } from 'mysql2/typings/mysql/lib/protocol/sequences/Query';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
-import { Utils } from '@common-lib/common-lib/common/utils';
 
 @Controller('communities')
 export class CommunityController {
-  constructor(
-    private readonly communityService: CommunityService,
-  ) {}
+  constructor(private readonly communityService: CommunityService) {}
 
   @Post()
   async createCommunityRequest(
@@ -37,7 +33,7 @@ export class CommunityController {
 
     // Create the community request
     const result = await this.communityService.createCommunityRequest({
-      userId: userId,
+      userId,
       communityName: createCommunityDto.name,
       communityDescription: createCommunityDto.description,
       causeTitle: createCommunityDto.cause.title,
@@ -53,6 +49,11 @@ export class CommunityController {
       switch (error.constructor) {
         case Exceptions.CommunityNameIsTaken:
           res.status(HttpStatus.CONFLICT);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+          return;
+        case Exceptions.InvalidDateProvided:
+          res.status(HttpStatus.BAD_REQUEST);
           res.json({ errors: { message: error.errorValue().message } });
           res.send();
           return;
@@ -161,8 +162,7 @@ export class CommunityController {
       };
 
       res.status(HttpStatus.OK);
-      res.json({data, links
-      });
+      res.json({ data, links });
     }
   }
 
@@ -209,8 +209,7 @@ export class CommunityController {
       };
 
       res.status(HttpStatus.OK);
-      res.json({data, links
-      });
+      res.json({ data, links });
     }
   }
 }

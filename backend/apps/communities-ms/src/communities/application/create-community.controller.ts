@@ -107,7 +107,7 @@ export class CreateCommunityController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
-  ) {   
+  ) {
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,

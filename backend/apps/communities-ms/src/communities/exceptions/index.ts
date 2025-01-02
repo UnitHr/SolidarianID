@@ -8,6 +8,7 @@ import { UserIsAlreadyMember } from './UserIsAlreadyMember';
 import { JoinCommunityRequestNotFound } from './JoinCommunityRequestNotFound';
 import { MissingPropertiesError } from './MissingPropertiesError';
 import { UserIsNotCommunityAdmin } from './UserIsNotCommunityAdmin';
+import { InvalidDateProvided } from './InvalidDateProvided';
 
 export {
   CommunityNameIsTaken,
@@ -19,5 +20,6 @@ export {
   UserIsAlreadyMember,
   JoinCommunityRequestNotFound,
   MissingPropertiesError,
-  UserIsNotCommunityAdmin
+  UserIsNotCommunityAdmin,
+  InvalidDateProvided,
 };

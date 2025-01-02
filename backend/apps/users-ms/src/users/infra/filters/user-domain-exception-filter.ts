@@ -12,12 +12,14 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
+import {
+  EntityNotFoundError,
+  InvalidDateProvidedError,
+} from '@common-lib/common-lib/core/exceptions';
 import { Response } from 'express';
 import {
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
-  InvalidDateProvidedError,
   MissingUserPropertiesError,
   UnderageUserError,
 } from '../../exceptions';

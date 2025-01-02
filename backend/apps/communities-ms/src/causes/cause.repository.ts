@@ -3,6 +3,4 @@ import * as Domain from './domain';
 
 export abstract class CauseRepository extends Repository<Domain.Cause> {
   abstract findAll(): Promise<Domain.Cause[]>;
-
-  abstract update(entity: Domain.Cause): Promise<Domain.Cause>;
 }

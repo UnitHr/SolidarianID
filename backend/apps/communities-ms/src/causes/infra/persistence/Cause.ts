@@ -1,3 +1,4 @@
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
@@ -14,17 +15,21 @@ export class Cause {
   @Prop({ type: Date, required: true })
   endDate: Date;
 
-  @Prop({ type: [Number] })
-  ods: number[];
+  @Prop({
+    required: true,
+    enum: ODSEnum,
+    type: Number,
+  })
+  ods: ODSEnum[];
 
   @Prop({ required: true })
   communityId: string;
 
   @Prop()
-  actions: string[];
+  actionsIds: string[];
 
   @Prop()
-  supporters: string[];
+  supportersIds: string[];
 }
 
 export const CauseSchema = SchemaFactory.createForClass(Cause);

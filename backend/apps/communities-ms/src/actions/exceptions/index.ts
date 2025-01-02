@@ -1,11 +1,9 @@
-import { ActionNotFoundException } from './ActionNotFoundException';
-import { ActionTitleConflictException } from './ActionTitleConflictException';
-import { InvalidCauseIdException } from './InvalidCauseIdException';
-import { InvalidContributionUnitException } from './InvalidContributionUnitException';
-import { CompletedActionException } from './CompletedActionException';
+import { ActionTitleConflictException } from './action-title-conflict.error';
+import { InvalidCauseIdException } from './invalid-cause-id.error';
+import { InvalidContributionUnitException } from './invalid-contribution-unit.error';
+import { CompletedActionException } from './completed-action.error';
 
 export {
-  ActionNotFoundException,
   ActionTitleConflictException,
   InvalidCauseIdException,
   InvalidContributionUnitException,

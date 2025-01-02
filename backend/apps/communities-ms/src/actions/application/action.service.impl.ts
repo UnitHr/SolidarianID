@@ -51,10 +51,6 @@ export class ActionServiceImpl implements ActionService {
     // Find the existing action by Id
     const action = await this.actionRepository.findById(id);
 
-    if (!action) {
-      throw new Exceptions.ActionNotFoundException(id);
-    }
-
     // Update action fields
     action.update(updateActionDto as unknown as ActionProps);
 
@@ -65,10 +61,6 @@ export class ActionServiceImpl implements ActionService {
   async getActionDetails(id: string): Promise<Action> {
     // Find the action by Id
     const action = await this.actionRepository.findById(id);
-
-    if (!action) {
-      throw new Exceptions.ActionNotFoundException(id);
-    }
 
     return action;
   }
@@ -119,10 +111,6 @@ export class ActionServiceImpl implements ActionService {
   ): Promise<{ id: string }> {
     // Find the action by Id
     const action = await this.actionRepository.findById(actionId);
-
-    if (!action) {
-      throw new Exceptions.ActionNotFoundException(actionId);
-    }
 
     if (action.unit !== unit) {
       throw new Exceptions.InvalidContributionUnitException(actionId, unit);

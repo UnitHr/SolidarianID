@@ -1,11 +1,11 @@
-import { ActionTitleConflictException } from './action-title-conflict.error';
-import { InvalidCauseIdException } from './invalid-cause-id.error';
-import { InvalidContributionUnitException } from './invalid-contribution-unit.error';
-import { CompletedActionException } from './completed-action.error';
+import { ActionTitleConflictError } from './action-title-conflict.error';
+import { InvalidActionTypeError } from './invalid-action-type.erros';
+import { CompletedActionError } from './completed-action.error';
+import { InvalidContributionUnitError } from './invalid-contribution-unit.error';
 
 export {
-  ActionTitleConflictException,
-  InvalidCauseIdException,
-  InvalidContributionUnitException,
-  CompletedActionException,
+  ActionTitleConflictError,
+  InvalidActionTypeError,
+  InvalidContributionUnitError,
+  CompletedActionError,
 };

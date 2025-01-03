@@ -8,10 +8,6 @@ export class EconomicAction extends Action {
     this.type = ActionType.ECONOMIC;
   }
 
-  update(params: ActionProps): void {
-    this.updateCommonProperties(params);
-  }
-
   /* eslint-disable class-methods-use-this */
   public static create(props: ActionProps, id?: string): EconomicAction {
     if (id !== undefined)

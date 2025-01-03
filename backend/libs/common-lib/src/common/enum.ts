@@ -10,6 +10,13 @@ export enum CauseSortBy {
   CREATED_AT = 'createdAt',
 }
 
+export enum ActionSortBy {
+  TITLE = 'title',
+  CREATED_AT = 'createdAt',
+  TYPE = 'type',
+  STATUS = 'status',
+}
+
 export enum SortDirection {
   ASC = 'asc',
   DESC = 'desc',

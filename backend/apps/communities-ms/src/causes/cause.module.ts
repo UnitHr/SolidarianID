@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER } from '@nestjs/core';
+import { ActionModule } from '@communities-ms/actions/action.module';
 import { CauseController } from './application/cause.controller';
 import { CauseServiceImpl } from './application/cause.service.impl';
 import { Cause } from './infra/persistence';
@@ -18,6 +19,7 @@ import { CauseDomainExceptionFilter } from './infra/filters/cause-domain-excepti
         schema: CauseSchema,
       },
     ]),
+    ActionModule,
   ],
   controllers: [CauseController],
   providers: [

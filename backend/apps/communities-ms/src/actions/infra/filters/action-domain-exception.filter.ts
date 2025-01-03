@@ -7,20 +7,20 @@ import {
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { Response } from 'express';
 import {
-  ActionTitleConflictException,
-  CompletedActionException,
-  InvalidCauseIdException,
-  InvalidContributionUnitException,
+  ActionTitleConflictError,
+  InvalidActionTypeError,
+  CompletedActionError,
+  InvalidContributionUnitError,
 } from '../../exceptions';
 
 type ExceptionConstructor = new (...args: unknown[]) => Error;
 
 @Catch(
   EntityNotFoundError,
-  ActionTitleConflictException,
-  CompletedActionException,
-  InvalidCauseIdException,
-  InvalidContributionUnitException,
+  ActionTitleConflictError,
+  CompletedActionError,
+  InvalidContributionUnitError,
+  InvalidActionTypeError,
 )
 export class ActionDomainExceptionFilter implements ExceptionFilter {
   private readonly exceptionStatusMap = new Map<
@@ -28,10 +28,10 @@ export class ActionDomainExceptionFilter implements ExceptionFilter {
     HttpStatus
   >([
     [EntityNotFoundError, HttpStatus.NOT_FOUND],
-    [ActionTitleConflictException, HttpStatus.CONFLICT],
-    [CompletedActionException, HttpStatus.CONFLICT],
-    [InvalidCauseIdException, HttpStatus.BAD_REQUEST],
-    [InvalidContributionUnitException, HttpStatus.BAD_REQUEST],
+    [ActionTitleConflictError, HttpStatus.CONFLICT],
+    [InvalidActionTypeError, HttpStatus.BAD_REQUEST],
+    [CompletedActionError, HttpStatus.CONFLICT],
+    [InvalidContributionUnitError, HttpStatus.BAD_REQUEST],
   ]);
 
   catch(exception: Error, host: ArgumentsHost) {

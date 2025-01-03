@@ -21,6 +21,7 @@ import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
 import { CauseDomainExceptionFilter } from '../infra/filters/cause-domain-exception.filter';
 import { FindCausesDto } from '../dto/find-causes.dto';
+import { CreateActionDto } from '../dto/create-action.dto';
 
 @Controller('causes')
 @UseFilters(CauseDomainExceptionFilter)
@@ -97,10 +98,29 @@ export class CauseController {
     res.status(HttpStatus.OK).json(actionsIds);
   }
 
-  // TODO: Implement this method
   @Post(':id/actions')
-  async createAction() {
-    return this.causeService.addCauseAction();
+  async createAction(
+    @Body() createActionDto: CreateActionDto,
+    @Param('id', ParseUUIDPipe) causeId: string,
+    @Res() res: Response,
+  ) {
+    const { type, title, description, target, unit, goodType, location, date } =
+      createActionDto;
+
+    const result = await this.causeService.addCauseAction(
+      type,
+      title,
+      description,
+      causeId,
+      target,
+      unit,
+      goodType,
+      location,
+      date,
+    );
+
+    const locationUrl = `/actions/${result}`;
+    res.status(HttpStatus.CREATED).location(locationUrl).json({ id: result });
   }
 
   @Public()

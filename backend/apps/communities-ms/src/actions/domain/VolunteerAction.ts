@@ -29,12 +29,6 @@ export class VolunteerAction extends Action {
     (this.props as VolunteerActionProps).date = value;
   }
 
-  update(params: VolunteerActionProps): void {
-    super.updateCommonProperties(params);
-    if (params.location !== undefined) this.location = params.location;
-    if (params.date !== undefined) this.date = params.date;
-  }
-
   /* eslint-disable class-methods-use-this */
   public static create(props: VolunteerActionProps, id?: string): Action {
     if (id !== undefined)

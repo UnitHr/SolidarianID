@@ -47,5 +47,15 @@ export abstract class CauseService {
 
   abstract getCauseActions(id: string): Promise<string[]>;
 
-  abstract addCauseAction(): Promise<void>;
+  abstract addCauseAction(
+    type,
+    title,
+    description,
+    causeId,
+    target,
+    unit,
+    goodType,
+    location,
+    date,
+  ): Promise<string>;
 }

@@ -27,6 +27,7 @@ export class CreateCommunityController {
     @Query() query: QueryPaginationDto,
     @Res() res: Response,
   ) {
+    console.log('Controller');
     const { offset = 0, limit = 10 } = query;
     const results =
       await this.createCommunityService.getCreateCommunityRequests(
@@ -107,7 +108,7 @@ export class CreateCommunityController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
-  ) {   
+  ) {
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,

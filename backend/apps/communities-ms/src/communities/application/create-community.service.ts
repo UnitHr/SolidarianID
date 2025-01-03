@@ -19,6 +19,7 @@ export class CreateCommunityService {
     limit: number,
   ): Promise<Result<Domain.CreateCommunityRequest[]>> {
     // Get all the requests
+    console.log('Getting all the requests');
     const createCommunityRequests =
       await this.createCommunityRequestRepository.findAll(offset, limit);
 

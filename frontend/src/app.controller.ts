@@ -9,15 +9,18 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { HandlebarsHelpersService } from './helper.service';
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
 import { Constants } from './common/constants';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(
+    private readonly appService: AppService,
     private readonly handlebarsHelpersService: HandlebarsHelpersService,
   ) {}
 
@@ -96,18 +99,27 @@ export class AppController {
 
   @Get('/validation')
   @Render('platform-admin/validation')
-  getValidation(@Request() req) {
+  async getValidation(@Query('page') page = 1, @Request() req) {
     // check if user is authenticated
     const user = req.cookies.user;
     if (!user) {
       return { title: 'Home', activePage: 'home' };
     }
+    // Pagination: 10 items per page
+    const offset = (page - 1) * 10;
+    const limit = 10;
+    const results = await this.appService.getCreateCommunityRequests(
+      offset,
+      limit,
+    );
 
     return {
       user: user,
       title: 'Validation',
       activePage: 'adminDashboard',
-      userAutenticate: true,
+      requests: results.data,
+      page,
+      totalPages: Math.ceil(results.total / limit),
     };
   }
 

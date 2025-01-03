@@ -1,101 +1,132 @@
-export const ODS = [
-  {
-    odsId: 1,
-    title: 'Fin de la pobreza',
-    description: 'Erradicar la pobreza en todas sus formas en todo el mundo.',
+/**
+ * @file This module exports various ODS-related data and functions.
+ * @module common/ods
+ *
+ * @description This module provides a collection of ODS-related data and functions
+ * to work with the Sustainable Development Goals (ODS).
+ */
+
+export enum ODSEnum {
+  NoPoverty = 1,
+  ZeroHunger = 2,
+  GoodHealthAndWellBeing = 3,
+  QualityEducation = 4,
+  GenderEquality = 5,
+  CleanWaterAndSanitation = 6,
+  AffordableAndCleanEnergy = 7,
+  DecentWorkAndEconomicGrowth = 8,
+  IndustryInnovationAndInfrastructure = 9,
+  ReducedInequalities = 10,
+  SustainableCitiesAndCommunities = 11,
+  ResponsibleConsumptionAndProduction = 12,
+  ClimateAction = 13,
+  LifeBelowWater = 14,
+  LifeOnLand = 15,
+  PeaceJusticeAndStrongInstitutions = 16,
+  PartnershipsForTheGoals = 17,
+}
+
+export type ODSDetail = { id: ODSEnum; title: string; description: string };
+
+export const odsData: Record<ODSEnum, ODSDetail> = {
+  [ODSEnum.NoPoverty]: {
+    id: ODSEnum.NoPoverty,
+    title: 'No Poverty',
+    description: 'Eradicate poverty in all its forms everywhere.',
   },
-  {
-    odsId: 2,
-    title: 'Hambre cero',
+  [ODSEnum.ZeroHunger]: {
+    id: ODSEnum.ZeroHunger,
+    title: 'Zero Hunger',
+    description: 'End hunger, achieve food security, and improve nutrition.',
+  },
+  [ODSEnum.GoodHealthAndWellBeing]: {
+    id: ODSEnum.GoodHealthAndWellBeing,
+    title: 'Good Health and Well-Being',
+    description: 'Ensure healthy lives and promote well-being for all.',
+  },
+  [ODSEnum.QualityEducation]: {
+    id: ODSEnum.QualityEducation,
+    title: 'Quality Education',
+    description: 'Ensure inclusive, equitable, and quality education.',
+  },
+  [ODSEnum.GenderEquality]: {
+    id: ODSEnum.GenderEquality,
+    title: 'Gender Equality',
+    description: 'Achieve gender equality and empower all women and girls.',
+  },
+  [ODSEnum.CleanWaterAndSanitation]: {
+    id: ODSEnum.CleanWaterAndSanitation,
+    title: 'Clean Water and Sanitation',
     description:
-      'Poner fin al hambre, lograr la seguridad alimentaria y mejorar la nutrición y promover la agricultura sostenible.',
+      'Ensure availability and sustainable management of water and sanitation.',
   },
-  {
-    odsId: 3,
-    title: 'Salud y bienestar',
+  [ODSEnum.AffordableAndCleanEnergy]: {
+    id: ODSEnum.AffordableAndCleanEnergy,
+    title: 'Affordable and Clean Energy',
     description:
-      'Garantizar una vida sana y promover el bienestar para todos en todas las edades.',
+      'Ensure access to affordable, reliable, and sustainable energy.',
   },
-  {
-    odsId: 4,
-    title: 'Educación de calidad',
+  [ODSEnum.DecentWorkAndEconomicGrowth]: {
+    id: ODSEnum.DecentWorkAndEconomicGrowth,
+    title: 'Decent Work and Economic Growth',
     description:
-      'Garantizar una educación inclusiva, equitativa y de calidad y promover oportunidades de aprendizaje durante toda la vida para todos.',
+      'Promote sustained, inclusive, and sustainable economic growth.',
   },
-  {
-    odsId: 5,
-    title: 'Igualdad de género',
+  [ODSEnum.IndustryInnovationAndInfrastructure]: {
+    id: ODSEnum.IndustryInnovationAndInfrastructure,
+    title: 'Industry, Innovation, and Infrastructure',
     description:
-      'Lograr la igualdad entre los géneros y empoderar a todas las mujeres y las niñas.',
+      'Build resilient infrastructure and promote inclusive industrialization.',
   },
-  {
-    odsId: 6,
-    title: 'Agua limpia y saneamiento',
+  [ODSEnum.ReducedInequalities]: {
+    id: ODSEnum.ReducedInequalities,
+    title: 'Reduced Inequalities',
+    description: 'Reduce inequality within and among countries.',
+  },
+  [ODSEnum.SustainableCitiesAndCommunities]: {
+    id: ODSEnum.SustainableCitiesAndCommunities,
+    title: 'Sustainable Cities and Communities',
+    description: 'Make cities and human settlements inclusive and sustainable.',
+  },
+  [ODSEnum.ResponsibleConsumptionAndProduction]: {
+    id: ODSEnum.ResponsibleConsumptionAndProduction,
+    title: 'Responsible Consumption and Production',
+    description: 'Ensure sustainable consumption and production patterns.',
+  },
+  [ODSEnum.ClimateAction]: {
+    id: ODSEnum.ClimateAction,
+    title: 'Climate Action',
+    description: 'Take urgent action to combat climate change and its impacts.',
+  },
+  [ODSEnum.LifeBelowWater]: {
+    id: ODSEnum.LifeBelowWater,
+    title: 'Life Below Water',
     description:
-      'Garantizar la disponibilidad de agua y su gestión sostenible y el saneamiento para todos.',
+      'Conserve and sustainably use the oceans, seas, and marine resources.',
   },
-  {
-    odsId: 7,
-    title: 'Energía asequible y no contaminante',
+  [ODSEnum.LifeOnLand]: {
+    id: ODSEnum.LifeOnLand,
+    title: 'Life on Land',
+    description: 'Sustainably manage forests and halt biodiversity loss.',
+  },
+  [ODSEnum.PeaceJusticeAndStrongInstitutions]: {
+    id: ODSEnum.PeaceJusticeAndStrongInstitutions,
+    title: 'Peace, Justice, and Strong Institutions',
     description:
-      'Garantizar el acceso a una energía asequible, fiable, sostenible y moderna para todos.',
+      'Promote peaceful and inclusive societies for sustainable development.',
   },
-  {
-    odsId: 8,
-    title: 'Trabajo decente y crecimiento económico',
+  [ODSEnum.PartnershipsForTheGoals]: {
+    id: ODSEnum.PartnershipsForTheGoals,
+    title: 'Partnerships for the Goals',
     description:
-      'Promover el crecimiento económico sostenido, inclusivo y sostenible, el empleo pleno y productivo y el trabajo decente para todos.',
+      'Strengthen the means of implementation and revitalize the global partnership.',
   },
-  {
-    odsId: 9,
-    title: 'Industria, innovación e infraestructura',
-    description:
-      'Construir infraestructuras resilientes, promover la industrialización inclusiva y sostenible y fomentar la innovación.',
-  },
-  {
-    odsId: 10,
-    title: 'Reducción de las desigualdades',
-    description: 'Reducir la desigualdad en y entre los países.',
-  },
-  {
-    odsId: 11,
-    title: 'Ciudades y comunidades sostenibles',
-    description:
-      'Lograr que las ciudades y los asentamientos humanos sean inclusivos, seguros, resilientes y sostenibles.',
-  },
-  {
-    odsId: 12,
-    title: 'Producción y consumo responsables',
-    description: 'Garantizar modalidades de consumo y producción sostenibles.',
-  },
-  {
-    odsId: 13,
-    title: 'Acción por el clima',
-    description:
-      'Adoptar medidas urgentes para combatir el cambio climático y sus efectos.',
-  },
-  {
-    odsId: 14,
-    title: 'Vida submarina',
-    description:
-      'Conservar y utilizar sosteniblemente los océanos, los mares y los recursos marinos para el desarrollo sostenible.',
-  },
-  {
-    odsId: 15,
-    title: 'Vida de ecosistemas terrestres',
-    description:
-      'Gestionar sosteniblemente los bosques, luchar contra la desertificación, detener e invertir la degradación de las tierras y detener la pérdida de biodiversidad.',
-  },
-  {
-    odsId: 16,
-    title: 'Paz, justicia e instituciones sólidas',
-    description:
-      'Promover sociedades pacíficas e inclusivas para el desarrollo sostenible, facilitar el acceso a la justicia para todos y construir a todos los niveles instituciones eficaces e inclusivas que rindan cuentas.',
-  },
-  {
-    odsId: 17,
-    title: 'Alianzas para lograr los objetivos',
-    description:
-      'Fortalecer los medios de ejecución y revitalizar la Alianza Mundial para el Desarrollo Sostenible.',
-  },
-];
+};
+
+export function mapODSEnumListToDetails(odsList: ODSEnum[]): ODSDetail[] {
+  return odsList.map((ods) => ({
+    id: ods,
+    title: odsData[ods]?.title || 'Unknown',
+    description: odsData[ods]?.description || 'Description not available',
+  }));
+}

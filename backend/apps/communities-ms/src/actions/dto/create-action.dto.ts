@@ -1,15 +1,17 @@
-/* eslint-disable max-classes-per-file */
+import { Transform } from 'class-transformer';
 import {
-  IsDateString,
+  IsDate,
+  IsEnum,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
+  IsPositive,
   IsString,
+  ValidateIf,
 } from 'class-validator';
+import { ActionType } from '../domain/ActionType';
 
 export class CreateActionDto {
-  @IsString()
-  type: 'economic' | 'food' | 'volunteer';
+  @IsEnum(ActionType, { message: 'Invalid action type' })
+  type: ActionType;
 
   @IsString()
   @IsNotEmpty()
@@ -22,43 +24,44 @@ export class CreateActionDto {
   @IsString()
   @IsNotEmpty()
   causeId: string;
+
+  @IsPositive()
+  target: number;
+
+  @IsString()
+  unit: string;
+
+  @ValidateIf((o) => o.type === ActionType.GOODS_COLLECTION)
+  @IsString({ message: 'goodType must be a string' })
+  @IsNotEmpty({ message: 'goodType is required for GoodsCollectionAction' })
+  goodType?: string;
+
+  @ValidateIf((o) => o.type === ActionType.VOLUNTEER)
+  @IsString({ message: 'location must be a string' })
+  @IsNotEmpty({ message: 'location is required for VolunteerAction' })
+  location?: string;
+
+  @ValidateIf((o) => o.type === ActionType.VOLUNTEER)
+  @IsDate({ message: 'date must be a Date' })
+  @IsNotEmpty({ message: 'date is required for VolunteerAction' })
+  @Transform(({ value }) => new Date(value))
+  date?: Date;
 }
 
-export class CreateEconomicActionDto extends CreateActionDto {
-  @IsNumber()
-  targetAmount: number;
-}
+/*
+export class CreateEconomicActionDto extends CreateActionDto {}
 
 export class CreateGoodsCollectionActionDto extends CreateActionDto {
   @IsString()
   goodType: string;
-
-  @IsOptional()
-  @IsNumber()
-  quantity?: number;
-
-  @IsOptional()
-  @IsString()
-  unit?: string;
-
-  @IsOptional()
-  @IsNumber()
-  collectQuantity?: number;
 }
 
 export class CreateVolunteerActionDto extends CreateActionDto {
-  @IsNumber()
-  targetVolunteers: number;
-
   @IsString()
   location: string;
 
-  @IsOptional()
-  @IsNumber()
-  currentVolunteers?: number;
-
   @IsDateString()
   date: Date;
-}
+} */
 
 // export class UpdateTalDto extends PartialType(CreateActionDto) {}

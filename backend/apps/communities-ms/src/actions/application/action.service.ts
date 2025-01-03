@@ -4,30 +4,43 @@ import { UpdateActionDto } from '../dto/update-action.dto';
 
 @Injectable()
 export abstract class ActionService {
-  abstract createEconomicAction(
+  abstract createAction(
+    type,
     title,
     description,
     causeId,
-    targetAmount,
+    target,
+    unit,
+    goodType,
+    location,
+    date,
+  ): Promise<{ id: string }>;
+  /* abstract createEconomicAction(
+    title,
+    description,
+    causeId,
+    type,
+    target,
   ): Promise<{ id: string }>;
 
   abstract createGoodsCollectionAction(
     title,
     description,
     causeId,
+    type,
+    target,
     goodType,
-    quantity,
-    unit,
   ): Promise<{ id: string }>;
 
   abstract createVolunteerAction(
     title,
     description,
     causeId,
-    targetVolunteers,
+    type,
+    target,
     location,
     date,
-  ): Promise<{ id: string }>;
+  ): Promise<{ id: string }>; */
 
   abstract updateAction(id: string, updateActionDto: UpdateActionDto);
 
@@ -41,4 +54,12 @@ export abstract class ActionService {
   ): Promise<{ data: Action[]; total: number }>;
 
   abstract listActionsByCause(causeId: string): Promise<Action[]>;
+
+  abstract makeContribution(
+    userId: string,
+    actionId: string,
+    date: Date,
+    amount: number,
+    unit: string,
+  ): Promise<{ id: string }>;
 }

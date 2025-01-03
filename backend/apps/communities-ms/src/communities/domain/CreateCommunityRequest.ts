@@ -2,18 +2,18 @@ import {
   Entity,
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
-import { CauseEndDate } from '../../causes/domain/CauseEndDate';
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
 
 interface CreateCommunityRequestProps {
-  userId: string; // This is the user that is creating the community
+  userId: string;
   communityName: string;
   communityDescription: string;
   causeTitle: string;
   causeDescription: string;
-  causeEndDate: CauseEndDate;
-  causeOds: number[];
+  causeEndDate: Date;
+  causeOds: ODSEnum[];
   status: StatusRequest;
   comment?: string;
 }
@@ -43,7 +43,7 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
     return this.props.causeDescription;
   }
 
-  get causeEndDate(): CauseEndDate {
+  get causeEndDate(): Date {
     return this.props.causeEndDate;
   }
 

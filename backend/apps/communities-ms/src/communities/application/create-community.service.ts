@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
+import { CauseService } from '@communities-ms/causes/application/cause.service';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
@@ -12,6 +13,7 @@ export class CreateCommunityService {
   constructor(
     private readonly createCommunityRequestRepository: CreateCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
+    private readonly causeService: CauseService,
   ) {}
 
   async getCreateCommunityRequests(
@@ -64,9 +66,9 @@ export class CreateCommunityService {
     }
 
     switch (status) {
-      case StatusRequest.Approved: {
+      case StatusRequest.APPROVED: {
         // Update the request
-        createCommunityRequest.status = StatusRequest.Approved;
+        createCommunityRequest.status = StatusRequest.APPROVED;
 
         // Save the request
         this.createCommunityRequestRepository.save(createCommunityRequest);
@@ -79,18 +81,31 @@ export class CreateCommunityService {
           members: [],
           causes: [],
         });
-        this.communityRepository.save(newCommunity);
 
-        // Send the "created_community" event
+        // Create the cause
+        const causeId = await this.causeService.createCause(
+          createCommunityRequest.causeTitle,
+          createCommunityRequest.causeDescription,
+          createCommunityRequest.causeOds,
+          createCommunityRequest.causeEndDate,
+          newCommunity.id.toString(),
+          createCommunityRequest.userId,
+        );
+
+        // Add the cause to the community
+        newCommunity.addCause(causeId);
+
+        // Save the community
+        this.communityRepository.save(newCommunity);
 
         // Return the community object
         return right(Result.ok(newCommunity));
       }
 
-      case StatusRequest.Denied:
+      case StatusRequest.DENIED:
         if (comment) {
           // Update the request
-          createCommunityRequest.status = StatusRequest.Denied;
+          createCommunityRequest.status = StatusRequest.DENIED;
           createCommunityRequest.comment = comment;
 
           // Save the request

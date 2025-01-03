@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { Repository as TypeOrmRepository } from 'typeorm/repository/Repository';
 import { UserMapper } from '../user.mapper';
+import { UserRepository } from '../user.repository';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
-import { UserRepository } from '../user.repository';
 
 @Injectable()
 export class UserRepositoryTypeOrm extends UserRepository {
@@ -16,8 +16,17 @@ export class UserRepositoryTypeOrm extends UserRepository {
     super();
   }
 
+  save(entity: Domain.User): Promise<Domain.User> {
+    return this.userRepository
+      .save(UserMapper.toPersistence(entity))
+      .then((user) => UserMapper.toDomain(user));
+  }
+
   async findById(id: string): Promise<Domain.User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['followers'],
+    });
     if (!user) {
       throw new EntityNotFoundError(`User with id ${id} not found`);
     }
@@ -31,10 +40,4 @@ export class UserRepositoryTypeOrm extends UserRepository {
     }
     return UserMapper.toDomain(user);
   }
-
-  save = (entity: Domain.User): Promise<Domain.User> => {
-    return this.userRepository
-      .save(UserMapper.toPersistence(entity))
-      .then((user) => UserMapper.toDomain(user));
-  };
 }

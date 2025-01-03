@@ -1,3 +1,4 @@
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { StatusRequest } from '@communities-ms/communities/domain/StatusRequest';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
@@ -20,12 +21,19 @@ export class CreateCommunityRequest {
   @Prop()
   description: string;
 
-  @Prop({ type: Object })
+  @Prop({
+    type: {
+      title: { type: String, required: true },
+      description: { type: String, required: true },
+      end: { type: Date, required: true },
+      ods: { type: [Number], required: true, enum: ODSEnum },
+    },
+  })
   cause: {
     title: string;
     description: string;
     end: Date;
-    ods: number[];
+    ods: ODSEnum[];
   };
 
   @Prop({ type: String, enum: StatusRequest })

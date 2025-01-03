@@ -3,23 +3,27 @@ import {
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { CauseEndDate } from './CauseEndDate';
+import {
+  ActionAlreadyExistsError,
+  SupporterAlreadyExistsError,
+} from '../exceptions';
 
 export interface CauseProps {
   title: string;
   description: string;
-  ods: number[];
+  ods: ODSEnum[];
   endDate: CauseEndDate;
   communityId: string;
-  actions: string[];
-  supporters: string[];
+  actionsIds?: string[];
+  supportersIds?: string[];
+  createdBy: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Cause extends Entity<CauseProps> {
-  private constructor(props: CauseProps, id?: UniqueEntityID) {
-    super(props, id);
-  }
-
   get id(): UniqueEntityID {
     return this._id;
   }
@@ -36,11 +40,11 @@ export class Cause extends Entity<CauseProps> {
     this.props.description = value;
   }
 
-  get ods(): number[] {
+  get ods(): ODSEnum[] {
     return this.props.ods;
   }
 
-  set ods(value: number[]) {
+  set ods(value: ODSEnum[]) {
     this.props.ods = value;
   }
 
@@ -52,27 +56,65 @@ export class Cause extends Entity<CauseProps> {
     return this.props.communityId;
   }
 
-  get actions(): string[] {
-    return this.props.actions;
+  get actionsIds(): string[] {
+    return [...this.props.actionsIds];
   }
 
-  get supporters(): string[] {
-    return this.props.supporters;
+  get supportersIds(): string[] {
+    return [...this.props.supportersIds];
+  }
+
+  get createdBy(): string {
+    return this.props.createdBy;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
   }
 
   public static create(props: CauseProps, id?: UniqueEntityID): Cause {
-    const { title, description, ods, endDate, communityId } = props;
-    if (!title || !description || !ods || !endDate || !communityId) {
+    const { title, description, ods, endDate, communityId, createdBy } = props;
+    if (
+      !title ||
+      !description ||
+      !ods ||
+      !endDate ||
+      !communityId ||
+      !createdBy
+    ) {
       throw new MissingPropertiesError('[Cause] Properties are missing.');
     }
-    return new Cause(props, id);
+
+    const defaultProps: CauseProps = {
+      ...props,
+      actionsIds: props.actionsIds || [],
+      supportersIds: props.supportersIds || [],
+      createdAt: props.createdAt ?? new Date(),
+      updatedAt: props.updatedAt ?? new Date(),
+    };
+
+    return new Cause(defaultProps, id);
+  }
+
+  public addAction(actionId: string): void {
+    // We check if the action already exists
+    if (this.props.actionsIds.includes(actionId)) {
+      throw new ActionAlreadyExistsError(actionId);
+    }
+
+    this.props.actionsIds.push(actionId);
   }
 
   public addSupporter(userId: string): void {
-    this.props.supporters.push(userId);
-  }
+    // We check if the supporter already exists
+    if (this.props.supportersIds.includes(userId)) {
+      throw new SupporterAlreadyExistsError(userId);
+    }
 
-  public createCauseAction(description: string): void {
-    this.props.actions.push(description);
+    this.props.supportersIds.push(userId);
   }
 }

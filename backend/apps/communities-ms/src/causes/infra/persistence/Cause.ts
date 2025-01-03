@@ -1,6 +1,7 @@
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema()
+@Schema({ timestamps: true }) // Handles createdAt and updatedAt automatically
 export class Cause {
   @Prop({ required: true, unique: true })
   id: string;
@@ -14,17 +15,29 @@ export class Cause {
   @Prop({ type: Date, required: true })
   endDate: Date;
 
-  @Prop({ type: [Number] })
-  ods: number[];
+  @Prop({
+    required: true,
+    enum: ODSEnum,
+    type: [Number],
+  })
+  ods: ODSEnum[];
 
   @Prop({ required: true })
   communityId: string;
 
-  @Prop()
-  actions: string[];
+  @Prop({ type: [String], default: [] })
+  actionsIds: string[];
 
-  @Prop()
-  supporters: string[];
+  @Prop({ type: [String], default: [] })
+  supportersIds: string[];
+
+  @Prop({ required: true })
+  createdBy: string;
+
+  // These properties are automatically handled by the timestamps option
+  readonly createdAt?: Date;
+
+  readonly updatedAt?: Date;
 }
 
 export const CauseSchema = SchemaFactory.createForClass(Cause);

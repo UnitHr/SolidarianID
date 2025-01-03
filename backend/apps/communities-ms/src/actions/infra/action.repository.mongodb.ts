@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions';
 import * as Domain from '../domain';
 import * as Persistence from './persistence';
 import { ActionMapper } from '../mapper/action.mapper';
@@ -15,29 +16,26 @@ export class ActionRepositoryMongoDB extends ActionRepository {
     super();
   }
 
-  save = async (entity: Domain.Action): Promise<Domain.Action> => {
-    return this.actionModel
-      .create(ActionMapper.toPersistence(entity))
-      .then((doc) => ActionMapper.toDomain(doc));
-  };
+  async save(entity: Domain.Action): Promise<Domain.Action> {
+    const persistenceAction = ActionMapper.toPersistence(entity);
 
-  update = async (entity: Domain.Action): Promise<Domain.Action> => {
-    return this.actionModel
-      .findOneAndUpdate(
-        { id: entity.id.toString() },
-        ActionMapper.toPersistence(entity),
-        { new: true },
-      )
-      .then((doc) => ActionMapper.toDomain(doc));
-  };
+    const doc = await this.actionModel
+      .findOneAndUpdate({ id: persistenceAction.id }, persistenceAction, {
+        upsert: true,
+        new: true,
+      })
+      .exec();
+    return ActionMapper.toDomain(doc);
+  }
 
   async findById(id: string): Promise<Domain.Action | null> {
     const action = await this.actionModel.findOne({ id }).exec();
-    return action ? ActionMapper.toDomain(action) : null;
-  }
 
-  async delete(id: string): Promise<void> {
-    await this.actionModel.deleteOne({ id }).exec();
+    if (!action) {
+      throw new EntityNotFoundError(`Action with id ${id} not found.`);
+    }
+
+    return action ? ActionMapper.toDomain(action) : null;
   }
 
   async findAll(offset: number, limit: number): Promise<Domain.Action[]> {

@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import * as Domain from '../domain';
-import * as Persistence from './persistence';
+import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions';
 import { CauseRepository } from '../cause.repository';
 import { CauseMapper } from '../cause.mapper';
+import {
+  CauseFilter,
+  CauseSort,
+  PaginationParams,
+} from './filters/cause-query.builder';
+import * as Domain from '../domain';
+import * as Persistence from './persistence';
 
 @Injectable()
 export class CauseRepositoryMongoDB extends CauseRepository {
@@ -15,48 +21,52 @@ export class CauseRepositoryMongoDB extends CauseRepository {
     super();
   }
 
-  getAllCauses(): Promise<Domain.Cause[]> {
-    return this.causeModel
-      .find()
-      .exec()
-      .then((docs) => docs.map(CauseMapper.toDomain));
+  async save(entity: Domain.Cause): Promise<Domain.Cause> {
+    const persistenceCause = CauseMapper.toPersistence(entity);
+
+    try {
+      const doc = await this.causeModel
+        .findOneAndUpdate(
+          { id: persistenceCause.id }, // Search by id
+          persistenceCause, // Data to store
+          { upsert: true, new: true }, // Create if not found, return updated doc
+        )
+        .exec();
+
+      return CauseMapper.toDomain(doc);
+    } catch (error) {
+      throw new Error(
+        `[CauseRepositoryMongoDB] Error saving Cause: ${error.message}`,
+      );
+    }
   }
 
-  save = async (entity: Domain.Cause): Promise<Domain.Cause> => {
-    return this.causeModel
-      .create(CauseMapper.toPersistence(entity))
-      .then((doc) => CauseMapper.toDomain(doc));
-  };
+  async findById(id: string): Promise<Domain.Cause> {
+    const cause = await this.causeModel.findOne({ id }).exec();
 
-  // TODO: Review if we can update using the save method
-  update = async (entity: Domain.Cause): Promise<Domain.Cause> => {
-    return this.causeModel
-      .findOneAndUpdate(
-        { id: entity.id.toString() },
-        CauseMapper.toPersistence(entity),
-        { new: true },
-      )
-      .then((doc) => CauseMapper.toDomain(doc));
-  };
+    if (!cause) {
+      throw new EntityNotFoundError(`Cause with id ${id} not found.`);
+    }
 
-  findById(id: string): Promise<Domain.Cause | null> {
-    return this.causeModel
-      .findOne({ id })
-      .exec()
-      .then((doc) => (doc ? CauseMapper.toDomain(doc) : null));
+    return CauseMapper.toDomain(cause);
   }
 
-  findByCommunityId(communityId: string): Promise<Domain.Cause[]> {
-    return this.causeModel
-      .find({ communityId })
-      .exec()
-      .then((docs) => docs.map(CauseMapper.toDomain));
+  async findAll(
+    filter: CauseFilter,
+    sort: CauseSort,
+    pagination: PaginationParams,
+  ): Promise<Domain.Cause[]> {
+    const causes = await this.causeModel
+      .find(filter)
+      .sort(sort)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .exec();
+
+    return causes.map(CauseMapper.toDomain);
   }
 
-  findAll(): Promise<Domain.Cause[]> {
-    return this.causeModel
-      .find()
-      .exec()
-      .then((docs) => docs.map(CauseMapper.toDomain));
+  async countDocuments(filter: CauseFilter): Promise<number> {
+    return this.causeModel.countDocuments(filter).exec();
   }
 }

@@ -1,10 +1,10 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { UserServiceImpl } from '@users-ms/users/application/user.service.impl';
 import { User } from '@users-ms/users/domain';
 import {
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
-  UserNotFoundError,
 } from '@users-ms/users/exceptions';
 import { UserRepository } from '@users-ms/users/user.repository';
 
@@ -46,7 +46,9 @@ describe('UserServiceImpl', () => {
   describe('createUser', () => {
     it('should create a new user successfully', async () => {
       // Arrange
-      userRepositoryMock.findByEmail.mockResolvedValueOnce(null);
+      userRepositoryMock.findByEmail.mockRejectedValueOnce(
+        new EntityNotFoundError('User not found'),
+      );
       userRepositoryMock.save.mockResolvedValueOnce(
         createMockUser({ id: createMockId('1234') }),
       );
@@ -57,7 +59,7 @@ describe('UserServiceImpl', () => {
         'Doe',
         new Date('2000-01-01'),
         'john.doe@example.com',
-        'password',
+        'password_A123',
         'This is my bio',
         true,
         false,
@@ -108,7 +110,9 @@ describe('UserServiceImpl', () => {
         email: 'old.email@example.com',
       });
       userRepositoryMock.findById.mockResolvedValueOnce(existingUser);
-      userRepositoryMock.findByEmail.mockResolvedValueOnce(null);
+      userRepositoryMock.findByEmail.mockRejectedValueOnce(
+        new EntityNotFoundError('User not found'),
+      );
 
       // Act
       await userService.updateUser(
@@ -131,12 +135,14 @@ describe('UserServiceImpl', () => {
 
     it('should throw UserNotFoundError if user does not exist', async () => {
       // Arrange
-      userRepositoryMock.findById.mockResolvedValueOnce(null);
+      userRepositoryMock.findById.mockRejectedValueOnce(
+        new EntityNotFoundError('User not found'),
+      );
 
       // Act & Assert
       await expect(
         userService.updateUser('1234', 'new.email@example.com', 'Updated bio'),
-      ).rejects.toThrow(UserNotFoundError);
+      ).rejects.toThrow(EntityNotFoundError);
 
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
       expect(userRepositoryMock.findByEmail).not.toHaveBeenCalled();
@@ -205,11 +211,13 @@ describe('UserServiceImpl', () => {
 
     it('should throw UserNotFoundError if user does not exist', async () => {
       // Arrange
-      userRepositoryMock.findById.mockResolvedValueOnce(null);
+      userRepositoryMock.findById.mockRejectedValueOnce(
+        new EntityNotFoundError('User not found'),
+      );
 
       // Act & Assert
       await expect(userService.getUserProfile('1234')).rejects.toThrow(
-        UserNotFoundError,
+        EntityNotFoundError,
       );
 
       expect(userRepositoryMock.findById).toHaveBeenCalledWith('1234');
@@ -239,12 +247,14 @@ describe('UserServiceImpl', () => {
 
     it('should throw UserNotFoundError if email does not exist', async () => {
       // Arrange
-      userRepositoryMock.findByEmail.mockResolvedValueOnce(null);
+      userRepositoryMock.findByEmail.mockRejectedValueOnce(
+        new EntityNotFoundError('User not found'),
+      );
 
       // Act & Assert
       await expect(
         userService.getUserByEmail('john.doe@example.com'),
-      ).rejects.toThrow(UserNotFoundError);
+      ).rejects.toThrow(EntityNotFoundError);
 
       expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
         'john.doe@example.com',

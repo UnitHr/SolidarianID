@@ -1,3 +1,14 @@
+import { BaseDomainError } from '@common-lib/common-lib/core/exceptions/base-domain.error';
+
+export class InvalidCauseIdException extends BaseDomainError {
+  constructor(causeId: string) {
+    super(
+      `The cause with the id "${causeId}" does not exist or has no associated actions.`,
+    );
+  }
+}
+
+/*
 import { DomainError } from '@common-lib/common-lib/core/exceptions/DomainError';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 
@@ -12,3 +23,4 @@ export class InvalidCauseIdException extends Result<DomainError> {
     return new InvalidCauseIdException(causeId);
   }
 }
+*/

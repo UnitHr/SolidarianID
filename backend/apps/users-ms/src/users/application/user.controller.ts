@@ -9,13 +9,14 @@ import {
   Res,
   HttpStatus,
   ParseUUIDPipe,
+  Req,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserDomainExceptionFilter } from '../infra/filters/user-domain-exception-filter';
+import { UserDomainExceptionFilter } from '../infra/filters/user-domain-exception.filter';
 import { UserMapper } from '../user.mapper';
 
 @Controller('users')
@@ -64,5 +65,28 @@ export class UsersController {
 
     const userDto = UserMapper.toProfileDto(user);
     res.status(HttpStatus.OK).json(userDto);
+  }
+
+  @Post(':id/followers')
+  async follow(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const followerId = req['user']?.sub.value;
+
+    await this.usersService.followUser(id, followerId);
+
+    res.status(HttpStatus.NO_CONTENT).send();
+  }
+
+  @Get(':id/followers')
+  async getFollowers(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const followers = await this.usersService.getUserFollowers(id);
+
+    res.status(HttpStatus.OK).json(followers.map(UserMapper.toProfileDto));
   }
 }

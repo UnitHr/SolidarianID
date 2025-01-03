@@ -7,14 +7,18 @@ import { UserPassword } from './domain/Password';
 
 export class UserMapper {
   static toDomain(raw: Persistence.User): Domain.User {
-    return Domain.User.create(
+    const user = Domain.User.create(
       {
         ...raw,
         birthDate: UserBirthDate.create(new Date(raw.birthDate)),
         password: UserPassword.fromHashedPassword(raw.password),
+        followers: raw.followers?.map((follower) =>
+          UserMapper.toDomain(follower),
+        ),
       },
       new UniqueEntityID(raw.id),
     );
+    return user;
   }
 
   static toPersistence(user: Domain.User): Persistence.User {
@@ -29,6 +33,9 @@ export class UserMapper {
       showAge: user.showAge,
       showEmail: user.showEmail,
       role: user.role,
+      followers: user.followers?.map((follower) =>
+        UserMapper.toPersistence(follower),
+      ),
     };
   }
 

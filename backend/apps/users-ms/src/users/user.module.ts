@@ -7,7 +7,7 @@ import { UsersController } from './application/user.controller';
 import { UserService } from './application/user.service';
 import { UserServiceImpl } from './application/user.service.impl';
 import { UserRepositoryTypeOrm } from './infra/user.repository.typeorm';
-import { UserDomainExceptionFilter } from './infra/filters/user-domain-exception-filter';
+import { UserDomainExceptionFilter } from './infra/filters/user-domain-exception.filter';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],

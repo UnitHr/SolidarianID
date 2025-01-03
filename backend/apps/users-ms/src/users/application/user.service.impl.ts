@@ -90,4 +90,16 @@ export class UserServiceImpl implements UserService {
   async getUserByEmail(email: string): Promise<User> {
     return this.userRepository.findByEmail(email);
   }
+
+  async followUser(id: string, followerId: string): Promise<void> {
+    const followed = await this.userRepository.findById(id);
+    const follower = await this.userRepository.findById(followerId);
+    follower.followUser(followed);
+    await this.userRepository.save(followed);
+  }
+
+  async getUserFollowers(id: string): Promise<User[]> {
+    const user = await this.userRepository.findById(id);
+    return user.followers;
+  }
 }

@@ -1,18 +1,24 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
-import * as Domain from './domain';
+import { mapODSEnumListToDetails } from '@common-lib/common-lib/common/ods';
 import { CauseDto } from './dto/cause.dto';
-import * as Persistence from './infra/persistence';
 import { CauseEndDate } from './domain/CauseEndDate';
+import * as Persistence from './infra/persistence';
+import * as Domain from './domain';
 
 export class CauseMapper {
   static toDomain(raw: Persistence.Cause): Domain.Cause {
     return Domain.Cause.create(
       {
-        ...raw,
-        ods: raw.ods as number[],
-        endDate: CauseEndDate.create(raw.endDate).getValue(),
-        actions: raw.actions as string[],
-        supporters: raw.supporters as string[],
+        title: raw.title,
+        description: raw.description,
+        ods: raw.ods,
+        endDate: CauseEndDate.create(raw.endDate),
+        communityId: raw.communityId,
+        actionsIds: raw.actionsIds || [],
+        supportersIds: raw.supportersIds || [],
+        createdBy: raw.createdBy,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     );
@@ -26,8 +32,9 @@ export class CauseMapper {
       ods: cause.ods,
       endDate: cause.endDate.value,
       communityId: cause.communityId,
-      actions: cause.actions,
-      supporters: cause.supporters,
+      actionsIds: cause.actionsIds,
+      supportersIds: cause.supportersIds,
+      createdBy: cause.createdBy,
     };
   }
 
@@ -36,10 +43,12 @@ export class CauseMapper {
       id: cause.id.toString(),
       title: cause.title,
       description: cause.description,
-      ods: cause.ods, // TODO: Map to ODS dictionary to show the name and description
+      ods: mapODSEnumListToDetails(cause.ods),
       endDate: cause.endDate.value,
       communityId: cause.communityId,
-      // TODO: ? Add actions and supporters
+      createdBy: cause.createdBy,
+      createdAt: cause.createdAt,
+      updatedAt: cause.updatedAt,
     };
   }
 }

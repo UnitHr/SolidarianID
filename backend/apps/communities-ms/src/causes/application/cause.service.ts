@@ -1,21 +1,51 @@
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { CauseSortBy, SortDirection } from '@common-lib/common-lib/common/enum';
 import { Cause } from '../domain';
 
 export abstract class CauseService {
-  abstract getAllCauses(): Promise<Cause[]>;
+  abstract getAllCauses(
+    odsFilter?: ODSEnum[],
+    nameFilter?: string,
+    sortBy?: CauseSortBy,
+    sortDirection?: SortDirection,
+    page?: number,
+    limit?: number,
+  ): Promise<{
+    data: Cause[];
+    total: number;
+  }>;
+
+  abstract createCause(
+    title: string,
+    description: string,
+    ods: ODSEnum[],
+    endDate: Date,
+    communityId: string,
+    createdBy: string,
+  ): Promise<string>;
+
+  abstract validateCauseEndDate(endDate: Date): boolean;
 
   abstract getCause(id: string): Promise<Cause>;
 
   abstract updateCause(
     id: string,
     description?: string,
-    ods?: number[],
+    ods?: ODSEnum[],
   ): Promise<void>;
+
+  abstract getCauseSupporters(
+    id: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{
+    data: string[];
+    total: number;
+  }>;
+
+  abstract addCauseSupporter(id: string, userId: string): Promise<void>;
 
   abstract getCauseActions(id: string): Promise<string[]>;
 
-  abstract createCauseAction(id: string, description: string): Promise<void>;
-
-  abstract getCauseSupporters(id: string): Promise<string[]>;
-
-  abstract addCauseSupporter(id: string, userId: string): Promise<void>;
+  abstract addCauseAction(): Promise<void>;
 }

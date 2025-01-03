@@ -8,89 +8,51 @@ import {
   Post,
   Res,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { ActionService } from './action.service';
 import { UpdateActionDto } from '../dto/update-action.dto';
-import { EconomicContributionDto } from '../dto/contributions/create-economic-contribution.dto';
-import {
-  CreateEconomicActionDto,
-  CreateGoodsCollectionActionDto,
-  CreateVolunteerActionDto,
-} from '../dto/create-action.dto';
-import { ContributionService } from './contribution.service';
-import { GoodsContributionDto } from '../dto/contributions/create-goods-contribution.dto';
-import { VolunteerContributionDto } from '../dto/contributions/create-volunteer-contribution.dto';
+import { CreateActionDto } from '../dto/create-action.dto';
 import { ActionMapper } from '../mapper/action.mapper';
 import { QueryPaginationDto } from '../dto/query-pagination.dto';
-import { PaginatedResponse } from '../dto/PaginatedResponse';
+import { PaginatedResponse } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { ActionDto } from '../dto/action.dto';
+import { CreateContributionDto } from '../dto/create-contribution.dto';
+import { ActionDomainExceptionFilter } from '../infra/filters/action-domain-exception.filter';
 
 @Controller('actions')
+@UseFilters(ActionDomainExceptionFilter)
 export class ActionController {
-  constructor(
-    private readonly actionService: ActionService,
-    private readonly contributionService: ContributionService,
-  ) {}
+  constructor(private readonly actionService: ActionService) {}
 
-  @Post('economic')
-  async createEconomicAction(
-    @Body() createActionDto: CreateEconomicActionDto,
+  @Public()
+  @Post()
+  async createAction(
+    @Body() createActionDto: CreateActionDto,
     @Res() res: Response,
   ) {
-    const { title, description, causeId, targetAmount } = createActionDto;
-
-    const result = await this.actionService.createEconomicAction(
+    const {
+      type,
       title,
       description,
       causeId,
-      targetAmount,
-    );
-
-    const locationUrl = `/actions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  }
-
-  @Post('goodsCollection')
-  async createGoodsCollectionAction(
-    @Body() createActionDto: CreateGoodsCollectionActionDto,
-    @Res() res: Response,
-  ) {
-    const { title, description, causeId, goodType, quantity, unit } =
-      createActionDto;
-
-    const result = await this.actionService.createGoodsCollectionAction(
-      title,
-      description,
-      causeId,
-      goodType,
-      quantity,
+      target,
       unit,
-    );
+      goodType,
+      location,
+      date,
+    } = createActionDto;
 
-    const locationUrl = `/actions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  }
-
-  @Post('volunteer')
-  async createVolunteerAction(
-    @Body() createActionDto: CreateVolunteerActionDto,
-    @Res() res: Response,
-  ) {
-    const { title, description, causeId, targetVolunteers, location, date } =
-      createActionDto;
-
-    const result = await this.actionService.createVolunteerAction(
+    const result = await this.actionService.createAction(
+      type,
       title,
       description,
       causeId,
-      targetVolunteers,
+      target,
+      unit,
+      goodType,
       location,
       date,
     );
@@ -102,6 +64,7 @@ export class ActionController {
       .json({ id: result.id });
   }
 
+  @Public()
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -120,13 +83,9 @@ export class ActionController {
     res.status(HttpStatus.OK).json([action]);
   }
 
-  // TODO: find by filters
-
+  @Public()
   @Get()
-  async findAll(
-    @Query() query: QueryPaginationDto,
-    // @Res() res: Response,
-  ) {
+  async findAll(@Query() query: QueryPaginationDto) {
     const page = query.page || 1;
     const size = query.size || 10;
 
@@ -138,19 +97,14 @@ export class ActionController {
       limit,
     );
 
-    const paginatedResponse: PaginatedResponse<ActionDto> = {
-      data: data.map((action) => ActionMapper.toDTO(action)),
-      pagination: {
-        totalItems: total,
-        totalPages: Math.ceil(total / size),
-        currentPage: page,
-        pageSize: size,
-      },
-    };
+    const paginatedResponse = new PaginatedResponse(
+      data.map((action) => ActionMapper.toDTO(action)),
+      total,
+      page,
+      size,
+    );
 
     return paginatedResponse;
-
-    // res.status(HttpStatus.OK).json(paginatedResponse);
   }
 
   @Get('cause/:causeId')
@@ -159,81 +113,21 @@ export class ActionController {
     return actions.map(ActionMapper.toDTO);
   }
 
-  @Patch(':actionId/contribute/economic')
-  async makeEconomicContribution(
+  @Public()
+  @Patch(':actionId/contribute')
+  async makeContribution(
     @Param('actionId') actionId: string,
-    @Body() contributionDto: EconomicContributionDto,
+    @Body() contributionDto: CreateContributionDto,
     @Res() res: Response,
   ) {
-    const { userId, date, description, donatedAmount } = contributionDto;
+    const { userId, date, amount, unit } = contributionDto;
 
-    const result = await this.contributionService.makeEconomicContribution(
+    const result = await this.actionService.makeContribution(
       userId,
       actionId,
       date,
-      donatedAmount,
-      description,
-    );
-
-    const locationUrl = `/actions/${actionId}/contributions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  }
-
-  @Patch(':actionId/contribute/goodsCollection')
-  async makeGoodsCollectionContribution(
-    @Param('actionId') actionId: string,
-    @Body() contributionDto: GoodsContributionDto,
-    @Res() res: Response,
-  ) {
-    const { userId, date, description, goodType, donatedQuantity, unit } =
-      contributionDto;
-
-    const result =
-      await this.contributionService.makeGoodsCollectionContribution(
-        userId,
-        actionId,
-        date,
-        goodType,
-        donatedQuantity,
-        unit,
-        description,
-      );
-
-    const locationUrl = `/actions/${actionId}/contributions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
-  }
-
-  @Patch(':actionId/contribute/volunteer')
-  async makeVolunteerContribution(
-    @Param('actionId') actionId: string,
-    @Body() contributionDto: VolunteerContributionDto,
-    @Res() res: Response,
-  ) {
-    const {
-      userId,
-      date,
-      description,
-      volunteerNumber,
-      hoursContributed,
-      task,
-      location,
-    } = contributionDto;
-
-    const result = await this.contributionService.makeVolunteerContribution(
-      userId,
-      actionId,
-      date,
-      volunteerNumber,
-      hoursContributed,
-      task,
-      location,
-      description,
+      amount,
+      unit,
     );
 
     const locationUrl = `/actions/${actionId}/contributions/${result.id}`;

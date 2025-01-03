@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { APP_FILTER } from '@nestjs/core';
 import { ActionService } from './application/action.service';
 import { ActionController } from './application/action.controller';
 import { Action } from './infra/persistence';
@@ -7,8 +8,7 @@ import { ActionRepository } from './action.repository';
 import { ActionServiceImpl } from './application/action.service.impl';
 import { ActionRepositoryMongoDB } from './infra/action.repository.mongodb';
 import { ActionSchema } from './infra/persistence/Action';
-import { ContributionService } from './application/contribution.service';
-import { ContributionServiceImpl } from './application/contribution.service.impl';
+import { ActionDomainExceptionFilter } from './infra/filters/action-domain-exception.filter';
 
 @Module({
   imports: [
@@ -26,13 +26,14 @@ import { ContributionServiceImpl } from './application/contribution.service.impl
       useClass: ActionServiceImpl,
     },
     {
-      provide: ContributionService,
-      useClass: ContributionServiceImpl,
-    },
-    {
       provide: ActionRepository,
       useClass: ActionRepositoryMongoDB,
     },
+    {
+      provide: APP_FILTER,
+      useClass: ActionDomainExceptionFilter,
+    },
   ],
+  exports: [ActionService],
 })
 export class ActionModule {}

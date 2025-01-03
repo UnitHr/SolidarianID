@@ -1,7 +1,7 @@
 export class ActionDto {
   id: string;
 
-  status: 'pending' | 'in_progress' | 'completed';
+  status: string;
 
   type: string;
 
@@ -11,21 +11,13 @@ export class ActionDto {
 
   causeId: string;
 
-  targetAmount?: number;
+  target: number;
 
-  currentAmount?: number;
+  unit: string;
+
+  achieved: number;
 
   foodType?: string;
-
-  quantity?: number;
-
-  unit?: string;
-
-  collectQuantity?: number;
-
-  targetVolunteers?: number;
-
-  currentVolunteers?: number;
 
   location?: string;
 

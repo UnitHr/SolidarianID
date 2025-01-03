@@ -1,9 +1,18 @@
 {{! partials/navbar.hbs }}
 <header class='bg-gray-800 text-white py-4'>
   <nav class='container mx-auto flex justify-between'>
-    <a href='/' class='text-xl font-bold'>
-      SolidarianID
-    </a>
+    <div class="flex items-center space-x-6">
+      <a href='/' class='text-xl font-bold'>
+        SolidarianID
+      </a>
+
+      {{#if (eq user.roles 'user')}}
+      <a href='/validation' class='hover:underline'>
+        Dashboard
+      </a>
+      {{/if}}
+    </div>
+
     <ul class='flex space-x-4'>
       {{#if (not user)}}
       <li>
@@ -18,15 +27,8 @@
       </li>
       {{/if}}
 
-      {{#if (not activePage 'adminDashboard')}}
-      <li>
-        <a href='/validation' class='hover:underline'>
-          Administrador Dashboard
-        </a>
-      </li>
-      {{/if}}
       {{#if user}}
-      <p class="text-sm">Welcome, {{user.email}} ({{user.role}})</p>
+      <p class="text-base">Welcome, {{user.firstName}} {{user.lastName}} [ {{user.roles}} ]</p>
       {{/if}}
     </ul>
   </nav>

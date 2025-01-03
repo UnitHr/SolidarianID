@@ -1,5 +1,19 @@
-import { Get, Controller, Render, Request } from '@nestjs/common';
+import {
+  Get,
+  Controller,
+  Render,
+  Request,
+  Body,
+  Res,
+  Post,
+  Req,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { HandlebarsHelpersService } from './helper.service';
+import axios from 'axios';
+import * as jwt from 'jsonwebtoken';
+import { Constants } from './common/constants';
 
 @Controller()
 export class AppController {
@@ -9,16 +23,63 @@ export class AppController {
 
   @Get()
   @Render('home')
-  home(@Request() req) {
-    console.log('req', req.user);
-    return { user: req.user, title: 'Home', activePage: 'home' };
+  async home(@Req() req) {
+    const user = req.cookies.user;
+    if (!user) {
+      return { title: 'Home', activePage: 'home' };
+    }
+    return { user: user, title: 'Home', activePage: 'home' };
+  }
+
+  @Post('authenticate')
+  async authenticate(@Body() body, @Res() res) {
+    const { email, password } = body;
+    try {
+      const loginResponse = await axios.post(Constants.USER_MS_LOGIN, {
+        email,
+        password,
+      });
+
+      const token = loginResponse.data.access_token;
+
+      if (!token) {
+        throw new HttpException('Token not provided', HttpStatus.FORBIDDEN);
+      }
+
+      const playload = jwt.verify(token, Constants.TOKEN_SECRET);
+
+      const userResponse = await axios.get(
+        Constants.USER_MS_bASE_URL + '/' + playload.sub.value,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const userData = {
+        firstName: userResponse.data.firstName,
+        lastName: userResponse.data.lastName,
+        roles: playload.roles,
+        token: token,
+      };
+
+      res.cookie('user', userData, {
+        httpOnly: true,
+        maxAge: 3600000, // expires in 1 hour
+        sameSite: 'strict', // CSRF protection
+      });
+
+      // redirect to home page with token
+      res.redirect('/');
+    } catch (error) {
+      console.log(error);
+      res.render('login', { error: 'Invalid credentials' });
+    }
   }
 
   @Get('/login')
   @Render('login')
-  getLogin(@Request() req: any) {
+  getLogin() {
     return {
-      user: req.user,
       title: 'Login',
       activePage: 'login',
     };
@@ -26,9 +87,8 @@ export class AppController {
 
   @Get('/register')
   @Render('register')
-  getRegister(@Request() req: any) {
+  getRegister() {
     return {
-      user: req.user,
       title: 'Register',
       activePage: 'register',
     };
@@ -36,9 +96,15 @@ export class AppController {
 
   @Get('/validation')
   @Render('platform-admin/validation')
-  getValidation(@Request() req: any) {
+  getValidation(@Request() req) {
+    // check if user is authenticated
+    const user = req.cookies.user;
+    if (!user) {
+      return { title: 'Home', activePage: 'home' };
+    }
+
     return {
-      user: req.user,
+      user: user,
       title: 'Validation',
       activePage: 'adminDashboard',
       userAutenticate: true,

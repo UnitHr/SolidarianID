@@ -3,6 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -19,6 +20,8 @@ async function bootstrap() {
 
   // Set default layout
   app.set('view options', { layout: 'layouts/main' });
+
+  app.use(cookieParser());
 
   await app.listen(3005); // TODO: Load port from .env file
   console.log(`Frontend is running on: ${await app.getUrl()}`);

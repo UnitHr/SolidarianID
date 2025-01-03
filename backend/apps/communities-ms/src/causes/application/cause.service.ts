@@ -8,7 +8,12 @@ export abstract class CauseService {
     nameFilter?: string,
     sortBy?: CauseSortBy,
     sortDirection?: SortDirection,
-  ): Promise<Cause[]>;
+    page?: number,
+    limit?: number,
+  ): Promise<{
+    data: Cause[];
+    total: number;
+  }>;
 
   abstract createCause(
     title: string,
@@ -29,7 +34,14 @@ export abstract class CauseService {
     ods?: ODSEnum[],
   ): Promise<void>;
 
-  abstract getCauseSupporters(id: string): Promise<string[]>;
+  abstract getCauseSupporters(
+    id: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{
+    data: string[];
+    total: number;
+  }>;
 
   abstract addCauseSupporter(id: string, userId: string): Promise<void>;
 

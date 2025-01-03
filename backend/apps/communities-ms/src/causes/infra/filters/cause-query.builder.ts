@@ -8,7 +8,11 @@
  * build these filters and sorting options.
  */
 
-import { CauseSortBy, SortDirection } from '@common-lib/common-lib/common/enum';
+import {
+  CauseSortBy,
+  PaginationDefaults,
+  SortDirection,
+} from '@common-lib/common-lib/common/enum';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
 
 export type CauseFilter = {
@@ -18,10 +22,20 @@ export type CauseFilter = {
 
 export type CauseSort = Record<string, 1 | -1>;
 
+export type PaginationParams = {
+  skip: number;
+  limit: number;
+};
+
 export class CauseQueryBuilder {
   private filter: CauseFilter = {};
 
   private sort: CauseSort = {};
+
+  private pagination: PaginationParams = {
+    skip: 0,
+    limit: PaginationDefaults.DEFAULT_LIMIT,
+  };
 
   addOdsFilter(odsFilter?: ODSEnum[]): this {
     if (odsFilter && odsFilter.length > 0) {
@@ -47,11 +61,34 @@ export class CauseQueryBuilder {
     return this;
   }
 
+  addPagination(
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): this {
+    // Validate that page is at least 1
+    const validatedPage = Math.max(page, 1);
+
+    // Validate that limit is within the allowed values
+    const validatedLimit = Math.min(
+      Math.max(limit, 1), // Ensure it is at least 1
+      PaginationDefaults.MAX_LIMIT, // Respect the maximum allowed limit
+    );
+
+    const skip = (validatedPage - 1) * validatedLimit;
+
+    this.pagination = { skip, limit: validatedLimit };
+    return this;
+  }
+
   buildFilter(): CauseFilter {
     return this.filter;
   }
 
   buildSort(): CauseSort {
     return this.sort;
+  }
+
+  buildPagination(): PaginationParams {
+    return this.pagination;
   }
 }

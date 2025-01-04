@@ -1,0 +1,23 @@
+{
+    "supportPercentageByODS": [
+        {
+            "ods": "ODS 1",
+            "percentage": 10
+        },
+        {
+            "ods": "ODS 2",
+            "percentage": 12
+        },
+        {
+            "ods": "ODS 3",
+            "percentage": 8
+        },
+        {   "ods": "ODS 4",
+            "percentage": 5
+        },
+        {
+            "ods": "ODS 5",
+            "percentage": 15
+        }
+    ]
+}

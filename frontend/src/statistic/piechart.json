@@ -1,0 +1,24 @@
+{
+    "supportPercentageByCommunity": [
+        {
+            "community": "Community 1",
+            "percentage": 20
+        },
+        {
+            "community": "Community 2",
+            "percentage": 30
+        },
+        {
+            "community": "Community 3",
+            "percentage": 50
+        },
+        {
+            "community": "Community 4",
+            "percentage": 40
+        },
+        {
+            "community": "Community 5",
+            "percentage": 60
+        }
+    ]
+}

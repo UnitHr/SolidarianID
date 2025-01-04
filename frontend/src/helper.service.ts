@@ -21,5 +21,10 @@ export class HandlebarsHelpersService {
     hbs.registerHelper('not', function (v1) {
       return !v1;
     });
+
+    hbs.registerHelper('inc', (value) => parseInt(value) + 1);
+    hbs.registerHelper('dec', (value) => parseInt(value) - 1);
+    hbs.registerHelper('gt', (a, b) => a > b);
+    hbs.registerHelper('lt', (a, b) => a < b);
   }
 }

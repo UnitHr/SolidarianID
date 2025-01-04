@@ -1,23 +1,132 @@
 <section>
   <div class="bg-white shadow-md rounded-lg p-4">
-    <h2 class="text-lg font-semibold mb-4">Pending Request</h2>
+    <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
+
     <div class="space-y-4 max-h-64 overflow-y-auto">
-      {{#each request}}
+      {{#each requests}}
       <div class="flex items-center justify-between border border-gray-300 rounded-md p-3">
-        <div class="flex items-center space-x-3">
-          <input type="checkbox" id="request-{{this.id}}" class="h-4 w-4">
-          <label for="request-{{this.id}}" class="text-sm font-medium">{{this.description}}</label>
+        <div class="flex flex-row items-center space-x-4">
+          <input type="checkbox" id="request-{{this.id}}" class="h-4 w-4 mr-4" />
+          <div class="flex flex-col">
+            <span class="text-sm font-medium text-gray-700">{{this.title}}</span> <!-- Título -->
+            <span class="text-xs text-gray-500">{{this.description}}</span> <!-- Descripción -->
+          </div>
         </div>
-        <button class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-4 rounded-md">
+
+        <!-- Reject Button -->
+        <button class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-4 rounded-md"
+          onclick="openRejectModal('{{this.id}}')">
           Reject
         </button>
       </div>
       {{/each}}
     </div>
+
+    <!-- Modal for Rejection Reason -->
+    <div id="reject-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
+      <div class="bg-white p-6 rounded-md w-1/3">
+        <h3 class="text-xl font-semibold mb-4">Rejection Reason</h3>
+        <textarea id="rejection-reason" class="w-full p-2 border rounded-md mb-4" rows="4"
+          placeholder="Enter the reason for rejection"></textarea>
+        <div class="flex justify-between">
+          <button onclick="rejectRequest()" class="bg-red-500 text-white py-2 px-4 rounded-md">Submit</button>
+          <button onclick="closeRejectModal()" class="bg-gray-500 text-white py-2 px-4 rounded-md">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <div class="text-center mt-6">
-      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md">
+      <!-- Botón para validar solicitudes seleccionadas -->
+      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md"
+        onclick="validateSelectedRequests()">
         Validate
       </button>
     </div>
   </div>
 </section>
+
+<script>
+  // Function to get all selected request IDs
+  function getSelectedRequests() {
+    const selectedRequests = [];
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked'); // Obtener todos los checkboxes seleccionados
+
+    checkboxes.forEach((checkbox) => {
+      const requestId = checkbox.id.replace('request-', ''); // Extraer el ID de la solicitud del ID del checkbox
+      selectedRequests.push(requestId);
+    });
+
+    return selectedRequests;
+  }
+
+  // Validate all selected requests
+  function validateSelectedRequests() {
+    const selectedRequestIds = getSelectedRequests();
+
+    if (selectedRequestIds.length === 0) {
+      alert('Please select at least one request to validate.');
+      return;
+    }
+
+    // Send the selected request IDs to the backend for validation
+    fetch('/community-requests/validate-requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ requestIds: selectedRequestIds }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Selected requests validated successfully');
+          location.reload(); // Optionally, refresh the list of requests
+        } else {
+          alert('Failed to validate selected requests');
+        }
+      })
+      .catch(error => {
+        alert('Error validating selected requests');
+        console.error(error);
+      });
+  }
+
+  // Open modal for rejection
+  function openRejectModal(requestId) {
+    document.getElementById('reject-modal').dataset.requestId = requestId;
+    document.getElementById('reject-modal').classList.remove('hidden');
+  }
+
+  // Close modal
+  function closeRejectModal() {
+    document.getElementById('reject-modal').classList.add('hidden');
+  }
+
+  // Submit rejection
+  function rejectRequest() {
+    const requestId = document.getElementById('reject-modal').dataset.requestId;
+    const reason = document.getElementById('rejection-reason').value;
+
+    fetch(`/community-requests/reject-request/${requestId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ reason }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Request rejected successfully');
+          closeRejectModal();
+          location.reload(); // Optionally, refresh the list of requests
+        } else {
+          alert('Failed to reject request');
+        }
+      })
+      .catch(error => {
+        alert('Error rejecting request');
+        console.error(error);
+      });
+  }
+</script>

@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.chart-wrapper {
+    display: flex; /* Coloca los elementos en una fila */
+    flex-wrap: wrap; /* Permite que los elementos se ajusten si el espacio es insuficiente */
+    justify-content: space-between; /* Añade espacio entre los elementos */
+    gap: 20px; /* Espaciado entre las gráficas */
+    width: 100%;
+}
+
+/* Contenedor de cada gráfica */
+.chart-container {
+    flex-basis: 45%; /* Cada gráfica ocupará el 45% del espacio disponible */
+    max-width: 45%;  /* Limita el ancho máximo al 45% */
+    height: auto;    /* Mantiene la altura dinámica */
+    margin: 0 10px;  /* Opcional: espaciado entre las gráficas */
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 768px) {
+    .chart-wrapper {
+        flex-direction: column; /* Cambia el diseño a columna */
+        align-items: center;     /* Centra las gráficas */
+    }
+
+    .chart-container {
+        max-width: 100%; /* Las gráficas ocuparán todo el ancho en pantallas pequeñas */
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "communitiesByOds": [
+      { "ods": "ODS 1", "communities": 10, "causes":5 },
+      { "ods": "ODS 2", "communities": 12, "causes":5 },
+      { "ods": "ODS 3", "communities": 8, "causes":8 }  
+    ]
+}

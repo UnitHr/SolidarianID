@@ -10,6 +10,7 @@ import {
   HttpException,
   HttpStatus,
   Query,
+  Param,
 } from '@nestjs/common';
 import { HandlebarsHelpersService } from './helper.service';
 import axios from 'axios';
@@ -111,6 +112,7 @@ export class AppController {
     const results = await this.appService.getCreateCommunityRequests(
       offset,
       limit,
+      user.token,
     );
 
     return {
@@ -123,15 +125,43 @@ export class AppController {
     };
   }
 
-  @Get('/statistics')
-  @Render('platform-admin/statistics')
-  getStatistics() {
-    return {
-      title: 'Statistics',
-      activePage: 'adminDashboard',
-      userAutenticate: true,
-    };
+  // Endpoint para validar varias solicitudes seleccionadas
+  /*
+  @Post('validate-requests')
+  async validateRequests(
+    @Body() body: { requestIds: string[] }, // Lista de IDs de las solicitudes a validar
+    @Res() res: Response,
+  ) {
+    try {
+      const result = await this.appService.validateRequests(body.requestIds);
+      //return res.status(200).json(result);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error al validar las solicitudes' });
+    }
   }
+
+  // Endpoint para rechazar una solicitud
+  @Post('reject-request/:id')
+  async rejectRequest(
+    @Param('id') requestId: string, 
+    @Body() body: { reason: string }, 
+    @Res() res: Response,
+  ) {
+    try {
+      const result = await this.appService.rejectRequest(
+        requestId,
+        body.reason,
+      );
+      return res.status(200).json(result);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error al rechazar la solicitud' });
+    }
+  }
+  */
 
   @Get('/reports')
   @Render('platform-admin/reports')

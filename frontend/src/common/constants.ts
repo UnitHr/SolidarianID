@@ -9,4 +9,7 @@ export class Constants {
 
   public static readonly COMMUNITY_MS_BASE_URL =
     'http://localhost:3002/api/v1/communities';
+
+  public static readonly STATISTICS_MS_BASE_URL =
+    'http://localhost:3002/api/v1/statistics';
 }

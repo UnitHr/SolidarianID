@@ -1,0 +1,24 @@
+{
+    "actionsProgressByCommunity": [
+        {
+            "community": "Comunidad 1",
+            "progress": 50
+        },
+        {
+            "community": "Comunidad 2",
+            "progress": 75
+        },
+        {
+            "community": "Comunidad 3",
+            "progress": 100
+        },
+        {
+            "community": "Comunidad 4",
+            "progress": 25
+        },
+        {
+            "community": "Comunidad 5",
+            "progress": 50
+        }
+    ]
+}

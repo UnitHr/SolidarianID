@@ -1,10 +1,9 @@
-import {
-  Entity,
-  UniqueEntityID,
-} from '@common-lib/common-lib/core/domain/Entity';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { ActionStatus } from './ActionStatus';
 import { ActionType } from './ActionType';
 import { Contribution } from './Contribution';
+import { ActionContributedEvent } from './events/ActionContributedEvent';
 
 export interface ActionProps {
   type: ActionType;
@@ -18,7 +17,7 @@ export interface ActionProps {
   achieved?: number;
 }
 
-export abstract class Action extends Entity<ActionProps> {
+export abstract class Action extends EntityRoot<ActionProps> {
   protected constructor(props: ActionProps, id?: UniqueEntityID) {
     super(props, id);
     this.props.status = props.status || ActionStatus.PENDING;
@@ -105,7 +104,7 @@ export abstract class Action extends Entity<ActionProps> {
     return (this.achieved / this.target) * 100;
   }
 
-  contribute(contribution: Contribution): void {
+  contribute(contribution: Contribution): ActionContributedEvent {
     if (this.status === ActionStatus.PENDING)
       this.status = ActionStatus.IN_PROGRESS;
     this.addContribution(contribution);
@@ -113,5 +112,15 @@ export abstract class Action extends Entity<ActionProps> {
     this.achieved += contribution.amount;
 
     if (this.achieved >= this.target) this.status = ActionStatus.COMPLETED;
+
+    const event = new ActionContributedEvent(
+      contribution.userId,
+      this.id.toString(),
+      contribution.amount,
+    );
+
+    this.apply(event);
+
+    return event;
   }
 }

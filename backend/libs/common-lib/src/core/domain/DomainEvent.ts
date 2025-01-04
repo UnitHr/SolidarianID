@@ -1,4 +1,6 @@
-export abstract class DomainEvent {
+import { IEvent } from '@nestjs/cqrs';
+
+export abstract class DomainEvent implements IEvent {
   public readonly type: string;
 
   public readonly date: Date;

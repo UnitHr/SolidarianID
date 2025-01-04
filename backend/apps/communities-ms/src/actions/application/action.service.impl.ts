@@ -10,10 +10,15 @@ import { ActionRepository } from '../action.repository';
 import * as Exceptions from '../exceptions';
 import { ActionFactory } from '../domain/ActionFactory';
 import { ActionQueryBuilder } from '../infra/filters/action-query.builder';
+import { ActionEventPublisher } from '../action.event-publisher';
+import { ActionCreatedEvent } from '../domain/events/ActionCreatedEvent';
 
 @Injectable()
 export class ActionServiceImpl implements ActionService {
-  constructor(private readonly actionRepository: ActionRepository) {}
+  constructor(
+    private readonly actionRepository: ActionRepository,
+    private eventPublisher: ActionEventPublisher,
+  ) {}
 
   async createAction(
     type,
@@ -48,7 +53,17 @@ export class ActionServiceImpl implements ActionService {
     // Save the new action in the repository
     const savedAction = await this.actionRepository.save(action);
 
-    return savedAction.id.toString();
+    const id = savedAction.id.toString();
+
+    // Create and publish the ActionCreatedEvent
+    const event = new ActionCreatedEvent(
+      id,
+      savedAction.type,
+      savedAction.title,
+    );
+    await this.eventPublisher.publish(event);
+
+    return id;
   }
 
   async updateAction(
@@ -124,7 +139,9 @@ export class ActionServiceImpl implements ActionService {
     unit: string,
   ): Promise<string> {
     // Find the action by Id
-    const action = await this.actionRepository.findById(actionId);
+    const action = this.eventPublisher.mergeObjectContext(
+      await this.actionRepository.findById(actionId),
+    );
 
     if (action.unit !== unit) {
       throw new Exceptions.InvalidContributionUnitError(
@@ -147,8 +164,11 @@ export class ActionServiceImpl implements ActionService {
       unit,
     });
 
-    action.contribute(contribution);
+    // Publish the ActionContributedEvent
+    const event = action.contribute(contribution);
     await this.actionRepository.save(action);
+
+    await this.eventPublisher.publish(event);
 
     return contribution.id.toString();
   }

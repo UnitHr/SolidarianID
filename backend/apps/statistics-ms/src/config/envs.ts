@@ -9,6 +9,10 @@ interface EnvVars {
   NODE_ENV: string;
   STATISTICS_MS_HOST: string;
   STATISTICS_MS_PORT: number;
+  KAFKA_BROKERS: string;
+  KAFKA_CLIENT_ID: string;
+  KAFKA_GROUP_ID: string;
+  KAFKA_TOPIC_COMMUNITIES: string;
 }
 
 const envsSchema = joi
@@ -19,6 +23,10 @@ const envsSchema = joi
       .required(),
     STATISTICS_MS_HOST: joi.string().required(),
     STATISTICS_MS_PORT: joi.number().required(),
+    KAFKA_BROKERS: joi.string().required(),
+    KAFKA_CLIENT_ID: joi.string().required(),
+    KAFKA_GROUP_ID: joi.string().required(),
+    KAFKA_TOPIC_COMMUNITIES: joi.string().required(),
   })
   .unknown(true);
 
@@ -33,4 +41,8 @@ export const envs = {
   nodeEnv: envVars.NODE_ENV,
   statisticsMsHost: envVars.STATISTICS_MS_HOST,
   statisticsMsPort: envVars.STATISTICS_MS_PORT,
+  kafkaBrokers: envVars.KAFKA_BROKERS,
+  kafkaClientId: envVars.KAFKA_CLIENT_ID,
+  kafkaGroupId: envVars.KAFKA_GROUP_ID,
+  kafkaTopicCommunities: envVars.KAFKA_TOPIC_COMMUNITIES,
 };

@@ -10,8 +10,10 @@
 
 {{> navbar}}
 
+{{#if (eq user.roles 'user')}}
 {{#if (eq activePage 'adminDashboard')}}
 {{>adminnavbar}}
+{{/if}}
 {{/if}}
 
 <body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">

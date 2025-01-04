@@ -1,5 +1,5 @@
 import { Controller, Get, Render, Req, Res } from '@nestjs/common';
-import { StatisticsService } from './statistics.service';
+import { StatisticsService } from './statistic.service';
 import { HandlebarsHelpersService } from 'src/helper.service';
 
 @Controller('statistics')
@@ -12,19 +12,23 @@ export class StatisticsController {
   @Get()
   @Render('platform-admin/statistics')
   async getCommunitiesByODS(@Req() req, @Res() res) {
-    const token = req.cookies.user;
-    if (!token) {
+    const user = req.cookies.user;
+    if (!user) {
       return res.redirect('/login');
     }
-    const data = await this.statisticsService.getCommunitiesCausesByODS(token);
+    const data = await this.statisticsService.getCommunitiesCausesByODS(
+      user.token,
+    );
 
-    const supportsByOds = await this.statisticsService.getSupportsByODS(token);
+    const supportsByOds = await this.statisticsService.getSupportsByODS(
+      user.token,
+    );
 
     const supportsByCommunity =
-      await this.statisticsService.getSupportsByCommunity(token);
+      await this.statisticsService.getSupportsByCommunity(user.token);
 
     const actionsProgressByCommunity =
-      await this.statisticsService.getActionsProgressByCommunity(token);
+      await this.statisticsService.getActionsProgressByCommunity(user.token);
 
     return {
       data: JSON.stringify(data.communitiesByOds),
@@ -35,6 +39,9 @@ export class StatisticsController {
       actionsProgressByCommunity: JSON.stringify(
         actionsProgressByCommunity.actionsProgressByCommunity,
       ),
+      user: user,
+      activePage: 'adminDashboard',
+      title: 'Statistics',
     };
   }
 }

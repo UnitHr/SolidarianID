@@ -17,11 +17,12 @@ export class StatisticsService {
 
       return response.data;
       */
-      // Ruta al archivo JSON
-      const filePath = join(process.cwd(), 'src', 'statistic', 'datas.json');
 
       // Leer el archivo JSON
-      const fileContent = readFileSync(filePath, 'utf-8');
+      const fileContent = readFileSync(
+        '../frontend/src/modules/statistics/datas.json',
+        'utf-8',
+      );
 
       // Parsear el contenido a JSON
       const data = JSON.parse(fileContent);
@@ -49,8 +50,10 @@ export class StatisticsService {
 
       return response.data;
       */
-      const filePath = join(process.cwd(), 'src', 'statistic', 'piechard.json');
-      const fileContent = readFileSync(filePath, 'utf-8');
+      const fileContent = readFileSync(
+        '../frontend/src/modules/statistics/piechard.json',
+        'utf-8',
+      );
       const data = JSON.parse(fileContent);
       return data;
     } catch (error) {
@@ -76,10 +79,11 @@ export class StatisticsService {
       return response.data;
       */
 
-      const filePath = join(process.cwd(), 'src', 'statistic', 'piechart.json');
-      const fileContent = readFileSync(filePath, 'utf-8');
+      const fileContent = readFileSync(
+        '../frontend/src/modules/statistics/piechart.json',
+        'utf-8',
+      );
       const data = JSON.parse(fileContent);
-      console.log(data);
       return data;
     } catch (error) {
       console.error(
@@ -103,10 +107,11 @@ export class StatisticsService {
 
       return response.data;
       */
-      const filePath = join(process.cwd(), 'src', 'statistic', 'progreso.json');
-      const fileContent = readFileSync(filePath, 'utf-8');
+      const fileContent = readFileSync(
+        '../frontend/src/modules/statistics/progreso.json',
+        'utf-8',
+      );
       const data = JSON.parse(fileContent);
-      console.log(data);
       return data;
     } catch (error) {
       console.error(

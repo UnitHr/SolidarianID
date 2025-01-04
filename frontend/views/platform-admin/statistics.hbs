@@ -15,186 +15,36 @@
     </div>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/chart.js"></script>
 <script>
     window.onload = function () {
+
+        // Combined Chart
         const combinedChartData = `{{{ data }}}`;
         const data1 = JSON.parse(combinedChartData);
+        generateCombinedChart(data1, 'combinedChart');
 
-        // Llamada a la función para generar el gráfico
-        const ctx = document.getElementById('combinedChart')?.getContext('2d');
-        if (ctx) {
-            console.log('Canvas encontrado:', ctx);
-            generateCombinedChart(data1, ctx);
-        } else {
-            console.error('Combined chart not found.');
-        }
+        // Pie chart for supports by ODS
+        const supportByOdsData = `{{{ supportsByOds }}}`;
+        const data2 = JSON.parse(supportByOdsData);
+        const labels2 = data2.map((item) => item.ods);
+        const supportsOdsData = data2.map((item) => parseFloat(item.percentage));
+        generateSupportsPieChart(labels2, supportsOdsData, 'supportByOsdPieChart', 'Supports by ODS');
 
-        const data2 = `{{{ supportsByOds }}}`;
-        const supportByOdsData = JSON.parse(data2);
+        // Pie chart for supports by Community
+        const supportByCommunityData = `{{{ supportsByCommunity }}}`;
+        const data3 = JSON.parse(supportByCommunityData);
+        const labels3 = data3.map((item) => item.ods);
+        const supportsCommunityData = data3.map((item) => parseFloat(item.percentage));
+        generateSupportsPieChart(labels3, supportsCommunityData, 'supportByCommunityPieChart', 'Supports by Community');
 
-        // Configurar etiquetas y datos para el gráfico
-        const labels = supportByOdsData.map(item => item.ods);
-        const supportsData = supportByOdsData.map(item => parseFloat(item.percentage));
-
-        // Llamada a la función para generar el gráfico
-        const supportPieChart = document.getElementById('supportByOsdPieChart')?.getContext('2d');
-        if (supportPieChart) {
-            generateSupportsPieChart(labels, supportsData, supportPieChart, 'Supports by ODS');
-        } else {
-            console.error('Support Pie Chart not found.');
-        }
-
-        const data3 = `{{{ supportsByCommunity }}}`;
-        const supportByCommunityData = JSON.parse(data3);
-
-        // Configurar etiquetas y datos para el gráfico
-        const labels2 = supportByCommunityData.map(item => item.ods);
-        const supportsCommunityData = supportByCommunityData.map(item => parseFloat(item.percentage));
-
-        // Llamada a la función para generar el gráfico
-        const supportCommunityPieChart = document.getElementById('supportByCommunityPieChart')?.getContext('2d');
-        if (supportCommunityPieChart) {
-            generateSupportsPieChart(labels2, supportsCommunityData, supportCommunityPieChart, 'Supports by Community');
-        } else {
-            console.error('Support Pie Chart not found.');
-        }
-
-
-        const data4 = `{{{ actionsProgressByCommunity }}}`;
-        const actionsProgressByCommunity = JSON.parse(data4);
-
-        const labels3 = actionsProgressByCommunity.map(item => item.community); // Nombres de las comunidades
-        const progressData = actionsProgressByCommunity.map(item => item.progress); // Progreso de cada comunidad
-
-        // Llamada a la función para generar el gráfico
-        const polarAreaChart = document.getElementById('polarAreaChart')?.getContext('2d');
-        if (polarAreaChart) {
-            generatePolarAreaChart(labels3, progressData, polarAreaChart, 'Actions Progress by Community');
-        } else {
-            console.error('Support Pie Chart not found.');
-        }
+        // Polar Area Chart for Actions Progress by Community
+        const actionsProgressByCommunity = `{{{ actionsProgressByCommunity }}}`;
+        const data4 = JSON.parse(actionsProgressByCommunity);
+        const labels4 = data4.map((item) => item.community); // Nombres de las comunidades
+        const progressData = data4.map((item) => item.progress); // Progreso de cada comunidad
+        generatePolarAreaChart(labels4, progressData, 'polarAreaChart', 'Actions Progress by Community');
 
     };
-
-    function generateCombinedChart(data, ctx) {
-        new Chart(ctx, {
-            type: 'bar', // Type of combined chart (bars + line)
-            data: {
-                labels: data.map((item) => item.ods), // ODS as labels on the X axis
-                datasets: [
-                    {
-                        label: 'Número de Comunidades',
-                        data: data.map((item) => item.communities),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                    },
-                    {
-                        label: 'Número de Causas',
-                        data: data.map((item) => item.causes),
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                        type: 'line', // Set this dataset as a line
-                        fill: false,
-                    },
-                ],
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Number of Communities and Causes by ODS',
-                    },
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        enabled: true,
-                    },
-                },
-            },
-        });
-    }
-
-    function generateSupportsPieChart(labels, data, supportPieChart, title) {
-        return new Chart(supportPieChart, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Percentage of Supports',
-                    data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: title,
-                    },
-                    legend: {
-                        position: 'top',
-                    }
-                }
-            }
-        });
-    }
-
-    function generatePolarAreaChart(labels, data, ctx, title) {
-        return new Chart(ctx, {
-            type: 'polarArea',
-            data: {
-                labels: labels, // Etiquetas de las comunidades
-                datasets: [{
-                    label: 'Progreso de Acciones',
-                    data: data, // Datos del progreso
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.2)', // Color para la comunidad 1
-                        'rgba(54, 162, 235, 0.2)', // Color para la comunidad 2
-                        'rgba(255, 159, 64, 0.2)', // Color para la comunidad 3
-                        'rgba(153, 102, 255, 0.2)', // Color para la comunidad 4
-                        'rgba(255, 99, 132, 0.2)',  // Color para la comunidad 5
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 99, 132, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: title,
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw + '%'; // Mostrar el progreso en el tooltip
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
 
 </script>

@@ -1,0 +1,89 @@
+{
+  "communitiesByOds": [
+    {
+      "ods": "ODS 1",
+      "communities": 10,
+      "causes": 5
+    },
+    {
+      "ods": "ODS 2",
+      "communities": 12,
+      "causes": 5
+    },
+    {
+      "ods": "ODS 3",
+      "communities": 8,
+      "causes": 8
+    },
+    {
+      "ods": "ODS 4",
+      "communities": 5,
+      "causes": 3
+    },
+    {
+      "ods": "ODS 5",
+      "communities": 6,
+      "causes": 4
+    },
+    {
+      "ods": "ODS 6",
+      "communities": 7,
+      "causes": 3
+    },
+    {
+      "ods": "ODS 7",
+      "communities": 8,
+      "causes": 4
+    },
+    {
+      "ods": "ODS 8",
+      "communities": 9,
+      "causes": 5
+    },
+    {
+      "ods": "ODS 9",
+      "communities": 10,
+      "causes": 6
+    },
+    {
+      "ods": "ODS 10",
+      "communities": 11,
+      "causes": 7
+    },
+    {
+      "ods": "ODS 11",
+      "communities": 12,
+      "causes": 8
+    },
+    {
+      "ods": "ODS 12",
+      "communities": 13,
+      "causes": 9
+    },
+    {
+      "ods": "ODS 13",
+      "communities": 14,
+      "causes": 10
+    },
+    {
+      "ods": "ODS 14",
+      "communities": 15,
+      "causes": 11
+    },
+    {
+      "ods": "ODS 15",
+      "communities": 16,
+      "causes": 12
+    },
+    {
+      "ods": "ODS 16",
+      "communities": 17,
+      "causes": 13
+    },
+    {
+      "ods": "ODS 17",
+      "communities": 18,
+      "causes": 14
+    }
+  ]
+}

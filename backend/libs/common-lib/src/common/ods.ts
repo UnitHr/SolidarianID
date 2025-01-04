@@ -7,124 +7,119 @@
  */
 
 export enum ODSEnum {
-  FinDeLaPobreza = 1,
-  HambreCero = 2,
-  SaludYBienestar = 3,
-  EducacionDeCalidad = 4,
-  IgualdadDeGenero = 5,
-  AguaLimpiaYSaneamiento = 6,
-  EnergiaAsequibleYNoContaminante = 7,
-  TrabajoDecenteYCrecimientoEconomico = 8,
-  IndustriaInnovacionEInfraestructura = 9,
-  ReduccionDeLasDesigualdades = 10,
-  CiudadesYComunidadesSostenibles = 11,
-  ProduccionYConsumoResponsables = 12,
-  AccionPorElClima = 13,
-  VidaSubmarina = 14,
-  VidaDeEcosistemasTerrestres = 15,
-  PazJusticiaEInstitucionesSolidas = 16,
-  AlianzasParaLograrLosObjetivos = 17,
+  NoPoverty = 1,
+  ZeroHunger = 2,
+  GoodHealthAndWellBeing = 3,
+  QualityEducation = 4,
+  GenderEquality = 5,
+  CleanWaterAndSanitation = 6,
+  AffordableAndCleanEnergy = 7,
+  DecentWorkAndEconomicGrowth = 8,
+  IndustryInnovationAndInfrastructure = 9,
+  ReducedInequalities = 10,
+  SustainableCitiesAndCommunities = 11,
+  ResponsibleConsumptionAndProduction = 12,
+  ClimateAction = 13,
+  LifeBelowWater = 14,
+  LifeOnLand = 15,
+  PeaceJusticeAndStrongInstitutions = 16,
+  PartnershipsForTheGoals = 17,
 }
 
 export type ODSDetail = { id: ODSEnum; title: string; description: string };
 
 export const odsData: Record<ODSEnum, ODSDetail> = {
-  [ODSEnum.FinDeLaPobreza]: {
-    id: ODSEnum.FinDeLaPobreza,
-    title: 'Fin de la Pobreza',
-    description: 'Erradicar la pobreza en todas sus formas en todo el mundo.',
+  [ODSEnum.NoPoverty]: {
+    id: ODSEnum.NoPoverty,
+    title: 'No Poverty',
+    description: 'Eradicate poverty in all its forms everywhere.',
   },
-  [ODSEnum.HambreCero]: {
-    id: ODSEnum.HambreCero,
-    title: 'Hambre Cero',
+  [ODSEnum.ZeroHunger]: {
+    id: ODSEnum.ZeroHunger,
+    title: 'Zero Hunger',
+    description: 'End hunger, achieve food security, and improve nutrition.',
+  },
+  [ODSEnum.GoodHealthAndWellBeing]: {
+    id: ODSEnum.GoodHealthAndWellBeing,
+    title: 'Good Health and Well-Being',
+    description: 'Ensure healthy lives and promote well-being for all.',
+  },
+  [ODSEnum.QualityEducation]: {
+    id: ODSEnum.QualityEducation,
+    title: 'Quality Education',
+    description: 'Ensure inclusive, equitable, and quality education.',
+  },
+  [ODSEnum.GenderEquality]: {
+    id: ODSEnum.GenderEquality,
+    title: 'Gender Equality',
+    description: 'Achieve gender equality and empower all women and girls.',
+  },
+  [ODSEnum.CleanWaterAndSanitation]: {
+    id: ODSEnum.CleanWaterAndSanitation,
+    title: 'Clean Water and Sanitation',
     description:
-      'Poner fin al hambre, lograr la seguridad alimentaria y mejorar la nutrición.',
+      'Ensure availability and sustainable management of water and sanitation.',
   },
-  [ODSEnum.SaludYBienestar]: {
-    id: ODSEnum.SaludYBienestar,
-    title: 'Salud y Bienestar',
-    description: 'Garantizar una vida sana y promover el bienestar para todos.',
-  },
-  [ODSEnum.EducacionDeCalidad]: {
-    id: ODSEnum.EducacionDeCalidad,
-    title: 'Educación de Calidad',
-    description: 'Garantizar una educación inclusiva, equitativa y de calidad.',
-  },
-  [ODSEnum.IgualdadDeGenero]: {
-    id: ODSEnum.IgualdadDeGenero,
-    title: 'Igualdad de Género',
+  [ODSEnum.AffordableAndCleanEnergy]: {
+    id: ODSEnum.AffordableAndCleanEnergy,
+    title: 'Affordable and Clean Energy',
     description:
-      'Lograr la igualdad entre los géneros y empoderar a todas las mujeres y niñas.',
+      'Ensure access to affordable, reliable, and sustainable energy.',
   },
-  [ODSEnum.AguaLimpiaYSaneamiento]: {
-    id: ODSEnum.AguaLimpiaYSaneamiento,
-    title: 'Agua Limpia y Saneamiento',
+  [ODSEnum.DecentWorkAndEconomicGrowth]: {
+    id: ODSEnum.DecentWorkAndEconomicGrowth,
+    title: 'Decent Work and Economic Growth',
     description:
-      'Garantizar la disponibilidad y la gestión sostenible del agua y el saneamiento.',
+      'Promote sustained, inclusive, and sustainable economic growth.',
   },
-  [ODSEnum.EnergiaAsequibleYNoContaminante]: {
-    id: ODSEnum.EnergiaAsequibleYNoContaminante,
-    title: 'Energía Asequible y No Contaminante',
+  [ODSEnum.IndustryInnovationAndInfrastructure]: {
+    id: ODSEnum.IndustryInnovationAndInfrastructure,
+    title: 'Industry, Innovation, and Infrastructure',
     description:
-      'Garantizar el acceso a una energía asequible, segura y sostenible.',
+      'Build resilient infrastructure and promote inclusive industrialization.',
   },
-  [ODSEnum.TrabajoDecenteYCrecimientoEconomico]: {
-    id: ODSEnum.TrabajoDecenteYCrecimientoEconomico,
-    title: 'Trabajo Decente y Crecimiento Económico',
+  [ODSEnum.ReducedInequalities]: {
+    id: ODSEnum.ReducedInequalities,
+    title: 'Reduced Inequalities',
+    description: 'Reduce inequality within and among countries.',
+  },
+  [ODSEnum.SustainableCitiesAndCommunities]: {
+    id: ODSEnum.SustainableCitiesAndCommunities,
+    title: 'Sustainable Cities and Communities',
+    description: 'Make cities and human settlements inclusive and sustainable.',
+  },
+  [ODSEnum.ResponsibleConsumptionAndProduction]: {
+    id: ODSEnum.ResponsibleConsumptionAndProduction,
+    title: 'Responsible Consumption and Production',
+    description: 'Ensure sustainable consumption and production patterns.',
+  },
+  [ODSEnum.ClimateAction]: {
+    id: ODSEnum.ClimateAction,
+    title: 'Climate Action',
+    description: 'Take urgent action to combat climate change and its impacts.',
+  },
+  [ODSEnum.LifeBelowWater]: {
+    id: ODSEnum.LifeBelowWater,
+    title: 'Life Below Water',
     description:
-      'Promover el crecimiento económico sostenido, inclusivo y sostenible.',
+      'Conserve and sustainably use the oceans, seas, and marine resources.',
   },
-  [ODSEnum.IndustriaInnovacionEInfraestructura]: {
-    id: ODSEnum.IndustriaInnovacionEInfraestructura,
-    title: 'Industria, Innovación e Infraestructura',
+  [ODSEnum.LifeOnLand]: {
+    id: ODSEnum.LifeOnLand,
+    title: 'Life on Land',
+    description: 'Sustainably manage forests and halt biodiversity loss.',
+  },
+  [ODSEnum.PeaceJusticeAndStrongInstitutions]: {
+    id: ODSEnum.PeaceJusticeAndStrongInstitutions,
+    title: 'Peace, Justice, and Strong Institutions',
     description:
-      'Construir infraestructuras resilientes y promover la industrialización inclusiva.',
+      'Promote peaceful and inclusive societies for sustainable development.',
   },
-  [ODSEnum.ReduccionDeLasDesigualdades]: {
-    id: ODSEnum.ReduccionDeLasDesigualdades,
-    title: 'Reducción de las Desigualdades',
-    description: 'Reducir la desigualdad en y entre los países.',
-  },
-  [ODSEnum.CiudadesYComunidadesSostenibles]: {
-    id: ODSEnum.CiudadesYComunidadesSostenibles,
-    title: 'Ciudades y Comunidades Sostenibles',
+  [ODSEnum.PartnershipsForTheGoals]: {
+    id: ODSEnum.PartnershipsForTheGoals,
+    title: 'Partnerships for the Goals',
     description:
-      'Lograr que las ciudades y los asentamientos humanos sean inclusivos y sostenibles.',
-  },
-  [ODSEnum.ProduccionYConsumoResponsables]: {
-    id: ODSEnum.ProduccionYConsumoResponsables,
-    title: 'Producción y Consumo Responsables',
-    description: 'Garantizar modalidades de consumo y producción sostenibles.',
-  },
-  [ODSEnum.AccionPorElClima]: {
-    id: ODSEnum.AccionPorElClima,
-    title: 'Acción por el Clima',
-    description:
-      'Adoptar medidas urgentes para combatir el cambio climático y sus efectos.',
-  },
-  [ODSEnum.VidaSubmarina]: {
-    id: ODSEnum.VidaSubmarina,
-    title: 'Vida Submarina',
-    description:
-      'Conservar y utilizar sosteniblemente los océanos, mares y recursos marinos.',
-  },
-  [ODSEnum.VidaDeEcosistemasTerrestres]: {
-    id: ODSEnum.VidaDeEcosistemasTerrestres,
-    title: 'Vida de Ecosistemas Terrestres',
-    description:
-      'Gestionar sosteniblemente los bosques y detener la pérdida de biodiversidad.',
-  },
-  [ODSEnum.PazJusticiaEInstitucionesSolidas]: {
-    id: ODSEnum.PazJusticiaEInstitucionesSolidas,
-    title: 'Paz, Justicia e Instituciones Sólidas',
-    description:
-      'Promover sociedades pacíficas e inclusivas para el desarrollo sostenible.',
-  },
-  [ODSEnum.AlianzasParaLograrLosObjetivos]: {
-    id: ODSEnum.AlianzasParaLograrLosObjetivos,
-    title: 'Alianzas para Lograr los Objetivos',
-    description:
-      'Fortalecer los medios de ejecución y revitalizar la Alianza Mundial.',
+      'Strengthen the means of implementation and revitalize the global partnership.',
   },
 };
 

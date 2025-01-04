@@ -1,48 +1,31 @@
-/**
- * @file This module exports the CauseFilter type and the CauseQueryBuilder class.
- * @module causes/infra/filters/cause-query.filter
- *
- * @description This module defines the structure for filtering causes in the application.
- * It includes optional properties for filtering by ODS (Objetivos de Desarrollo Sostenible)
- * and title using regular expressions. The CauseQueryBuilder class provides methods to
- * build these filters and sorting options.
- */
-
 import {
-  CauseSortBy,
+  ActionSortBy,
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
-import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { ActionStatus } from '@communities-ms/actions/domain';
 
-export type CauseFilter = {
-  ods?: { $in: number[] };
+export type ActionFilter = {
   title?: { $regex: string; $options: string };
+  status?: { $eq: string };
 };
 
-export type CauseSort = Record<string, 1 | -1>;
+export type ActionSort = Record<string, 1 | -1>;
 
 export type PaginationParams = {
   skip: number;
   limit: number;
 };
 
-export class CauseQueryBuilder {
-  private filter: CauseFilter = {};
+export class ActionQueryBuilder {
+  private filter: ActionFilter = {};
 
-  private sort: CauseSort = {};
+  private sort: ActionSort = {};
 
   private pagination: PaginationParams = {
     skip: 0,
     limit: PaginationDefaults.DEFAULT_LIMIT,
   };
-
-  addOdsFilter(odsFilter?: ODSEnum[]): this {
-    if (odsFilter && odsFilter.length > 0) {
-      this.filter.ods = { $in: odsFilter };
-    }
-    return this;
-  }
 
   addNameFilter(nameFilter?: string): this {
     if (nameFilter) {
@@ -51,8 +34,15 @@ export class CauseQueryBuilder {
     return this;
   }
 
+  addStatusFilter(statusFilter?: ActionStatus): this {
+    if (statusFilter) {
+      this.filter.status = { $eq: statusFilter };
+    }
+    return this;
+  }
+
   addSort(
-    sortBy?: CauseSortBy,
+    sortBy?: ActionSortBy,
     sortDirection: SortDirection = SortDirection.ASC,
   ): this {
     if (sortBy) {
@@ -80,11 +70,11 @@ export class CauseQueryBuilder {
     return this;
   }
 
-  buildFilter(): CauseFilter {
+  buildFilter(): ActionFilter {
     return this.filter;
   }
 
-  buildSort(): CauseSort {
+  buildSort(): ActionSort {
     return this.sort;
   }
 

@@ -5,118 +5,85 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
   Res,
   Query,
   UseFilters,
+  ParseUUIDPipe,
+  Post,
+  Req,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response2.dto';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
 import { ActionService } from './action.service';
 import { UpdateActionDto } from '../dto/update-action.dto';
-import { CreateActionDto } from '../dto/create-action.dto';
-import { ActionMapper } from '../mapper/action.mapper';
-import { QueryPaginationDto } from '../dto/query-pagination.dto';
-import { PaginatedResponse } from '@common-lib/common-lib/dto/paginated-response.dto';
-import { ActionDto } from '../dto/action.dto';
+import * as Mapper from '../mapper';
 import { CreateContributionDto } from '../dto/create-contribution.dto';
 import { ActionDomainExceptionFilter } from '../infra/filters/action-domain-exception.filter';
+import { FindActionsDto } from '../dto/find-actions.dto';
 
 @Controller('actions')
 @UseFilters(ActionDomainExceptionFilter)
 export class ActionController {
   constructor(private readonly actionService: ActionService) {}
 
-  @Public()
-  @Post()
-  async createAction(
-    @Body() createActionDto: CreateActionDto,
-    @Res() res: Response,
-  ) {
-    const {
-      type,
-      title,
-      description,
-      causeId,
-      target,
-      unit,
-      goodType,
-      location,
-      date,
-    } = createActionDto;
+  @Get(':id')
+  async findOne(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const action = await this.actionService.getActionDetails(id);
 
-    const result = await this.actionService.createAction(
-      type,
-      title,
-      description,
-      causeId,
-      target,
-      unit,
-      goodType,
-      location,
-      date,
-    );
-
-    const locationUrl = `/actions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
+    const actionDto = Mapper.ActionMapper.toDTO(action);
+    res.status(HttpStatus.OK).json(actionDto);
   }
 
-  @Public()
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateActionDto: UpdateActionDto,
     @Res() res: Response,
   ) {
-    await this.actionService.updateAction(id, updateActionDto);
+    const { title, description, target } = updateActionDto;
+
+    await this.actionService.updateAction(id, title, description, target);
     const locationUrl = `/actions/${id}`;
     res.status(HttpStatus.NO_CONTENT).location(locationUrl).send();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
-    const action = await this.actionService.getActionDetails(id);
-
-    res.status(HttpStatus.OK).json([action]);
-  }
-
   @Public()
   @Get()
-  async findAll(@Query() query: QueryPaginationDto) {
-    const page = query.page || 1;
-    const size = query.size || 10;
+  async findAll(
+    @Query() query: FindActionsDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    const { name, status, sortBy, sortDirection, page, limit } = query;
 
-    const offset = (page - 1) * size;
-    const limit = size;
-
-    const { data, total } = await this.actionService.getPaginatedActions(
-      offset,
+    const { data, total } = await this.actionService.getAllActions(
+      name,
+      status,
+      sortBy,
+      sortDirection,
+      page,
       limit,
     );
 
-    const paginatedResponse = new PaginatedResponse(
-      data.map((action) => ActionMapper.toDTO(action)),
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    const response = new PaginatedResponseDto(
+      data.map(Mapper.ActionMapper.toDTO),
       total,
       page,
-      size,
+      limit,
+      baseUrl,
     );
 
-    return paginatedResponse;
+    res.status(HttpStatus.OK).json(response);
   }
 
-  @Get('cause/:causeId')
-  async findByCause(@Param('causeId') causeId: string) {
-    const actions = await this.actionService.listActionsByCause(causeId);
-    return actions.map(ActionMapper.toDTO);
-  }
-
-  @Public()
-  @Patch(':actionId/contribute')
+  @Post(':id/contributions')
   async makeContribution(
-    @Param('actionId') actionId: string,
+    @Param('id', ParseUUIDPipe) actionId: string,
     @Body() contributionDto: CreateContributionDto,
     @Res() res: Response,
   ) {
@@ -130,10 +97,38 @@ export class ActionController {
       unit,
     );
 
-    const locationUrl = `/actions/${actionId}/contributions/${result.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: result.id });
+    const locationUrl = `/actions/${actionId}/contributions/${result}`;
+    res.status(HttpStatus.CREATED).location(locationUrl).json({ id: result });
+  }
+
+  @Get(':id/contributions')
+  async getContributions(
+    @Param('id', ParseUUIDPipe) actionId: string,
+    @Query() queryPagination: QueryPaginationDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const { page, limit } = queryPagination;
+
+    const { data, total } = await this.actionService.getContributions(
+      actionId,
+      page,
+      limit,
+    );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data.map(Mapper.ContributionMapper.toDTO),
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK).json(response);
   }
 }

@@ -6,6 +6,11 @@ import * as Domain from '../domain';
 import * as Persistence from './persistence';
 import { ActionMapper } from '../mapper/action.mapper';
 import { ActionRepository } from '../action.repository';
+import {
+  ActionFilter,
+  ActionSort,
+  PaginationParams,
+} from './filters/action-query.builder';
 
 @Injectable()
 export class ActionRepositoryMongoDB extends ActionRepository {
@@ -28,60 +33,32 @@ export class ActionRepositoryMongoDB extends ActionRepository {
     return ActionMapper.toDomain(doc);
   }
 
-  async findById(id: string): Promise<Domain.Action | null> {
+  async findById(id: string): Promise<Domain.Action> {
     const action = await this.actionModel.findOne({ id }).exec();
 
     if (!action) {
       throw new EntityNotFoundError(`Action with id ${id} not found.`);
     }
 
-    return action ? ActionMapper.toDomain(action) : null;
+    return ActionMapper.toDomain(action);
   }
 
-  async findAll(offset: number, limit: number): Promise<Domain.Action[]> {
+  async findAll(
+    filter: ActionFilter,
+    sort: ActionSort,
+    pagination: PaginationParams,
+  ): Promise<Domain.Action[]> {
     const actions = await this.actionModel
-      .find()
-      .skip(offset)
-      .limit(limit)
+      .find(filter)
+      .sort(sort)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
       .exec();
     return actions.map(ActionMapper.toDomain);
   }
 
-  async findWithFilters(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filters: Record<string, any>,
-    offset: number,
-    limit: number,
-  ): Promise<{ data: Domain.Action[]; total: number }> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: Record<string, any> = {};
-
-    if (filters.title) {
-      query.title = { $regex: filters.title, $options: 'i' };
-    }
-
-    if (filters.status) {
-      query.status = filters.status;
-    }
-
-    if (filters.type) {
-      query.type = filters.type;
-    }
-
-    const actions = await this.actionModel
-      .find(query)
-      .skip(offset)
-      .limit(limit)
-      .exec();
-
-    const total = await this.actionModel.countDocuments(query);
-
-    const data = actions.map(ActionMapper.toDomain);
-    return { data, total };
-  }
-
-  async count(): Promise<number> {
-    return this.actionModel.countDocuments();
+  async countDocuments(filter: ActionFilter): Promise<number> {
+    return this.actionModel.countDocuments(filter).exec();
   }
 
   async findByCauseId(causeId: string): Promise<Domain.Action[]> {

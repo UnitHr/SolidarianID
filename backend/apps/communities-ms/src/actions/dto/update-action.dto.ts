@@ -1,10 +1,4 @@
-import {
-  IsDateString,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateActionDto {
   @IsOptional()
@@ -19,22 +13,5 @@ export class UpdateActionDto {
 
   @IsOptional()
   @IsNumber()
-  amount?: number;
-
-  @IsOptional()
-  @IsString()
-  foodType?: string;
-
-  /*
-  @IsOptional()
-  @IsString()
-  unit?: string; */
-
-  @IsOptional()
-  @IsString()
-  location?: string;
-
-  @IsOptional()
-  @IsDateString()
-  date?: Date;
+  target?: number;
 }

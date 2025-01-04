@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
-import { CauseSortBy, SortDirection } from '@common-lib/common-lib/common/enum';
+import {
+  CauseSortBy,
+  PaginationDefaults,
+  SortDirection,
+} from '@common-lib/common-lib/common/enum';
+import { ActionService } from '@communities-ms/actions/application/action.service';
 import { CauseRepository } from '../cause.repository';
 import { CauseService } from './cause.service';
 import { Cause, CauseEndDate } from '../domain';
@@ -8,29 +13,44 @@ import { CauseQueryBuilder } from '../infra/filters/cause-query.builder';
 
 @Injectable()
 export class CauseServiceImpl implements CauseService {
-  constructor(private readonly causeRepository: CauseRepository) {}
+  constructor(
+    private readonly causeRepository: CauseRepository,
+    private readonly actionService: ActionService,
+  ) {}
 
   logger = new Logger(CauseServiceImpl.name);
 
-  getAllCauses(
+  async getAllCauses(
     odsFilter?: ODSEnum[],
     nameFilter?: string,
-    sortBy?: CauseSortBy,
-    sortDirection?: SortDirection,
-  ): Promise<Cause[]> {
-    // Create a new query builder
-    const queryBuilder = new CauseQueryBuilder();
-
-    // Build the filter options
-    const filter = queryBuilder
+    sortBy: CauseSortBy = CauseSortBy.TITLE,
+    sortDirection: SortDirection = SortDirection.ASC,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{
+    data: Cause[];
+    total: number;
+  }> {
+    const queryBuilder = new CauseQueryBuilder()
       .addOdsFilter(odsFilter)
       .addNameFilter(nameFilter)
-      .buildFilter();
+      .addSort(sortBy, sortDirection)
+      .addPagination(page, limit);
 
-    // Build the sort options
-    const sort = queryBuilder.addSort(sortBy, sortDirection).buildSort();
+    const filters = queryBuilder.buildFilter();
+    const sort = queryBuilder.buildSort();
+    const pagination = queryBuilder.buildPagination();
 
-    return this.causeRepository.findAll(filter, sort);
+    // Use Promise.all to execute both queries in parallel
+    const [data, total] = await Promise.all([
+      this.causeRepository.findAll(filters, sort, pagination), // Get paginated data
+      this.causeRepository.countDocuments(filters), // Count total documents
+    ]);
+
+    return {
+      data,
+      total,
+    };
   }
 
   async createCause(
@@ -88,9 +108,29 @@ export class CauseServiceImpl implements CauseService {
     await this.causeRepository.save(existingCause);
   }
 
-  async getCauseSupporters(id: string): Promise<string[]> {
+  async getCauseSupporters(
+    id: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{
+    data: string[];
+    total: number;
+  }> {
     const cause = await this.getCause(id);
-    return cause.supportersIds;
+
+    // Validate page and limit
+    const validatedPage = Math.max(page, 1);
+    const validatedLimit = Math.max(limit, 1);
+
+    // Calculate the total number of supporters and the data to return
+    const total = cause.supportersIds.length;
+    const skip = (validatedPage - 1) * validatedLimit;
+    const data = cause.supportersIds.slice(skip, skip + validatedLimit);
+
+    return {
+      data,
+      total,
+    };
   }
 
   async addCauseSupporter(id: string, userId: string): Promise<void> {
@@ -104,7 +144,33 @@ export class CauseServiceImpl implements CauseService {
     return cause.actionsIds;
   }
 
-  async addCauseAction(): Promise<void> {
-    // TODO: Implement this method
+  async addCauseAction(
+    type,
+    title,
+    description,
+    causeId,
+    target,
+    unit,
+    goodType,
+    location,
+    date,
+  ): Promise<string> {
+    const cause = await this.getCause(causeId);
+
+    const actionId = await this.actionService.createAction(
+      type,
+      title,
+      description,
+      causeId,
+      target,
+      unit,
+      goodType,
+      location,
+      date,
+    );
+
+    cause.addAction(actionId);
+    await this.causeRepository.save(cause);
+    return actionId;
   }
 }

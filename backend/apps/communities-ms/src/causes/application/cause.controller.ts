@@ -10,15 +10,18 @@ import {
   HttpStatus,
   UseFilters,
   Query,
+  Req,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { userIdDto } from '@common-lib/common-lib/dto/user-id.dto';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response2.dto';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
 import { CauseDomainExceptionFilter } from '../infra/filters/cause-domain-exception.filter';
 import { FindCausesDto } from '../dto/find-causes.dto';
+import { CreateActionDto } from '../dto/create-action.dto';
 
 @Controller('causes')
 @UseFilters(CauseDomainExceptionFilter)
@@ -29,19 +32,34 @@ export class CauseController {
   @Get()
   async findAll(
     @Query() query: FindCausesDto,
+    @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    const { ods, name, sortBy, sortDirection } = query;
+    const { ods, name, sortBy, sortDirection, page, limit } = query;
 
-    const causes = await this.causeService.getAllCauses(
+    const { data, total } = await this.causeService.getAllCauses(
       ods,
       name,
       sortBy,
       sortDirection,
+      page,
+      limit,
     );
 
-    const causesDto = causes.map(CauseMapper.toDTO);
-    res.status(HttpStatus.OK).json(causesDto);
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data.map(CauseMapper.toDTO),
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK).json(response);
   }
 
   @Public()
@@ -71,38 +89,84 @@ export class CauseController {
 
   @Public()
   @Get(':id/actions')
-  getActions(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
-    const actionsIds = this.causeService.getCauseActions(id);
+  async getActions(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const actionsIds = await this.causeService.getCauseActions(id);
 
     res.status(HttpStatus.OK).json(actionsIds);
   }
 
-  // TODO: Implement this method
   @Post(':id/actions')
-  async createAction() {
-    return this.causeService.addCauseAction();
+  async createAction(
+    @Body() createActionDto: CreateActionDto,
+    @Param('id', ParseUUIDPipe) causeId: string,
+    @Res() res: Response,
+  ) {
+    const { type, title, description, target, unit, goodType, location, date } =
+      createActionDto;
+
+    const result = await this.causeService.addCauseAction(
+      type,
+      title,
+      description,
+      causeId,
+      target,
+      unit,
+      goodType,
+      location,
+      date,
+    );
+
+    const locationUrl = `/actions/${result}`;
+    res.status(HttpStatus.CREATED).location(locationUrl).json({ id: result });
   }
 
   @Public()
   @Get(':id/supporters')
-  getSupporters(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
-    const supportersIds = this.causeService.getCauseSupporters(id);
+  async getSupporters(
+    @Param('id', ParseUUIDPipe) causeId: string,
+    @Query() queryPagination: QueryPaginationDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const { page, limit } = queryPagination;
 
-    res.status(HttpStatus.OK).json(supportersIds);
+    const { data, total } = await this.causeService.getCauseSupporters(
+      causeId,
+      page,
+      limit,
+    );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data,
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK).json(response);
   }
 
   @Post(':id/supporters')
   async addSupporter(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() userDto: userIdDto,
+    @Body('userId', ParseUUIDPipe) userId: string,
     @Res() res: Response,
   ) {
-    await this.causeService.addCauseSupporter(id, userDto.userId);
+    await this.causeService.addCauseSupporter(id, userId);
 
-    const locationUrl = `/causes/${id}/supporters/${userDto.userId}`;
+    const locationUrl = `/causes/${id}/supporters/${userId}`;
     res
       .status(HttpStatus.CREATED)
       .location(locationUrl)
-      .json({ causeId: id, userId: userDto.userId });
+      .json({ causeId: id, userId });
   }
 }

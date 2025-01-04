@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import {
+  ActionSortBy,
+  PaginationDefaults,
+  SortDirection,
+} from '@common-lib/common-lib/common/enum';
 import { ActionService } from './action.service';
-import { Action, ActionProps } from '../domain/Action';
+import * as Domain from '../domain';
 import { ActionRepository } from '../action.repository';
-import { ActionStatus, Contribution } from '../domain';
-import { UpdateActionDto } from '../dto/update-action.dto';
 import * as Exceptions from '../exceptions';
 import { ActionFactory } from '../domain/ActionFactory';
+import { ActionQueryBuilder } from '../infra/filters/action-query.builder';
 
 @Injectable()
 export class ActionServiceImpl implements ActionService {
@@ -21,11 +25,11 @@ export class ActionServiceImpl implements ActionService {
     goodType,
     location,
     date,
-  ): Promise<{ id: string }> {
+  ): Promise<string> {
     // Check for duplicate
     const isDuplicate = await this.duplicateCheck(causeId, title);
     if (isDuplicate) {
-      throw new Exceptions.ActionTitleConflictException(title);
+      throw new Exceptions.ActionTitleConflictError(title);
     }
 
     // Create the new action
@@ -44,59 +48,69 @@ export class ActionServiceImpl implements ActionService {
     // Save the new action in the repository
     const savedAction = await this.actionRepository.save(action);
 
-    return { id: savedAction.id.toString() };
+    return savedAction.id.toString();
   }
 
-  async updateAction(id: string, updateActionDto: UpdateActionDto) {
+  async updateAction(
+    id: string,
+    title?: string,
+    description?: string,
+    target?: number,
+  ): Promise<void> {
     // Find the existing action by Id
     const action = await this.actionRepository.findById(id);
 
     // Update action fields
-    action.update(updateActionDto as unknown as ActionProps);
+    action.update(title, description, target);
 
     // Update the action in the repository
     await this.actionRepository.save(action);
   }
 
-  async getActionDetails(id: string): Promise<Action> {
+  async getActionDetails(id: string): Promise<Domain.Action> {
     // Find the action by Id
     const action = await this.actionRepository.findById(id);
 
     return action;
   }
 
-  async getAllActions(offset: number, limit: number): Promise<Action[]> {
-    return this.actionRepository.findAll(offset, limit);
-  }
+  async getAllActions(
+    nameFilter?: string,
+    statusFilter?: Domain.ActionStatus,
+    sortBy: ActionSortBy = ActionSortBy.TITLE,
+    sortDirection: SortDirection = SortDirection.ASC,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{ data: Domain.Action[]; total: number }> {
+    const queryBuilder = new ActionQueryBuilder()
+      .addNameFilter(nameFilter)
+      .addStatusFilter(statusFilter)
+      .addSort(sortBy, sortDirection)
+      .addPagination(page, limit);
 
-  async getPaginatedActions(
-    offset: number,
-    limit: number,
-  ): Promise<{ data: Action[]; total: number }> {
+    const filters = queryBuilder.buildFilter();
+    const sort = queryBuilder.buildSort();
+    const pagination = queryBuilder.buildPagination();
+
+    // Use Promise.all to execute both queries in parallel
     const [data, total] = await Promise.all([
-      this.actionRepository.findAll(offset, limit),
-      this.actionRepository.count(),
+      this.actionRepository.findAll(filters, sort, pagination), // Get paginated data
+      this.actionRepository.countDocuments(filters), // Count total documents
     ]);
 
-    return { data, total };
-  }
-
-  async listActionsByCause(causeId: string): Promise<Action[]> {
-    // Find all actions defined for the cause
-    const actions = await this.actionRepository.findByCauseId(causeId);
-
-    if (!actions) {
-      throw new Exceptions.InvalidCauseIdException(causeId);
-    }
-
-    return actions;
+    return {
+      data,
+      total,
+    };
   }
 
   async duplicateCheck(causeId: string, title: string): Promise<boolean> {
     // Check if an action with the same title already exists for the cause
     const existingActions = await this.actionRepository.findByCauseId(causeId);
     const actionWithTitle = existingActions.find(
-      (action) => action.title === title,
+      (action) =>
+        action.title === title &&
+        action.status !== Domain.ActionStatus.COMPLETED,
     );
 
     return !!actionWithTitle;
@@ -108,20 +122,24 @@ export class ActionServiceImpl implements ActionService {
     date: Date,
     amount: number,
     unit: string,
-  ): Promise<{ id: string }> {
+  ): Promise<string> {
     // Find the action by Id
     const action = await this.actionRepository.findById(actionId);
 
     if (action.unit !== unit) {
-      throw new Exceptions.InvalidContributionUnitException(actionId, unit);
+      throw new Exceptions.InvalidContributionUnitError(
+        actionId,
+        unit,
+        action.unit,
+      );
     }
 
     // Check the action is not completed
-    if (action.status === ActionStatus.completed) {
-      throw new Exceptions.CompletedActionException(actionId);
+    if (action.status === Domain.ActionStatus.COMPLETED) {
+      throw new Exceptions.CompletedActionError(actionId);
     }
 
-    const contribution = Contribution.create({
+    const contribution = Domain.Contribution.create({
       userId,
       actionId,
       date,
@@ -132,6 +150,26 @@ export class ActionServiceImpl implements ActionService {
     action.contribute(contribution);
     await this.actionRepository.save(action);
 
-    return { id: contribution.id.toString() };
+    return contribution.id.toString();
+  }
+
+  async getContributions(
+    id: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{ data: Domain.Contribution[]; total: number }> {
+    // Find the action by Id
+    const action = await this.actionRepository.findById(id);
+
+    // Validate page and limit
+    const validatedPage = Math.max(page, 1);
+    const validatedLimit = Math.max(limit, 1);
+
+    // Calculate the total number of contributions and the data to return
+    const total = action.contributions.length;
+    const skip = (validatedPage - 1) * validatedLimit;
+    const data = action.contributions.slice(skip, skip + validatedLimit);
+
+    return { data, total };
   }
 }

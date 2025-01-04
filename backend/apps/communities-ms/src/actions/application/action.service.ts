@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { SortDirection } from 'typeorm';
+import { ActionSortBy } from '@common-lib/common-lib/common/enum';
 import { Action } from '../domain/Action';
-import { UpdateActionDto } from '../dto/update-action.dto';
+import { ActionStatus, Contribution } from '../domain';
 
 @Injectable()
 export abstract class ActionService {
@@ -14,46 +16,25 @@ export abstract class ActionService {
     goodType,
     location,
     date,
-  ): Promise<{ id: string }>;
-  /* abstract createEconomicAction(
-    title,
-    description,
-    causeId,
-    type,
-    target,
-  ): Promise<{ id: string }>;
+  ): Promise<string>;
 
-  abstract createGoodsCollectionAction(
-    title,
-    description,
-    causeId,
-    type,
-    target,
-    goodType,
-  ): Promise<{ id: string }>;
-
-  abstract createVolunteerAction(
-    title,
-    description,
-    causeId,
-    type,
-    target,
-    location,
-    date,
-  ): Promise<{ id: string }>; */
-
-  abstract updateAction(id: string, updateActionDto: UpdateActionDto);
+  abstract updateAction(
+    id: string,
+    title?: string,
+    description?: string,
+    target?: number,
+  ): Promise<void>;
 
   abstract getActionDetails(id: string): Promise<Action>;
 
-  abstract getAllActions(offset: number, limit: number): Promise<Action[]>;
-
-  abstract getPaginatedActions(
-    offset: number,
-    limit: number,
+  abstract getAllActions(
+    nameFilter?: string,
+    statusFilter?: ActionStatus,
+    sortBy?: ActionSortBy,
+    sortDirection?: SortDirection,
+    page?: number,
+    limit?: number,
   ): Promise<{ data: Action[]; total: number }>;
-
-  abstract listActionsByCause(causeId: string): Promise<Action[]>;
 
   abstract makeContribution(
     userId: string,
@@ -61,5 +42,11 @@ export abstract class ActionService {
     date: Date,
     amount: number,
     unit: string,
-  ): Promise<{ id: string }>;
+  ): Promise<string>;
+
+  abstract getContributions(
+    id: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ data: Contribution[]; total: number }>;
 }

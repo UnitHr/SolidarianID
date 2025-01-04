@@ -1,3 +1,4 @@
+import { InvalidActionTypeError } from '../exceptions';
 import { Action } from './Action';
 import { ActionType } from './ActionType';
 import { EconomicAction } from './EconomicAction';
@@ -37,7 +38,7 @@ export class ActionFactory {
         });
       }
       default:
-        throw new Error(`Invalid action type: ${type}`);
+        throw new InvalidActionTypeError(type);
     }
   }
 }

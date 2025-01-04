@@ -20,11 +20,6 @@ export class GoodsCollectionAction extends Action {
     (this.props as GoodsCollectionActionProps).goodType = goodType;
   }
 
-  update(params: GoodsCollectionActionProps): void {
-    this.updateCommonProperties(params);
-    if (params.goodType !== undefined) this.goodType = params.goodType;
-  }
-
   /* eslint-disable class-methods-use-this */
   public static create(props: GoodsCollectionActionProps, id?: string): Action {
     if (id !== undefined)

@@ -79,12 +79,13 @@ export class JoinCommunityService {
   }
 
   async getJoinCommunityRequests(
+    communityId: string,
     offset: number,
     limit: number,
   ): Promise<Result<Domain.JoinCommunityRequest[]>> {
     // Get all the requests
     const joinCommunityRequests =
-      await this.joinCommunityRequestRepository.findAll(offset, limit);
+      await this.joinCommunityRequestRepository.findAll(communityId, offset, limit);
 
     // Return the requests
     return Result.ok(joinCommunityRequests);
@@ -162,18 +163,12 @@ export class JoinCommunityService {
   async isCommunityAdmin(
     userId: string,
     communityId: string,
-  ): Promise<Either<Exceptions.UserIsNotCommunityAdmin, Result<boolean>>> {
+  ): Promise<boolean> {
     const result = await this.communityRepository.isCommunityAdmin(
       userId,
       communityId,
     );
 
-    if (result === false) {
-      return left(
-        Exceptions.UserIsNotCommunityAdmin.create(communityId, userId),
-      );
-    }
-
-    return right(Result.ok(true));
+    return result;
   }
 }

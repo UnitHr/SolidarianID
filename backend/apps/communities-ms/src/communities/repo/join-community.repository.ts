@@ -3,6 +3,7 @@ import * as Domain from '../domain';
 
 export abstract class JoinCommunityRequestRepository extends Repository<Domain.JoinCommunityRequest> {
   abstract findAll(
+    communityId: string,
     offset: number,
     limit: number,
   ): Promise<Domain.JoinCommunityRequest[]>;

@@ -49,11 +49,9 @@ export class CommunityService {
         createCommunityRequest.causeEndDate,
       )
     ) {
-      return right(
-        Result.fail(
-          Exceptions.InvalidDateProvided.create(
-            createCommunityRequest.causeEndDate,
-          ),
+      return left(
+        Exceptions.InvalidDateProvided.create(
+          createCommunityRequest.causeEndDate,
         ),
       );
     }

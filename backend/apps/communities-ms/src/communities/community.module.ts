@@ -39,9 +39,7 @@ import { CreateCommunityService } from './application/create-community.service';
       },
     ]),
   ],
-  controllers: [
-    CommunityController,
-  ],
+  controllers: [CommunityController],
   providers: [
     {
       provide: CreateCommunityRequestRepository,

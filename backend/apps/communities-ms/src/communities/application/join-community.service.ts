@@ -85,7 +85,11 @@ export class JoinCommunityService {
   ): Promise<Result<Domain.JoinCommunityRequest[]>> {
     // Get all the requests
     const joinCommunityRequests =
-      await this.joinCommunityRequestRepository.findAll(communityId, offset, limit);
+      await this.joinCommunityRequestRepository.findAll(
+        communityId,
+        offset,
+        limit,
+      );
 
     // Return the requests
     return Result.ok(joinCommunityRequests);

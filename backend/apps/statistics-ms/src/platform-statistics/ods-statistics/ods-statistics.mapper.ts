@@ -2,22 +2,21 @@ import {
   mapODSEnumToDetails,
   ODSEnum,
 } from '@common-lib/common-lib/common/ods';
+import { Utils } from '@common-lib/common-lib/common/utils';
 import { OdsStatisticsResponseDto } from './dto/ods-statistics-response.dto';
 import OdsStatistics from './infra/persistence/OdsStatistics';
 import * as Persistence from './infra/persistence';
 import * as Domain from './domain';
-import { Utils } from '@common-lib/common-lib/common/utils';
-import e from 'express';
 
 export class OdsStatisticsMapper {
   static toDomain(raw: Persistence.OdsStatistics): Domain.OdsStatistics {
-    const OdsStatistics = Domain.OdsStatistics.create(
+    const odsStatistics = Domain.OdsStatistics.create(
       raw.odsId as ODSEnum,
       raw.communitiesCount,
       raw.causesCount,
       raw.supportsCount,
     );
-    return OdsStatistics;
+    return odsStatistics;
   }
 
   static toPersistence(

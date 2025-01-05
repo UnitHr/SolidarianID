@@ -51,7 +51,7 @@ export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestR
     limit: number,
   ): Promise<Domain.JoinCommunityRequest[]> {
     return this.joinCommunityModel
-      .find({status: StatusRequest.PENDING, communityId})
+      .find({ status: StatusRequest.PENDING, communityId })
       .skip(offset)
       .limit(limit)
       .then((docs) => docs.map(JoinCommunityRequestMapper.toDomain));

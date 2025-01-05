@@ -50,7 +50,7 @@ export class CreateCommunityRequestRepositoryMongoDb extends CreateCommunityRequ
     limit: number,
   ): Promise<Domain.CreateCommunityRequest[]> {
     return this.joinCommunityModel
-      .find({status: StatusRequest.PENDING})
+      .find({ status: StatusRequest.PENDING })
       .skip(offset)
       .limit(limit)
       .then((docs) => docs.map(CreateCommunityRequestMapper.toDomain));

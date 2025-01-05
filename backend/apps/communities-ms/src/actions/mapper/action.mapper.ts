@@ -1,9 +1,9 @@
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from '../domain';
 import * as Persistence from '../infra/persistence';
 import { ActionDto } from '../dto/action.dto';
 import { ContributionMapper } from './contribution.mapper';
 import { InvalidActionTypeError } from '../exceptions';
-import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 
 export class ActionMapper {
   static toDomain(document: Persistence.Action): Domain.Action {

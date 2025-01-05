@@ -23,6 +23,8 @@ import { envs } from './config';
         subscribers: [],
       }),
     }),
+
+    // Import modules
     UserModule,
     AuthModule,
   ],

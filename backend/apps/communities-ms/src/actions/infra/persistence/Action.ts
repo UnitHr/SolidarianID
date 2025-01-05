@@ -3,15 +3,15 @@ import { ActionType } from '@communities-ms/actions/domain/ActionType';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Contribution, ContributionSchema } from './Contribution';
 
-@Schema({ discriminatorKey: 'type' })
+@Schema({ timestamps: true }) // Handles createdAt and updatedAt automatically
 export class Action {
-  @Prop()
+  @Prop({ required: true, unique: true })
   id: string;
 
-  @Prop({ type: String, enum: ActionStatus })
+  @Prop({ required: true, type: String, enum: ActionStatus })
   status: ActionStatus;
 
-  @Prop({ type: String, enum: ActionType })
+  @Prop({ required: true, type: String, enum: ActionType })
   type: ActionType;
 
   @Prop({ required: true })
@@ -34,6 +34,14 @@ export class Action {
 
   @Prop({ required: true })
   achieved: number;
+
+  @Prop({ required: true })
+  createdBy: string;
+
+  // These properties are automatically handled by the timestamps option
+  readonly createdAt?: Date;
+
+  readonly updatedAt?: Date;
 
   @Prop({ required: false })
   goodType?: string;

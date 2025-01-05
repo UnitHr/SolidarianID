@@ -2,20 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { SortDirection } from 'typeorm';
 import { ActionSortBy } from '@common-lib/common-lib/common/enum';
 import { Action } from '../domain/Action';
-import { ActionStatus, Contribution } from '../domain';
+import { ActionStatus, ActionType, Contribution } from '../domain';
 
 @Injectable()
 export abstract class ActionService {
   abstract createAction(
-    type,
-    title,
-    description,
-    causeId,
-    target,
-    unit,
-    goodType,
-    location,
-    date,
+    type: ActionType,
+    title: string,
+    description: string,
+    causeId: string,
+    target: number,
+    unit: string,
+    createdBy: string,
+    goodType?: string,
+    location?: string,
+    date?: Date,
   ): Promise<string>;
 
   abstract updateAction(

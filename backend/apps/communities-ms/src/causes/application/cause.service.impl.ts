@@ -6,6 +6,7 @@ import {
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
 import { ActionService } from '@communities-ms/actions/application/action.service';
+import { ActionType } from '@communities-ms/actions/domain';
 import { CauseRepository } from '../cause.repository';
 import { CauseService } from './cause.service';
 import { Cause, CauseEndDate } from '../domain';
@@ -145,15 +146,16 @@ export class CauseServiceImpl implements CauseService {
   }
 
   async addCauseAction(
-    type,
-    title,
-    description,
-    causeId,
-    target,
-    unit,
-    goodType,
-    location,
-    date,
+    type: ActionType,
+    title: string,
+    description: string,
+    causeId: string,
+    target: number,
+    unit: string,
+    createdBy: string,
+    goodType?: string,
+    location?: string,
+    date?: Date,
   ): Promise<string> {
     const cause = await this.getCause(causeId);
 
@@ -164,6 +166,7 @@ export class CauseServiceImpl implements CauseService {
       causeId,
       target,
       unit,
+      createdBy,
       goodType,
       location,
       date,

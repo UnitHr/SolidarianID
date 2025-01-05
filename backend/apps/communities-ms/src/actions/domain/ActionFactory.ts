@@ -13,11 +13,20 @@ export class ActionFactory {
     causeId,
     target,
     unit,
+    createdBy,
     goodType?,
     location?,
     date?,
   ): Action {
-    const commonProps = { type, title, description, causeId, target, unit };
+    const commonProps = {
+      type,
+      title,
+      description,
+      causeId,
+      target,
+      unit,
+      createdBy,
+    };
     switch (type) {
       case ActionType.ECONOMIC: {
         return EconomicAction.create({

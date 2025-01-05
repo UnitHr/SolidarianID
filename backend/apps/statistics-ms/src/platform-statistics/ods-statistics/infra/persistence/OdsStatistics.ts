@@ -3,9 +3,9 @@ import { envs } from '../../../../config';
 
 @Entity({
   keyspace: envs.cassandraKeyspace, // Cassandra Keyspace
-  table: 'communities_causes_by_ods', // Cassandra Table
+  table: 'ods', // Cassandra Table
 })
-export default class CommunitiesCausesByOds {
+export default class OdsStatistics {
   @Column({ name: 'ods_id' })
   odsId: number; // ODS Identifier
 
@@ -14,4 +14,7 @@ export default class CommunitiesCausesByOds {
 
   @Column({ name: 'causes_count' })
   causesCount: number; // Number of associated causes
+
+  @Column({ name: 'supports_count' })
+  supportsCount: number; // Number of supports
 }

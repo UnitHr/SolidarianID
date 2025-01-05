@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PlatformStatisticsController } from './platform-statistics.controller';
-import { CommunitiesCausesByOdsModule } from './communities-causes-by-ods/communities-causes-by-ods.module';
+import { OdsStatisticsModule } from './ods-statistics/ods-statistics.module';
 
 @Module({
   imports: [
     // Import modules
-    CommunitiesCausesByOdsModule,
+    OdsStatisticsModule,
   ],
   controllers: [PlatformStatisticsController],
 })

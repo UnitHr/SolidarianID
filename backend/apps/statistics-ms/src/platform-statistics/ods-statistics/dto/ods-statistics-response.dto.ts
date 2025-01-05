@@ -1,9 +1,11 @@
 import { ODSDetail } from '@common-lib/common-lib/common/ods';
 
-export class CommunitiesCausesByOdsResponseDto {
+export class OdsStatisticsResponseDto {
   ods: ODSDetail;
 
   communitiesCount: number;
 
   causesCount: number;
+
+  averageSupports: number;
 }

@@ -17,6 +17,10 @@ export class Utils {
     return age;
   }
 
+  static calculateAverage(amount: number, totalAmount: number): number {
+    return parseFloat(((amount / totalAmount) * 100).toFixed(2));
+  }
+
   static getPaginationLinks(
     endpoint: string,
     offset: number,

@@ -1,19 +1,20 @@
 import { Controller, Get } from '@nestjs/common';
-import { CommunitiesCausesByOdsMapper } from './communities-causes-by-ods/communities-causes-by-ods.mapper';
-import { CommunitiesCausesByOdsResponseDto } from './communities-causes-by-ods/dto/communities-causes-by-ods-response.dto';
-import { CommunitiesCausesByOdsService } from './communities-causes-by-ods/application/communities-causes-by-ods.service';
+import { OdsStatisticsMapper } from './ods-statistics/ods-statistics.mapper';
+import { OdsStatisticsResponseDto } from './ods-statistics/dto/ods-statistics-response.dto';
+import { OdsStatisticsService } from './ods-statistics/application/ods-statistics.service';
 
 @Controller('/statistics')
 export class PlatformStatisticsController {
-  constructor(
-    private readonly communitiesCausesByOdsService: CommunitiesCausesByOdsService,
-  ) {}
+  constructor(private readonly odsStatisticsService: OdsStatisticsService) {}
 
-  @Get('/ods/communities-causes')
-  async findAllHotels(): Promise<CommunitiesCausesByOdsResponseDto[]> {
-    const communitiesCausesByOds =
-      await this.communitiesCausesByOdsService.getAll();
+  @Get('ods')
+  async findAllOdsStatistics(): Promise<OdsStatisticsResponseDto[]> {
+    const OdsStatistics = await this.odsStatisticsService.getAll();
 
-    return communitiesCausesByOds.map(CommunitiesCausesByOdsMapper.toDto);
+    const totalSupports = await this.odsStatisticsService.getTotalSupports();
+
+    return OdsStatistics.map((entity) =>
+      OdsStatisticsMapper.toDto(entity, totalSupports),
+    );
   }
 }

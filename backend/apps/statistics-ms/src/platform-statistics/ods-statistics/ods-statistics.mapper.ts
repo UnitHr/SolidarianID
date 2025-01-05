@@ -31,14 +31,14 @@ export class OdsStatisticsMapper {
   }
 
   static toDto(
-    entity: OdsStatistics,
+    entity: Domain.OdsStatistics,
     totalSupports: number,
   ): OdsStatisticsResponseDto {
     return {
       ods: mapODSEnumToDetails(entity.odsId),
       communitiesCount: entity.communitiesCount,
       causesCount: entity.causesCount,
-      averageSupports: Utils.calculateAverage(
+      averageSupport: Utils.calculateAverage(
         entity.supportsCount,
         totalSupports,
       ),

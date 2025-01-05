@@ -3,7 +3,7 @@ import { envs } from '../../../../config';
 
 @Entity({
   keyspace: envs.cassandraKeyspace, // Cassandra Keyspace
-  table: 'ods', // Cassandra Table
+  table: 'ods_statistics', // Cassandra Table
 })
 export default class OdsStatistics {
   @Column({ name: 'ods_id' })

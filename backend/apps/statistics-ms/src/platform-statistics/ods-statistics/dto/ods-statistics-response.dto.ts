@@ -7,5 +7,5 @@ export class OdsStatisticsResponseDto {
 
   causesCount: number;
 
-  averageSupports: number;
+  averageSupport: number;
 }

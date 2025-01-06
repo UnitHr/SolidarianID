@@ -1,0 +1,14 @@
+{
+    "communities": [
+        {
+            "id": 1,
+            "name": "Comunidad 1",
+            "members": 10
+        },
+        {
+            "id": 2,
+            "name": "Comunidad 2",
+            "members": 12
+        }
+    ]
+}

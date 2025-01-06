@@ -1,0 +1,32 @@
+<section>
+    <div class="bg-white shadow-md rounded-lg p-4 chart-wrapper">
+        <div class="mx-auto p-5">
+
+            <!-- Formulario -->
+            <form action="/reports" method="POST" class="space-x-4">
+                <!-- Select -->
+                <div class="flex items-center space-x-4 mb-4">
+                    <h3 class="text-base font-medium">Select Community: </h3>
+                    <select id="community-select" name="communityId"
+                        class="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
+                        required>
+                        <option value="" {{#if (eq selectedCommunityId "" )}}selected{{/if}}>
+                            -- Select a Community --
+                        </option>
+                        {{#each communities}}
+                        <option value="{{this.id}}" {{#if (eq ../selectedCommunityId this.id)}}selected{{/if}}>
+                            {{this.name}}
+                        </option>
+                        {{/each}}
+                    </select>
+
+                    <!-- Botón -->
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">
+                        View Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

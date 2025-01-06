@@ -97,14 +97,4 @@ export class AppController {
       activePage: 'register',
     };
   }
-
-  @Get('/reports')
-  @Render('platform-admin/reports')
-  getReports() {
-    return {
-      title: 'Reports',
-      activePage: 'adminDashboard',
-      userAutenticate: true,
-    };
-  }
 }

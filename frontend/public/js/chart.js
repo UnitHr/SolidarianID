@@ -10,18 +10,18 @@ function generateCombinedChart(data, elementId) {
   new Chart(ctx, {
     type: 'bar', // Type of combined chart (bars + line)
     data: {
-      labels: data.map((item) => item.ods), // ODS as labels on the X axis
+      labels: data.map((item) => item.ods.title), // ODS as labels on the X axis
       datasets: [
         {
           label: 'Number of Communities',
-          data: data.map((item) => item.communities),
+          data: data.map((item) => item.communitiesCount),
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1,
         },
         {
           label: 'Number of Causes',
-          data: data.map((item) => item.causes),
+          data: data.map((item) => item.causesCount),
           borderColor: 'rgba(153, 102, 255, 1)',
           backgroundColor: 'rgba(153, 102, 255, 0.2)',
           type: 'line', // Set this dataset as a line
@@ -30,6 +30,7 @@ function generateCombinedChart(data, elementId) {
       ],
     },
     options: {
+      responsive: true,
       plugins: {
         title: {
           display: true,
@@ -69,6 +70,7 @@ function generateSupportsPieChart(labels, data, elementId, title) {
       ],
     },
     options: {
+      responsive: true,
       plugins: {
         title: {
           display: true,

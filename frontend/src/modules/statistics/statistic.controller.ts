@@ -16,29 +16,15 @@ export class StatisticsController {
     if (!user) {
       return res.redirect('/login');
     }
-    const data = await this.statisticsService.getCommunitiesCausesByODS(
+    const datasByOds = await this.statisticsService.getDataByODS(user.token);
+
+    const datasByCommunity = await this.statisticsService.getDataByCommunity(
       user.token,
     );
-
-    const supportsByOds = await this.statisticsService.getSupportsByODS(
-      user.token,
-    );
-
-    const supportsByCommunity =
-      await this.statisticsService.getSupportsByCommunity(user.token);
-
-    const actionsProgressByCommunity =
-      await this.statisticsService.getActionsProgressByCommunity(user.token);
 
     return {
-      data: JSON.stringify(data.communitiesByOds),
-      supportsByOds: JSON.stringify(supportsByOds.supportPercentageByODS),
-      supportsByCommunity: JSON.stringify(
-        supportsByCommunity.supportPercentageByCommunity,
-      ),
-      actionsProgressByCommunity: JSON.stringify(
-        actionsProgressByCommunity.actionsProgressByCommunity,
-      ),
+      datasByOds: JSON.stringify(datasByOds),
+      datasByCommunity: JSON.stringify(datasByCommunity),
       user: user,
       activePage: 'adminDashboard',
       title: 'Statistics',

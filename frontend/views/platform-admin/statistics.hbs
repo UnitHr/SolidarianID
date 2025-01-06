@@ -1,50 +1,5 @@
 <section>
     <div class="bg-white shadow-md rounded-lg p-4 chart-wrapper">
-        <div class="chart-container">
-            <canvas id="combinedChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="supportByOsdPieChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="supportByCommunityPieChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="polarAreaChart"></canvas>
-        </div>
+        {{> chart}}
     </div>
 </section>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/js/chart.js"></script>
-<script>
-    window.onload = function () {
-
-        // Combined Chart
-        const combinedChartData = `{{{ data }}}`;
-        const data1 = JSON.parse(combinedChartData);
-        generateCombinedChart(data1, 'combinedChart');
-
-        // Pie chart for supports by ODS
-        const supportByOdsData = `{{{ supportsByOds }}}`;
-        const data2 = JSON.parse(supportByOdsData);
-        const labels2 = data2.map((item) => item.ods);
-        const supportsOdsData = data2.map((item) => parseFloat(item.percentage));
-        generateSupportsPieChart(labels2, supportsOdsData, 'supportByOsdPieChart', 'Supports by ODS');
-
-        // Pie chart for supports by Community
-        const supportByCommunityData = `{{{ supportsByCommunity }}}`;
-        const data3 = JSON.parse(supportByCommunityData);
-        const labels3 = data3.map((item) => item.ods);
-        const supportsCommunityData = data3.map((item) => parseFloat(item.percentage));
-        generateSupportsPieChart(labels3, supportsCommunityData, 'supportByCommunityPieChart', 'Supports by Community');
-
-        // Polar Area Chart for Actions Progress by Community
-        const actionsProgressByCommunity = `{{{ actionsProgressByCommunity }}}`;
-        const data4 = JSON.parse(actionsProgressByCommunity);
-        const labels4 = data4.map((item) => item.community); // Nombres de las comunidades
-        const progressData = data4.map((item) => item.progress); // Progreso de cada comunidad
-        generatePolarAreaChart(labels4, progressData, 'polarAreaChart', 'Actions Progress by Community');
-
-    };
-
-</script>

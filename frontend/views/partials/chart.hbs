@@ -40,10 +40,5 @@
         const labels3 = communityData.map((item) => item.communityName); // Nombres de las comunidades
         const progressData = communityData.map((item) => item.averageActionsProgress); // Progreso de cada comunidad
         generatePolarAreaChart(labels3, progressData, 'polarAreaChart', 'Actions Progress by Community');
-
     };
-
-    window.addEventListener('resize', function () {
-        myChart.resize();  // Redibuja la gráfica para ajustarse al nuevo tamaño
-    });
 </script>

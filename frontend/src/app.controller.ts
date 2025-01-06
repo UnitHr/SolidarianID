@@ -36,28 +36,62 @@ export class AppController {
   }
 
   @Post('authenticate')
-  async authenticate(@Body() body, @Res() res) {
+  async authenticate(@Body() body: any, @Res() res) {
+    res.clearCookie('user');
     const { email, password } = body;
+
+    if (!email || !password) {
+      throw new HttpException(
+        'Email and password are required',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     try {
-      const loginResponse = await axios.post(Constants.USER_MS_LOGIN, {
-        email,
-        password,
+      const loginResponse = await axios.post(Constants.USER_MS_LOGIN, body, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      if (
+        !loginResponse ||
+        !loginResponse.data ||
+        !loginResponse.data.access_token
+      ) {
+        throw new HttpException(
+          'Invalid login response',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
 
       const token = loginResponse.data.access_token;
 
-      if (!token) {
-        throw new HttpException('Token not provided', HttpStatus.FORBIDDEN);
+      let playload;
+      try {
+        playload = jwt.verify(token, Constants.TOKEN_SECRET);
+      } catch (err) {
+        console.error('Invalid token:', err.message);
+        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       }
 
-      const playload = jwt.verify(token, Constants.TOKEN_SECRET);
+      const userId = playload.sub?.value;
+      if (!userId) {
+        throw new HttpException(
+          'Invalid token payload',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       const userResponse = await axios.get(
-        Constants.USER_MS_bASE_URL + '/' + playload.sub.value,
+        `${Constants.USER_MS_bASE_URL}/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
+
+      if (!userResponse || !userResponse.data) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
 
       const userData = {
         firstName: userResponse.data.firstName,
@@ -68,14 +102,13 @@ export class AppController {
 
       res.cookie('user', userData, {
         httpOnly: true,
-        maxAge: 3600000, // expires in 1 hour
-        sameSite: 'strict', // CSRF protection
+        maxAge: 3600000, // 1 hora
+        sameSite: 'strict',
       });
 
-      // redirect to home page with token
       res.redirect('/');
     } catch (error) {
-      console.log(error);
+      console.error('Authentication error:', error.message);
       res.render('login', { error: 'Invalid credentials' });
     }
   }
@@ -96,5 +129,10 @@ export class AppController {
       title: 'Register',
       activePage: 'register',
     };
+  }
+  @Get('/logout')
+  logout(@Res() res) {
+    res.clearCookie('user');
+    res.redirect('/');
   }
 }

@@ -18,7 +18,6 @@ export class AuthServiceImpl implements AuthService {
   ): Promise<{ access_token: string }> {
     try {
       const user = await this.userService.getUserByEmail(email);
-
       const isPasswordValid = await user.isValidPassword(password);
 
       if (!isPasswordValid) {
@@ -27,7 +26,6 @@ export class AuthServiceImpl implements AuthService {
 
       // Payload for the JWT
       const payload = { sub: user.id, email: user.email, roles: user.role };
-
       return {
         access_token: await this.jwtService.signAsync(payload),
       };

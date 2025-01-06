@@ -35,9 +35,20 @@ function generateCombinedChart(data, elementId) {
         title: {
           display: true,
           text: 'Number of Communities and Causes by ODS',
+          font: {
+            size: 18,
+          },
         },
         legend: {
           position: 'top',
+          display: window.innerWidth >= 768,
+          labels: {
+            font: {
+              size: 8, // Aquí ajustas el tamaño de la fuente de la leyenda
+            },
+            boxWidth: 10,
+            maxWidth: 5,
+          },
         },
         tooltip: {
           enabled: true,
@@ -75,9 +86,20 @@ function generateSupportsPieChart(labels, data, elementId, title) {
         title: {
           display: true,
           text: title,
+          font: {
+            size: 18,
+          },
         },
         legend: {
-          position: 'top',
+          position: 'left',
+          display: window.innerWidth >= 768,
+          labels: {
+            font: {
+              size: 8, // Aquí ajustas el tamaño de la fuente de la leyenda
+            },
+            boxWidth: 10,
+            maxWidth: 5,
+          },
         },
       },
     },
@@ -109,9 +131,23 @@ function generatePolarAreaChart(labels, data, elementId, title) {
     options: {
       responsive: true,
       plugins: {
+        legend: {
+          position: 'left',
+          display: window.innerWidth >= 768,
+          labels: {
+            font: {
+              size: 8, // Aquí ajustas el tamaño de la fuente de la leyenda
+            },
+            boxWidth: 10,
+            maxWidth: 5,
+          },
+        },
         title: {
           display: true,
           text: title,
+          font: {
+            size: 18,
+          },
         },
         tooltip: {
           callbacks: {

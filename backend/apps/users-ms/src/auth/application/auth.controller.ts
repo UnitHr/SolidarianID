@@ -21,8 +21,12 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: { username: string; password: string }) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  async signIn(@Body() signInDto: { email: string; password: string }) {
+    const token = await this.authService.signIn(
+      signInDto.email,
+      signInDto.password,
+    );
+    return token;
   }
 
   @Public()
@@ -31,7 +35,6 @@ export class AuthController {
   githubLogin() {
     // necessary as the starting point of the authentication
     // left empty
-    console.log('env.GITHUB_CLIENT_ID', env.GITHUB_CLIENT_ID);
   }
 
   @Public()

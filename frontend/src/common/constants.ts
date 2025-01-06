@@ -8,8 +8,8 @@ export class Constants {
     'http://localhost:3000/api/v1/users';
 
   public static readonly COMMUNITY_MS_BASE_URL =
-    'http://localhost:3002/api/v1/communities';
+    'http://localhost:3000/api/v1/communities';
 
   public static readonly STATISTICS_MS_BASE_URL =
-    'http://localhost:3002/api/v1/statistics';
+    'http://localhost:3000/api/v1/statistics';
 }

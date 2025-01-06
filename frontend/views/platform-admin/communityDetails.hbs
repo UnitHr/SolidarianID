@@ -4,100 +4,36 @@
             ← Back to Community Selection
         </a>
 
-        <!-- Detalles de la Comunidad -->
+        <!-- Community Details -->
         {{#if community}}
         <div id="community-details" class="mt-6 p-4 border border-gray-300 rounded bg-gray-50">
-            <h4 class="text-xl font-medium text-center">Community Details</h4>
+            <h4 class="text-xl font-medium text-center md:text-2xl p-4">Community Details</h4>
             <p><strong>Name:</strong> {{community.name}}</p>
             <p><strong>Members:</strong> {{community.members}}</p>
 
             <!-- Include Graphics Checkbox -->
-            <div class="mt-4 flex items-center">
-                <input type="checkbox" id="include-graphics" name="includeGraphics" class="mr-2">
-                <label for="include-graphics" id="include-graphics-text" class="text-sm">Include Graphics in the
-                    Report</label>
+            <div class="mt-4 flex items-center pt-6 pb-6 pl-0 pr-0">
+                <input type="checkbox" id="include-graphics" name="includeGraphics" class="mr-2" checked>
+                <label for="include-graphics" id="include-graphics-text" class="text-sm md:text-base">Include Graphics
+                    in the Report</label>
             </div>
 
-            <div id="chart-placeholder" style="display: none;" class="mt-4">
-                {{> chart}} <!-- Este es tu gráfico dinámico -->
+            <div id="chart-placeholder" class="mt-4">
+                {{> chart}}
             </div>
         </div>
+
         <!-- Generate Report Button -->
-        <button type="button" id="generate-pdf-button"
-            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">
-            Generate PDF Report
-        </button>
+        <div class="mt-4 text-center">
+            <button type="button" id="generate-pdf-button"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 md:px-6 md:py-3">
+                Generate PDF Report
+            </button>
+        </div>
         {{/if}}
     </div>
 </section>
+
 <!-- src/public/js/html2pdf.bundle.min.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-<script>
-    // Manejador para mostrar/ocultar el gráfico según el checkbox
-    const checkbox = document.getElementById('include-graphics');
-    const chartPlaceholder = document.getElementById('chart-placeholder');
-    const generatePdfButton = document.getElementById('generate-pdf-button');
-
-    checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-            chartPlaceholder.style.display = 'block'; // Mostrar el gráfico
-        } else {
-            chartPlaceholder.style.display = 'none'; // Ocultar el gráfico
-        }
-    });
-
-    const ocultarElementos = () => {
-        document.getElementById('include-graphics-text').style.display = 'none';
-        document.getElementById('include-graphics').style.display = 'none';
-        document.getElementById('community-details').classList.remove('border', 'border-gray-300', 'bg-gray-50');
-    };
-
-    const restaurarElementos = () => {
-        document.getElementById('include-graphics-text').style.display = 'block';
-        document.getElementById('include-graphics').style.display = 'block';
-        document.getElementById('community-details').classList.add('border', 'border-gray-300', 'bg-gray-50');
-
-    };
-    // Función para generar el PDF utilizando html2pdf
-    generatePdfButton.addEventListener('click', () => {
-        // Elemento que contiene el reporte
-        const element = document.getElementById('community-details');
-
-        // Configuración para el PDF
-        const options = {
-            filename: 'community-report.pdf', // Nombre del archivo generado
-            jsPDF: {
-                unit: 'mm',  // Unidad de medida
-                format: 'a4',  // Formato de página (A4)
-                orientation: 'portrait'  // Orientación de la página
-            },
-            html2canvas: {
-                scale: 2,  // Doble resolución
-                backgroundColor: '#ffffff',  // Fondo blanco
-                useCORS: true,  // Usar CORS para imágenes
-                logging: false  // Deshabilitar el logging
-            },
-            image: {
-                type: 'jpeg',  // Tipo de imagen para las imágenes dentro del PDF
-                quality: 0.98  // Calidad de la imagen (0-1)
-            },
-            margin: [20, 20, 20, 20],  // Márgenes de 20mm
-            pagebreak: { mode: 'avoid-all', before: '#avoid-page-break' }
-        };
-        ocultarElementos();
-        // Generar el PDF
-        html2pdf()
-            .from(element)
-            .set(options)
-            .save()
-            .then(() => {
-                restaurarElementos();
-            });;
-
-    });
-
-
-
-
-
-</script>
+<script src="/js/generate-report.js"></script>

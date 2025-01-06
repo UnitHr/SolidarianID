@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { PaginationParams } from '@communities-ms/causes/infra/filters/cause-query.builder';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
 import { JoinCommunityRequestRepository } from '../repo/join-community.repository';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
 import { StatusRequest } from '../domain/StatusRequest';
-import { PaginationParams } from '@communities-ms/causes/infra/filters/cause-query.builder';
 
 @Injectable()
 export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestRepository {

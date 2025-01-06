@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
 
@@ -17,22 +18,17 @@ export class VolunteerAction extends Action {
     return (this.props as VolunteerActionProps).location;
   }
 
-  set location(value: string) {
-    (this.props as VolunteerActionProps).location = value;
-  }
-
   get date(): Date {
     return (this.props as VolunteerActionProps).date;
   }
 
-  set date(value: Date) {
-    (this.props as VolunteerActionProps).date = value;
-  }
-
-  /* eslint-disable class-methods-use-this */
-  public static create(props: VolunteerActionProps, id?: string): Action {
-    if (id !== undefined)
-      return new VolunteerAction(props, new UniqueEntityID(id));
-    return new VolunteerAction(props);
+  public static create(
+    props: VolunteerActionProps,
+    id?: UniqueEntityID,
+  ): VolunteerAction {
+    if (!super.checkProperties(props) || !props.location || !props.date) {
+      throw new MissingPropertiesError('[Action] Properties are missing.');
+    }
+    return new VolunteerAction(props, id);
   }
 }

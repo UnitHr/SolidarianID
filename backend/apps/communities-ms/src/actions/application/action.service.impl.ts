@@ -16,15 +16,16 @@ export class ActionServiceImpl implements ActionService {
   constructor(private readonly actionRepository: ActionRepository) {}
 
   async createAction(
-    type,
-    title,
-    description,
-    causeId,
-    target,
-    unit,
-    goodType,
-    location,
-    date,
+    type: Domain.ActionType,
+    title: string,
+    description: string,
+    causeId: string,
+    target: number,
+    unit: string,
+    createdBy: string,
+    goodType?: string,
+    location?: string,
+    date?: Date,
   ): Promise<string> {
     // Check for duplicate
     const isDuplicate = await this.duplicateCheck(causeId, title);
@@ -40,6 +41,7 @@ export class ActionServiceImpl implements ActionService {
       causeId,
       target,
       unit,
+      createdBy,
       goodType,
       location,
       date,

@@ -16,17 +16,19 @@ export interface ActionProps {
   target: number;
   unit: string;
   achieved?: number;
+  createdBy: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export abstract class Action extends Entity<ActionProps> {
   protected constructor(props: ActionProps, id?: UniqueEntityID) {
     super(props, id);
     this.props.status = props.status || ActionStatus.PENDING;
+    this.props.contributions = props.contributions || [];
     this.props.achieved = props.achieved ?? 0;
-    if (this.props.contributions === undefined) this.props.contributions = [];
-
-    if (this.props.contributions.length > 0)
-      this.props.contributions = props.contributions;
+    this.props.createdAt = props.createdAt ?? new Date();
+    this.props.updatedAt = props.updatedAt ?? new Date();
   }
 
   get id(): UniqueEntityID {
@@ -62,7 +64,7 @@ export abstract class Action extends Entity<ActionProps> {
   }
 
   get contributions(): Contribution[] {
-    return this.props.contributions;
+    return [...this.props.contributions];
   }
 
   get target(): number {
@@ -83,6 +85,18 @@ export abstract class Action extends Entity<ActionProps> {
 
   set achieved(value: number) {
     this.props.achieved = value;
+  }
+
+  get createdBy(): string {
+    return this.props.createdBy;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
   }
 
   addContribution(contribution: Contribution) {
@@ -113,5 +127,13 @@ export abstract class Action extends Entity<ActionProps> {
     this.achieved += contribution.amount;
 
     if (this.achieved >= this.target) this.status = ActionStatus.COMPLETED;
+  }
+
+  static checkProperties(props: ActionProps, id?: UniqueEntityID): boolean {
+    const { type, title, description, causeId, createdBy } = props;
+    if (!type || !title || !description || !causeId || !createdBy) {
+      return false;
+    }
+    return true;
   }
 }

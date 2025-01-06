@@ -1,3 +1,4 @@
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from '../domain';
 import * as Persistence from '../infra/persistence';
 import { ActionDto } from '../dto/action.dto';
@@ -7,7 +8,6 @@ import { InvalidActionTypeError } from '../exceptions';
 export class ActionMapper {
   static toDomain(document: Persistence.Action): Domain.Action {
     const {
-      id,
       status,
       title,
       description,
@@ -16,6 +16,9 @@ export class ActionMapper {
       target,
       unit,
       achieved,
+      createdBy,
+      createdAt,
+      updatedAt,
     } = document;
 
     const mappedContributions = document.contributions
@@ -23,7 +26,6 @@ export class ActionMapper {
       : undefined;
 
     const commonProps = {
-      id,
       status,
       title,
       description,
@@ -33,7 +35,12 @@ export class ActionMapper {
       target,
       unit,
       achieved,
+      createdBy,
+      createdAt,
+      updatedAt,
     };
+
+    const id = new UniqueEntityID(document.id);
 
     if (document.type === Domain.ActionType.ECONOMIC) {
       return Domain.EconomicAction.create(
@@ -82,6 +89,9 @@ export class ActionMapper {
       target: action.target,
       unit: action.unit,
       achieved: action.achieved,
+      createdBy: action.createdBy,
+      createdAt: action.createdAt,
+      updatedAt: action.updatedAt,
     };
 
     if (action instanceof Domain.EconomicAction) {

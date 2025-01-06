@@ -1,5 +1,6 @@
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { CauseSortBy, SortDirection } from '@common-lib/common-lib/common/enum';
+import { ActionType } from '@communities-ms/actions/domain/ActionType';
 import { Cause } from '../domain';
 
 export abstract class CauseService {
@@ -47,5 +48,16 @@ export abstract class CauseService {
 
   abstract getCauseActions(id: string): Promise<string[]>;
 
-  abstract addCauseAction(): Promise<void>;
+  abstract addCauseAction(
+    type: ActionType,
+    title: string,
+    description: string,
+    causeId: string,
+    target: number,
+    unit: string,
+    createdBy: string,
+    goodType?: string,
+    location?: string,
+    date?: Date,
+  ): Promise<string>;
 }

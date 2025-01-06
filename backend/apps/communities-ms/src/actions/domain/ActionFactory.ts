@@ -1,3 +1,4 @@
+import { InvalidActionTypeError } from '../exceptions';
 import { Action } from './Action';
 import { ActionType } from './ActionType';
 import { EconomicAction } from './EconomicAction';
@@ -12,11 +13,20 @@ export class ActionFactory {
     causeId,
     target,
     unit,
+    createdBy,
     goodType?,
     location?,
     date?,
   ): Action {
-    const commonProps = { type, title, description, causeId, target, unit };
+    const commonProps = {
+      type,
+      title,
+      description,
+      causeId,
+      target,
+      unit,
+      createdBy,
+    };
     switch (type) {
       case ActionType.ECONOMIC: {
         return EconomicAction.create({
@@ -37,7 +47,7 @@ export class ActionFactory {
         });
       }
       default:
-        throw new Error(`Invalid action type: ${type}`);
+        throw new InvalidActionTypeError(type);
     }
   }
 }

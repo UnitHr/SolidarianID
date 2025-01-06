@@ -5,6 +5,7 @@ import * as Persistence from './persistence';
 import * as Domain from '../domain';
 import { JoinCommunityRequestRepository } from '../repo/join-community.repository';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
+import { StatusRequest } from '../domain/StatusRequest';
 
 @Injectable()
 export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestRepository {
@@ -45,11 +46,12 @@ export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestR
   }
 
   findAll(
+    communityId: string,
     offset: number,
     limit: number,
   ): Promise<Domain.JoinCommunityRequest[]> {
     return this.joinCommunityModel
-      .find()
+      .find({ status: StatusRequest.PENDING, communityId })
       .skip(offset)
       .limit(limit)
       .then((docs) => docs.map(JoinCommunityRequestMapper.toDomain));

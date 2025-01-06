@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
 
@@ -8,14 +9,14 @@ export class EconomicAction extends Action {
     this.type = ActionType.ECONOMIC;
   }
 
-  update(params: ActionProps): void {
-    this.updateCommonProperties(params);
-  }
+  public static create(
+    props: ActionProps,
+    id?: UniqueEntityID,
+  ): EconomicAction {
+    if (!super.checkProperties(props)) {
+      throw new MissingPropertiesError('[Action] Properties are missing.');
+    }
 
-  /* eslint-disable class-methods-use-this */
-  public static create(props: ActionProps, id?: string): EconomicAction {
-    if (id !== undefined)
-      return new EconomicAction(props, new UniqueEntityID(id));
-    return new EconomicAction(props);
+    return new EconomicAction(props, id);
   }
 }

@@ -5,6 +5,8 @@ import {
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
+import { ActionService } from '@communities-ms/actions/application/action.service';
+import { ActionType } from '@communities-ms/actions/domain';
 import { CauseRepository } from '../cause.repository';
 import { CauseService } from './cause.service';
 import { Cause, CauseEndDate } from '../domain';
@@ -12,7 +14,10 @@ import { CauseQueryBuilder } from '../infra/filters/cause-query.builder';
 
 @Injectable()
 export class CauseServiceImpl implements CauseService {
-  constructor(private readonly causeRepository: CauseRepository) {}
+  constructor(
+    private readonly causeRepository: CauseRepository,
+    private readonly actionService: ActionService,
+  ) {}
 
   logger = new Logger(CauseServiceImpl.name);
 
@@ -140,7 +145,35 @@ export class CauseServiceImpl implements CauseService {
     return cause.actionsIds;
   }
 
-  async addCauseAction(): Promise<void> {
-    // TODO: Implement this method
+  async addCauseAction(
+    type: ActionType,
+    title: string,
+    description: string,
+    causeId: string,
+    target: number,
+    unit: string,
+    createdBy: string,
+    goodType?: string,
+    location?: string,
+    date?: Date,
+  ): Promise<string> {
+    const cause = await this.getCause(causeId);
+
+    const actionId = await this.actionService.createAction(
+      type,
+      title,
+      description,
+      causeId,
+      target,
+      unit,
+      createdBy,
+      goodType,
+      location,
+      date,
+    );
+
+    cause.addAction(actionId);
+    await this.causeRepository.save(cause);
+    return actionId;
   }
 }

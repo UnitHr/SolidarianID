@@ -20,8 +20,6 @@ import { JoinCommunityRequestRepository } from './repo/join-community.repository
 import { JoinCommunityRequestRepositoryMongoDb } from './infra/join-community.repository.mongodb';
 import { JoinCommunityService } from './application/join-community.service';
 import { CreateCommunityService } from './application/create-community.service';
-import { CreateCommunityController } from './application/create-community.controller';
-import { JoinCommunityController } from './application/join-community.controller';
 
 @Module({
   imports: [
@@ -41,11 +39,7 @@ import { JoinCommunityController } from './application/join-community.controller
       },
     ]),
   ],
-  controllers: [
-    CommunityController,
-    CreateCommunityController,
-    JoinCommunityController,
-  ],
+  controllers: [CommunityController],
   providers: [
     {
       provide: CreateCommunityRequestRepository,

@@ -16,17 +16,19 @@ export interface ActionProps {
   target: number;
   unit: string;
   achieved?: number;
+  createdBy: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export abstract class Action extends Entity<ActionProps> {
   protected constructor(props: ActionProps, id?: UniqueEntityID) {
     super(props, id);
-    this.props.status = props.status || ActionStatus.pending;
+    this.props.status = props.status || ActionStatus.PENDING;
+    this.props.contributions = props.contributions || [];
     this.props.achieved = props.achieved ?? 0;
-    if (this.props.contributions === undefined) this.props.contributions = [];
-
-    if (this.props.contributions.length > 0)
-      this.props.contributions = props.contributions;
+    this.props.createdAt = props.createdAt ?? new Date();
+    this.props.updatedAt = props.updatedAt ?? new Date();
   }
 
   get id(): UniqueEntityID {
@@ -62,7 +64,7 @@ export abstract class Action extends Entity<ActionProps> {
   }
 
   get contributions(): Contribution[] {
-    return this.props.contributions;
+    return [...this.props.contributions];
   }
 
   get target(): number {
@@ -85,30 +87,53 @@ export abstract class Action extends Entity<ActionProps> {
     this.props.achieved = value;
   }
 
+  get createdBy(): string {
+    return this.props.createdBy;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
   addContribution(contribution: Contribution) {
     this.props.contributions.push(contribution);
   }
 
-  updateCommonProperties(params: ActionProps): void {
-    if (params.title !== undefined) this.props.title = params.title as string;
-    if (params.description)
-      this.props.description = params.description as string;
-    if (params.achieved !== undefined) this.achieved = params.achieved;
+  update(title?: string, description?: string, target?: number): void {
+    if (title !== undefined) {
+      this.props.title = title;
+    }
+    if (description !== undefined) {
+      this.props.description = description;
+    }
+    if (target !== undefined) {
+      this.props.target = target;
+    }
   }
-
-  abstract update(params: ActionProps): void;
 
   getProgress(): number {
     return (this.achieved / this.target) * 100;
   }
 
   contribute(contribution: Contribution): void {
-    if (this.status === ActionStatus.pending)
-      this.status = ActionStatus.in_progress;
+    if (this.status === ActionStatus.PENDING)
+      this.status = ActionStatus.IN_PROGRESS;
     this.addContribution(contribution);
 
     this.achieved += contribution.amount;
 
-    if (this.achieved >= this.target) this.status = ActionStatus.completed;
+    if (this.achieved >= this.target) this.status = ActionStatus.COMPLETED;
+  }
+
+  static checkProperties(props: ActionProps, id?: UniqueEntityID): boolean {
+    const { type, title, description, causeId, createdBy } = props;
+    if (!type || !title || !description || !causeId || !createdBy) {
+      return false;
+    }
+    return true;
   }
 }

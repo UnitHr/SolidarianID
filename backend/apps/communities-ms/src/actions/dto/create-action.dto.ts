@@ -21,10 +21,6 @@ export class CreateActionDto {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
-  @IsNotEmpty()
-  causeId: string;
-
   @IsPositive()
   target: number;
 
@@ -47,21 +43,3 @@ export class CreateActionDto {
   @Transform(({ value }) => new Date(value))
   date?: Date;
 }
-
-/*
-export class CreateEconomicActionDto extends CreateActionDto {}
-
-export class CreateGoodsCollectionActionDto extends CreateActionDto {
-  @IsString()
-  goodType: string;
-}
-
-export class CreateVolunteerActionDto extends CreateActionDto {
-  @IsString()
-  location: string;
-
-  @IsDateString()
-  date: Date;
-} */
-
-// export class UpdateTalDto extends PartialType(CreateActionDto) {}

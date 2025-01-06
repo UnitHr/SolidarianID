@@ -1,14 +1,13 @@
-import { error } from 'console';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from '../domain';
-import { ActionType } from '../domain/ActionType';
-import { ActionDto } from '../dto/action.dto';
 import * as Persistence from '../infra/persistence';
+import { ActionDto } from '../dto/action.dto';
 import { ContributionMapper } from './contribution.mapper';
+import { InvalidActionTypeError } from '../exceptions';
 
 export class ActionMapper {
   static toDomain(document: Persistence.Action): Domain.Action {
     const {
-      id,
       status,
       title,
       description,
@@ -17,6 +16,9 @@ export class ActionMapper {
       target,
       unit,
       achieved,
+      createdBy,
+      createdAt,
+      updatedAt,
     } = document;
 
     const mappedContributions = document.contributions
@@ -24,7 +26,6 @@ export class ActionMapper {
       : undefined;
 
     const commonProps = {
-      id,
       status,
       title,
       description,
@@ -34,9 +35,14 @@ export class ActionMapper {
       target,
       unit,
       achieved,
+      createdBy,
+      createdAt,
+      updatedAt,
     };
 
-    if (document.type === ActionType.ECONOMIC) {
+    const id = new UniqueEntityID(document.id);
+
+    if (document.type === Domain.ActionType.ECONOMIC) {
       return Domain.EconomicAction.create(
         {
           ...commonProps,
@@ -44,7 +50,7 @@ export class ActionMapper {
         id,
       );
     }
-    if (document.type === ActionType.GOODS_COLLECTION) {
+    if (document.type === Domain.ActionType.GOODS_COLLECTION) {
       return Domain.GoodsCollectionAction.create(
         {
           ...commonProps,
@@ -53,7 +59,7 @@ export class ActionMapper {
         id,
       );
     }
-    if (document.type === ActionType.VOLUNTEER) {
+    if (document.type === Domain.ActionType.VOLUNTEER) {
       return Domain.VolunteerAction.create(
         {
           ...commonProps,
@@ -63,8 +69,8 @@ export class ActionMapper {
         id,
       );
     }
-    // TODO: return something (lint)
-    throw error(`Unknown action type: ${document.type}`);
+
+    throw new InvalidActionTypeError(document.type);
   }
 
   static toPersistence(action: Domain.Action): Persistence.Action {
@@ -72,8 +78,7 @@ export class ActionMapper {
       ? action.contributions.map(ContributionMapper.toPersistence)
       : undefined;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const commonProps: any = {
+    const commonProps = {
       id: action.id.toString(),
       status: action.status,
       title: action.title,
@@ -84,6 +89,9 @@ export class ActionMapper {
       target: action.target,
       unit: action.unit,
       achieved: action.achieved,
+      createdBy: action.createdBy,
+      createdAt: action.createdAt,
+      updatedAt: action.updatedAt,
     };
 
     if (action instanceof Domain.EconomicAction) {
@@ -105,7 +113,7 @@ export class ActionMapper {
       };
     }
 
-    throw error(`Unknown action type: ${action.constructor.name}`);
+    throw new InvalidActionTypeError(action.type);
   }
 
   static toDTO(action: Domain.Action): ActionDto {
@@ -134,6 +142,6 @@ export class ActionMapper {
         date: action.date,
       });
     }
-    throw new Error(`Unknown domain action type: ${action.constructor.name}`);
+    throw new InvalidActionTypeError(action.type);
   }
 }

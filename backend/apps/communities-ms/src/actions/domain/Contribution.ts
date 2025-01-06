@@ -5,13 +5,9 @@ import {
 
 interface ContributionProps {
   userId: string;
-
   actionId: string;
-
   date: Date;
-
   amount: number;
-
   unit: string;
 }
 

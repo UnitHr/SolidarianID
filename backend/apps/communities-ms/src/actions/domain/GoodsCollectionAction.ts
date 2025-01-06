@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
 
@@ -16,19 +17,13 @@ export class GoodsCollectionAction extends Action {
     return (this.props as GoodsCollectionActionProps).goodType;
   }
 
-  set goodType(goodType: string) {
-    (this.props as GoodsCollectionActionProps).goodType = goodType;
-  }
-
-  update(params: GoodsCollectionActionProps): void {
-    this.updateCommonProperties(params);
-    if (params.goodType !== undefined) this.goodType = params.goodType;
-  }
-
-  /* eslint-disable class-methods-use-this */
-  public static create(props: GoodsCollectionActionProps, id?: string): Action {
-    if (id !== undefined)
-      return new GoodsCollectionAction(props, new UniqueEntityID(id));
-    return new GoodsCollectionAction(props);
+  public static create(
+    props: GoodsCollectionActionProps,
+    id?: UniqueEntityID,
+  ): GoodsCollectionAction {
+    if (!super.checkProperties(props) || !props.goodType) {
+      throw new MissingPropertiesError('[Action] Properties are missing.');
+    }
+    return new GoodsCollectionAction(props, id);
   }
 }

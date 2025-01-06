@@ -12,8 +12,7 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
-import { Utils } from '@common-lib/common-lib/common/utils';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
@@ -22,6 +21,12 @@ import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
 import { JoinCommunityService } from './join-community.service';
 import { CreateCommunityService } from './create-community.service';
+import { FindCommunitiesDto } from '../dto/find-communities.dto';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response2.dto';
+import { CommunityMapper } from '../mapper/CommunityMapper';
+import { FindCreateCommunitiesDto } from '../dto/find-create-communities.dto';
+import { CreateCommunityRequestMapper } from '../mapper/CreateCommunityRequestMapper';
+import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
 
 @Controller('communities')
 export class CommunityController {
@@ -33,7 +38,6 @@ export class CommunityController {
 
   @Post()
   async createCommunityRequest(
-    // @Headers('authorization') authHeader: string,
     @Body() createCommunityDto: CreateCommunityDto,
     @Res() res: Response,
     @Req() req: Request,
@@ -84,6 +88,39 @@ export class CommunityController {
   }
 
   @Public()
+  @Get()
+  async getCommunities(
+    @Query() query: FindCommunitiesDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const { name, page, limit } = query;
+
+    const { data, total } = await this.communityService.getCommunities(
+      name,
+      page,
+      limit,
+    );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data.length > 0 ? data.map(CommunityMapper.toDto) : [],
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK);
+    res.json(response);
+    res.send();
+  }
+
+  @Public()
   @Get(':id')
   async getCommunity(
     @Param('id', ParseUUIDPipe) id: string,
@@ -113,12 +150,7 @@ export class CommunityController {
 
       res.status(HttpStatus.OK);
       res.json({
-        data: {
-          id: community.id.toString(),
-          adminId: community.adminId,
-          name: community.name,
-          description: community.description,
-        },
+        data: CommunityMapper.toDto(community),
       });
       res.send();
     }
@@ -129,12 +161,16 @@ export class CommunityController {
   async getCommunityMembers(
     @Body() query: QueryPaginationDto,
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    const { offset = 0, limit = 10 } = query;
+    const { page, limit } = query;
 
-    // Get the community
-    const result = await this.communityService.getCommunity(id);
+    const result = await this.communityService.getCommunityMembers(
+      id,
+      page,
+      limit,
+    );
 
     if (result.isLeft()) {
       const error = result.value;
@@ -144,42 +180,49 @@ export class CommunityController {
         case Exceptions.CommunityNotFound:
           res.status(HttpStatus.NOT_FOUND);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
           return;
         default:
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           res.json({ errors: { message: error.errorValue().message } });
+          res.send();
       }
     } else {
-      // Return the community
-      const community = result.value.getValue();
+      const { data, total } = result.value;
+      // Build the base URL for the paginated response
+      const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
-      const links = Utils.getPaginationLinks(
-        'communities/creation-requests',
-        offset,
+      // Create the paginated response
+      const response = new PaginatedResponseDto(
+        data,
+        total,
+        page,
         limit,
+        baseUrl,
       );
 
-      const data = {
-        id: community.id.toString(),
-        members: community.members.slice(offset, offset + limit),
-      };
-
+      // Send the response
       res.status(HttpStatus.OK);
-      res.json({ data, links });
+      res.json(response);
+      res.send();
     }
   }
 
   @Public()
   @Get(':id/causes')
   async getCommunityCauses(
-    @Body() query: QueryPaginationDto,
+    @Query() query: QueryPaginationDto,
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    const { offset = 0, limit = 10 } = query;
+    const { page, limit } = query;
 
-    // Get the community
-    const result = await this.communityService.getCommunity(id);
+    const result = await this.communityService.getCommunityCauses(
+      id,
+      page,
+      limit,
+    );
 
     if (result.isLeft()) {
       const error = result.value;
@@ -197,22 +240,23 @@ export class CommunityController {
           res.send();
       }
     } else {
-      // Return the community
-      const community = result.value.getValue();
+      const { data, total } = result.value;
+      // Build the base URL for the paginated response
+      const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
-      const links = Utils.getPaginationLinks(
-        'communities/creation-requests',
-        offset,
+      // Create the paginated response
+      const response = new PaginatedResponseDto(
+        data,
+        total,
+        page,
         limit,
+        baseUrl,
       );
 
-      const data = {
-        id: community.id.toString(),
-        causes: community.causes.slice(offset, offset + limit),
-      };
-
+      // Send the response
       res.status(HttpStatus.OK);
-      res.json({ data, links });
+      res.json(response);
+      res.send();
     }
   }
 
@@ -297,35 +341,30 @@ export class CommunityController {
       return;
     }
 
-    // Call the service to get the requests
-    const { offset = 0, limit = 10 } = query;
-    const results = await this.joinCommunityService.getJoinCommunityRequests(
-      communityId,
-      offset,
+    const { page, limit } = query;
+
+    const { data, total } =
+      await this.joinCommunityService.getJoinCommunityRequests(
+        communityId,
+        page,
+        limit,
+      );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data.length > 0 ? data.map(JoinCommunityRequestMapper.toDto) : [],
+      total,
+      page,
       limit,
+      baseUrl,
     );
 
-    // Return the error
-    if (results.isFailure) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      res.json({ errors: { message: results.getValue } });
-      res.send();
-      return;
-    }
-
-    // Return the requests
-    const data = results
-      .getValue()
-      .map((request) => ({ id: request.id.toString() }));
-
-    const links = Utils.getPaginationLinks(
-      `communities/${communityId}/join-requests`,
-      offset,
-      limit,
-    );
-
+    // Send the response
     res.status(HttpStatus.OK);
-    res.json({ data, links });
+    res.json(response);
     res.send();
   }
 
@@ -382,13 +421,7 @@ export class CommunityController {
       // Return the request
       res.status(HttpStatus.OK);
       res.json({
-        data: {
-          id: request.id.toString(),
-          userId: request.userId,
-          communityId: request.communityId,
-          status: request.status,
-          comment: request.comment,
-        },
+        data: JoinCommunityRequestMapper.toDto(request),
       });
       res.send();
     }
@@ -405,6 +438,7 @@ export class CommunityController {
   ) {
     // Check if the user is an admin of the community
     const userId = (req as any).user.sub.value;
+
     const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
       userId,
       communityId,
@@ -455,37 +489,37 @@ export class CommunityController {
     }
   }
 
-  @Get('creation-requests')
+  @Get('creation-requests/all')
   async getCreateCommunityRequests(
-    @Query() query: QueryPaginationDto,
+    @Req() req: Request,
+    @Query() query: FindCreateCommunitiesDto,
     @Res() res: Response,
   ) {
-    const { offset = 0, limit = 10 } = query;
-    const results =
+    const { createdAt, status, page, limit } = query;
+
+    const { data, total } =
       await this.createCommunityService.getCreateCommunityRequests(
-        offset,
+        createdAt,
+        status,
+        page,
         limit,
       );
 
-    if (results.isFailure) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      res.json({ errors: { message: results.getValue } });
-      res.send();
-      return;
-    }
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
-    const data = results
-      .getValue()
-      .map((request) => ({ id: request.id.toString() }));
-
-    const links = Utils.getPaginationLinks(
-      'communities/creation-requests',
-      offset,
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data.length > 0 ? data.map(CreateCommunityRequestMapper.toDto) : [],
+      total,
+      page,
       limit,
+      baseUrl,
     );
 
+    // Send the response
     res.status(HttpStatus.OK);
-    res.json({ data, links });
+    res.json(response);
     res.send();
   }
 
@@ -516,20 +550,7 @@ export class CommunityController {
 
       res.status(HttpStatus.OK);
       res.json({
-        data: {
-          id: request.id.toString(),
-          userId: request.userId,
-          name: request.communityName,
-          description: request.communityDescription,
-          cause: {
-            title: request.causeTitle,
-            description: request.causeDescription,
-            end: request.causeEndDate,
-            ods: request.causeOds,
-          },
-          status: request.status,
-          comment: request.comment,
-        },
+        data: CreateCommunityRequestMapper.toDto(request),
       });
       res.send();
     }

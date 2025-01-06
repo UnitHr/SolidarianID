@@ -6,6 +6,8 @@ import * as Exceptions from '../exceptions';
 import { CommunityRepository } from '../repo/community.repository';
 import { JoinCommunityRequestRepository } from '../repo/join-community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
+import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
+import { JoinCommunityQueryBuilder } from '../infra/filters/join-community-query.builder';
 
 @Injectable()
 export class JoinCommunityService {
@@ -80,15 +82,23 @@ export class JoinCommunityService {
 
   async getJoinCommunityRequests(
     communityId: string,
-    offset: number,
-    limit: number,
-  ): Promise<Result<Domain.JoinCommunityRequest[]>> {
-    // Get all the requests
-    const joinCommunityRequests =
-      await this.joinCommunityRequestRepository.findAll(communityId, offset, limit);
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{ data: Domain.JoinCommunityRequest[]; total: number }> {
+    const queryBuilder = new JoinCommunityQueryBuilder().addPagination(
+      page,
+      limit,
+    );
+
+    const pagination = queryBuilder.buildPagination();
+
+    const [data, total] = await Promise.all([
+      this.joinCommunityRequestRepository.findAll(communityId, pagination), // Get paginated data
+      this.joinCommunityRequestRepository.countDocuments(communityId), // Count total documents
+    ]);
 
     // Return the requests
-    return Result.ok(joinCommunityRequests);
+    return { data, total };
   }
 
   async getJoinCommunityRequest(

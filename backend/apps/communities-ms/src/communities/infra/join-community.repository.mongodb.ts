@@ -6,6 +6,7 @@ import * as Domain from '../domain';
 import { JoinCommunityRequestRepository } from '../repo/join-community.repository';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
 import { StatusRequest } from '../domain/StatusRequest';
+import { PaginationParams } from '@communities-ms/causes/infra/filters/cause-query.builder';
 
 @Injectable()
 export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestRepository {
@@ -45,16 +46,21 @@ export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestR
       .then(() => this.findById(entity.id.toString()));
   }
 
-  findAll(
+  async findAll(
     communityId: string,
-    offset: number,
-    limit: number,
+    pagination: PaginationParams,
   ): Promise<Domain.JoinCommunityRequest[]> {
-    return this.joinCommunityModel
-      .find({status: StatusRequest.PENDING, communityId})
-      .skip(offset)
-      .limit(limit)
-      .then((docs) => docs.map(JoinCommunityRequestMapper.toDomain));
+    const requests = await this.joinCommunityModel
+      .find({ status: StatusRequest.PENDING, communityId })
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .exec();
+
+    return requests.map(JoinCommunityRequestMapper.toDomain);
+  }
+
+  async countDocuments(communityId: string): Promise<number> {
+    return this.joinCommunityModel.countDocuments({ communityId }).exec();
   }
 
   async findByUserIdAndCommunityId(

@@ -1,6 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from '../domain';
 import * as Persistence from '../infra/persistence';
+import { CreateCommunityRequestDto } from '../dto/create-community-request.dto';
 
 export class CreateCommunityRequestMapper {
   static toDomain(
@@ -16,6 +17,7 @@ export class CreateCommunityRequestMapper {
         causeEndDate: new Date(raw.cause.end),
         causeOds: raw.cause.ods,
         status: raw.status,
+        createdAt: raw.createdAt,
         comment: raw.comment,
       },
       new UniqueEntityID(raw.id),
@@ -37,6 +39,25 @@ export class CreateCommunityRequestMapper {
         ods: entity.causeOds,
       },
       status: entity.status,
+      createdAt: entity.createdAt,
+      comment: entity.comment,
+    };
+  }
+
+  static toDto(
+    entity: Domain.CreateCommunityRequest,
+  ): CreateCommunityRequestDto {
+    return {
+      id: entity.id.toString(),
+      userId: entity.userId,
+      communityName: entity.communityName,
+      communityDescription: entity.communityDescription,
+      causeTitle: entity.causeTitle,
+      causeDescription: entity.causeDescription,
+      causeEndDate: entity.causeEndDate,
+      causeOds: entity.causeOds,
+      status: entity.status,
+      createdAt: entity.createdAt,
       comment: entity.comment,
     };
   }

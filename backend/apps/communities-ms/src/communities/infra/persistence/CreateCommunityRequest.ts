@@ -40,6 +40,9 @@ export class CreateCommunityRequest {
   status: StatusRequest;
 
   @Prop()
+  createdAt: Date;
+
+  @Prop()
   comment?: string;
 }
 

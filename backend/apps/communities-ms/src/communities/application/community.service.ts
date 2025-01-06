@@ -8,6 +8,10 @@ import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
 import { CommunityRepository } from '../repo/community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
+import {
+  PaginationDefaults,
+} from '@common-lib/common-lib/common/enum';
+import { CommunityQueryBuilder } from '../infra/filters/community-query.builder';
 
 @Injectable()
 export class CommunityService {
@@ -27,6 +31,75 @@ export class CommunityService {
     }
 
     return right(Result.ok(community));
+  }
+
+  async getCommunityMembers(
+    id: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<
+    Either<Exceptions.CommunityNotFound, { data: string[]; total: number }>
+  > {
+    const community = await this.communityRepository.findById(id);
+
+    if (!!community === false) {
+      return left(Exceptions.CommunityNotFound.create(id));
+    }
+
+    // Validate page and limit
+    const validatedPage = Math.max(page, 1);
+    const validatedLimit = Math.max(limit, 1);
+
+    const total = community.members.length;
+    const skip = (validatedPage - 1) * validatedLimit;
+    const data = community.members.slice(skip, skip + validatedLimit);
+
+    return right({ data, total });
+  }
+
+  async getCommunityCauses(
+    id: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<
+    Either<Exceptions.CommunityNotFound, { data: string[]; total: number }>
+  > {
+    const community = await this.communityRepository.findById(id);
+
+    if (!!community === false) {
+      return left(Exceptions.CommunityNotFound.create(id));
+    }
+
+    // Validate page and limit
+    const validatedPage = Math.max(page, 1);
+    const validatedLimit = Math.max(limit, 1);
+
+    const total = community.causes.length;
+    const skip = (validatedPage - 1) * validatedLimit;
+    const data = community.causes.slice(skip, skip + validatedLimit);
+
+    return right({ data, total });
+  }
+
+  async getCommunities(
+    name?: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{ data: Domain.Community[]; total: number }> {
+    const queryBuilder = new CommunityQueryBuilder()
+      .addNameFilter(name)
+      .addPagination(page, limit);
+
+    const filters = queryBuilder.buildFilter();
+    const pagination = queryBuilder.buildPagination();
+
+    // Use Promise.all to execute both queries in parallel
+    const [data, total] = await Promise.all([
+      this.communityRepository.findAll(filters, pagination), // Get paginated data
+      this.communityRepository.countDocuments(filters), // Count total documents
+    ]);
+
+    return { data, total };
   }
 
   async createCommunityRequest(createCommunityRequest: {
@@ -80,6 +153,7 @@ export class CommunityService {
         causeEndDate: createCommunityRequest.causeEndDate,
         causeOds: createCommunityRequest.causeOds,
         status: StatusRequest.PENDING,
+        createdAt: new Date(),
       }),
     );
 

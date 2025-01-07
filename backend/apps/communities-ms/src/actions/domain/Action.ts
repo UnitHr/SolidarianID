@@ -20,12 +20,9 @@ export interface ActionProps {
 export abstract class Action extends EntityRoot<ActionProps> {
   protected constructor(props: ActionProps, id?: UniqueEntityID) {
     super(props, id);
-    this.props.status = props.status || ActionStatus.PENDING;
+    this.props.status = props.status ?? ActionStatus.PENDING;
     this.props.achieved = props.achieved ?? 0;
-    if (this.props.contributions === undefined) this.props.contributions = [];
-
-    if (this.props.contributions.length > 0)
-      this.props.contributions = props.contributions;
+    this.props.contributions = props.contributions ?? [];
   }
 
   get id(): UniqueEntityID {
@@ -104,7 +101,7 @@ export abstract class Action extends EntityRoot<ActionProps> {
     return (this.achieved / this.target) * 100;
   }
 
-  contribute(contribution: Contribution): ActionContributedEvent {
+  contribute(contribution: Contribution): void {
     if (this.status === ActionStatus.PENDING)
       this.status = ActionStatus.IN_PROGRESS;
     this.addContribution(contribution);
@@ -120,7 +117,5 @@ export abstract class Action extends EntityRoot<ActionProps> {
     );
 
     this.apply(event);
-
-    return event;
   }
 }

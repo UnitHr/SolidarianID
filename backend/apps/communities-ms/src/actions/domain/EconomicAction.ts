@@ -1,6 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
+import { ActionCreatedEvent } from './events/ActionCreatedEvent';
 
 export class EconomicAction extends Action {
   constructor(props: ActionProps, id?: UniqueEntityID) {
@@ -8,10 +9,11 @@ export class EconomicAction extends Action {
     this.type = ActionType.ECONOMIC;
   }
 
-  /* eslint-disable class-methods-use-this */
   public static create(props: ActionProps, id?: string): EconomicAction {
-    if (id !== undefined)
-      return new EconomicAction(props, new UniqueEntityID(id));
-    return new EconomicAction(props);
+    const action = new EconomicAction(props, new UniqueEntityID(id));
+    action.apply(
+      new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+    );
+    return action;
   }
 }

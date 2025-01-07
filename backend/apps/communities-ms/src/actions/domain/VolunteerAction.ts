@@ -1,6 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
+import { ActionCreatedEvent } from './events/ActionCreatedEvent';
 
 interface VolunteerActionProps extends ActionProps {
   location: string;
@@ -29,10 +30,16 @@ export class VolunteerAction extends Action {
     (this.props as VolunteerActionProps).date = value;
   }
 
-  /* eslint-disable class-methods-use-this */
-  public static create(props: VolunteerActionProps, id?: string): Action {
-    if (id !== undefined)
-      return new VolunteerAction(props, new UniqueEntityID(id));
-    return new VolunteerAction(props);
+  public static create(
+    props: VolunteerActionProps,
+    id?: string,
+  ): VolunteerAction {
+    const action = new VolunteerAction(props, new UniqueEntityID(id));
+
+    action.apply(
+      new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+    );
+
+    return action;
   }
 }

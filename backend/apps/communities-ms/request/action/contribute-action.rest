@@ -2,8 +2,9 @@
 @baseUrl = http://localhost:3002
 
 ### Success Case: Create a new contribution to an Action
-PATCH  {{baseUrl}}/actions/868fea09-8fe4-4e08-840f-24384382dc34/contribute
+POST  {{baseUrl}}/actions/5dcc0db3-80b3-472f-8e95-60b1b73fe798/contributions
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiI0ZmM3MjZmYi0zNDBkLTRkNDUtOGVjNC0wNDlhZTgyODU4NGMifSwiZW1haWwiOiJqYWNrMTIuZG9lQGV4YW1wbGUuY29tIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTczNjI4MTU2OCwiZXhwIjoxNzM2Mjg1MTY4fQ.qirGMo-wEVKrj7FSgdjIAJKTwn0KnMvdWleBZ2MAnzY
 
 {
   "userId": "1",

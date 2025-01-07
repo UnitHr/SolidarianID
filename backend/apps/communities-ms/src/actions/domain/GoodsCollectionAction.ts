@@ -1,6 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
+import { ActionCreatedEvent } from './events/ActionCreatedEvent';
 
 interface GoodsCollectionActionProps extends ActionProps {
   goodType: string;
@@ -20,10 +21,14 @@ export class GoodsCollectionAction extends Action {
     (this.props as GoodsCollectionActionProps).goodType = goodType;
   }
 
-  /* eslint-disable class-methods-use-this */
-  public static create(props: GoodsCollectionActionProps, id?: string): Action {
-    if (id !== undefined)
-      return new GoodsCollectionAction(props, new UniqueEntityID(id));
-    return new GoodsCollectionAction(props);
+  public static create(
+    props: GoodsCollectionActionProps,
+    id?: string,
+  ): GoodsCollectionAction {
+    const action = new GoodsCollectionAction(props, new UniqueEntityID(id));
+    action.apply(
+      new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+    );
+    return action;
   }
 }

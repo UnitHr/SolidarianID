@@ -4,20 +4,19 @@ import {
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
-import { CommunitiesEventService } from '@communities-ms/events/events.service';
+import { EventPublisher } from '@nestjs/cqrs';
 import { ActionService } from './action.service';
 import * as Domain from '../domain';
 import { ActionRepository } from '../action.repository';
 import * as Exceptions from '../exceptions';
 import { ActionFactory } from '../domain/ActionFactory';
 import { ActionQueryBuilder } from '../infra/filters/action-query.builder';
-import { ActionCreatedEvent } from '../domain/events/ActionCreatedEvent';
 
 @Injectable()
 export class ActionServiceImpl implements ActionService {
   constructor(
     private readonly actionRepository: ActionRepository,
-    private readonly eventService: CommunitiesEventService,
+    private readonly eventPublisher: EventPublisher,
   ) {}
 
   async createAction(
@@ -38,32 +37,25 @@ export class ActionServiceImpl implements ActionService {
     }
 
     // Create the new action
-    const action = ActionFactory.createAction(
-      type,
-      title,
-      description,
-      causeId,
-      target,
-      unit,
-      goodType,
-      location,
-      date,
+    const action = this.eventPublisher.mergeObjectContext(
+      ActionFactory.createAction(
+        type,
+        title,
+        description,
+        causeId,
+        target,
+        unit,
+        goodType,
+        location,
+        date,
+      ),
     );
 
     // Save the new action in the repository
     const savedAction = await this.actionRepository.save(action);
+    action.commit();
 
-    const id = savedAction.id.toString();
-
-    // Create and publish the ActionCreatedEvent
-    const event = new ActionCreatedEvent(
-      id,
-      savedAction.type,
-      savedAction.title,
-    );
-    await this.eventService.emitActionCreatedEvent(event);
-
-    return id;
+    return savedAction.id.toString();
   }
 
   async updateAction(
@@ -139,11 +131,11 @@ export class ActionServiceImpl implements ActionService {
     unit: string,
   ): Promise<string> {
     // Find the action by Id
-    // const action = this.eventPublisher.mergeObjectContext(
-    //   await this.actionRepository.findById(actionId),
-    // );
-    const action = await this.actionRepository.findById(actionId);
+    const action = this.eventPublisher.mergeObjectContext(
+      await this.actionRepository.findById(actionId),
+    );
 
+    // TODO: Maybe this should be in action.contribute
     if (action.unit !== unit) {
       throw new Exceptions.InvalidContributionUnitError(
         actionId,
@@ -165,12 +157,9 @@ export class ActionServiceImpl implements ActionService {
       unit,
     });
 
-    // Publish the ActionContributedEvent
-    // const event = action.contribute(contribution);
+    action.contribute(contribution);
     await this.actionRepository.save(action);
-
-    // await this.eventPublisher.publish(event);
-
+    action.commit();
     return contribution.id.toString();
   }
 

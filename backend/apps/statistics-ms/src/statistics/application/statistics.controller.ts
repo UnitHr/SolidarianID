@@ -1,3 +1,4 @@
+import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
 import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
@@ -10,5 +11,10 @@ export class StatisticsController {
   async handleActionCreated(@Payload() message: ActionCreatedEvent) {
     this.logger.log(`Evento recibido: ${JSON.stringify(message)}`);
     // Procesar la lógica del evento
+  }
+
+  @EventPattern('action-contributed')
+  async handleActionContributed(@Payload() message: ActionContributedEvent) {
+    this.logger.log(`Evento recibido: ${JSON.stringify(message)}`);
   }
 }

@@ -45,6 +45,7 @@ export class CreateCommunityService {
       this.createCommunityRequestRepository.countDocuments(filters), // Count total documents
     ]);
 
+    console.log('Data:', data);
     return {
       data,
       total,

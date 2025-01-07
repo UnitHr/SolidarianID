@@ -308,7 +308,6 @@ export class CommunityController {
     }
   }
 
-  @Roles(Role.ADMIN)
   @Get(':id/join-requests')
   async getJoinCommunityRequests(
     @Query() query: QueryPaginationDto,
@@ -361,7 +360,6 @@ export class CommunityController {
     res.send();
   }
 
-  @Roles(Role.ADMIN)
   @Get(':id/join-requests/:reqId')
   async getJoinCommunityRequest(
     @Param('id', ParseUUIDPipe) communityId: string,
@@ -417,7 +415,6 @@ export class CommunityController {
     }
   }
 
-  @Roles(Role.ADMIN)
   @Post(':id/join-requests/:reqId')
   async validateJoinCommunityRequest(
     @Param('id', ParseUUIDPipe) communityId: string,

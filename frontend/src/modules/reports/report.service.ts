@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { readFileSync } from 'fs';
-import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class ReportService {

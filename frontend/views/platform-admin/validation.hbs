@@ -1,132 +1,100 @@
-<section>
+<section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
   <div class="bg-white shadow-md rounded-lg p-4">
     <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
 
     <div class="space-y-4 max-h-64 overflow-y-auto">
       {{#each requests}}
-      <div class="flex items-center justify-between border border-gray-300 rounded-md p-3">
-        <div class="flex flex-row items-center space-x-4">
-          <input type="checkbox" id="request-{{this.id}}" class="h-4 w-4 mr-4" />
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-gray-300 rounded-md p-3">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+          <input type="checkbox" id="request-{{this.id}}" class="h-4 w-4 sm:mr-4" />
           <div class="flex flex-col">
-            <span class="text-sm font-medium text-gray-700">{{this.title}}</span> <!-- Título -->
-            <span class="text-xs text-gray-500">{{this.description}}</span> <!-- Descripción -->
+            <span class="text-sm font-medium text-gray-700">{{this.communityName}}</span>
+            <span class="text-xs text-gray-500">{{this.communityDescription}}</span>
+            <span class="text-xs text-gray-500">{{this.createdAt}}</span>
           </div>
         </div>
 
         <!-- Reject Button -->
-        <button class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-4 rounded-md"
-          onclick="openRejectModal('{{this.id}}')">
+        <button class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-1 px-4 rounded-md mt-2 sm:mt-0"
+          data-request-id="{{this.id}}" onclick="openRejectModal('{{this.id}}')">
           Reject
         </button>
       </div>
       {{/each}}
     </div>
 
+    <!-- Pagination Controls -->
+    <div class="mt-4 flex justify-center space-x-2">
+      {{#if pagination.hasPrevious}}
+      <a href="?page={{pagination.previousPage}}" class="hover:bg-gray-300 text-gray-700 py-1 px-3 rounded">
+        Previous
+      </a>
+      {{/if}}
+      {{#each pagination.pages}}
+      <a href="?page={{this}}"
+        class="hover:bg-blue-600 py-1 px-4 rounded-md {{#if (eq this ../pagination.currentPage)}}bg-blue-600{{/if}} ">{{this}}</a>
+      {{/each}}
+      {{#if pagination.hasNext}}
+      <a href="?page={{pagination.nextPage}}" class="hover:bg-gray-300 text-gray-700 py-1 px-3 rounded">
+        Next
+      </a>
+      {{/if}}
+    </div>
+
     <!-- Modal for Rejection Reason -->
     <div id="reject-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
-      <div class="bg-white p-6 rounded-md w-1/3">
+      <div class="bg-white p-6 rounded-md w-full sm:w-1/3">
         <h3 class="text-xl font-semibold mb-4">Rejection Reason</h3>
         <textarea id="rejection-reason" class="w-full p-2 border rounded-md mb-4" rows="4"
           placeholder="Enter the reason for rejection"></textarea>
         <div class="flex justify-between">
-          <button onclick="rejectRequest()" class="bg-red-500 text-white py-2 px-4 rounded-md">Submit</button>
-          <button onclick="closeRejectModal()" class="bg-gray-500 text-white py-2 px-4 rounded-md">Cancel</button>
+          <button class="bg-red-500 text-white py-2 px-4 rounded-md" id="reject-confirm">
+            Submit
+          </button>
+          <button onclick="closeRejectModal()" class="bg-gray-500 text-white py-2 px-4 rounded-md">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
 
     <div class="text-center mt-6">
-      <!-- Botón para validar solicitudes seleccionadas -->
-      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md"
-        onclick="validateSelectedRequests()">
-        Validate
-      </button>
+      <!-- Validate selected requests -->
+      <form id="validate-requests-form" method="POST" action="/community-requests/validate">
+        <input type="hidden" name="selectedRequests" id="selected-requests-input" />
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md">
+          Validate
+        </button>
+      </form>
     </div>
   </div>
 </section>
 
+<!-- Include external JavaScript -->
+<script src="/js/validation.js"></script>
 <script>
-  // Function to get all selected request IDs
-  function getSelectedRequests() {
-    const selectedRequests = [];
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked'); // Obtener todos los checkboxes seleccionados
+  // Función para marcar el enlace activo de la paginación según la página actual
+  function setActivePageLink() {
+    // Obtener el parámetro de la página actual en la URL
+    const currentPage = new URLSearchParams(window.location.search).get('page') || 1; // Si no existe, usa la página 1 por defecto
 
-    checkboxes.forEach((checkbox) => {
-      const requestId = checkbox.id.replace('request-', ''); // Extraer el ID de la solicitud del ID del checkbox
-      selectedRequests.push(requestId);
+    // Obtener todos los enlaces de la paginación
+    const paginationLinks = document.querySelectorAll('a');
+
+    // Eliminar la clase 'bg-blue-600' de todos los enlaces
+    paginationLinks.forEach(link => {
+      link.classList.remove('bg-blue-600');
     });
 
-    return selectedRequests;
+    // Añadir la clase 'bg-blue-600' al enlace correspondiente según la página actual
+    paginationLinks.forEach(link => {
+      if (link.textContent.trim() === currentPage) {
+        link.classList.add('bg-blue-600');
+      }
+    });
   }
 
-  // Validate all selected requests
-  function validateSelectedRequests() {
-    const selectedRequestIds = getSelectedRequests();
-
-    if (selectedRequestIds.length === 0) {
-      alert('Please select at least one request to validate.');
-      return;
-    }
-
-    // Send the selected request IDs to the backend for validation
-    fetch('/community-requests/validate-requests', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ requestIds: selectedRequestIds }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert('Selected requests validated successfully');
-          location.reload(); // Optionally, refresh the list of requests
-        } else {
-          alert('Failed to validate selected requests');
-        }
-      })
-      .catch(error => {
-        alert('Error validating selected requests');
-        console.error(error);
-      });
-  }
-
-  // Open modal for rejection
-  function openRejectModal(requestId) {
-    document.getElementById('reject-modal').dataset.requestId = requestId;
-    document.getElementById('reject-modal').classList.remove('hidden');
-  }
-
-  // Close modal
-  function closeRejectModal() {
-    document.getElementById('reject-modal').classList.add('hidden');
-  }
-
-  // Submit rejection
-  function rejectRequest() {
-    const requestId = document.getElementById('reject-modal').dataset.requestId;
-    const reason = document.getElementById('rejection-reason').value;
-
-    fetch(`/community-requests/reject-request/${requestId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ reason }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert('Request rejected successfully');
-          closeRejectModal();
-          location.reload(); // Optionally, refresh the list of requests
-        } else {
-          alert('Failed to reject request');
-        }
-      })
-      .catch(error => {
-        alert('Error rejecting request');
-        console.error(error);
-      });
-  }
+  // Llamar a la función para establecer el enlace activo cuando se carga la página
+  window.onload = setActivePageLink;
 </script>

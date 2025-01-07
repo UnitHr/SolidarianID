@@ -11,29 +11,57 @@ export class ValidationController {
 
   @Get()
   @Render('platform-admin/validation')
-  async getValidation(@Query('page') page = 1, @Req() req, @Res() res) {
+  async getValidation(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Req() req,
+    @Res() res,
+  ) {
     // check if user is authenticated
     const user = req.cookies.user;
     if (!user) {
       res.redirect('/login');
     }
-    // Pagination: 10 items per page
-    const offset = (page - 1) * 10;
-    const limit = 10;
-    const results = await this.validationService.getCreateCommunityRequests(
-      offset,
-      limit,
-      user.token,
-    );
 
-    return {
-      user: user,
-      title: 'Validation',
-      activePage: 'adminDashboard',
-      requests: results.data,
-      page,
-      totalPages: Math.ceil(results.total / limit),
-    };
+    try {
+      const { data, pagination } =
+        await this.validationService.getCreateCommunityRequests(
+          page,
+          limit,
+          user.token,
+        );
+
+      return {
+        user: user,
+        activePage: 'adminDashboard',
+        title: 'Validations',
+        requests: data,
+        pagination: {
+          currentPage: page,
+          totalPages: pagination.totalPages,
+          hasPrevious: page > 1,
+          hasNext: page < pagination.totalPages,
+          previousPage: page > 1 ? page - 1 : null,
+          nextPage: page < pagination.totalPages ? +page + 1 : null,
+          pages: Array.from({ length: pagination.totalPages }, (_, i) => i + 1),
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching community requests:', error);
+      return {
+        user: user,
+        requests: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 0,
+          hasPrevious: false,
+          hasNext: false,
+          previousPage: null,
+          nextPage: null,
+          pages: [],
+        },
+      };
+    }
   }
 
   // Endpoint para validar varias solicitudes seleccionadas

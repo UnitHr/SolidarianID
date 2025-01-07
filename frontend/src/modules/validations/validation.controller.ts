@@ -1,6 +1,17 @@
-import { Controller, Get, Query, Render, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Render,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ValidationService } from './validation.service';
 import { HandlebarsHelpersService } from 'src/helper.service';
+import { ModuleTokenFactory } from '@nestjs/core/injector/module-token-factory';
 
 @Controller('validation')
 export class ValidationController {
@@ -64,41 +75,57 @@ export class ValidationController {
     }
   }
 
-  // Endpoint para validar varias solicitudes seleccionadas
-  /*
-  @Post('validate-requests')
+  @Post('/validate')
   async validateRequests(
-    @Body() body: { requestIds: string[] }, // Lista de IDs de las solicitudes a validar
-    @Res() res: Response,
+    @Req() req,
+    @Res() res,
+    @Body() body: { selectedRequests: string },
   ) {
+    const user = req.cookies.user;
+
+    if (!user) {
+      return res.redirect('/login');
+    }
+
     try {
-      const result = await this.appService.validateRequests(body.requestIds);
-      //return res.status(200).json(result);
+      await this.validationService.validateRequests(
+        body.selectedRequests,
+        user.token,
+      );
+
+      return res.redirect('/validation');
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'Error al validar las solicitudes' });
+      console.error('Error validating requests:', error);
+      return res.status(500).json({
+        success: false,
+        message:
+          'There was an error processing the validation of the requests.',
+      });
     }
   }
 
-  // Endpoint para rechazar una solicitud
-  @Post('reject-request/:id')
+  @Post('/reject/:id')
   async rejectRequest(
-    @Param('id') requestId: string, 
-    @Body() body: { reason: string }, 
-    @Res() res: Response,
+    @Req() req,
+    @Res() res,
+    @Param('id') id: string,
+    @Body('reason') reason: string,
   ) {
+    const user = req.cookies.user;
+    if (!user) {
+      res.redirect('/login');
+    }
     try {
-      const result = await this.appService.rejectRequest(
-        requestId,
-        body.reason,
-      );
-      return res.status(200).json(result);
+      await this.validationService.rejectRequest(id, reason, user.token);
+
+      return res.redirect('/validation');
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'Error al rechazar la solicitud' });
+      console.error('Error validating requests:', error);
+      return res.status(500).json({
+        success: false,
+        message:
+          'There was an error processing the validation of the requests.',
+      });
     }
   }
-  */
 }

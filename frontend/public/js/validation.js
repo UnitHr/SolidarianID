@@ -5,10 +5,9 @@ function getSelectedRequests() {
   );
 
   checkboxes.forEach((checkbox) => {
-    const requestId = checkbox.id.replace('request-', '');
+    const requestId = checkbox.id;
     selectedRequests.push(requestId);
   });
-
   return selectedRequests;
 }
 
@@ -18,6 +17,7 @@ function handleValidateFormSubmit(event) {
     event.preventDefault();
     alert('Please select at least one request to validate.');
   } else {
+    console.log(selectedRequests);
     document.getElementById('selected-requests-input').value =
       JSON.stringify(selectedRequests);
   }
@@ -40,7 +40,7 @@ function handleRejectConfirm() {
 
   const rejectForm = document.createElement('form');
   rejectForm.method = 'POST';
-  rejectForm.action = `/community-requests/reject/${requestId}`;
+  rejectForm.action = `/validation/reject/${requestId}`;
   rejectForm.innerHTML = `<input type="hidden" name="reason" value="${reason}" />`;
 
   document.body.appendChild(rejectForm);

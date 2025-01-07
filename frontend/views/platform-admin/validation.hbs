@@ -1,17 +1,17 @@
-<section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
   <div class="bg-white shadow-md rounded-lg p-4">
     <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
 
-    <div class="space-y-4 max-h-64 overflow-y-auto">
+    <div class="space-y-4 max-h-64 shadow-lg overflow-y-auto">
       {{#each requests}}
       <div
         class="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-gray-300 rounded-md p-3">
         <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-          <input type="checkbox" id="request-{{this.id}}" class="h-4 w-4 sm:mr-4" />
+          <input type="checkbox" id="{{this.id}}" class="h-4 w-4 sm:mr-4" />
           <div class="flex flex-col">
             <span class="text-sm font-medium text-gray-700">{{this.communityName}}</span>
             <span class="text-xs text-gray-500">{{this.communityDescription}}</span>
-            <span class="text-xs text-gray-500">{{this.createdAt}}</span>
+            <span class="text-xs text-gray-500">{{formatDate this.createdAt}}</span>
           </div>
         </div>
 
@@ -32,7 +32,7 @@
       </a>
       {{/if}}
       {{#each pagination.pages}}
-      <a href="?page={{this}}"
+      <a id="page-{{this}}" href="?page={{this}}"
         class="hover:bg-blue-600 py-1 px-4 rounded-md {{#if (eq this ../pagination.currentPage)}}bg-blue-600{{/if}} ">{{this}}</a>
       {{/each}}
       {{#if pagination.hasNext}}
@@ -61,7 +61,7 @@
 
     <div class="text-center mt-6">
       <!-- Validate selected requests -->
-      <form id="validate-requests-form" method="POST" action="/community-requests/validate">
+      <form id="validate-requests-form" method="POST" action="/validation/validate">
         <input type="hidden" name="selectedRequests" id="selected-requests-input" />
         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md">
           Validate
@@ -71,30 +71,19 @@
   </div>
 </section>
 
-<!-- Include external JavaScript -->
 <script src="/js/validation.js"></script>
 <script>
-  // Función para marcar el enlace activo de la paginación según la página actual
   function setActivePageLink() {
-    // Obtener el parámetro de la página actual en la URL
-    const currentPage = new URLSearchParams(window.location.search).get('page') || 1; // Si no existe, usa la página 1 por defecto
+    // Obtener la página actual desde la URL, o '1' si no existe
+    const currentPage = String(new URLSearchParams(window.location.search).get('page') || 1);
 
-    // Obtener todos los enlaces de la paginación
-    const paginationLinks = document.querySelectorAll('a');
-
-    // Eliminar la clase 'bg-blue-600' de todos los enlaces
-    paginationLinks.forEach(link => {
-      link.classList.remove('bg-blue-600');
-    });
-
-    // Añadir la clase 'bg-blue-600' al enlace correspondiente según la página actual
-    paginationLinks.forEach(link => {
-      if (link.textContent.trim() === currentPage) {
-        link.classList.add('bg-blue-600');
-      }
-    });
+    // Selecciona el enlace correspondiente a la página actual
+    const activeLink = document.getElementById(`page-${currentPage}`);
+    if (activeLink) {
+      activeLink.classList.add('bg-blue-600');
+    }
   }
 
-  // Llamar a la función para establecer el enlace activo cuando se carga la página
-  window.onload = setActivePageLink;
+  // Llamar a la función cuando el DOM esté completamente cargado
+  document.addEventListener('DOMContentLoaded', setActivePageLink);
 </script>

@@ -24,41 +24,46 @@ export class ValidationService {
       return { data: [], total: 0 };
     }
   }
-  // Método para validar solicitudes
-  // async validateRequests(requestIds: string[], token: string) {
-  //   try {
-  //     const status = 'approved';
-  //     const body = { status };
-  //     const response = await axios.post(
-  //       Constants.COMMUNITY_MS_BASE_URL + '/creation-requests/' + requestId,
-  //       {
-  //         body,
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       },
-  //     );
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error al validar las solicitudes:', error);
-  //     throw new Error('No se pudo validar las solicitudes');
-  //   }
-  // }
 
-  // // Método para rechazar una solicitud
-  // async rejectRequest(requestId: string, reason: string, token: string) {
-  //   try {
-  //     const status = 'denied';
-  //     const body = { status, reason };
-  //     const response = await axios.post(
-  //       Constants.COMMUNITY_MS_BASE_URL + '/creation-requests/' + requestId,
-  //       {
-  //         body,
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       },
-  //     );
-  //     return response.data; // Devuelve el resultado del rechazo
-  //   } catch (error) {
-  //     console.error('Error al rechazar la solicitud:', error);
-  //     throw new Error('No se pudo rechazar la solicitud');
-  //   }
-  // }
+  async validateRequests(requestIds: string, token: string) {
+    console.log('requestIds:', requestIds);
+    const selectedRequests = JSON.parse(requestIds);
+
+    for (const requestId of selectedRequests) {
+      try {
+        console.log('Validating request:', requestId);
+        await axios.post(
+          Constants.COMMUNITY_MS_BASE_URL + `/creation-requests/${requestId}`,
+          {
+            status: 'approved',
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        console.log(`Request ${requestId} validated successfully.`);
+      } catch (error) {
+        console.error(`Error validating request ${requestId}:`, error.message);
+      }
+    }
+  }
+
+  async rejectRequest(requestId: string, reason: string, token: string) {
+    try {
+      console.log('Validating request:', requestId);
+      await axios.post(
+        Constants.COMMUNITY_MS_BASE_URL + `/creation-requests/${requestId}`,
+        {
+          status: 'denied',
+          comment: reason,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      console.log(`Request ${requestId} validated successfully.`);
+    } catch (error) {
+      console.error(`Error validating request ${requestId}:`, error.message);
+    }
+  }
 }

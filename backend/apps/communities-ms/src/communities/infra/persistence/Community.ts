@@ -1,10 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type CommunityDocument =
-  // eslint-disable-next-line no-use-before-define
-  HydratedDocument<Community>;
-
 @Schema()
 export class Community {
   @Prop()
@@ -25,5 +21,7 @@ export class Community {
   @Prop()
   causes: string[];
 }
+
+export type CommunityDocument = HydratedDocument<Community>;
 
 export const CommunitySchema = SchemaFactory.createForClass(Community);

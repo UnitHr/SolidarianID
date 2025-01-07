@@ -29,7 +29,6 @@ import { envs } from './config';
     CommunityModule,
     CauseModule,
     ActionModule,
-    KafkaModule,
   ],
   providers: [
     {

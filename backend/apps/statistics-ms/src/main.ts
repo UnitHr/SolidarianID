@@ -1,24 +1,43 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { Transport } from '@nestjs/microservices';
 import { StatisticsMsModule } from './statistics-ms.module';
 import { envs } from './config';
 
 async function bootstrap() {
   const logger = new Logger('Statistics-MS_Bootstrap');
 
+  // Crea la aplicación HTTP
   const app = await NestFactory.create(StatisticsMsModule);
 
-  // Enable ValidationPipe for all routes
+  // Conecta un microservicio con transporte KAFKA
+  app.connectMicroservice({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: envs.kafkaClientId,
+        brokers: (envs.kafkaBrokers || 'localhost:9092').split(','),
+      },
+      consumer: {
+        groupId: envs.kafkaGroupId,
+      },
+    },
+  });
+
+  // Iniciamos el microservicio
+  await app.startAllMicroservices();
+
+  // (Opcional) Configura un ValidationPipe global para tu API HTTP
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true, // Convert data to the expected types in the DTOs
-      whitelist: true, // Ignore properties that are not in the DTO
-      forbidNonWhitelisted: true, // Reject unknown properties in requests
-      disableErrorMessages: false, // Include detailed error messages
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      disableErrorMessages: false,
     }),
   );
 
-  // Start the application
+  // Inicia la aplicación HTTP
   await app.listen(envs.statisticsMsPort, envs.statisticsMsHost);
   logger.log(`statistics-ms is running on: ${await app.getUrl()}`);
 }

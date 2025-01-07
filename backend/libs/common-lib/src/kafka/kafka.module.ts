@@ -19,6 +19,6 @@ import { KafkaEventPublisherService } from './kafka-event-publisher.service';
       useClass: KafkaEventPublisherService,
     },
   ],
-  exports: [EventPublisher, ClientsModule],
+  exports: [EventPublisher],
 })
 export class KafkaModule {}

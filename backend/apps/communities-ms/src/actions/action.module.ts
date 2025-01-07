@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { KafkaModule } from '@common-lib/common-lib/kafka/kafka.module';
-import { CommunitiesMsModule } from '@communities-ms/communities-ms.module';
+import { CommunitiesEventService } from '@communities-ms/events.service';
 import { ActionService } from './application/action.service';
 import { ActionController } from './application/action.controller';
 import { Action } from './infra/persistence';
@@ -12,7 +12,6 @@ import { ActionServiceImpl } from './application/action.service.impl';
 import { ActionRepositoryMongoDB } from './infra/action.repository.mongodb';
 import { ActionSchema } from './infra/persistence/Action';
 import { ActionDomainExceptionFilter } from './infra/filters/action-domain-exception.filter';
-import { CommunitiesEventService } from '@communities-ms/events.service';
 
 @Module({
   imports: [

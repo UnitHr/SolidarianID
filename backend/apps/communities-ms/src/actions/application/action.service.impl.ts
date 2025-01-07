@@ -4,7 +4,7 @@ import {
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
-import { CommunitiesEventService } from '@communities-ms/events.service';
+import { CommunitiesEventService } from '@communities-ms/events/events.service';
 import { ActionService } from './action.service';
 import * as Domain from '../domain';
 import { ActionRepository } from '../action.repository';

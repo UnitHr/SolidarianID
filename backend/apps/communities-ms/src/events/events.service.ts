@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventPublisher } from '@common-lib/common-lib/kafka/event-publisher.interface';
-import { ActionCreatedEvent } from './actions/domain/events/ActionCreatedEvent';
+import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 
 @Injectable()
 export class CommunitiesEventService {

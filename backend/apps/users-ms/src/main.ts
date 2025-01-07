@@ -18,6 +18,13 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors({
+    origin: '*', // Aquí defines el frontend (puerto 3000 en este caso)
+    methods: 'GET,POST,PUT,DELETE', // Métodos permitidos
+    allowedHeaders: 'Content-Type, Authorization', // Encabezados permitidos
+    credentials: true, // Permite el uso de cookies y credenciales
+  });
+
   // Start the application
   await app.listen(envs.usersMsPort, envs.usersMsHost);
   logger.log(`users-ms is running on: ${await app.getUrl()}`);

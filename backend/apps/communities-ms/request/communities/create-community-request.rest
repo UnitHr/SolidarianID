@@ -1,10 +1,10 @@
-### Create Cause
+### Create community request
 POST http://localhost:3002/communities
 Content-Type: application/json
 Authorization: Bearer {token}
 
 {
-  "name": "Mi nueva comunidad",
+  "name": "Mi nueva comunidad 2",
   "description": "Una descripción breve de la comunidad",
   "cause": {
     "title": "Causa principal",

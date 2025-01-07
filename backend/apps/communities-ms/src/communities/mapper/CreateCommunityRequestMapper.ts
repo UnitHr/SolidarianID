@@ -10,7 +10,7 @@ export class CreateCommunityRequestMapper {
     return Domain.CreateCommunityRequest.create(
       {
         userId: raw.userId,
-        communityName: raw.id,
+        communityName: raw.name,
         communityDescription: raw.description,
         causeTitle: raw.cause.title,
         causeDescription: raw.cause.description,

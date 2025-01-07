@@ -1,9 +1,9 @@
 ### Login success
-POST http://localhost:3001/auth/login
+POST http://localhost:3001/users/auth/login
 Content-Type: application/json
 
 {
-  "username": "jack.doe@example.com",
+  "email": "admin@example.com",
   "password": "123456Test*"
 }
 

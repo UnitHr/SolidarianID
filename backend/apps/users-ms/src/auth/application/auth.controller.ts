@@ -12,16 +12,21 @@ import {
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { env } from 'process';
 
-@Controller('auth')
+@Controller('users/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: { username: string; password: string }) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  async signIn(@Body() signInDto: { email: string; password: string }) {
+    const token = await this.authService.signIn(
+      signInDto.email,
+      signInDto.password,
+    );
+    return token;
   }
 
   @Public()

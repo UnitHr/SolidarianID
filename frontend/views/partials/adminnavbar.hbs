@@ -1,0 +1,44 @@
+<div class="bg-gray-500 text-white">
+    <div class="w-full flex justify-between">
+        <ul class="flex w-full">
+            <li class="w-full flex items-center justify-center">
+                <a id="link-validation" href="/Validation"
+                    class="block w-full text-center py-2 hover:bg-gray-600 active:bg-cyan-900">Validation</a>
+            </li>
+            <li class=" w-full flex items-center justify-center">
+                <a id="link-statistics" href="/statistics"
+                    class="block w-full text-center py-2 hover:bg-gray-600 active:bg-cyan-900">Statistics</a>
+            </li>
+            <li class=" w-full flex items-center justify-center">
+                <a id="link-reports" href="/reports"
+                    class="block w-full text-center py-2 hover:bg-gray-600 active:bg-cyan-900">Reports</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Función para marcar el enlace activo según la URL actual
+    function setActiveLink() {
+        // Obtener la URL actual
+        const currentUrl = window.location.pathname;
+
+        // Eliminar la clase 'active' de todos los enlaces
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            link.classList.remove('bg-cyan-900');
+        });
+
+        // Añadir la clase 'active' al enlace correspondiente según la URL actual
+        if (currentUrl.includes('/Validation')) {
+            document.getElementById('link-validation').classList.add('bg-cyan-900');
+        } else if (currentUrl.includes('/statistics')) {
+            document.getElementById('link-statistics').classList.add('bg-cyan-900');
+        } else if (currentUrl.includes('/reports')) {
+            document.getElementById('link-reports').classList.add('bg-cyan-900');
+        }
+    }
+
+    // Llamar a la función para establecer el enlace activo cuando se carga la página
+    window.onload = setActiveLink;
+</script>

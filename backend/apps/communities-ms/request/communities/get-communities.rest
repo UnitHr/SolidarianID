@@ -1,0 +1,4 @@
+### Get all Communities
+GET http://localhost:3002/communities
+Content-Type: application/json
+Authorization: Bearer {token}

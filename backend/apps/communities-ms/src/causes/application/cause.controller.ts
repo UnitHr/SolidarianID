@@ -90,12 +90,33 @@ export class CauseController {
   @Public()
   @Get(':id/actions')
   async getActions(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe) causeId: string,
+    @Query() queryPagination: QueryPaginationDto,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    const actionsIds = await this.causeService.getCauseActions(id);
+    const { page, limit } = queryPagination;
 
-    res.status(HttpStatus.OK).json(actionsIds);
+    const { data, total } = await this.causeService.getCauseActions(
+      causeId,
+      page,
+      limit,
+    );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data,
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK).json(response);
   }
 
   @Post(':id/actions')

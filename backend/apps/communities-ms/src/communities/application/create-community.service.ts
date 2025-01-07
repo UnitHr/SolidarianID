@@ -2,11 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { CauseService } from '@communities-ms/causes/application/cause.service';
+import {
+  CreateCommunitySortBy,
+  PaginationDefaults,
+  SortDirection,
+} from '@common-lib/common-lib/common/enum';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
 import { CommunityRepository } from '../repo/community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
+import { CreateCommunityQueryBuilder } from '../infra/filters/create-community-query.builder';
 
 @Injectable()
 export class CreateCommunityService {
@@ -17,16 +23,32 @@ export class CreateCommunityService {
   ) {}
 
   async getCreateCommunityRequests(
-    offset: number,
-    limit: number,
-  ): Promise<Result<Domain.CreateCommunityRequest[]>> {
-    // Get all the requests
-    console.log('Getting all the requests');
-    const createCommunityRequests =
-      await this.createCommunityRequestRepository.findAll(offset, limit);
+    createdAtFilter?: Date,
+    statusFilter?: StatusRequest,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{ data: Domain.CreateCommunityRequest[]; total: number }> {
+    const queryBuilder = new CreateCommunityQueryBuilder()
+      .addStatusFilter(statusFilter)
+      .addCreatedAtFilter(createdAtFilter)
+      .addStatusFilter(statusFilter)
+      .addSort(CreateCommunitySortBy.CREATED_AT, SortDirection.DESC)
+      .addPagination(page, limit);
 
-    // Return the requests
-    return Result.ok(createCommunityRequests);
+    const filters = queryBuilder.buildFilter();
+    const sort = queryBuilder.buildSort();
+    const pagination = queryBuilder.buildPagination();
+
+    // Use Promise.all to execute both queries in parallel
+    const [data, total] = await Promise.all([
+      this.createCommunityRequestRepository.findAll(filters, sort, pagination), // Get paginated data
+      this.createCommunityRequestRepository.countDocuments(filters), // Count total documents
+    ]);
+
+    return {
+      data,
+      total,
+    };
   }
 
   async getCreateCommunityRequest(

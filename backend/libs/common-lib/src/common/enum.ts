@@ -17,6 +17,12 @@ export enum ActionSortBy {
   STATUS = 'status',
 }
 
+export enum CommunitySortBy {}
+
+export enum CreateCommunitySortBy {
+  CREATED_AT = 'createdAt',
+}
+
 export enum SortDirection {
   ASC = 'asc',
   DESC = 'desc',

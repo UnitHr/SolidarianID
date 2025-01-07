@@ -1,19 +1,24 @@
-import { Module, Global } from '@nestjs/common';
-import { Kafka } from 'kafkajs';
-import { KafkaProducer } from './producer.kafka';
-import { KafkaConsumer } from './consumer.kafka';
+import { Module } from '@nestjs/common';
+import { ClientsModule } from '@nestjs/microservices';
 import { kafkaConfig } from './kafka.config';
+import { EventPublisher } from './event-publisher.interface';
+import { KafkaEventPublisherService } from './kafka-event-publisher.service';
 
-@Global()
 @Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'KAFKA_SERVICE',
+        ...kafkaConfig,
+      },
+    ]),
+  ],
   providers: [
     {
-      provide: Kafka,
-      useFactory: () => new Kafka(kafkaConfig),
+      provide: EventPublisher,
+      useClass: KafkaEventPublisherService,
     },
-    KafkaProducer,
-    KafkaConsumer,
   ],
-  exports: [KafkaProducer, KafkaConsumer],
+  exports: [EventPublisher, ClientsModule],
 })
 export class KafkaModule {}

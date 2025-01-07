@@ -4,20 +4,20 @@ import {
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
+import { CommunitiesEventService } from '@communities-ms/events.service';
 import { ActionService } from './action.service';
 import * as Domain from '../domain';
 import { ActionRepository } from '../action.repository';
 import * as Exceptions from '../exceptions';
 import { ActionFactory } from '../domain/ActionFactory';
 import { ActionQueryBuilder } from '../infra/filters/action-query.builder';
-import { ActionEventPublisher } from '../action.event-publisher';
 import { ActionCreatedEvent } from '../domain/events/ActionCreatedEvent';
 
 @Injectable()
 export class ActionServiceImpl implements ActionService {
   constructor(
     private readonly actionRepository: ActionRepository,
-    private eventPublisher: ActionEventPublisher,
+    private readonly eventService: CommunitiesEventService,
   ) {}
 
   async createAction(
@@ -61,7 +61,7 @@ export class ActionServiceImpl implements ActionService {
       savedAction.type,
       savedAction.title,
     );
-    await this.eventPublisher.publish(event);
+    await this.eventService.emitActionCreatedEvent(event);
 
     return id;
   }
@@ -139,9 +139,10 @@ export class ActionServiceImpl implements ActionService {
     unit: string,
   ): Promise<string> {
     // Find the action by Id
-    const action = this.eventPublisher.mergeObjectContext(
-      await this.actionRepository.findById(actionId),
-    );
+    // const action = this.eventPublisher.mergeObjectContext(
+    //   await this.actionRepository.findById(actionId),
+    // );
+    const action = await this.actionRepository.findById(actionId);
 
     if (action.unit !== unit) {
       throw new Exceptions.InvalidContributionUnitError(
@@ -165,10 +166,10 @@ export class ActionServiceImpl implements ActionService {
     });
 
     // Publish the ActionContributedEvent
-    const event = action.contribute(contribution);
+    // const event = action.contribute(contribution);
     await this.actionRepository.save(action);
 
-    await this.eventPublisher.publish(event);
+    // await this.eventPublisher.publish(event);
 
     return contribution.id.toString();
   }

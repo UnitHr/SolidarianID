@@ -1,7 +1,7 @@
 ### Create Cause
 POST http://localhost:3002/communities
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJiZjZmODlkMy02ZGQzLTRiOTEtOTU3Yy0xMWJhMjA3ZTRjMjQifSwiZW1haWwiOiJqYWNrLmRvZUBleGFtcGxlLmNvbSIsInJvbGVzIjoidXNlciIsImlhdCI6MTczNTU3NjIyMywiZXhwIjoxNzM1NTc5ODIzfQ.Be_HWI5L71_RCle90avopXaVSKDAJWhW4eo4ca0cfiE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiI5ZjJmNTk4NC1hYTk5LTQ2M2EtODdjMi0xZDhjYzI2ZjEwZDAifSwiZW1haWwiOiJqYWNrMS5kb2VAZXhhbXBsZS5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzM2MTgyMDI4LCJleHAiOjE3MzYxODU2Mjh9.flrG9nlgI572WQDXRthjlgOd1xGYuwyalyk_nhxlJXg
 
 {
   "name": "Mi nueva comunidad",
@@ -10,6 +10,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiO
     "title": "Causa principal",
     "description": "Descripción de la causa principal",
     "end": "2025-12-31T23:59:59.000Z",
-    "ods": ["NoPoverty", "ZeroHunger"]
+    "ods": [1]
   }
+}
+
+
+### Get Creation Requests
+POST http://localhost:3002/communities/creation-requests/5a0f40db-9a7a-4c7d-8b02-e857305ace2b
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiI5ZjJmNTk4NC1hYTk5LTQ2M2EtODdjMi0xZDhjYzI2ZjEwZDAifSwiZW1haWwiOiJqYWNrMS5kb2VAZXhhbXBsZS5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzM2MTgyMDI4LCJleHAiOjE3MzYxODU2Mjh9.flrG9nlgI572WQDXRthjlgOd1xGYuwyalyk_nhxlJXg
+
+{
+  "status": "approved"
 }

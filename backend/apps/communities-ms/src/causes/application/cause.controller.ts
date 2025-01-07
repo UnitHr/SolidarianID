@@ -106,7 +106,6 @@ export class CauseController {
   ) {
     const { type, title, description, target, unit, goodType, location, date } =
       createActionDto;
-
     const result = await this.causeService.addCauseAction(
       type,
       title,

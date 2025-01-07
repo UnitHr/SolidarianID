@@ -16,6 +16,7 @@ import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
@@ -39,12 +40,9 @@ export class CommunityController {
   @Post()
   async createCommunityRequest(
     @Body() createCommunityDto: CreateCommunityDto,
+    @GetUserId() userId: string,
     @Res() res: Response,
-    @Req() req: Request,
   ) {
-    // Get the user ID from the request
-    const userId = (req as any).user.sub.value;
-
     // Create the community request
     const result = await this.communityService.createCommunityRequest({
       userId,
@@ -262,13 +260,10 @@ export class CommunityController {
 
   @Post(':id/join-requests')
   async joinCommunityRequest(
-    @Req() req: Request,
     @Param('id', ParseUUIDPipe) communityId: string,
+    @GetUserId() userId: string,
     @Res() res: Response,
   ) {
-    // Extract the token from the authorization header
-    const userId = (req as any).user.sub.value;
-
     const result = await this.joinCommunityService.joinCommunityRequest(
       userId,
       communityId,
@@ -316,14 +311,12 @@ export class CommunityController {
   @Roles(Role.ADMIN)
   @Get(':id/join-requests')
   async getJoinCommunityRequests(
-    @Req() req: Request,
     @Query() query: QueryPaginationDto,
     @Param('id', ParseUUIDPipe) communityId: string,
+    @GetUserId() userId: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    // Extract the token from the authorization header
-    const userId = (req as any).user.sub.value;
-
     // Check if the user is an admin of the community
     const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
       userId,
@@ -371,14 +364,11 @@ export class CommunityController {
   @Roles(Role.ADMIN)
   @Get(':id/join-requests/:reqId')
   async getJoinCommunityRequest(
-    @Req() req: Request,
     @Param('id', ParseUUIDPipe) communityId: string,
     @Param('reqId', ParseUUIDPipe) requestId: string,
+    @GetUserId() userId: string,
     @Res() res: Response,
   ) {
-    // Extract the token from the authorization header
-    const userId = (req as any).user.sub.value;
-
     // Check if the user is an admin of the community
     const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
       userId,
@@ -430,15 +420,12 @@ export class CommunityController {
   @Roles(Role.ADMIN)
   @Post(':id/join-requests/:reqId')
   async validateJoinCommunityRequest(
-    @Req() req: Request,
     @Param('id', ParseUUIDPipe) communityId: string,
     @Param('reqId', ParseUUIDPipe) requestId: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
+    @GetUserId() userId: string,
     @Res() res: Response,
   ) {
-    // Check if the user is an admin of the community
-    const userId = (req as any).user.sub.value;
-
     const isCommunityAdmin = await this.joinCommunityService.isCommunityAdmin(
       userId,
       communityId,

@@ -4,7 +4,6 @@ import {
 } from '@common-lib/common-lib/common/ods';
 import { Utils } from '@common-lib/common-lib/common/utils';
 import { OdsStatisticsResponseDto } from './dto/ods-statistics-response.dto';
-import OdsStatistics from './infra/persistence/OdsStatistics';
 import * as Persistence from './infra/persistence';
 import * as Domain from './domain';
 

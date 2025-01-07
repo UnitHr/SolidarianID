@@ -13,9 +13,9 @@ import {
   Req,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response2.dto';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
 import { ActionService } from './action.service';
 import { UpdateActionDto } from '../dto/update-action.dto';
 import * as Mapper from '../mapper';

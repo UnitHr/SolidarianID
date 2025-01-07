@@ -3,7 +3,7 @@ import {
   ActionSortBy,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { ActionStatus } from '../domain';
 
 export class FindActionsDto extends QueryPaginationDto {

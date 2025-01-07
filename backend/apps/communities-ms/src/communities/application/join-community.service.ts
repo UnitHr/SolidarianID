@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
+import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CommunityRepository } from '../repo/community.repository';
 import { JoinCommunityRequestRepository } from '../repo/join-community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
-import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { JoinCommunityQueryBuilder } from '../infra/filters/join-community-query.builder';
 
 @Injectable()

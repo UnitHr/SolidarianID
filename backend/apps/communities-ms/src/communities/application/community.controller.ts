@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
-import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response2.dto';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';

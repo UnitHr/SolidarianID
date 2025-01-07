@@ -1,35 +1,58 @@
-export class PaginatedResponse<T> {
+export class PaginatedResponseDto<T> {
   data: T[];
 
-  pagination: {
-    totalItems: number;
+  meta: {
+    total: number;
+
+    page: number;
+
+    limit: number;
+
     totalPages: number;
-    currentPage: number;
-    pageSize: number;
-    nextPage?: string | null;
-    prevPage?: string | null;
+
+    hasNextPage: boolean;
+
+    hasPreviousPage: boolean;
   };
 
-  constructor(data: T[], total: number, page: number, size: number) {
+  links: {
+    self: string;
+
+    next?: string;
+
+    previous?: string;
+  };
+
+  constructor(
+    data: T[],
+    total: number,
+    page: number,
+    limit: number,
+    baseUrl: string,
+  ) {
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1 && page <= totalPages + 1;
+
     this.data = data;
-    this.pagination = this.getPaginationData(total, page, size);
-  }
 
-  private getPaginationData(total: number, page: number, size: number) {
-    const totalPages = Math.ceil(total / size);
-
-    const nextPage =
-      page < totalPages ? `/actions?page=${page + 1}&size=${size}` : undefined;
-    const prevPage =
-      page > 1 ? `/actions?page=${page - 1}&size=${size}` : undefined;
-
-    return {
-      totalItems: total,
+    this.meta = {
+      total,
+      page,
+      limit,
       totalPages,
-      currentPage: page,
-      pageSize: size,
-      ...(nextPage && { nextPage }),
-      ...(prevPage && { prevPage }),
+      hasNextPage,
+      hasPreviousPage,
+    };
+
+    this.links = {
+      self: `${baseUrl}?page=${page}&limit=${limit}`,
+      next: hasNextPage
+        ? `${baseUrl}?page=${page + 1}&limit=${limit}`
+        : undefined,
+      previous: hasPreviousPage
+        ? `${baseUrl}?page=${page - 1}&limit=${limit}`
+        : undefined,
     };
   }
 }

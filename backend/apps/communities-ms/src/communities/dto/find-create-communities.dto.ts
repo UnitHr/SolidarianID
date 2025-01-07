@@ -1,5 +1,5 @@
 import { IsOptional, IsString, IsEnum, IsDate } from 'class-validator';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { Type } from 'class-transformer';
 import { StatusRequest } from '../domain/StatusRequest';
 

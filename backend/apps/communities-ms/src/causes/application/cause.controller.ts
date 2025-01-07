@@ -16,6 +16,7 @@ import { Request, Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
@@ -123,7 +124,7 @@ export class CauseController {
   async createAction(
     @Body() createActionDto: CreateActionDto,
     @Param('id', ParseUUIDPipe) causeId: string,
-    @Body('userId', ParseUUIDPipe) userId: string,
+    @GetUserId() userId: string,
     @Res() res: Response,
   ) {
     const { type, title, description, target, unit, goodType, location, date } =
@@ -183,15 +184,15 @@ export class CauseController {
   @Post(':id/supporters')
   async addSupporter(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body('userId', ParseUUIDPipe) userId: string,
+    @GetUserId() supporterId: string,
     @Res() res: Response,
   ) {
-    await this.causeService.addCauseSupporter(id, userId);
+    await this.causeService.addCauseSupporter(id, supporterId);
 
-    const locationUrl = `/causes/${id}/supporters/${userId}`;
+    const locationUrl = `/causes/${id}/supporters/${supporterId}`;
     res
       .status(HttpStatus.CREATED)
       .location(locationUrl)
-      .json({ causeId: id, userId });
+      .json({ causeId: id, supporterId });
   }
 }

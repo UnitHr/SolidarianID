@@ -11,9 +11,11 @@ export class EconomicAction extends Action {
 
   public static create(props: ActionProps, id?: string): EconomicAction {
     const action = new EconomicAction(props, new UniqueEntityID(id));
-    action.apply(
-      new ActionCreatedEvent(action.id.toString(), props.type, props.title),
-    );
+    if (!id) {
+      action.apply(
+        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+      );
+    }
     return action;
   }
 }

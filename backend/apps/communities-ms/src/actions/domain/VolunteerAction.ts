@@ -35,11 +35,11 @@ export class VolunteerAction extends Action {
     id?: string,
   ): VolunteerAction {
     const action = new VolunteerAction(props, new UniqueEntityID(id));
-
-    action.apply(
-      new ActionCreatedEvent(action.id.toString(), props.type, props.title),
-    );
-
+    if (!id) {
+      action.apply(
+        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+      );
+    }
     return action;
   }
 }

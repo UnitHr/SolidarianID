@@ -5,7 +5,6 @@ import { EventPublisher } from './event-publisher.interface';
 
 @Injectable()
 export class KafkaEventPublisherService extends EventPublisher {
-  // logger
   private readonly logger = new Logger(KafkaEventPublisherService.name);
 
   constructor(

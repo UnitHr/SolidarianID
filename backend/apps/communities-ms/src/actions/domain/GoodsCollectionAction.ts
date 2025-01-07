@@ -26,9 +26,11 @@ export class GoodsCollectionAction extends Action {
     id?: string,
   ): GoodsCollectionAction {
     const action = new GoodsCollectionAction(props, new UniqueEntityID(id));
-    action.apply(
-      new ActionCreatedEvent(action.id.toString(), props.type, props.title),
-    );
+    if (!id) {
+      action.apply(
+        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+      );
+    }
     return action;
   }
 }

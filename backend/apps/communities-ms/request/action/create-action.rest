@@ -8,7 +8,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiO
 
 {
   "type": "economic",
-  "title": "Money for the Fire victims-43",
+  "title": "Money for the Fire victims-44",
   "description": "Raising funds to provide financial help for families who lost their homes and livelihoods during the fire.",
   "target": 5000,
   "unit": "euros"

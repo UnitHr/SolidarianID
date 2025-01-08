@@ -10,6 +10,46 @@
             <h4 class="text-xl font-medium text-center md:text-2xl p-4">Community Details</h4>
             <p><strong>Name:</strong> {{community.name}}</p>
             <p><strong>Members:</strong> {{community.members}}</p>
+            <!-- Lista de ODS -->
+            <h5 class="text-lg font-semibold mt-4">ODS List:</h5>
+            <ul>
+                {{#each community.ods}}
+                <li>
+                    <strong>{{title}}</strong>: {{description}}
+                </li>
+                {{/each}}
+            </ul>
+
+            <!-- Lista de causas -->
+            <h5 class="text-lg font-semibold mt-4">Causes:</h5>
+            <ul>
+                {{#each community.causes}}
+                <li>
+                    <strong>{{causeName}}</strong> ({{supports}} supporters)
+
+                    <!-- Lista de ODS relacionados -->
+                    <h6 class="text-md font-medium mt-2">ODS Related:</h6>
+                    <ul>
+                        {{#each ods}}
+                        <li>
+                            <strong>{{title}}</strong>: {{description}}
+                        </li>
+                        {{/each}}
+                    </ul>
+
+                    <!-- Acciones relacionadas -->
+                    <h6 class="text-md font-medium mt-2">Actions:</h6>
+                    <ul>
+                        {{#each actions}}
+                        <li>
+                            <p><strong>Action Name:</strong> {{actionName}}</p>
+                            <p><strong>Progress:</strong> {{progress}}%</p>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </li>
+                {{/each}}
+            </ul>
 
             <!-- Include Graphics Checkbox -->
             <div class="mt-4 flex items-center pt-6 pb-6 pl-0 pr-0">

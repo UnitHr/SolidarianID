@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Render, Req, Res } from '@nestjs/common';
 import { ReportService } from './report.service';
-import { Response } from 'express';
 import { StatisticsService } from '../statistics/statistic.service';
 
 @Controller('reports')
@@ -20,7 +19,6 @@ export class ReportController {
 
     try {
       const communities = await this.reportService.getCommunities(user.token);
-      console.log(communities);
       return {
         user: user,
         communities: communities,
@@ -50,30 +48,35 @@ export class ReportController {
     if (!user) {
       return res.redirect('/login');
     }
+    try {
+      const community = await this.reportService.getCommunityDetails(
+        user.token,
+        body.communityId,
+      );
 
-    const community = await this.reportService.getCommunityDetails(
-      user.token,
-      body.communityId,
-    );
+      const datasByOds = await this.statisticsService.getDataByODS(user.token);
 
-    const datasByOds = await this.statisticsService.getDataByODS(user.token);
-
-    const datasByCommunity = await this.statisticsService.getDataByCommunity(
-      user.token,
-    );
-
-    return {
-      user: user,
-      title: 'Reports',
-      activePage: 'adminDashboard',
-      community: community,
-      datasByOds: JSON.stringify(datasByOds),
-      datasByCommunity: JSON.stringify(datasByCommunity),
-    };
-  }
-
-  @Post('/generate')
-  async generateReport(@Body() body: any, @Res() res: Response) {
-    const { communityDetails, includeGraphics } = body;
+      const datasByCommunity = await this.statisticsService.getDataByCommunity(
+        user.token,
+      );
+      return {
+        user: user,
+        title: 'Reports',
+        activePage: 'adminDashboard',
+        community: community,
+        datasByOds: JSON.stringify(datasByOds),
+        datasByCommunity: JSON.stringify(datasByCommunity),
+      };
+    } catch (error) {
+      console.error('Error fetching community details:', error);
+      return {
+        user: user,
+        title: 'Reports',
+        activePage: 'adminDashboard',
+        community: {},
+        datasByOds: JSON.stringify([]),
+        datasByCommunity: JSON.stringify([]),
+      };
+    }
   }
 }

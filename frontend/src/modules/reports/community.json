@@ -1,5 +1,34 @@
 {
-    "id": 1,
-    "name": "Comunidad 1",
-    "members": 10
+    "communityId": "community_004",
+    "communityName": "Community 004",
+    "adminId": "admin_004",
+    "members": 1000,
+    "ods": [
+        {
+            "id": 14,
+            "title": "Life Below Wather",
+            "description": "Conserve and sustainably use the oceans, seas and marine resources for sustainable development",
+        }
+    ],
+    "causes": [
+        {
+            "causeId": "cause_004",
+            "causeName": "Cause 004",
+            "supports": 1000,
+            "ods": [
+                {
+                    "id": 14,
+                    "title": "Life Below Wather",
+                    "description": "Conserve and sustainably use the oceans, seas and marine resources for sustainable development",
+                }
+            ],
+            "actions": [
+                {
+                    "actionId": "action_004",
+                    "actionName": "Action 004",
+                    "progress": 95
+                }
+            ]
+        }
+    ]
 }

@@ -18,11 +18,18 @@ export class ReportService {
   }
 
   async getCommunityDetails(token: string, communityId: string) {
-    const fileContent = readFileSync(
-      '../frontend/src/modules/reports/community.json',
-      'utf-8',
-    );
-    const data = JSON.parse(fileContent);
-    return data;
+    try {
+      const response = await axios.get(
+        Constants.STATISTICS_MS_BASE_URL + `/community/community_004/report`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching communities details:', error);
+      return [];
+    }
   }
 }

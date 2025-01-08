@@ -9,4 +9,9 @@ export abstract class HistoryService {
     userId: string,
     followedUserId: string,
   ): Promise<void>;
+
+  abstract registerActionContribute(
+    userId: string,
+    actionId: string,
+  ): Promise<void>;
 }

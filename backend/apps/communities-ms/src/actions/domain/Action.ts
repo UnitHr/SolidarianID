@@ -131,6 +131,7 @@ export abstract class Action extends EntityRoot<ActionProps> {
       contribution.userId,
       this.id.toString(),
       contribution.amount,
+      contribution.unit,
     );
 
     this.apply(event);

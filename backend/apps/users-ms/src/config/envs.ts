@@ -20,6 +20,9 @@ interface EnvVars {
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
   GITHUB_CALLBACK_URL: string;
+  KAFKA_CLIENT_ID: string;
+  KAFKA_BROKERS: string;
+  KAFKA_GROUP_ID: string;
 }
 
 const envsSchema = joi
@@ -39,6 +42,9 @@ const envsSchema = joi
     GITHUB_CLIENT_ID: joi.string().required(),
     GITHUB_CLIENT_SECRET: joi.string().required(),
     GITHUB_CALLBACK_URL: joi.string().required(),
+    KAFKA_CLIENT_ID: joi.string().required(),
+    KAFKA_BROKERS: joi.string().required(),
+    KAFKA_GROUP_ID: joi.string().required(),
   })
   .unknown(true);
 
@@ -62,4 +68,7 @@ export const envs = {
   githubClientId: envVars.GITHUB_CLIENT_ID,
   githubClientSecret: envVars.GITHUB_CLIENT_SECRET,
   githubCallbackUrl: envVars.GITHUB_CALLBACK_URL,
+  kafkaClientId: process.env.KAFKA_CLIENT_ID,
+  kafkaBrokers: process.env.KAFKA_BROKERS.split(','),
+  kafkaGroupId: process.env.KAFKA_GROUP_ID,
 };

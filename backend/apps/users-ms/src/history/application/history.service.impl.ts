@@ -29,4 +29,13 @@ export class HistoryServiceImpl implements HistoryService {
     history.addEntryUserFollowed(followedUserId);
     await this.historyRepository.save(history);
   }
+
+  async registerActionContribute(
+    userId: string,
+    actionId: string,
+  ): Promise<void> {
+    const history = await this.historyRepository.findByUserId(userId);
+    history.addEntryActionContribute(actionId);
+    await this.historyRepository.save(history);
+  }
 }

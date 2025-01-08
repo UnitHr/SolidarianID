@@ -43,4 +43,14 @@ export class History extends EntityRoot<HistoryProps> {
 
     this.addEntry(entry);
   }
+
+  public addEntryActionContribute(actionId: string): void {
+    const entry = HistoryEntry.create({
+      type: HistoryEntryType.ACTION_CONTRIBUTION,
+      entityId: new UniqueEntityID(actionId),
+      timestamp: new Date(),
+    });
+
+    this.addEntry(entry);
+  }
 }

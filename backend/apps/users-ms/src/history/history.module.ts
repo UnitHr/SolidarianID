@@ -7,9 +7,11 @@ import { HistoryService } from './application/history.service';
 import { HistoryServiceImpl } from './application/history.service.impl';
 import { UserCreatedHandler } from './domain/events/user-created.handler';
 import { UserFollowedHandler } from './domain/events/user-followed.handler';
+import { HistoryController } from './application/history.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([History, HistoryEntry])],
+  controllers: [HistoryController],
   providers: [
     { provide: HistoryRepository, useClass: HistoryRepositoryTypeOrm },
     { provide: HistoryService, useClass: HistoryServiceImpl },

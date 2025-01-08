@@ -3,8 +3,8 @@
  * @module modules/actions/domain
  */
 
-import { Action } from './Action';
-import { Contribution } from './Contribution';
+import { Action, ActionSchema } from './Action';
+import { Contribution, ContributionSchema } from './Contribution';
 
-export { Action };
-export { Contribution };
+export { Action, ActionSchema };
+export { Contribution, ContributionSchema };

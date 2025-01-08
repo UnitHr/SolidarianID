@@ -38,5 +38,6 @@ export class User {
     joinColumn: { name: 'followed_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'follower_id', referencedColumnName: 'id' },
   })
+  // eslint-disable-next-line no-use-before-define
   followers: User[];
 }

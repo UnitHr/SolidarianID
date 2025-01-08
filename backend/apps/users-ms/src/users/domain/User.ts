@@ -20,6 +20,7 @@ export interface UserProps {
   showAge: boolean;
   showEmail: boolean;
   role: string;
+  // eslint-disable-next-line no-use-before-define
   followers?: User[];
 }
 

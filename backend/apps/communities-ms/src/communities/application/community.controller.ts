@@ -14,8 +14,6 @@ import { Response, Request } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
-import { Role } from '@common-lib/common-lib/auth/role/role.enum';
-import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
@@ -546,8 +544,6 @@ export class CommunityController {
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
   ) {
-    console.log('id', id);
-    console.log('validateCommunityDto', validateCommunityDto);
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,

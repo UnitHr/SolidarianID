@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 import { HistoryEntry } from './HistoryEntry';
 

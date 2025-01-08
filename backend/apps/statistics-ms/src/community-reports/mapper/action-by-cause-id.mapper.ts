@@ -1,5 +1,5 @@
-import { ActionReportResponseDto } from '../dto/action-report-response.dto';
 import { Utils } from '@common-lib/common-lib/common/utils';
+import { ActionReportResponseDto } from '../dto/action-report-response.dto';
 import * as Persistence from '../infra/persistence';
 import * as Domain from '../domain';
 

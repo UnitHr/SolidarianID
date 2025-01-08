@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { HistoryEntryStatus, HistoryEntryType } from '@users-ms/history/domain';
 import { History } from './History';

@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { env } from 'process';
 import { AuthService } from './auth.service';
 
 @Controller('users/auth')

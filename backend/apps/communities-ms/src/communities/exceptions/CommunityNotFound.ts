@@ -1,4 +1,4 @@
-import { DomainError } from '@common-lib/common-lib/core/exceptions/DomainError';
+import { DomainError } from '@common-lib/common-lib/core/exceptions/domain.error';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 
 export class CommunityNotFound extends Result<DomainError> {

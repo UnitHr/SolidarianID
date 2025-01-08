@@ -5,19 +5,23 @@ import * as Persistence from './persistence';
 import * as Domain from '../domain';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
 import { CreateCommunityRequestMapper } from '../mapper/CreateCommunityRequestMapper';
-import { StatusRequest } from '../domain/StatusRequest';
+import { PaginationParams } from './filters/community-query.builder';
+import {
+  CreateCommunityFilter,
+  CreateCommunitySort,
+} from './filters/create-community-query.builder';
 
 @Injectable()
 export class CreateCommunityRequestRepositoryMongoDb extends CreateCommunityRequestRepository {
   constructor(
     @InjectModel(Persistence.CreateCommunityRequest.name)
-    private joinCommunityModel: Model<Persistence.CreateCommunityRequest>,
+    private createCommunityModel: Model<Persistence.CreateCommunityRequest>,
   ) {
     super();
   }
 
   async findById(id: string): Promise<Domain.CreateCommunityRequest> {
-    const existsRequest = await this.joinCommunityModel.findOne({ id });
+    const existsRequest = await this.createCommunityModel.findOne({ id });
 
     if (!!existsRequest === true) {
       return CreateCommunityRequestMapper.toDomain(existsRequest);
@@ -29,30 +33,38 @@ export class CreateCommunityRequestRepositoryMongoDb extends CreateCommunityRequ
   async save(
     entity: Domain.CreateCommunityRequest,
   ): Promise<Domain.CreateCommunityRequest> {
-    const existsRequest = await this.joinCommunityModel.findOne({
+    const existsRequest = await this.createCommunityModel.findOne({
       id: entity.id.toString(),
     });
 
     const document = CreateCommunityRequestMapper.toPersistence(entity);
 
     if (!!existsRequest === false) {
-      return this.joinCommunityModel
+      return this.createCommunityModel
         .create(document)
         .then((doc) => CreateCommunityRequestMapper.toDomain(doc));
     }
-    return this.joinCommunityModel
+    return this.createCommunityModel
       .updateOne({ id: entity.id.toString() }, document)
       .then(() => this.findById(entity.id.toString()));
   }
 
-  findAll(
-    offset: number,
-    limit: number,
+  async findAll(
+    filter: CreateCommunityFilter,
+    sort: CreateCommunitySort,
+    pagination: PaginationParams,
   ): Promise<Domain.CreateCommunityRequest[]> {
-    return this.joinCommunityModel
-      .find({status: StatusRequest.PENDING})
-      .skip(offset)
-      .limit(limit)
-      .then((docs) => docs.map(CreateCommunityRequestMapper.toDomain));
+    const requests = await this.createCommunityModel
+      .find(filter)
+      .sort(sort)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .exec();
+
+    return requests.map(CreateCommunityRequestMapper.toDomain);
+  }
+
+  async countDocuments(filter: CreateCommunityFilter): Promise<number> {
+    return this.createCommunityModel.countDocuments(filter).exec();
   }
 }

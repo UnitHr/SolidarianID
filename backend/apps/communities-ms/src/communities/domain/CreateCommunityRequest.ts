@@ -15,6 +15,7 @@ interface CreateCommunityRequestProps {
   causeEndDate: Date;
   causeOds: ODSEnum[];
   status: StatusRequest;
+  createdAt: Date;
   comment?: string;
 }
 
@@ -73,6 +74,14 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
 
   set userId(userId: string) {
     this.props.userId = userId;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  set createdAt(createdAt: Date) {
+    this.props.createdAt = createdAt;
   }
 
   static create(

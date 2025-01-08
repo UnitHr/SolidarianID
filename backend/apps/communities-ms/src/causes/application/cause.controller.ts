@@ -14,8 +14,9 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response2.dto';
-import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination2.dto';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
@@ -90,19 +91,40 @@ export class CauseController {
   @Public()
   @Get(':id/actions')
   async getActions(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe) causeId: string,
+    @Query() queryPagination: QueryPaginationDto,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    const actionsIds = await this.causeService.getCauseActions(id);
+    const { page, limit } = queryPagination;
 
-    res.status(HttpStatus.OK).json(actionsIds);
+    const { data, total } = await this.causeService.getCauseActions(
+      causeId,
+      page,
+      limit,
+    );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data,
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK).json(response);
   }
 
   @Post(':id/actions')
   async createAction(
     @Body() createActionDto: CreateActionDto,
     @Param('id', ParseUUIDPipe) causeId: string,
-    @Body('userId', ParseUUIDPipe) userId: string,
+    @GetUserId() userId: string,
     @Res() res: Response,
   ) {
     const { type, title, description, target, unit, goodType, location, date } =
@@ -162,15 +184,15 @@ export class CauseController {
   @Post(':id/supporters')
   async addSupporter(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body('userId', ParseUUIDPipe) userId: string,
+    @GetUserId() supporterId: string,
     @Res() res: Response,
   ) {
-    await this.causeService.addCauseSupporter(id, userId);
+    await this.causeService.addCauseSupporter(id, supporterId);
 
-    const locationUrl = `/causes/${id}/supporters/${userId}`;
+    const locationUrl = `/causes/${id}/supporters/${supporterId}`;
     res
       .status(HttpStatus.CREATED)
       .location(locationUrl)
-      .json({ causeId: id, userId });
+      .json({ causeId: id, supporterId });
   }
 }

@@ -3,9 +3,9 @@ import {
   UniqueEntityID,
 } from '@common-lib/common-lib/core/domain/Entity';
 import { UserBirthDate } from './UserBirthDate';
-import { MissingUserPropertiesError } from '../exceptions/missing-user-properties.error';
 import { UserPassword } from './Password';
 import {
+  MissingPropertiesError,
   UserAlreadyFollowedError,
   UserCannotFollowSelfError,
 } from '../exceptions';
@@ -91,7 +91,9 @@ export class User extends Entity<UserProps> {
   public static create(props: UserProps, id?: UniqueEntityID): User {
     const { firstName, lastName, birthDate, email, password } = props;
     if (!firstName || !lastName || !birthDate || !email || !password) {
-      throw new MissingUserPropertiesError();
+      throw new MissingPropertiesError(
+        '[User] Missing properties to create a new user.',
+      );
     }
     return new User({ ...props, followers: props.followers ?? [] }, id);
   }

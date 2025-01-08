@@ -19,9 +19,9 @@ import {
 import { Response } from 'express';
 import { UserCannotFollowSelfError } from '@users-ms/users/exceptions/user-cannot-follow-self.error';
 import {
+  MissingPropertiesError,
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
-  MissingUserPropertiesError,
   UnderageUserError,
   UserAlreadyFollowedError,
 } from '../../exceptions';
@@ -29,10 +29,10 @@ import {
 type ExceptionConstructor = new (...args: unknown[]) => Error;
 
 @Catch(
+  MissingPropertiesError,
   EntityNotFoundError,
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
-  MissingUserPropertiesError,
   InvalidDateProvidedError,
   UnderageUserError,
   UserAlreadyFollowedError,
@@ -43,12 +43,12 @@ export class UserDomainExceptionFilter implements ExceptionFilter {
     ExceptionConstructor,
     HttpStatus
   >([
+    [MissingPropertiesError, HttpStatus.BAD_REQUEST],
     [EntityNotFoundError, HttpStatus.NOT_FOUND],
     [EmailAlreadyInUseError, HttpStatus.CONFLICT],
     [EmailUpdateConflictError, HttpStatus.CONFLICT],
     [UserCannotFollowSelfError, HttpStatus.CONFLICT],
     [UserAlreadyFollowedError, HttpStatus.CONFLICT],
-    [MissingUserPropertiesError, HttpStatus.BAD_REQUEST],
     [InvalidDateProvidedError, HttpStatus.BAD_REQUEST],
     [UnderageUserError, HttpStatus.BAD_REQUEST],
   ]);

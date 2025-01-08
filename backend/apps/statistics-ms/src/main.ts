@@ -38,6 +38,14 @@ async function bootstrap() {
   );
 
   // Start application
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
+  });
+
+  // Start the application
   await app.listen(envs.statisticsMsPort, envs.statisticsMsHost);
   logger.log(`statistics-ms is running on: ${await app.getUrl()}`);
 }

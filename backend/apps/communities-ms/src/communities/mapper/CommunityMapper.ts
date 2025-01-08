@@ -1,6 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from '../domain';
 import * as Persistence from '../infra/persistence';
+import { CommunityDto } from '../dto/community.dto';
 
 export class CommunityMapper {
   static toDomain(raw: Persistence.Community): Domain.Community {
@@ -24,6 +25,15 @@ export class CommunityMapper {
       description: entity.description,
       members: entity.members,
       causes: entity.causes,
+    };
+  }
+
+  static toDto(entity: Domain.Community): CommunityDto {
+    return {
+      id: entity.id.toString(),
+      adminId: entity.adminId,
+      name: entity.name,
+      description: entity.description,
     };
   }
 }

@@ -140,9 +140,29 @@ export class CauseServiceImpl implements CauseService {
     await this.causeRepository.save(cause);
   }
 
-  async getCauseActions(id: string): Promise<string[]> {
+  async getCauseActions(
+    id: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<{
+    data: string[];
+    total: number;
+  }> {
     const cause = await this.getCause(id);
-    return cause.actionsIds;
+
+    // Validate page and limit
+    const validatedPage = Math.max(page, 1);
+    const validatedLimit = Math.max(limit, 1);
+
+    // Calculate the total number of actions and the data to return
+    const total = cause.actionsIds.length;
+    const skip = (validatedPage - 1) * validatedLimit;
+    const data = cause.actionsIds.slice(skip, skip + validatedLimit);
+
+    return {
+      data,
+      total,
+    };
   }
 
   async addCauseAction(

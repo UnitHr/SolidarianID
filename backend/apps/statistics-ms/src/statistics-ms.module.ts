@@ -16,6 +16,10 @@ import { StatisticsModule } from './statistics/statistics.module';
       ),
       localDataCenter: envs.cassandraLocalDataCenter,
       keyspace: envs.cassandraKeyspace,
+      socketOptions: {
+        readTimeout: 30000, // Aumenta el timeout de lectura (en milisegundos)
+        connectTimeout: 5000, // Aumenta el timeout de conexión (en milisegundos)
+      },
     }),
 
     // Import modules

@@ -1,16 +1,20 @@
-import { IsOptional, IsInt, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
+import { IsOptional, IsPositive, Max } from 'class-validator';
+import { PaginationDefaults } from '../common/enum';
 
 export class QueryPaginationDto {
+  @IsPositive()
   @IsOptional()
   @Type(() => Number)
-  @IsInt({ message: 'The skip parameter must be an integer' })
-  @Min(0, { message: 'The skip parameter must be greater than or equal to 0' })
-  offset?: number;
+  @Transform(({ value }) => value ?? PaginationDefaults.DEFAULT_PAGE)
+  page: number = PaginationDefaults.DEFAULT_PAGE;
 
+  @IsPositive()
   @IsOptional()
   @Type(() => Number)
-  @IsInt({ message: 'The limit parameter must be an integer' })
-  @Min(1, { message: 'The limit parameter must be greater than or equal to 1' })
-  limit?: number;
+  @Transform(({ value }) => value ?? PaginationDefaults.DEFAULT_LIMIT)
+  @Max(PaginationDefaults.MAX_LIMIT, {
+    message: `Limit cannot exceed ${PaginationDefaults.MAX_LIMIT} items`,
+  })
+  limit: number = PaginationDefaults.DEFAULT_LIMIT;
 }

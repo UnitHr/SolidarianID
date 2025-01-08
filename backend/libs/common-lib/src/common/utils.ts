@@ -1,6 +1,8 @@
 /**
- * This file contains utility functions used throughout the application.
- * These utilities are intended to be used globally to ensure consistency.
+ * @file This module exports various utility functions used across the application.
+ * @module common/utils
+ *
+ * @description This module provides a collection of utility functions used throughout the application.
  */
 
 export class Utils {
@@ -17,19 +19,7 @@ export class Utils {
     return age;
   }
 
-  static getPaginationLinks(
-    endpoint: string,
-    offset: number,
-    limit: number,
-  ): { prev?: string; next: string } {
-    const links: { prev?: string; next: string } = {
-      next: `${endpoint}?offset=${offset + limit}&limit=${limit}`,
-    };
-
-    if (offset > 0 && offset > limit) {
-      links.prev = `${endpoint}?offset=${offset - limit}&limit=${limit}`;
-    }
-
-    return links;
+  static calculateAverage(amount: number, totalAmount: number): number {
+    return parseFloat(((amount / totalAmount) * 100).toFixed(2));
   }
 }

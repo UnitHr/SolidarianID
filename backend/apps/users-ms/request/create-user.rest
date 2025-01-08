@@ -14,7 +14,7 @@ Content-Type: application/json
   "bio": "Hello, I'm Jane Doe!",
   "showAge": true,
   "showEmail": false,
-  "role": "user"
+  "role": "admin"
 }
 
 ### Success Case: Create a new user without bio

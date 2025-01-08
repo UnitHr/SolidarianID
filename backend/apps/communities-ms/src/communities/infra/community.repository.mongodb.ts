@@ -5,6 +5,10 @@ import { CommunityRepository } from '../repo/community.repository';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
 import { CommunityMapper } from '../mapper/CommunityMapper';
+import {
+  CommunityFilter,
+  PaginationParams,
+} from './filters/community-query.builder';
 
 @Injectable()
 export class CommunityRepositoryMongoDb extends CommunityRepository {
@@ -66,5 +70,22 @@ export class CommunityRepositoryMongoDb extends CommunityRepository {
     return this.communityModel
       .updateOne({ id: entity.id.toString() }, document)
       .then(() => this.findById(entity.id.toString()));
+  }
+
+  async findAll(
+    filter: CommunityFilter,
+    pagination: PaginationParams,
+  ): Promise<Domain.Community[]> {
+    const communities = await this.communityModel
+      .find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .exec();
+
+    return communities.map(CommunityMapper.toDomain);
+  }
+
+  async countDocuments(filter: CommunityFilter): Promise<number> {
+    return this.communityModel.countDocuments(filter).exec();
   }
 }

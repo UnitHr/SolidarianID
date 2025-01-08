@@ -136,7 +136,7 @@ export abstract class Action extends EntityRoot<ActionProps> {
     this.apply(event);
   }
 
-  static checkProperties(props: ActionProps, id?: UniqueEntityID): boolean {
+  static checkProperties(props: ActionProps): boolean {
     const { type, title, description, causeId, createdBy } = props;
     if (!type || !title || !description || !causeId || !createdBy) {
       return false;

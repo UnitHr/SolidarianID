@@ -5,7 +5,7 @@ import { CommunityService } from '../../../src/communities/application/community
 import { CreateCommunityRequestRepository } from '../../../src/communities/repo/create-community.repository';
 import { StatusRequest } from '../../../src/communities/domain/StatusRequest';
 import * as Domain from '../../../src/communities/domain';
-import { Ods } from '../../../../../libs/common-lib/src/common/Ods';
+import { ODSEnum } from '../../../../../libs/common-lib/src/common/ods';
 import { CommunityRepository } from '../../../src/communities/repo/community.repository';
 import * as Exceptions from '../../../src/communities/exceptions';
 
@@ -19,7 +19,7 @@ describe('CommunityService', () => {
     causeTitle: 'This is the title of the cause',
     causeDescription: 'This is the description of the cause',
     causeEndDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-    causeOds: [Ods.NoPoverty, Ods.ZeroHunger],
+    causeOds: [ODSEnum.NoPoverty, ODSEnum.ZeroHunger],
   };
 
   const mockCreateCommunityRequest = Domain.CreateCommunityRequest.create(
@@ -29,11 +29,10 @@ describe('CommunityService', () => {
       communityDescription: mockProps.communityDescription,
       causeTitle: mockProps.causeTitle,
       causeDescription: mockProps.causeDescription,
-      causeEndDate: Domain.CauseEndDate.create(
-        mockProps.causeEndDate,
-      ).getValue(),
+      causeEndDate: new Date(),
       causeOds: mockProps.causeOds,
-      status: StatusRequest.Pending,
+      status: StatusRequest.PENDING,
+      createdAt: new Date(),
     },
     new UniqueEntityID('5ee7a693-a93e-4b6d-bd7e-4bafd1046db3'),
   );

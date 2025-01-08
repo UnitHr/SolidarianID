@@ -1,0 +1,7 @@
+# Base URL
+@baseUrl = http://localhost:3001
+@jwtToken = <token>
+
+
+GET {{baseUrl}}/users/:userId/history
+Authorization: Bearer {{jwtToken}}

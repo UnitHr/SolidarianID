@@ -1,8 +1,7 @@
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
 import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
 
-interface ActionByCommunityIdProps {
-  communityId: string;
+interface ActionByCauseIdProps {
   causeId: string;
   actionId: string;
   actionName: string;
@@ -10,13 +9,9 @@ interface ActionByCommunityIdProps {
   achieved: number;
 }
 
-export class ActionByCommunityId extends ValueObject<ActionByCommunityIdProps> {
-  private constructor(props: ActionByCommunityIdProps) {
+export class ActionByCauseId extends ValueObject<ActionByCauseIdProps> {
+  private constructor(props: ActionByCauseIdProps) {
     super(props);
-  }
-
-  get communityId(): string {
-    return this.props.communityId;
   }
 
   get causeId(): string {
@@ -40,26 +35,24 @@ export class ActionByCommunityId extends ValueObject<ActionByCommunityIdProps> {
   }
 
   public static create(
-    communityId: string,
     causeId: string,
     actionId: string,
     actionName: string,
     target: number = 0,
     achieved: number = 0,
-  ): ActionByCommunityId {
+  ): ActionByCauseId {
     if (target < 0) {
       throw new NegativeCountError(
-        '[ActionByCommunityId] Target value cannot be negative.',
+        '[ActionByCauseId] Target value cannot be negative.',
       );
     }
     if (achieved < 0) {
       throw new NegativeCountError(
-        '[ActionByCommunityId] Achieved value cannot be negative.',
+        '[ActionByCauseId] Achieved value cannot be negative.',
       );
     }
 
-    return new ActionByCommunityId({
-      communityId,
+    return new ActionByCauseId({
       causeId,
       actionId,
       actionName,
@@ -71,7 +64,7 @@ export class ActionByCommunityId extends ValueObject<ActionByCommunityIdProps> {
   public incrementAchieved(amount: number = 1): number {
     if (amount < 0) {
       throw new NegativeCountError(
-        '[ActionByCommunityId] Increment amount cannot be negative.',
+        '[ActionByCauseId] Increment amount cannot be negative.',
       );
     }
     this.props.achieved += amount;
@@ -81,7 +74,7 @@ export class ActionByCommunityId extends ValueObject<ActionByCommunityIdProps> {
   public setTarget(newTarget: number): void {
     if (newTarget < 0) {
       throw new NegativeCountError(
-        '[ActionByCommunityId] Target value cannot be negative.',
+        '[ActionByCauseId] Target value cannot be negative.',
       );
     }
     this.props.target = newTarget;

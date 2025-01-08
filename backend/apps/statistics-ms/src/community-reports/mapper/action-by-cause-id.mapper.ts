@@ -1,14 +1,11 @@
-import { ActionReportResponseDto } from '../dto/action-report-response.dto';
 import { Utils } from '@common-lib/common-lib/common/utils';
+import { ActionReportResponseDto } from '../dto/action-report-response.dto';
 import * as Persistence from '../infra/persistence';
 import * as Domain from '../domain';
 
-export class ActionByCommunityIdMapper {
-  static toDomain(
-    raw: Persistence.ActionByCommunityId,
-  ): Domain.ActionByCommunityId {
-    return Domain.ActionByCommunityId.create(
-      raw.communityId,
+export class ActionByCauseIdMapper {
+  static toDomain(raw: Persistence.ActionByCauseId): Domain.ActionByCauseId {
+    return Domain.ActionByCauseId.create(
       raw.causeId,
       raw.actionId,
       raw.actionName,
@@ -18,10 +15,9 @@ export class ActionByCommunityIdMapper {
   }
 
   static toPersistence(
-    entity: Domain.ActionByCommunityId,
-  ): Persistence.ActionByCommunityId {
+    entity: Domain.ActionByCauseId,
+  ): Persistence.ActionByCauseId {
     return {
-      communityId: entity.communityId,
       causeId: entity.causeId,
       actionId: entity.actionId,
       actionName: entity.actionName,
@@ -30,7 +26,7 @@ export class ActionByCommunityIdMapper {
     };
   }
 
-  static toDto(entity: Domain.ActionByCommunityId): ActionReportResponseDto {
+  static toDto(entity: Domain.ActionByCauseId): ActionReportResponseDto {
     return {
       actionId: entity.actionId,
       actionName: entity.actionName,

@@ -1,7 +1,5 @@
-import {
-  Entity,
-  UniqueEntityID,
-} from '@common-lib/common-lib/core/domain/Entity';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { UserBirthDate } from './UserBirthDate';
 import { UserPassword } from './Password';
 import {
@@ -9,6 +7,8 @@ import {
   UserAlreadyFollowedError,
   UserCannotFollowSelfError,
 } from '../exceptions';
+import { UserCreatedEvent } from './events/UserCreatedEvent';
+import { UserFollowedEvent } from './events/UserFollowedEvent';
 
 export interface UserProps {
   firstName: string;
@@ -20,10 +20,11 @@ export interface UserProps {
   showAge: boolean;
   showEmail: boolean;
   role: string;
+  // eslint-disable-next-line no-use-before-define
   followers?: User[];
 }
 
-export class User extends Entity<UserProps> {
+export class User extends EntityRoot<UserProps> {
   get id(): UniqueEntityID {
     return this._id;
   }
@@ -95,7 +96,14 @@ export class User extends Entity<UserProps> {
         '[User] Missing properties to create a new user.',
       );
     }
-    return new User({ ...props, followers: props.followers ?? [] }, id);
+
+    const user = new User({ ...props, followers: props.followers ?? [] }, id);
+
+    if (!id) {
+      user.apply(new UserCreatedEvent(user.id.toString()));
+    }
+
+    return user;
   }
 
   public updateProfile(updateData: Partial<UserProps>): void {
@@ -119,7 +127,10 @@ export class User extends Entity<UserProps> {
     if (followed.props.followers.find((user) => user.equals(this))) {
       throw new UserAlreadyFollowedError(followed.id.toString());
     }
-    // TODO: Emit event
+
     followed.props.followers.push(this);
+    this.apply(
+      new UserFollowedEvent(this.id.toString(), followed.id.toString()),
+    );
   }
 }

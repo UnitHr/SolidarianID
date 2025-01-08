@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
+import { EventPublisher } from '@nestjs/cqrs';
 import { UserRepository } from '../user.repository';
 import { User } from '../domain';
 import { UserService } from './user.service';
@@ -12,7 +13,10 @@ import { UserPassword } from '../domain/Password';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly eventPublisher: EventPublisher,
+  ) {}
 
   async createUser(
     firstName: string,
@@ -38,21 +42,24 @@ export class UserServiceImpl implements UserService {
     }
 
     // Create the new user
-    const user = User.create({
-      firstName,
-      lastName,
-      birthDate: UserBirthDate.create(birthDate),
-      email,
-      password: await UserPassword.create(password),
-      bio,
-      showAge,
-      showEmail,
-      role,
-    });
+    const user = this.eventPublisher.mergeObjectContext(
+      User.create({
+        firstName,
+        lastName,
+        birthDate: UserBirthDate.create(birthDate),
+        email,
+        password: await UserPassword.create(password),
+        bio,
+        showAge,
+        showEmail,
+        role,
+      }),
+    );
 
     // Create the new user and save it
     const savedUser = await this.userRepository.save(user);
 
+    user.commit();
     // Return the ID of the newly created user
     return savedUser.id.toString();
   }
@@ -92,10 +99,14 @@ export class UserServiceImpl implements UserService {
   }
 
   async followUser(id: string, followerId: string): Promise<void> {
+    const follower = this.eventPublisher.mergeObjectContext(
+      await this.userRepository.findById(followerId),
+    );
     const followed = await this.userRepository.findById(id);
-    const follower = await this.userRepository.findById(followerId);
+
     follower.followUser(followed);
     await this.userRepository.save(followed);
+    follower.commit();
   }
 
   async getUserFollowers(id: string): Promise<User[]> {

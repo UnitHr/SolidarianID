@@ -60,20 +60,20 @@ WITH comment = 'Q2. Find causes by community_id'
 AND CLUSTERING ORDER BY (cause_id ASC);
 
 -- 3) Actions table
--- Partitioned by community_id, then clustered by cause_id and action_id
-CREATE TABLE IF NOT EXISTS actions_by_community (
-  community_id TEXT,
+-- Partitioned by cause_id, clustered by action_id
+CREATE TABLE IF NOT EXISTS actions_by_cause (
   cause_id TEXT,
   action_id TEXT,
   action_name TEXT,
   target DOUBLE,
   achieved DOUBLE,
-  PRIMARY KEY ((community_id), cause_id, action_id)
+  PRIMARY KEY ((cause_id), action_id)
 )
-WITH comment = 'Q3. Find actions by community_id and optional cause_id'
-AND CLUSTERING ORDER BY (cause_id ASC, action_id ASC);
+WITH comment = 'Q3. Find actions by cause_id'
+AND CLUSTERING ORDER BY (action_id ASC);
 
 
+-- TODO: Remove this section for production
 --------------------------------------------------------------------------------
 -- TEST DATA
 --------------------------------------------------------------------------------
@@ -130,12 +130,12 @@ INSERT INTO causes_by_community (community_id, cause_id, cause_name, supports_co
 INSERT INTO causes_by_community (community_id, cause_id, cause_name, supports_count, ods) VALUES ('community_004', 'cause_007', 'Marine Wildlife Protection', 600, {14, 15});
 INSERT INTO causes_by_community (community_id, cause_id, cause_name, supports_count, ods) VALUES ('community_005', 'cause_008', 'Urban Gardening Program', 75, {12});
 
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_001', 'cause_001', 'action_001', 'Host Climate Webinar', 500.0, 400.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_001', 'cause_001', 'action_002', 'Organize Community Clean-up', 200.0, 190.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_001', 'cause_002', 'action_003', 'Distribute Energy-efficient Bulbs', 1000.0, 850.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_002', 'cause_003', 'action_004', 'Donate Educational Books', 300.0, 250.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_002', 'cause_004', 'action_005', 'Hold Training Workshop', 100.0, 75.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_003', 'cause_005', 'action_006', 'Distribute Nutrition Kits', 400.0, 300.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_004', 'cause_006', 'action_007', 'Conduct Beach Cleanup', 10000.0, 9500.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_004', 'cause_007', 'action_008', 'Protect Turtle Nesting Areas', 50.0, 30.0);
-INSERT INTO actions_by_community (community_id, cause_id, action_id, action_name, target, achieved) VALUES ('community_005', 'cause_008', 'action_009', 'Plant Trees in Urban Areas', 500.0, 450.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_001', 'action_001', 'Host Climate Webinar', 500.0, 400.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_001', 'action_002', 'Organize Community Clean-up', 200.0, 190.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_002', 'action_003', 'Distribute Energy-efficient Bulbs', 1000.0, 850.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_003', 'action_004', 'Donate Educational Books', 300.0, 250.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_004', 'action_005', 'Hold Training Workshop', 100.0, 75.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_005', 'action_006', 'Distribute Nutrition Kits', 400.0, 300.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_006', 'action_007', 'Conduct Beach Cleanup', 10000.0, 9500.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_007', 'action_008', 'Protect Turtle Nesting Areas', 50.0, 30.0);
+INSERT INTO actions_by_cause (cause_id, action_id, action_name, target, achieved) VALUES ('cause_008', 'action_009', 'Plant Trees in Urban Areas', 500.0, 450.0);

@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { CommunityReportsService } from './community-reports.service';
-import { CommunityReportMapper } from '../mapper/community-report.mapper';
+import { CommunityByCommunityIdMapper } from '../mapper/community-by-community-id.mapper';
 
 @Controller('statistics')
 export class CommunityReportsController {
@@ -13,6 +13,6 @@ export class CommunityReportsController {
   async getCommunityReport(@Param('id') communityId: string) {
     const communityReport =
       await this.communityReportsService.findOne(communityId);
-    return CommunityReportMapper.toPersistence(communityReport);
+    return CommunityByCommunityIdMapper.toDto(communityReport);
   }
 }

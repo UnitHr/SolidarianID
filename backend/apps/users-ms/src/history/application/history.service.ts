@@ -1,0 +1,12 @@
+import { History } from '../domain/History';
+
+export abstract class HistoryService {
+  abstract createHistory(userId: string): Promise<string>;
+
+  abstract getHistoryByUserId(userId: string): Promise<History>;
+
+  abstract registerUserFollowed(
+    userId: string,
+    followedUserId: string,
+  ): Promise<void>;
+}

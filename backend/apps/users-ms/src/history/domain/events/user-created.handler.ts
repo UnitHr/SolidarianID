@@ -9,8 +9,8 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
 
   constructor(private readonly historyService: HistoryService) {}
 
-  handle(event: UserCreatedEvent) {
-    this.historyService.createHistory(event.userId);
+  async handle(event: UserCreatedEvent) {
+    await this.historyService.createHistory(event.userId);
     this.logger.log(
       `History created for user registered with id: ${event.userId}`,
     );

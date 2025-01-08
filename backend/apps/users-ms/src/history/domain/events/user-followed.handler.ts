@@ -9,8 +9,8 @@ export class UserFollowedHandler implements IEventHandler<UserFollowedEvent> {
 
   constructor(private readonly historyService: HistoryService) {}
 
-  handle(event: UserFollowedEvent) {
-    this.historyService.registerUserFollowed(
+  async handle(event: UserFollowedEvent) {
+    await this.historyService.registerUserFollowed(
       event.userId,
       event.followedUserId,
     );

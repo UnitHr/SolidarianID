@@ -13,6 +13,8 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
+import { HistoryService } from '@users-ms/history/application/history.service';
+import { HistoryMapper } from '@users-ms/history/history.mapper';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -22,7 +24,10 @@ import { UserMapper } from '../user.mapper';
 @Controller('users')
 @UseFilters(UserDomainExceptionFilter)
 export class UsersController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(
+    private readonly usersService: UserService,
+    private readonly historyService: HistoryService,
+  ) {}
 
   @Public()
   @Post()
@@ -88,5 +93,16 @@ export class UsersController {
     const followers = await this.usersService.getUserFollowers(id);
 
     res.status(HttpStatus.OK).json(followers.map(UserMapper.toProfileDto));
+  }
+
+  // TODO: Review this endpoint, only the history owner and community admins should be able to see this
+  @Get(':id/history')
+  async getHistory(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const history = await this.historyService.getHistoryByUserId(id);
+
+    res.status(HttpStatus.OK).json(HistoryMapper.toDto(history));
   }
 }

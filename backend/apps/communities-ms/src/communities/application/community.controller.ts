@@ -546,8 +546,6 @@ export class CommunityController {
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
   ) {
-    console.log('id', id);
-    console.log('validateCommunityDto', validateCommunityDto);
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,

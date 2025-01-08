@@ -1,4 +1,4 @@
-<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<section>
   <div class="bg-white shadow-md rounded-lg p-4">
     <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
 
@@ -32,8 +32,7 @@
       </a>
       {{/if}}
       {{#each pagination.pages}}
-      <a id="page-{{this}}" href="?page={{this}}"
-        class="hover:bg-blue-600 py-1 px-4 rounded-md {{#if (eq this ../pagination.currentPage)}}bg-blue-600{{/if}} ">{{this}}</a>
+      <a id="page-{{this}}" href="?page={{this}}" class="hover:bg-blue-600 py-1 px-4 rounded-md ">{{this}}</a>
       {{/each}}
       {{#if pagination.hasNext}}
       <a href="?page={{pagination.nextPage}}" class="hover:bg-gray-300 text-gray-700 py-1 px-3 rounded">

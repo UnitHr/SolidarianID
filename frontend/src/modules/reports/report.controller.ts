@@ -18,14 +18,24 @@ export class ReportController {
       return res.redirect('/login');
     }
 
-    const communities = await this.reportService.getCommunities(user.token);
-
-    return {
-      user: user,
-      communities: communities.communities,
-      title: 'Reports',
-      activePage: 'adminDashboard',
-    };
+    try {
+      const communities = await this.reportService.getCommunities(user.token);
+      console.log(communities);
+      return {
+        user: user,
+        communities: communities,
+        title: 'Reports',
+        activePage: 'adminDashboard',
+      };
+    } catch (error) {
+      console.error('Error fetching communities:', error);
+      return {
+        user: user,
+        communities: [],
+        title: 'Reports',
+        activePage: 'adminDashboard',
+      };
+    }
   }
 
   @Post('')

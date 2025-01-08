@@ -16,18 +16,28 @@ export class StatisticsController {
     if (!user) {
       return res.redirect('/login');
     }
-    const datasByOds = await this.statisticsService.getDataByODS(user.token);
+    try {
+      const datasByOds = await this.statisticsService.getDataByODS(user.token);
 
-    const datasByCommunity = await this.statisticsService.getDataByCommunity(
-      user.token,
-    );
-
-    return {
-      datasByOds: JSON.stringify(datasByOds),
-      datasByCommunity: JSON.stringify(datasByCommunity),
-      user: user,
-      activePage: 'adminDashboard',
-      title: 'Statistics',
-    };
+      const datasByCommunity = await this.statisticsService.getDataByCommunity(
+        user.token,
+      );
+      return {
+        datasByOds: JSON.stringify(datasByOds),
+        datasByCommunity: JSON.stringify(datasByCommunity),
+        user: user,
+        activePage: 'adminDashboard',
+        title: 'Statistics',
+      };
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+      return {
+        datasByOds: JSON.stringify([]),
+        datasByCommunity: JSON.stringify([]),
+        user: user,
+        activePage: 'adminDashboard',
+        title: 'Statistics',
+      };
+    }
   }
 }

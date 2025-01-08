@@ -20,18 +20,15 @@ export class ValidationService {
       return { data: response.data.data, pagination: response.data.meta };
     } catch (error) {
       console.error('Error fetching community requests:', error);
-      // In case of error, return an empty array
       return { data: [], total: 0 };
     }
   }
 
   async validateRequests(requestIds: string, token: string) {
-    console.log('requestIds:', requestIds);
     const selectedRequests = JSON.parse(requestIds);
 
     for (const requestId of selectedRequests) {
       try {
-        console.log('Validating request:', requestId);
         await axios.post(
           Constants.COMMUNITY_MS_BASE_URL + `/creation-requests/${requestId}`,
           {
@@ -41,7 +38,6 @@ export class ValidationService {
             headers: { Authorization: `Bearer ${token}` },
           },
         );
-        console.log(`Request ${requestId} validated successfully.`);
       } catch (error) {
         console.error(`Error validating request ${requestId}:`, error.message);
       }

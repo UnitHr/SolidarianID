@@ -95,7 +95,7 @@ export class UsersController {
     res.status(HttpStatus.OK).json(followers.map(UserMapper.toProfileDto));
   }
 
-  // TODO: Review this endpoint, dto and only the history owner and community admins should be able to see this
+  // TODO: Review this endpoint, only the history owner and community admins should be able to see this
   @Get(':id/history')
   async getHistory(
     @Param('id', ParseUUIDPipe) id: string,

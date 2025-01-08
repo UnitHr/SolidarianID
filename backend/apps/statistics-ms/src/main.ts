@@ -16,7 +16,7 @@ async function bootstrap() {
     options: {
       client: {
         clientId: envs.kafkaClientId,
-        brokers: (envs.kafkaBrokers || 'localhost:9092').split(','),
+        brokers: envs.kafkaBrokers,
       },
       consumer: {
         groupId: envs.kafkaGroupId,
@@ -27,17 +27,17 @@ async function bootstrap() {
   // Start the microservice
   await app.startAllMicroservices();
 
-  // (Optional) Configure a global ValidationPipe for your HTTP API
+  // Enable ValidationPipe for all routes
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      disableErrorMessages: false,
+      transform: true, // Convert data to the expected types in the DTOs
+      whitelist: true, // Ignore properties that are not in the DTO
+      forbidNonWhitelisted: true, // Reject unknown properties in requests
+      disableErrorMessages: false, // Include detailed error messages
     }),
   );
 
-  // Start application
+  // Enable CORS
   app.enableCors({
     origin: '*',
     methods: 'GET,POST,PUT,DELETE',

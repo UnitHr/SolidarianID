@@ -55,7 +55,7 @@ export const envs = {
   nodeEnv: envVars.NODE_ENV,
   statisticsMsHost: envVars.STATISTICS_MS_HOST,
   statisticsMsPort: envVars.STATISTICS_MS_PORT,
-  kafkaBrokers: envVars.KAFKA_BROKERS,
+  kafkaBrokers: envVars.KAFKA_BROKERS.split(','),
   kafkaClientId: envVars.KAFKA_CLIENT_ID,
   kafkaGroupId: envVars.KAFKA_GROUP_ID,
   kafkaTopicCommunities: envVars.KAFKA_TOPIC_COMMUNITIES,

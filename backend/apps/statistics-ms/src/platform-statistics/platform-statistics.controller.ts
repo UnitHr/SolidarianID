@@ -6,7 +6,7 @@ import { CommunityStatisticsResponseDto } from './community-statistics/dto/commu
 import { CommunityStatisticsService } from './community-statistics/application/community-statistics.service';
 import { CommunityStatisticsMapper } from './community-statistics/community-statistics.mapper';
 
-@Controller('/statistics')
+@Controller('statistics')
 export class PlatformStatisticsController {
   constructor(
     private readonly odsStatisticsService: OdsStatisticsService,

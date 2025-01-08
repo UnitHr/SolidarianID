@@ -83,11 +83,14 @@ export class ActionController {
 
   @Post(':id/contributions')
   async makeContribution(
+    @Req() req: Request,
     @Param('id', ParseUUIDPipe) actionId: string,
     @Body() contributionDto: CreateContributionDto,
     @Res() res: Response,
   ) {
-    const { userId, date, amount, unit } = contributionDto;
+    // Extract the token from the authorization header
+    const userId = (req as any).user.sub.value;
+    const { date, amount, unit } = contributionDto;
 
     const result = await this.actionService.makeContribution(
       userId,

@@ -7,10 +7,10 @@ import { envs } from './config';
 async function bootstrap() {
   const logger = new Logger('Statistics-MS_Bootstrap');
 
-  // Crea la aplicación HTTP
+  // Create the HTTP application
   const app = await NestFactory.create(StatisticsMsModule);
 
-  // Conecta un microservicio con transporte KAFKA
+  // Connect a microservice with KAFKA transport
   app.connectMicroservice({
     transport: Transport.KAFKA,
     options: {
@@ -24,10 +24,10 @@ async function bootstrap() {
     },
   });
 
-  // Iniciamos el microservicio
+  // Start the microservice
   await app.startAllMicroservices();
 
-  // (Opcional) Configura un ValidationPipe global para tu API HTTP
+  // (Optional) Configure a global ValidationPipe for your HTTP API
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -37,7 +37,7 @@ async function bootstrap() {
     }),
   );
 
-  // Inicia la aplicación HTTP
+  // Start application
   await app.listen(envs.statisticsMsPort, envs.statisticsMsHost);
   logger.log(`statistics-ms is running on: ${await app.getUrl()}`);
 }

@@ -18,18 +18,22 @@ import { envs } from './config';
         uri: envs.mongoUri,
       }),
     }),
+
     // JWT configuration
     JwtModule.register({
       global: true,
       secret: envs.jwtSecret,
       signOptions: { expiresIn: '1h' },
     }),
+
     // Import modules
     CommunityModule,
     CauseModule,
     ActionModule,
   ],
+
   providers: [
+    // AuthGuard provider
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

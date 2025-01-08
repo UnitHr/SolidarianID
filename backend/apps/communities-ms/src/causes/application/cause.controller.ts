@@ -102,10 +102,14 @@ export class CauseController {
   async createAction(
     @Body() createActionDto: CreateActionDto,
     @Param('id', ParseUUIDPipe) causeId: string,
+    @Body('userId', ParseUUIDPipe) userId: string,
     @Res() res: Response,
   ) {
     const { type, title, description, target, unit, goodType, location, date } =
       createActionDto;
+
+    const createdBy = userId;
+
     const result = await this.causeService.addCauseAction(
       type,
       title,
@@ -113,6 +117,7 @@ export class CauseController {
       causeId,
       target,
       unit,
+      createdBy,
       goodType,
       location,
       date,

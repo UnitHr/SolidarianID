@@ -18,7 +18,7 @@ export class JoinCommunityRequest extends Entity<JoinCommunityRequestProps> {
   }
 
   get id(): UniqueEntityID {
-    return this.id;
+    return this._id;
   }
 
   get status(): StatusRequest {

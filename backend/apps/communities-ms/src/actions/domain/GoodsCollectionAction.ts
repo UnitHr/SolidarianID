@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
 import { ActionCreatedEvent } from './events/ActionCreatedEvent';
@@ -17,15 +18,14 @@ export class GoodsCollectionAction extends Action {
     return (this.props as GoodsCollectionActionProps).goodType;
   }
 
-  set goodType(goodType: string) {
-    (this.props as GoodsCollectionActionProps).goodType = goodType;
-  }
-
   public static create(
     props: GoodsCollectionActionProps,
-    id?: string,
+    id?: UniqueEntityID,
   ): GoodsCollectionAction {
-    const action = new GoodsCollectionAction(props, new UniqueEntityID(id));
+    if (!super.checkProperties(props) || !props.goodType) {
+      throw new MissingPropertiesError('[Action] Properties are missing.');
+    }
+    const action = new GoodsCollectionAction(props, id);
     if (!id) {
       action.apply(
         new ActionCreatedEvent(action.id.toString(), props.type, props.title),

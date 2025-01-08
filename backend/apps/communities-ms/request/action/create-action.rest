@@ -4,11 +4,11 @@
 ### Success Case: Create a new economic action
 POST {{baseUrl}}/causes/de1e4f77-1e10-4f1a-8353-8003256658a7/actions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiI0ZmM3MjZmYi0zNDBkLTRkNDUtOGVjNC0wNDlhZTgyODU4NGMifSwiZW1haWwiOiJqYWNrMTIuZG9lQGV4YW1wbGUuY29tIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTczNjI4MTU2OCwiZXhwIjoxNzM2Mjg1MTY4fQ.qirGMo-wEVKrj7FSgdjIAJKTwn0KnMvdWleBZ2MAnzY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiI0ZmM3MjZmYi0zNDBkLTRkNDUtOGVjNC0wNDlhZTgyODU4NGMifSwiZW1haWwiOiJqYWNrMTIuZG9lQGV4YW1wbGUuY29tIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTczNjI5NDYxOSwiZXhwIjoxNzM2Mjk4MjE5fQ.nCk7DdQUHFwkZKfjTAbtYOM-4Pn0QcD3xr41zfMxUNc
 
 {
   "type": "economic",
-  "title": "Money for the Fire victims-55",
+  "title": "Money for the Fire victims-70",
   "description": "Raising funds to provide financial help for families who lost their homes and livelihoods during the fire.",
   "target": 5000,
   "unit": "euros"

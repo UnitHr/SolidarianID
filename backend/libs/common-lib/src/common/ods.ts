@@ -123,10 +123,14 @@ export const odsData: Record<ODSEnum, ODSDetail> = {
   },
 };
 
-export function mapODSEnumListToDetails(odsList: ODSEnum[]): ODSDetail[] {
-  return odsList.map((ods) => ({
+export function mapODSEnumToDetails(ods: ODSEnum): ODSDetail {
+  return {
     id: ods,
     title: odsData[ods]?.title || 'Unknown',
     description: odsData[ods]?.description || 'Description not available',
-  }));
+  };
+}
+
+export function mapODSEnumListToDetails(odsList: ODSEnum[]): ODSDetail[] {
+  return odsList.map(mapODSEnumToDetails);
 }

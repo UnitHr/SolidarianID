@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
 import { ActionCreatedEvent } from './events/ActionCreatedEvent';
@@ -18,23 +19,18 @@ export class VolunteerAction extends Action {
     return (this.props as VolunteerActionProps).location;
   }
 
-  set location(value: string) {
-    (this.props as VolunteerActionProps).location = value;
-  }
-
   get date(): Date {
     return (this.props as VolunteerActionProps).date;
   }
 
-  set date(value: Date) {
-    (this.props as VolunteerActionProps).date = value;
-  }
-
   public static create(
     props: VolunteerActionProps,
-    id?: string,
+    id?: UniqueEntityID,
   ): VolunteerAction {
-    const action = new VolunteerAction(props, new UniqueEntityID(id));
+    if (!super.checkProperties(props) || !props.location || !props.date) {
+      throw new MissingPropertiesError('[Action] Properties are missing.');
+    }
+    const action = new VolunteerAction(props, id);
     if (!id) {
       action.apply(
         new ActionCreatedEvent(action.id.toString(), props.type, props.title),

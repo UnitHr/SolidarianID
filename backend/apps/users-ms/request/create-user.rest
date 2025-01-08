@@ -9,7 +9,7 @@ Content-Type: application/json
   "firstName": "Jane",
   "lastName": "Doe",
   "birthDate": "1990-01-01",
-  "email": "jack.doe@example.com",
+  "email": "admin@example.com",
   "password": "123456Test*",
   "bio": "Hello, I'm Jane Doe!",
   "showAge": true,

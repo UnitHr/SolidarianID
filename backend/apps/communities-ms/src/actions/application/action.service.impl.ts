@@ -46,6 +46,7 @@ export class ActionServiceImpl implements ActionService {
         causeId,
         target,
         unit,
+        createdBy,
         goodType,
         location,
         date,

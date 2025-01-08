@@ -1,6 +1,7 @@
+import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
 import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
-import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
+import { CauseByCommunityId } from './CauseByCommunityId';
 
 interface CommunityByCommunityIdProps {
   communityId: string;
@@ -8,6 +9,7 @@ interface CommunityByCommunityIdProps {
   adminId: string;
   membersCount: number;
   ods: Set<ODSEnum>;
+  causes: CauseByCommunityId[];
 }
 
 export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdProps> {
@@ -35,12 +37,17 @@ export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdPr
     return this.props.ods;
   }
 
+  get causes(): CauseByCommunityId[] {
+    return this.props.causes;
+  }
+
   public static create(
     communityId: string,
     communityName: string,
     adminId: string,
     membersCount: number = 0,
     ods: Set<ODSEnum> = new Set<ODSEnum>(),
+    causes: CauseByCommunityId[] = [],
   ): CommunityByCommunityId {
     if (membersCount < 0) {
       throw new NegativeCountError(
@@ -54,6 +61,7 @@ export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdPr
       adminId,
       membersCount,
       ods,
+      causes,
     });
   }
 
@@ -64,5 +72,13 @@ export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdPr
 
   public addODS(ods: ODSEnum): void {
     this.props.ods.add(ods);
+  }
+
+  public addCauses(causes: CauseByCommunityId | CauseByCommunityId[]): void {
+    if (Array.isArray(causes)) {
+      this.props.causes.push(...causes);
+    } else {
+      this.props.causes.push(causes);
+    }
   }
 }

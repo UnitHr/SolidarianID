@@ -4,7 +4,7 @@ services:
     ports:
       - '5432:5432'
     env_file:
-      - ./apps/users-ms/.env
+      - ./apps/users-ms/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -13,7 +13,7 @@ services:
     ports:
       - '27017:27017'
     env_file:
-      - ./apps/communities-ms/.env
+      - ./apps/communities-ms/.env.development
     volumes:
       - mongo_data:/data/db
 
@@ -22,7 +22,7 @@ services:
     ports:
       - '9042:9042'
     env_file:
-      - ./apps/statistics-ms/.env
+      - ./apps/statistics-ms/.env.development
     volumes:
       - './apps/statistics-ms:/docker-entrypoint-initdb.d'
 

@@ -3,6 +3,7 @@ import {
   ODSEnum,
 } from '@common-lib/common-lib/common/ods';
 import { CommunityByCommunityIdResponseDto } from '../dto/community-report-response.dto';
+import { CauseByCommunityIdMapper } from './cause-by-community-id.repository.mapper';
 import * as Persistence from '../infra/persistence';
 import * as Domain from '../domain';
 
@@ -40,6 +41,7 @@ export class CommunityByCommunityIdMapper {
       adminId: entity.adminId,
       members: entity.membersCount,
       ods: mapODSEnumListToDetails(Array.from(entity.ods)),
+      causes: entity.causes.map(CauseByCommunityIdMapper.toDto),
     };
   }
 }

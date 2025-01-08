@@ -1,4 +1,5 @@
 import { ODSDetail } from '@common-lib/common-lib/common/ods';
+import { ActionReportResponseDto } from './action-report-response.dto';
 
 export class CauseReportResponseDto {
   causeId: string;
@@ -8,4 +9,6 @@ export class CauseReportResponseDto {
   supports: number;
 
   ods: ODSDetail[];
+
+  actions: ActionReportResponseDto[];
 }

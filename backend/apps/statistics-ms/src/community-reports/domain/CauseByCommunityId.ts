@@ -1,5 +1,6 @@
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
+import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
+import { ActionByCauseId } from './ActionByCauseId';
 
 interface CauseByCommunityIdProps {
   communityId: string;
@@ -7,6 +8,7 @@ interface CauseByCommunityIdProps {
   causeName: string;
   supportsCount: number;
   ods: Set<number>;
+  actions: ActionByCauseId[];
 }
 
 export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
@@ -34,12 +36,17 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
     return this.props.ods;
   }
 
+  get actions(): ActionByCauseId[] {
+    return this.props.actions;
+  }
+
   public static create(
     communityId: string,
     causeId: string,
     causeName: string,
     supportsCount: number = 0,
     ods: Set<number> = new Set(),
+    actions: ActionByCauseId[] = [],
   ): CauseByCommunityId {
     if (supportsCount < 0) {
       throw new NegativeCountError(
@@ -53,6 +60,7 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
       causeName,
       supportsCount,
       ods,
+      actions,
     });
   }
 
@@ -63,5 +71,13 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
 
   public addOds(odsId: number): void {
     this.props.ods.add(odsId);
+  }
+
+  public addActions(actions: ActionByCauseId | ActionByCauseId[]): void {
+    if (Array.isArray(actions)) {
+      this.props.actions.push(...actions);
+    } else {
+      this.props.actions.push(actions);
+    }
   }
 }

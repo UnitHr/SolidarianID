@@ -9,7 +9,7 @@ Content-Type: application/json
   "firstName": "Jane",
   "lastName": "Doe",
   "birthDate": "1990-01-01",
-  "email": "jack.doe@example.com",
+  "email": "admin@example.com",
   "password": "123456Test*",
   "bio": "Hello, I'm Jane Doe!",
   "showAge": true,
@@ -25,11 +25,11 @@ Content-Type: application/json
   "firstName": "Jack",
   "lastName": "Doe",
   "birthDate": "1980-01-01",
-  "email": "jack1.doe@example.com",
+  "email": "jack12.doe@example.com",
   "password":"123456Test*",
   "showAge": false,
   "showEmail": true,
-  "role": "user"
+  "role": "admin"
 }
 
 ### Error Case: Create user with an already registered email (expected: 404 ...)

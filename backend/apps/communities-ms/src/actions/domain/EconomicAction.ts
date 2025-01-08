@@ -2,6 +2,7 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityI
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
+import { ActionCreatedEvent } from './events/ActionCreatedEvent';
 
 export class EconomicAction extends Action {
   constructor(props: ActionProps, id?: UniqueEntityID) {
@@ -16,7 +17,12 @@ export class EconomicAction extends Action {
     if (!super.checkProperties(props)) {
       throw new MissingPropertiesError('[Action] Properties are missing.');
     }
-
-    return new EconomicAction(props, id);
+    const action = new EconomicAction(props, id);
+    if (!id) {
+      action.apply(
+        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+      );
+    }
+    return action;
   }
 }

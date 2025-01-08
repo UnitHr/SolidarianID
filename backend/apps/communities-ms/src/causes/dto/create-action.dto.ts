@@ -3,6 +3,7 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsPositive,
   IsString,
   ValidateIf,
@@ -27,16 +28,19 @@ export class CreateActionDto {
   @IsString()
   unit: string;
 
+  @IsOptional()
   @ValidateIf((o) => o.type === ActionType.GOODS_COLLECTION)
   @IsString({ message: 'goodType must be a string' })
   @IsNotEmpty({ message: 'goodType is required for GoodsCollectionAction' })
   goodType?: string;
 
+  @IsOptional()
   @ValidateIf((o) => o.type === ActionType.VOLUNTEER)
   @IsString({ message: 'location must be a string' })
   @IsNotEmpty({ message: 'location is required for VolunteerAction' })
   location?: string;
 
+  @IsOptional()
   @ValidateIf((o) => o.type === ActionType.VOLUNTEER)
   @IsDate({ message: 'date must be a Date' })
   @IsNotEmpty({ message: 'date is required for VolunteerAction' })

@@ -2,11 +2,11 @@
 @baseUrl = http://localhost:3002
 
 ### Success Case: Create a new contribution to an Action
-PATCH  {{baseUrl}}/actions/868fea09-8fe4-4e08-840f-24384382dc34/contribute
+POST  {{baseUrl}}/actions/{actionId}/contributions
 Content-Type: application/json
+Authorization: Bearer {jwtToken}
 
 {
-  "userId": "1",
   "date": "2025-01-24",
   "amount": 50,
   "unit": "euros"

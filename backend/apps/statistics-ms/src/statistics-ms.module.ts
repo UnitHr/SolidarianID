@@ -3,6 +3,7 @@ import { auth } from 'cassandra-driver';
 import { CassandraModule } from 'cassandra-for-nest';
 import { PlatformStatisticsModule } from './platform-statistics/platform-statistics.module';
 import { envs } from './config';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { envs } from './config';
 
     // Import modules
     PlatformStatisticsModule,
+    StatisticsModule,
   ],
 })
 export class StatisticsMsModule {}

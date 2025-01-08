@@ -4,6 +4,7 @@ import {
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
+import { EventPublisher } from '@nestjs/cqrs';
 import { ActionService } from './action.service';
 import * as Domain from '../domain';
 import { ActionRepository } from '../action.repository';
@@ -13,7 +14,10 @@ import { ActionQueryBuilder } from '../infra/filters/action-query.builder';
 
 @Injectable()
 export class ActionServiceImpl implements ActionService {
-  constructor(private readonly actionRepository: ActionRepository) {}
+  constructor(
+    private readonly actionRepository: ActionRepository,
+    private readonly eventPublisher: EventPublisher,
+  ) {}
 
   async createAction(
     type: Domain.ActionType,
@@ -34,21 +38,24 @@ export class ActionServiceImpl implements ActionService {
     }
 
     // Create the new action
-    const action = ActionFactory.createAction(
-      type,
-      title,
-      description,
-      causeId,
-      target,
-      unit,
-      createdBy,
-      goodType,
-      location,
-      date,
+    const action = this.eventPublisher.mergeObjectContext(
+      ActionFactory.createAction(
+        type,
+        title,
+        description,
+        causeId,
+        target,
+        unit,
+        createdBy,
+        goodType,
+        location,
+        date,
+      ),
     );
 
     // Save the new action in the repository
     const savedAction = await this.actionRepository.save(action);
+    action.commit();
 
     return savedAction.id.toString();
   }
@@ -126,8 +133,11 @@ export class ActionServiceImpl implements ActionService {
     unit: string,
   ): Promise<string> {
     // Find the action by Id
-    const action = await this.actionRepository.findById(actionId);
+    const action = this.eventPublisher.mergeObjectContext(
+      await this.actionRepository.findById(actionId),
+    );
 
+    // TODO: Maybe this should be in action.contribute
     if (action.unit !== unit) {
       throw new Exceptions.InvalidContributionUnitError(
         actionId,
@@ -151,7 +161,7 @@ export class ActionServiceImpl implements ActionService {
 
     action.contribute(contribution);
     await this.actionRepository.save(action);
-
+    action.commit();
     return contribution.id.toString();
   }
 

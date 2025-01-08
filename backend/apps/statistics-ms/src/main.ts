@@ -1,13 +1,43 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { Transport } from '@nestjs/microservices';
 import { StatisticsMsModule } from './statistics-ms.module';
 import { envs } from './config';
 
 async function bootstrap() {
   const logger = new Logger('Statistics-MS_Bootstrap');
 
+  // Create the HTTP application
   const app = await NestFactory.create(StatisticsMsModule);
 
+  // Connect a microservice with KAFKA transport
+  app.connectMicroservice({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: envs.kafkaClientId,
+        brokers: (envs.kafkaBrokers || 'localhost:9092').split(','),
+      },
+      consumer: {
+        groupId: envs.kafkaGroupId,
+      },
+    },
+  });
+
+  // Start the microservice
+  await app.startAllMicroservices();
+
+  // (Optional) Configure a global ValidationPipe for your HTTP API
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      disableErrorMessages: false,
+    }),
+  );
+
+  // Start application
   app.enableCors({
     origin: '*',
     methods: 'GET,POST,PUT,DELETE',

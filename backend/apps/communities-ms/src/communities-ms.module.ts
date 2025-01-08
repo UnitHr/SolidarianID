@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '@common-lib/common-lib/auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { CommonLibModule } from '@common-lib/common-lib/common-lib.module';
 import { CommunityModule } from './communities/community.module';
 import { CauseModule } from './causes/cause.module';
 import { ActionModule } from './actions/action.module';
@@ -37,6 +38,7 @@ import { envs } from './config';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    CommonLibModule,
   ],
 })
 export class CommunitiesMsModule {}

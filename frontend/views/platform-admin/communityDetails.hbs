@@ -1,0 +1,39 @@
+<section>
+    <div class="bg-white shadow-md rounded-lg p-4">
+        <a href="/reports" class="text-blue-500 hover:underline text-sm mt-4 inline-block">
+            ← Back to Community Selection
+        </a>
+
+        <!-- Community Details -->
+        {{#if community}}
+        <div id="community-details" class="mt-6 p-4 border border-gray-300 rounded bg-gray-50">
+            <h4 class="text-xl font-medium text-center md:text-2xl p-4">Community Details</h4>
+            <p><strong>Name:</strong> {{community.name}}</p>
+            <p><strong>Members:</strong> {{community.members}}</p>
+
+            <!-- Include Graphics Checkbox -->
+            <div class="mt-4 flex items-center pt-6 pb-6 pl-0 pr-0">
+                <input type="checkbox" id="include-graphics" name="includeGraphics" class="mr-2" checked>
+                <label for="include-graphics" id="include-graphics-text" class="text-sm md:text-base">Include Graphics
+                    in the Report</label>
+            </div>
+
+            <div id="chart-placeholder" class="mt-4">
+                {{> chart}}
+            </div>
+        </div>
+
+        <!-- Generate Report Button -->
+        <div class="mt-4 text-center">
+            <button type="button" id="generate-pdf-button"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 md:px-6 md:py-3">
+                Generate PDF Report
+            </button>
+        </div>
+        {{/if}}
+    </div>
+</section>
+
+<!-- src/public/js/html2pdf.bundle.min.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="/js/generate-report.js"></script>

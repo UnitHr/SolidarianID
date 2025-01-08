@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { auth } from 'cassandra-driver';
 import { CassandraModule } from 'cassandra-for-nest';
 import { PlatformStatisticsModule } from './platform-statistics/platform-statistics.module';
+import { CommunityReportsModule } from './community-reports/community-reports.module';
 import { envs } from './config';
 
 @Module({
@@ -19,6 +20,7 @@ import { envs } from './config';
 
     // Import modules
     PlatformStatisticsModule,
+    CommunityReportsModule,
   ],
 })
 export class StatisticsMsModule {}

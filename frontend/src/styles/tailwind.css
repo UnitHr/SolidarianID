@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.chart-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centra las gráficas en pantallas pequeñas */
+  gap: 20px; /* Espaciado entre las gráficas */
+  width: 100%;
+  align-items: center; /* Centra las gráficas verticalmente si hay más de una fila */
+}
+
+/* Contenedor de cada gráfica */
+.chart-container {
+  flex-basis: 45%; /* Cada gráfica ocupará el 45% del espacio disponible */
+  max-width: 45%; /* Limita el ancho máximo al 45% */
+  height: auto; /* Mantiene la altura dinámica */
+  margin: 10px 10px; /* Espaciado entre las gráficas */
+}
+
+/* Estilos para tabletas (ancho mínimo de 768px) */
+
+@media (max-width: 1024px) {
+  .chart-wrapper {
+    justify-content: center;
+  }
+  .chart-container {
+    flex-basis: 48%;
+    max-width: 48%;
+  }
+}
+
+/* Estilos para dispositivos móviles (ancho menor de 640px) */
+@media (max-width: 639px) {
+  .chart-wrapper {
+    justify-content: center;
+  }
+  .chart-container {
+    flex-basis: 100%; /* Cada gráfica ocupará el 100% del espacio disponible */
+    max-width: 100%; /* Limita el ancho máximo al 100% */
+    margin: 10px 0; /* Para tener un margen vertical entre las gráficas */
+  }
+}
+
+@media (max-width: 767px) {
+  #navbar {
+    display: none;
+  }
+  #dashboard {
+    display: none;
+  }
+}

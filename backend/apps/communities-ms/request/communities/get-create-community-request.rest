@@ -1,0 +1,15 @@
+### Get all create community requests
+GET http://localhost:3002/communities/creation-requests/all
+Content-Type: application/json
+Authorization: Bearer {token}
+
+### Get create community request with pending status
+GET http://localhost:3002/communities/creation-requests/all?status=pending
+Content-Type: application/json
+Authorization: Bearer {token}
+
+### Get create community request with pagination
+GET http://localhost:3002/communities/creation-requests/all?page=1&limit=10
+Content-Type: application/json
+Authorization: Bearer {token}
+

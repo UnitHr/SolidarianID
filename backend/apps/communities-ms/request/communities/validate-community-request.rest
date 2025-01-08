@@ -1,0 +1,19 @@
+### Approve community creation request
+POST http://localhost:3002/communities/creation-requests/{request-id}
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+    "status": "approved"
+}
+
+### Deny community creation request
+POST http://localhost:3002/communities/creation-requests/{request-id}
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+    "status": "denied",
+    "comment": "The community does not meet the minimum requirements"
+}
+

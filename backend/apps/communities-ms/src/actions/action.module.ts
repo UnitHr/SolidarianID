@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER } from '@nestjs/core';
+import { CqrsModule } from '@nestjs/cqrs';
+import { EventsModule } from '@communities-ms/events/events.module';
 import { ActionService } from './application/action.service';
 import { ActionController } from './application/action.controller';
 import { Action } from './infra/persistence';
@@ -9,6 +11,8 @@ import { ActionServiceImpl } from './application/action.service.impl';
 import { ActionRepositoryMongoDB } from './infra/action.repository.mongodb';
 import { ActionSchema } from './infra/persistence/Action';
 import { ActionDomainExceptionFilter } from './infra/filters/action-domain-exception.filter';
+import { ActionCreatedHandler } from './domain/events/action-created.handler';
+import { ActionContributedEventHandler } from './domain/events/action-contributed.handler';
 
 @Module({
   imports: [
@@ -18,6 +22,8 @@ import { ActionDomainExceptionFilter } from './infra/filters/action-domain-excep
         schema: ActionSchema,
       },
     ]),
+    CqrsModule,
+    EventsModule,
   ],
   controllers: [ActionController],
   providers: [
@@ -33,6 +39,8 @@ import { ActionDomainExceptionFilter } from './infra/filters/action-domain-excep
       provide: APP_FILTER,
       useClass: ActionDomainExceptionFilter,
     },
+    ActionCreatedHandler,
+    ActionContributedEventHandler,
   ],
   exports: [ActionService],
 })

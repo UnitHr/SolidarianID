@@ -2,13 +2,19 @@ import * as dotenv from 'dotenv';
 import * as dotenvExpand from 'dotenv-expand';
 import * as joi from 'joi';
 
-const env = dotenv.config({ path: './apps/statistics-ms/.env' });
+const env = dotenv.config({
+  path: `./apps/statistics-ms/.env.${process.env.NODE_ENV}`,
+});
 dotenvExpand.expand(env);
 
 interface EnvVars {
   NODE_ENV: string;
   STATISTICS_MS_HOST: string;
   STATISTICS_MS_PORT: number;
+  KAFKA_BROKERS: string;
+  KAFKA_CLIENT_ID: string;
+  KAFKA_GROUP_ID: string;
+  KAFKA_TOPIC_COMMUNITIES: string;
   CASSANDRA_HOST: string;
   CASSANDRA_USER: string;
   CASSANDRA_PASSWORD: string;
@@ -25,6 +31,10 @@ const envsSchema = joi
       .required(),
     STATISTICS_MS_HOST: joi.string().required(),
     STATISTICS_MS_PORT: joi.number().required(),
+    KAFKA_BROKERS: joi.string().required(),
+    KAFKA_CLIENT_ID: joi.string().required(),
+    KAFKA_GROUP_ID: joi.string().required(),
+    KAFKA_TOPIC_COMMUNITIES: joi.string().required(),
     CASSANDRA_HOST: joi.string().required(),
     CASSANDRA_USER: joi.string().required(),
     CASSANDRA_PASSWORD: joi.string().required(),
@@ -45,6 +55,10 @@ export const envs = {
   nodeEnv: envVars.NODE_ENV,
   statisticsMsHost: envVars.STATISTICS_MS_HOST,
   statisticsMsPort: envVars.STATISTICS_MS_PORT,
+  kafkaBrokers: envVars.KAFKA_BROKERS.split(','),
+  kafkaClientId: envVars.KAFKA_CLIENT_ID,
+  kafkaGroupId: envVars.KAFKA_GROUP_ID,
+  kafkaTopicCommunities: envVars.KAFKA_TOPIC_COMMUNITIES,
   cassandraHost: envVars.CASSANDRA_HOST,
   cassandraUser: envVars.CASSANDRA_USER,
   cassandraPassword: envVars.CASSANDRA_PASSWORD,

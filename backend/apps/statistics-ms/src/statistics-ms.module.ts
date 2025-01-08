@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { auth } from 'cassandra-driver';
 import { CassandraModule } from 'cassandra-for-nest';
 import { PlatformStatisticsModule } from './platform-statistics/platform-statistics.module';
+import { CommunityReportsModule } from './community-reports/community-reports.module';
 import { envs } from './config';
 
 @Module({
@@ -15,14 +16,11 @@ import { envs } from './config';
       ),
       localDataCenter: envs.cassandraLocalDataCenter,
       keyspace: envs.cassandraKeyspace,
-      socketOptions: {
-        readTimeout: 30000, // Aumenta el timeout de lectura (en milisegundos)
-        connectTimeout: 5000, // Aumenta el timeout de conexión (en milisegundos)
-      },
     }),
 
     // Import modules
     PlatformStatisticsModule,
+    CommunityReportsModule,
   ],
 })
 export class StatisticsMsModule {}

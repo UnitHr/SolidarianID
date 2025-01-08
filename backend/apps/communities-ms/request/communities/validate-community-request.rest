@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {token}
 
 {
-    "status": "approved",
+    "status": "approved"
 }
 
 ### Deny community creation request

@@ -2,6 +2,7 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityI
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
+import { ActionCreatedEvent } from './events/ActionCreatedEvent';
 
 interface GoodsCollectionActionProps extends ActionProps {
   goodType: string;
@@ -24,6 +25,12 @@ export class GoodsCollectionAction extends Action {
     if (!super.checkProperties(props) || !props.goodType) {
       throw new MissingPropertiesError('[Action] Properties are missing.');
     }
-    return new GoodsCollectionAction(props, id);
+    const action = new GoodsCollectionAction(props, id);
+    if (!id) {
+      action.apply(
+        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+      );
+    }
+    return action;
   }
 }

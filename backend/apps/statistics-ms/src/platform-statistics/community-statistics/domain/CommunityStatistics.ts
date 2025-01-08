@@ -1,5 +1,5 @@
 import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
-import { NegativeCountError } from '../exceptions';
+import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
 
 interface CommunityStatisticsProps {
   communityId: string;

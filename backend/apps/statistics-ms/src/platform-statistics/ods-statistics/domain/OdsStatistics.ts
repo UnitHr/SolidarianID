@@ -1,6 +1,6 @@
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
-import { NegativeCountError } from '../exceptions';
+import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
 
 interface OdsStatisticsProps {
   odsId: ODSEnum;

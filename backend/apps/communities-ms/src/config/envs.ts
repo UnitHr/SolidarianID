@@ -2,7 +2,9 @@ import * as dotenv from 'dotenv';
 import * as dotenvExpand from 'dotenv-expand';
 import * as joi from 'joi';
 
-const env = dotenv.config({ path: './apps/communities-ms/.env' });
+const env = dotenv.config({
+  path: `./apps/communities-ms/.env.${process.env.NODE_ENV}`,
+});
 dotenvExpand.expand(env);
 
 interface EnvVars {
@@ -11,6 +13,10 @@ interface EnvVars {
   COMMUNITIES_MS_PORT: number;
   MONGO_URI: string;
   JWT_SECRET: string;
+  KAFKA_BROKERS: string;
+  KAFKA_CLIENT_ID: string;
+  KAFKA_GROUP_ID: string;
+  KAFKA_TOPIC_COMMUNITIES: string;
 }
 
 const envsSchema = joi
@@ -23,6 +29,10 @@ const envsSchema = joi
     COMMUNITIES_MS_PORT: joi.number().required(),
     MONGO_URI: joi.string().required(),
     JWT_SECRET: joi.string().required(),
+    KAFKA_BROKERS: joi.string().required(),
+    KAFKA_CLIENT_ID: joi.string().required(),
+    KAFKA_GROUP_ID: joi.string().required(),
+    KAFKA_TOPIC_COMMUNITIES: joi.string().required(),
   })
   .unknown(true);
 
@@ -39,4 +49,8 @@ export const envs = {
   communitiesMsPort: envVars.COMMUNITIES_MS_PORT,
   mongoUri: envVars.MONGO_URI,
   jwtSecret: envVars.JWT_SECRET,
+  kafkaBrokers: envVars.KAFKA_BROKERS,
+  kafkaClientId: envVars.KAFKA_CLIENT_ID,
+  kafkaGroupId: envVars.KAFKA_GROUP_ID,
+  kafkaTopicCommunities: envVars.KAFKA_TOPIC_COMMUNITIES,
 };

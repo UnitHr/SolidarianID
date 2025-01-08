@@ -2,7 +2,9 @@ import * as dotenv from 'dotenv';
 import * as dotenvExpand from 'dotenv-expand';
 import * as joi from 'joi';
 
-const env = dotenv.config({ path: './apps/api-gateway/.env' });
+const env = dotenv.config({
+  path: `./apps/api-gateway/.env.${process.env.NODE_ENV}`,
+});
 dotenvExpand.expand(env);
 
 interface EnvVars {

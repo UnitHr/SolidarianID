@@ -100,7 +100,13 @@ export class Cause extends EntityRoot<CauseProps> {
 
     if (!id) {
       cause.apply(
-        new CauseCreatedEvent(createdBy, cause.id.toString(), title, ods),
+        new CauseCreatedEvent(
+          createdBy,
+          communityId,
+          cause.id.toString(),
+          title,
+          ods,
+        ),
       );
     }
 

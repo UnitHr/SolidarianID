@@ -16,7 +16,7 @@ export class UserFollowedHandler implements IEventHandler<UserFollowedEvent> {
     );
 
     this.logger.log(
-      `User with id: ${event.userId} followed user with id: ${event.followedUserId}`,
+      `Internal user followed event handled: User with id: ${event.userId} followed user with id: ${event.followedUserId}`,
     );
   }
 }

@@ -12,7 +12,9 @@ export class CauseCreatedEventHandler
   constructor(private readonly eventsService: CommunitiesEventService) {}
 
   async handle(event: CauseCreatedEvent) {
-    this.logger.log(`Processing internal cause created event: ${event}`);
-    this.eventsService.emitCauseCreatedEvent(event);
+    await this.eventsService.emitCauseCreatedEvent(event);
+    this.logger.log(
+      `Internal cause created event handled: Cause ${event.causeId} created`,
+    );
   }
 }

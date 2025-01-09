@@ -10,7 +10,9 @@ export class ActionCreatedHandler implements IEventHandler<ActionCreatedEvent> {
   constructor(private readonly eventsService: CommunitiesEventService) {}
 
   async handle(event: ActionCreatedEvent) {
-    this.logger.log(`Processing internal action created event: ${event}`);
-    this.eventsService.emitActionCreatedEvent(event);
+    await this.eventsService.emitActionCreatedEvent(event);
+    this.logger.log(
+      `Internal action created event handled: Action ${event.id} created`,
+    );
   }
 }

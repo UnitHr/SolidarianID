@@ -13,7 +13,9 @@ export class ActionContributedEventHandler
   constructor(private readonly eventsService: CommunitiesEventService) {}
 
   async handle(event: ActionContributedEvent) {
-    this.logger.log(`Processing internal action contributed event: ${event}`);
-    this.eventsService.emitActionContributedEvent(event);
+    await this.eventsService.emitActionContributedEvent(event);
+    this.logger.log(
+      `Internal action contributed event handled: Action ${event.actionId} contributed`,
+    );
   }
 }

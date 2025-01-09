@@ -12,7 +12,7 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
   async handle(event: UserCreatedEvent) {
     await this.historyService.createHistory(event.userId);
     this.logger.log(
-      `History created for user registered with id: ${event.userId}`,
+      `Internal history created event handled: History created for user registered with id: ${event.userId}`,
     );
   }
 }

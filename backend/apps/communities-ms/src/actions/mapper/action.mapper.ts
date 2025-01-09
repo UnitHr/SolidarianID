@@ -17,6 +17,7 @@ export class ActionMapper {
       unit,
       achieved,
       createdBy,
+      communityId,
       createdAt,
       updatedAt,
     } = document;
@@ -36,6 +37,7 @@ export class ActionMapper {
       unit,
       achieved,
       createdBy,
+      communityId,
       createdAt,
       updatedAt,
     };
@@ -90,6 +92,7 @@ export class ActionMapper {
       unit: action.unit,
       achieved: action.achieved,
       createdBy: action.createdBy,
+      communityId: action.communityId,
       createdAt: action.createdAt,
       updatedAt: action.updatedAt,
     };

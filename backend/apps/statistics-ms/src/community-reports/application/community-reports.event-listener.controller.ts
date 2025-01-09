@@ -6,8 +6,8 @@ import {
 } from '@communities-ms/communities/domain/events';
 import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
-import { CommunityReportsService } from './community-reports.service';
 import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
+import { CommunityReportsService } from './community-reports.service';
 
 @Controller()
 export class CommunityReportsEventListenerController {
@@ -43,7 +43,6 @@ export class CommunityReportsEventListenerController {
 
   @EventPattern('cause-created')
   async handleCauseCreated(@Payload() message: CauseCreatedEvent) {
-    // TODO: Fix type
     await this.communityReportsService.registerCauseCreation(
       message.communityId,
       message.causeId,

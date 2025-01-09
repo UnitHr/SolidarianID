@@ -16,6 +16,7 @@ export interface ActionProps {
   unit: string;
   achieved?: number;
   createdBy: string;
+  communityId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -92,6 +93,10 @@ export abstract class Action extends EntityRoot<ActionProps> {
 
   get createdAt(): Date {
     return this.props.createdAt;
+  }
+
+  get communityId(): string {
+    return this.props.communityId;
   }
 
   get updatedAt(): Date {

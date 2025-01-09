@@ -38,6 +38,9 @@ export class Action {
   @Prop({ required: true })
   createdBy: string;
 
+  @Prop({ required: true })
+  communityId: string;
+
   // These properties are automatically handled by the timestamps option
   readonly createdAt?: Date;
 

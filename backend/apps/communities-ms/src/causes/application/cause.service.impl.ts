@@ -192,6 +192,7 @@ export class CauseServiceImpl implements CauseService {
       target,
       unit,
       createdBy,
+      cause.communityId,
       goodType,
       location,
       date,

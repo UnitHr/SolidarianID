@@ -2,6 +2,7 @@ import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { HistoryEntry } from './HistoryEntry';
 import { HistoryEntryType } from './HistoryEntryType';
+import { HistoryEntryStatus } from './HistoryEntryStatus';
 
 interface HistoryProps {
   userId: UniqueEntityID;
@@ -55,7 +56,7 @@ export class History extends EntityRoot<HistoryProps> {
 
   public addEntryActionContribute(actionId: string): void {
     const entry = HistoryEntry.create({
-      type: HistoryEntryType.ACTION_CONTRIBUTION,
+      type: HistoryEntryType.ACTION_CONTRIBUTED,
       entityId: new UniqueEntityID(actionId),
     });
 
@@ -64,8 +65,9 @@ export class History extends EntityRoot<HistoryProps> {
 
   public addEntryJoinCommunityRequest(communityId: string) {
     const entry = HistoryEntry.create({
-      type: HistoryEntryType.JOIN_COMMUNITY_REQUEST,
+      type: HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,
       entityId: new UniqueEntityID(communityId),
+      status: HistoryEntryStatus.PENDING,
     });
 
     this.addEntry(entry);
@@ -73,8 +75,17 @@ export class History extends EntityRoot<HistoryProps> {
 
   public addEntryUserJoinedCommunity(communityId: string): void {
     const entry = HistoryEntry.create({
-      type: HistoryEntryType.USER_JOINED_COMMUNITY,
+      type: HistoryEntryType.JOINED_COMMUNITY,
       entityId: new UniqueEntityID(communityId),
+    });
+
+    this.addEntry(entry);
+  }
+
+  public addEntryCauseCreation(causeId: string): void {
+    const entry = HistoryEntry.create({
+      type: HistoryEntryType.CAUSE_CREATED,
+      entityId: new UniqueEntityID(causeId),
     });
 
     this.addEntry(entry);

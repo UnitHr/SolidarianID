@@ -7,6 +7,7 @@ import {
   UserJoinedCommunity,
 } from '@communities-ms/communities/domain/events';
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
+import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
 
 @Injectable()
 export class CommunitiesEventService {
@@ -37,5 +38,9 @@ export class CommunitiesEventService {
 
   async createUserJoinedCommunity(event: UserJoinedCommunity): Promise<void> {
     await this.eventPublisher.emitEvent('user-joined-community', event);
+  }
+
+  async emitCauseCreatedEvent(event: CauseCreatedEvent): Promise<void> {
+    await this.eventPublisher.emitEvent('cause-created', event);
   }
 }

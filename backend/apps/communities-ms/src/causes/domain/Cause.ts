@@ -1,14 +1,13 @@
-import {
-  Entity,
-  UniqueEntityID,
-} from '@common-lib/common-lib/core/domain/Entity';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { CauseEndDate } from './CauseEndDate';
 import {
   ActionAlreadyExistsError,
   SupporterAlreadyExistsError,
 } from '../exceptions';
+import { CauseCreatedEvent } from './events/CauseCreatedEvent';
 
 export interface CauseProps {
   title: string;
@@ -23,7 +22,7 @@ export interface CauseProps {
   updatedAt?: Date;
 }
 
-export class Cause extends Entity<CauseProps> {
+export class Cause extends EntityRoot<CauseProps> {
   get id(): UniqueEntityID {
     return this._id;
   }
@@ -97,7 +96,15 @@ export class Cause extends Entity<CauseProps> {
       updatedAt: props.updatedAt ?? new Date(),
     };
 
-    return new Cause(defaultProps, id);
+    const cause = new Cause(defaultProps, id);
+
+    if (!id) {
+      cause.apply(
+        new CauseCreatedEvent(createdBy, cause.id.toString(), title, ods),
+      );
+    }
+
+    return cause;
   }
 
   public addAction(actionId: string): void {

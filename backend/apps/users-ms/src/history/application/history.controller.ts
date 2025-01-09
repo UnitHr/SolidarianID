@@ -6,6 +6,7 @@ import {
   UserJoinedCommunity,
 } from '@communities-ms/communities/domain/events';
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
+import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
 import { HistoryService } from './history.service';
 
 // TODO: review - event pattern should be in a shared module
@@ -58,6 +59,17 @@ export class HistoryController {
     );
     this.logger.log(
       `User joined community event handled: User ${message.userId} joined community ${message.communityId}`,
+    );
+  }
+
+  @EventPattern('cause-created')
+  async handleCauseCreated(@Payload() message: CauseCreatedEvent) {
+    await this.historyService.registerCauseCreation(
+      message.userId,
+      message.causeId,
+    );
+    this.logger.log(
+      `Cause created event handled: User ${message.userId} created cause ${message.causeId}`,
     );
   }
 }

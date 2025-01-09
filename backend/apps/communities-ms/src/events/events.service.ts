@@ -8,6 +8,7 @@ import {
 } from '@communities-ms/communities/domain/events';
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
+import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
 
 @Injectable()
 export class CommunitiesEventService {
@@ -23,11 +24,11 @@ export class CommunitiesEventService {
     await this.eventPublisher.emitEvent('action-contributed', event);
   }
 
-  async createCommunity(event: CommunityCreatedEvent): Promise<void> {
+  async emitCommunityCreatedEvent(event: CommunityCreatedEvent): Promise<void> {
     await this.eventPublisher.emitEvent('community-created', event);
   }
 
-  async createJoinCommunityRequest(
+  async emitJoinCommunityRequestEvent(
     event: JoinCommunityRequestCreatedEvent,
   ): Promise<void> {
     await this.eventPublisher.emitEvent(
@@ -36,11 +37,17 @@ export class CommunitiesEventService {
     );
   }
 
-  async createUserJoinedCommunity(event: UserJoinedCommunity): Promise<void> {
+  async emitUserJoinedCommunityEvent(
+    event: UserJoinedCommunity,
+  ): Promise<void> {
     await this.eventPublisher.emitEvent('user-joined-community', event);
   }
 
   async emitCauseCreatedEvent(event: CauseCreatedEvent): Promise<void> {
     await this.eventPublisher.emitEvent('cause-created', event);
+  }
+
+  async emitCauseSupportedEvent(event: CauseSupportedEvent): Promise<void> {
+    await this.eventPublisher.emitEvent('cause-supported', event);
   }
 }

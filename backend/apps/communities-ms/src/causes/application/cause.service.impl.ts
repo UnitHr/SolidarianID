@@ -140,9 +140,13 @@ export class CauseServiceImpl implements CauseService {
   }
 
   async addCauseSupporter(id: string, userId: string): Promise<void> {
-    const cause = await this.getCause(id);
+    const cause = this.eventPublisher.mergeObjectContext(
+      await this.getCause(id),
+    );
     cause.addSupporter(userId);
+
     await this.causeRepository.save(cause);
+    cause.commit();
   }
 
   async getCauseActions(

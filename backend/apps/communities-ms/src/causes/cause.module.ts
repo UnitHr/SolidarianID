@@ -13,6 +13,7 @@ import { CauseRepositoryMongoDB } from './infra/cause.repository.mongodb';
 import { CauseSchema } from './infra/persistence/Cause';
 import { CauseDomainExceptionFilter } from './infra/filters/cause-domain-exception.filter';
 import { CauseCreatedEventHandler } from './domain/events/cause-created.handler';
+import { CauseSupportedEventHandler } from './domain/events/cause-supported.handler';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CauseCreatedEventHandler } from './domain/events/cause-created.handler'
       useClass: CauseDomainExceptionFilter,
     },
     CauseCreatedEventHandler,
+    CauseSupportedEventHandler,
   ],
   exports: [CauseService],
 })

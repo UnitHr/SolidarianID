@@ -7,6 +7,7 @@ import {
 import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
 import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
+import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
 import { CommunityReportsService } from './community-reports.service';
 
 @Controller()
@@ -54,9 +55,8 @@ export class CommunityReportsEventListenerController {
     );
   }
 
-  @EventPattern('cause-add-supporter')
-  async handleCauseAddSupporter(@Payload() message: any) {
-    // TODO: Fix type
+  @EventPattern('cause-supported')
+  async handleCauseAddSupporter(@Payload() message: CauseSupportedEvent) {
     await this.communityReportsService.registerCauseAddSupporter(
       message.causeId,
     );

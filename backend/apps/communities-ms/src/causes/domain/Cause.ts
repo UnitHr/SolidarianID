@@ -8,6 +8,7 @@ import {
   SupporterAlreadyExistsError,
 } from '../exceptions';
 import { CauseCreatedEvent } from './events/CauseCreatedEvent';
+import { CauseSupportedEvent } from './events/CauseSupportedEvent';
 
 export interface CauseProps {
   title: string;
@@ -127,7 +128,9 @@ export class Cause extends EntityRoot<CauseProps> {
     if (this.props.supportersIds.includes(userId)) {
       throw new SupporterAlreadyExistsError(userId);
     }
-
     this.props.supportersIds.push(userId);
+    this.apply(
+      new CauseSupportedEvent(userId, this.id.toString(), this.communityId),
+    );
   }
 }

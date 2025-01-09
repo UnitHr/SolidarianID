@@ -7,6 +7,7 @@ import {
 } from '@communities-ms/communities/domain/events';
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
+import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
 import { HistoryService } from './history.service';
 
 // TODO: review - event pattern should be in a shared module
@@ -70,6 +71,17 @@ export class HistoryController {
     );
     this.logger.log(
       `Cause created event handled: User ${message.userId} created cause ${message.causeId}`,
+    );
+  }
+
+  @EventPattern('cause-supported')
+  async handleCauseSupported(@Payload() message: CauseSupportedEvent) {
+    await this.historyService.registerCauseSupported(
+      message.userId,
+      message.causeId,
+    );
+    this.logger.log(
+      `Cause supported event handled: User ${message.userId} supported cause ${message.causeId}`,
     );
   }
 }

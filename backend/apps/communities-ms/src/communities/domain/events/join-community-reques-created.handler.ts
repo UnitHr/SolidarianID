@@ -12,7 +12,7 @@ export class JoinCommunityRequestCreatedHandler
   constructor(private readonly eventsService: CommunitiesEventService) {}
 
   async handle(event: JoinCommunityRequestCreatedEvent) {
-    await this.eventsService.createJoinCommunityRequest(event);
+    await this.eventsService.emitJoinCommunityRequestEvent(event);
     this.logger.log(
       `Internal join community request created event handled: User ${event.userId} requested to join community ${event.communityId}`,
     );

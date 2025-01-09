@@ -90,4 +90,13 @@ export class History extends EntityRoot<HistoryProps> {
 
     this.addEntry(entry);
   }
+
+  public addEntryCauseSupported(causeId: string): void {
+    const entry = HistoryEntry.create({
+      type: HistoryEntryType.CAUSE_SUPPORTED,
+      entityId: new UniqueEntityID(causeId),
+    });
+
+    this.addEntry(entry);
+  }
 }

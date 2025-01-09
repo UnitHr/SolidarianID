@@ -34,4 +34,9 @@ export abstract class HistoryService {
     userId: string,
     causeId: string,
   ): Promise<void>;
+
+  abstract registerCauseSupported(
+    userId: string,
+    causeId: string,
+  ): Promise<void>;
 }

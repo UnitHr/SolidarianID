@@ -12,7 +12,7 @@ export class CommunityCreatedHandler
   constructor(private readonly eventsService: CommunitiesEventService) {}
 
   async handle(event: CommunityCreatedEvent) {
-    await this.eventsService.createCommunity(event);
+    await this.eventsService.emitCommunityCreatedEvent(event);
     this.logger.log(
       `Internal community created event handled: Community ${event.communityId} created`,
     );

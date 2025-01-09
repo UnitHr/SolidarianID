@@ -12,8 +12,8 @@ export class CauseByCommunityIdMapper {
       raw.communityId,
       raw.causeId,
       raw.causeName,
-      raw.supportsCount,
       raw.ods,
+      raw.supportsCount,
     );
   }
 
@@ -24,8 +24,8 @@ export class CauseByCommunityIdMapper {
       communityId: entity.communityId,
       causeId: entity.causeId,
       causeName: entity.causeName,
-      supportsCount: entity.supportsCount,
       ods: entity.ods,
+      supportsCount: entity.supportsCount,
     };
   }
 

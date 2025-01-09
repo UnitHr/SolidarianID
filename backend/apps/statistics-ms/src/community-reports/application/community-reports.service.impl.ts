@@ -75,7 +75,7 @@ export class CommunityReportsServiceImpl implements CommunityReportsService {
     communityId: string,
     causeId: string,
     causeName: string,
-    ods: ODSEnum,
+    ods: ODSEnum[],
   ): Promise<void> {
     // Fetch community
     const community =

@@ -1,10 +1,10 @@
-import { KafkaModule } from '@common-lib/common-lib/kafka/kafka.module';
 import { Module } from '@nestjs/common';
+import { EventsModule } from '@common-lib/common-lib/events/events.module';
 import { CommunitiesEventService } from './events.service';
 
 @Module({
-  imports: [KafkaModule],
+  imports: [EventsModule],
   providers: [CommunitiesEventService], // TODO: define interfaces for these services
   exports: [CommunitiesEventService],
 })
-export class EventsModule {}
+export class CommunitiesEventsModule {}

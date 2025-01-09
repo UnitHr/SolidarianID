@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
-import { kafkaConfig } from './kafka.config';
-import { EventPublisher } from './event-publisher.interface';
-import { KafkaEventPublisherService } from './kafka-event-publisher.service';
+import { kafkaConfig } from './infra/kafka.config';
+import { EventsService } from './events.service';
+import { KafkaEventPublisherService } from './infra/kafka-event-publisher.service';
 
 @Module({
   imports: [
@@ -15,10 +15,10 @@ import { KafkaEventPublisherService } from './kafka-event-publisher.service';
   ],
   providers: [
     {
-      provide: EventPublisher,
+      provide: EventsService,
       useClass: KafkaEventPublisherService,
     },
   ],
-  exports: [EventPublisher],
+  exports: [EventsService],
 })
-export class KafkaModule {}
+export class EventsModule {}

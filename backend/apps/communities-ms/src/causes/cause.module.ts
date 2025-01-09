@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER } from '@nestjs/core';
 import { ActionModule } from '@communities-ms/actions/action.module';
-import { EventsModule } from '@communities-ms/events/events.module';
+import { CommunitiesEventsModule } from '@communities-ms/events/events.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CauseController } from './application/cause.controller';
 import { CauseServiceImpl } from './application/cause.service.impl';
@@ -25,7 +25,7 @@ import { CauseSupportedEventHandler } from './domain/events/cause-supported.hand
     ]),
     ActionModule,
     CqrsModule,
-    EventsModule,
+    CommunitiesEventsModule,
   ],
   controllers: [CauseController],
   providers: [

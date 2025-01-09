@@ -4,6 +4,7 @@ export class ActionContributedEvent extends DomainEvent {
   constructor(
     public readonly userId: string,
     public readonly actionId: string,
+    public readonly communityId: string,
     public readonly amount: number,
     public readonly unit: string,
   ) {

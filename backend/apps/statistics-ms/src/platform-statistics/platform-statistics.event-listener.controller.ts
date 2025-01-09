@@ -1,8 +1,11 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { CommunityCreatedEvent } from '@communities-ms/communities/domain/events';
-import { OdsStatisticsService } from './ods-statistics/application/ods-statistics.service';
+import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
+import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
+import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
 import { CommunityStatisticsService } from './community-statistics/application/community-statistics.service';
+import { OdsStatisticsService } from './ods-statistics/application/ods-statistics.service';
 
 @Controller()
 export class PlatformStatisticsEventListenerController {
@@ -26,9 +29,8 @@ export class PlatformStatisticsEventListenerController {
     );
   }
 
-  @EventPattern('cause-add-supporter')
-  async handleCauseAddSupporter(@Payload() message: any) {
-    // TODO: Fix type
+  @EventPattern('cause-supported')
+  async handleCauseAddSupporter(@Payload() message: CauseSupportedEvent) {
     await this.communityStatisticsService.registerCauseSupport(
       message.communityId,
     );
@@ -38,8 +40,7 @@ export class PlatformStatisticsEventListenerController {
   }
 
   @EventPattern('action-created')
-  async handleActionCreated(@Payload() message: any) {
-    // TODO: Fix type
+  async handleActionCreated(@Payload() message: ActionCreatedEvent) {
     await this.communityStatisticsService.registerCausesTargeted(
       message.communityId,
       message.target,
@@ -50,8 +51,7 @@ export class PlatformStatisticsEventListenerController {
   }
 
   @EventPattern('action-contributed')
-  async handleActionContributed(@Payload() message: any) {
-    // TODO: Fix type
+  async handleActionContributed(@Payload() message: ActionContributedEvent) {
     await this.communityStatisticsService.registerCausesAchieved(
       message.communityId,
       message.amount,

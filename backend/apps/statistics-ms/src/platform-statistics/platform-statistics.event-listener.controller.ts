@@ -1,7 +1,6 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { CommunityCreatedEvent } from '@communities-ms/communities/domain/events';
-import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 import { OdsStatisticsService } from './ods-statistics/application/ods-statistics.service';
 import { CommunityStatisticsService } from './community-statistics/application/community-statistics.service';
 
@@ -30,7 +29,9 @@ export class PlatformStatisticsEventListenerController {
   @EventPattern('cause-add-supporter')
   async handleCauseAddSupporter(@Payload() message: any) {
     // TODO: Fix type
-    await this.communityStatisticsService.registerCauseSupport(message.causeId);
+    await this.communityStatisticsService.registerCauseSupport(
+      message.communityId,
+    );
     this.logger.log(
       `Cause add supporter event handled: Cause:${message.causeId} add supporter User:${message.userId}`,
     );

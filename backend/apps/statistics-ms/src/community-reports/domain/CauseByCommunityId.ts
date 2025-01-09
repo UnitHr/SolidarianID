@@ -7,8 +7,8 @@ interface CauseByCommunityIdProps {
   communityId: string;
   causeId: string;
   causeName: string;
-  supportsCount: number;
   ods: ODSEnum[];
+  supportsCount: number;
   actions: ActionByCauseId[];
 }
 
@@ -29,16 +29,16 @@ export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
     return this.props.causeName;
   }
 
+  get ods(): ODSEnum[] {
+    return this.props.ods;
+  }
+
   get supportsCount(): number {
     return this.props.supportsCount;
   }
 
   set supportsCount(supportsCount: number) {
     this.props.supportsCount = supportsCount;
-  }
-
-  get ods(): ODSEnum[] {
-    return this.props.ods;
   }
 
   get actions(): ActionByCauseId[] {
@@ -49,8 +49,8 @@ export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
     communityId: string,
     causeId: string,
     causeName: string,
+    ods: ODSEnum[],
     supportsCount: number = 0,
-    ods: ODSEnum[] = [],
     actions: ActionByCauseId[] = [],
   ): CauseByCommunityId {
     if (supportsCount < 0) {
@@ -63,8 +63,8 @@ export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
       communityId,
       causeId,
       causeName,
-      supportsCount,
       ods,
+      supportsCount,
       actions,
     });
   }

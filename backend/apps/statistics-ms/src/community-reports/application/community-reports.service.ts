@@ -18,7 +18,7 @@ export abstract class CommunityReportsService {
     communityId: string,
     causeId: string,
     causeName: string,
-    ods: ODSEnum,
+    ods: ODSEnum[],
   ): Promise<void>;
 
   abstract registerCauseAddSupporter(causeId: string): Promise<void>;

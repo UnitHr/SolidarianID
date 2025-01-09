@@ -20,4 +20,9 @@ export default class CommunityByCommunityIdRepository extends BaseService<Persis
     const entity = await this.findOne({ communityId });
     return CommunityByCommunityIdMapper.toDomain(entity);
   }
+
+  async save(community: Domain.CommunityByCommunityId): Promise<void> {
+    const entity = CommunityByCommunityIdMapper.toPersistence(community);
+    return this.saveOne(entity);
+  }
 }

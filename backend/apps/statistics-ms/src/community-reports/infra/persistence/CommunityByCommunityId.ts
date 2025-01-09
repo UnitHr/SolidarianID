@@ -19,5 +19,5 @@ export default class CommunityByCommunityId {
   membersCount: number; // Total number of members
 
   @Column({ name: 'ods' })
-  ods: Set<number>; // Set of Sustainable Development Goals (SDGs)
+  ods: Array<number>; // Set of Sustainable Development Goals (SDGs)
 }

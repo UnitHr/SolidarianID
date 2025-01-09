@@ -6,6 +6,7 @@ import { CommunityReportsServiceImpl } from './application/community-reports.ser
 import CommunityByCommunityIdRepository from './infra/community-by-community-id.repository.cassandra';
 import CauseByCommunityIdRepository from './infra/cause-by-community-id.repository.cassandra';
 import ActionByCauseIdRepository from './infra/action-by-cause-id.repository.cassandra';
+import { CommunityReportsEventListenerController } from './application/community-reports.event-listener.controller';
 import * as Persistence from './infra/persistence';
 
 @Module({
@@ -29,6 +30,9 @@ import * as Persistence from './infra/persistence';
       useClass: CommunityReportsServiceImpl,
     },
   ],
-  controllers: [CommunityReportsController],
+  controllers: [
+    CommunityReportsController,
+    CommunityReportsEventListenerController,
+  ],
 })
 export class CommunityReportsModule {}

@@ -1,5 +1,6 @@
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
+import { Entity } from '@common-lib/common-lib/core/domain/Entity';
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { ActionByCauseId } from './ActionByCauseId';
 
 interface CauseByCommunityIdProps {
@@ -7,11 +8,11 @@ interface CauseByCommunityIdProps {
   causeId: string;
   causeName: string;
   supportsCount: number;
-  ods: Set<number>;
+  ods: ODSEnum[];
   actions: ActionByCauseId[];
 }
 
-export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
+export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
   private constructor(props: CauseByCommunityIdProps) {
     super(props);
   }
@@ -32,7 +33,11 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
     return this.props.supportsCount;
   }
 
-  get ods(): Set<number> {
+  set supportsCount(supportsCount: number) {
+    this.props.supportsCount = supportsCount;
+  }
+
+  get ods(): ODSEnum[] {
     return this.props.ods;
   }
 
@@ -45,7 +50,7 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
     causeId: string,
     causeName: string,
     supportsCount: number = 0,
-    ods: Set<number> = new Set(),
+    ods: ODSEnum[] = [],
     actions: ActionByCauseId[] = [],
   ): CauseByCommunityId {
     if (supportsCount < 0) {
@@ -65,19 +70,23 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
   }
 
   public incrementSupportsCount(amount: number = 1): number {
-    this.props.supportsCount += amount;
-    return this.props.supportsCount;
+    this.supportsCount += amount;
+    return this.supportsCount;
   }
 
-  public addOds(odsId: number): void {
-    this.props.ods.add(odsId);
+  public addODS(ods: ODSEnum | ODSEnum[]): void {
+    if (Array.isArray(ods)) {
+      this.ods.push(...ods);
+    } else {
+      this.ods.push(ods);
+    }
   }
 
   public addActions(actions: ActionByCauseId | ActionByCauseId[]): void {
     if (Array.isArray(actions)) {
-      this.props.actions.push(...actions);
+      this.actions.push(...actions);
     } else {
-      this.props.actions.push(actions);
+      this.actions.push(actions);
     }
   }
 }

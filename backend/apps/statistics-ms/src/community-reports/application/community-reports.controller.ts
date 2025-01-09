@@ -12,7 +12,7 @@ export class CommunityReportsController {
   // TODO: Add ParseUUIDPipe to the id parameter
   async getCommunityReport(@Param('id') communityId: string) {
     const communityReport =
-      await this.communityReportsService.findOne(communityId);
+      await this.communityReportsService.findCommunityReport(communityId);
     return CommunityByCommunityIdMapper.toDto(communityReport);
   }
 }

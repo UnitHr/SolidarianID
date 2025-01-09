@@ -1,11 +1,16 @@
 import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { AppModule } from './app.module';
-import * as hbs from 'hbs';
+import { envs } from './config';
+import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
+import * as hbs from 'hbs';
 
 async function bootstrap() {
+  const logger = new Logger('Frontend_Bootstrap');
+
+  // Create the HTTP application
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Static assets and views configuration
@@ -21,9 +26,11 @@ async function bootstrap() {
   // Set default layout
   app.set('view options', { layout: 'layouts/main' });
 
+  // Enable cookie parser
   app.use(cookieParser());
 
-  await app.listen(3005); // TODO: Load port from .env file
-  console.log(`Frontend is running on: ${await app.getUrl()}`);
+  // Start the application
+  await app.listen(envs.frontendPort, envs.frontendHost);
+  logger.log(`Frontend is running on: ${await app.getUrl()}`);
 }
 bootstrap();

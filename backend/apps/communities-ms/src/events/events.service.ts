@@ -9,6 +9,7 @@ import {
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
 import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
+import { JoinCommunityRequestRejectedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestRejected';
 
 @Injectable()
 export class CommunitiesEventService {
@@ -49,5 +50,14 @@ export class CommunitiesEventService {
 
   async emitCauseSupportedEvent(event: CauseSupportedEvent): Promise<void> {
     await this.eventPublisher.emitEvent('cause-supported', event);
+  }
+
+  async emitJoinCommunityRequestRejectedEvent(
+    event: JoinCommunityRequestRejectedEvent,
+  ): Promise<void> {
+    await this.eventPublisher.emitEvent(
+      'join-community-request-rejected',
+      event,
+    );
   }
 }

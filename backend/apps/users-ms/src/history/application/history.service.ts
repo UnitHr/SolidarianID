@@ -25,6 +25,11 @@ export abstract class HistoryService {
     communityId: string,
   ): Promise<void>;
 
+  abstract registerJoinCommunityRequestRejected(
+    userId: string,
+    communityId: string,
+  ): Promise<void>;
+
   abstract registerUserJoinedCommunity(
     userId: string,
     communityId: string,

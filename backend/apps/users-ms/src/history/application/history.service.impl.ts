@@ -57,6 +57,15 @@ export class HistoryServiceImpl implements HistoryService {
     await this.historyRepository.save(history);
   }
 
+  async registerJoinCommunityRequestRejected(
+    userId: string,
+    communityId: string,
+  ): Promise<void> {
+    const history = await this.historyRepository.findByUserId(userId);
+    history.addEntryJoinCommunityRequestRejected(communityId);
+    await this.historyRepository.save(history);
+  }
+
   async registerUserJoinedCommunity(
     userId: string,
     communityId: string,

@@ -4,3 +4,18 @@
 ### Success case: Join a community
 POST {{baseUrl}}/communities/:communityId/join-requests
 Authorization: Bearer {{jwtToken}}
+
+### View all join community requests
+GET {{baseUrl}}/communities/:communityId/join-requests
+Authorization: Bearer {{jwtToken}}
+
+### Validate a join community request
+POST {{baseUrl}}/communities/:communityId/join-requests/:joinRequestId
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+    "status": "denied",
+    "comment": "Contact the community admin to join the community"
+}
+

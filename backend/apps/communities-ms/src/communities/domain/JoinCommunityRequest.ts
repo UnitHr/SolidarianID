@@ -3,6 +3,7 @@ import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
 import { JoinCommunityRequestCreatedEvent } from './events/JoinCommunityRequestCreatedEvent';
+import { JoinCommunityRequestRejectedEvent } from './events/JoinCommunityRequestRejected';
 
 interface JoinCommunityRequestProps {
   userId: string;
@@ -26,6 +27,12 @@ export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> 
 
   set status(status: StatusRequest) {
     this.props.status = status;
+
+    if (status === StatusRequest.DENIED) {
+      this.apply(
+        new JoinCommunityRequestRejectedEvent(this.userId, this.communityId),
+      );
+    }
   }
 
   get comment(): string | undefined {

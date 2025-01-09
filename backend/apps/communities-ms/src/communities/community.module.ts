@@ -25,6 +25,7 @@ import { CreateCommunityService } from './application/create-community.service';
 import { CommunityCreatedHandler } from './domain/events/community-created.handler';
 import { JoinCommunityRequestCreatedHandler } from './domain/events/join-community-reques-created.handler';
 import { UserJoinedCommunityHandler } from './domain/events/user-joined-community.handler';
+import { JoinCommunityRequestRejectedHandler } from './domain/events/join-community-request-rejected.handler';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { UserJoinedCommunityHandler } from './domain/events/user-joined-communit
     CommunityCreatedHandler,
     JoinCommunityRequestCreatedHandler,
     UserJoinedCommunityHandler,
+    JoinCommunityRequestRejectedHandler,
   ],
 })
 export class CommunityModule {}

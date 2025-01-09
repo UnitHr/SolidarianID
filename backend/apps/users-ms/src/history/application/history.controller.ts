@@ -8,6 +8,7 @@ import {
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
 import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
+import { JoinCommunityRequestRejectedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestRejected';
 import { HistoryService } from './history.service';
 
 // TODO: review - event pattern should be in a shared module
@@ -49,6 +50,19 @@ export class HistoryController {
     );
     this.logger.log(
       `Join community request created event handled: User ${message.userId} requested to join community ${message.communityId}`,
+    );
+  }
+
+  @EventPattern('join-community-request-rejected')
+  async handleJoinCommunityRequestRejected(
+    @Payload() message: JoinCommunityRequestRejectedEvent,
+  ) {
+    await this.historyService.registerJoinCommunityRequestRejected(
+      message.userId,
+      message.communityId,
+    );
+    this.logger.log(
+      `Join community request rejected event handled: User ${message.userId} requested to join community ${message.communityId}`,
     );
   }
 

@@ -73,6 +73,16 @@ export class History extends EntityRoot<HistoryProps> {
     this.addEntry(entry);
   }
 
+  public addEntryJoinCommunityRequestRejected(communityId: string): void {
+    const entry = HistoryEntry.create({
+      type: HistoryEntryType.JOIN_COMMUNITY_REQUEST_REJECTED,
+      entityId: new UniqueEntityID(communityId),
+      status: HistoryEntryStatus.REJECTED,
+    });
+
+    this.addEntry(entry);
+  }
+
   public addEntryUserJoinedCommunity(communityId: string): void {
     const entry = HistoryEntry.create({
       type: HistoryEntryType.JOINED_COMMUNITY,

@@ -135,12 +135,14 @@ export class JoinCommunityService {
     >
   > {
     // Check if the request exists
-    const joinCommunityRequest =
+    const request =
       await this.joinCommunityRequestRepository.findById(requestId);
 
-    if (!!joinCommunityRequest === false) {
+    if (!!request === false) {
       return left(Exceptions.JoinCommunityRequestNotFound.create(requestId));
     }
+    const joinCommunityRequest =
+      this.eventPublisher.mergeObjectContext(request); // TODO: Review all the mergeObjectContext methods on the project, dont call it if the object is not found
 
     let community: Domain.Community;
     switch (status) {
@@ -167,6 +169,8 @@ export class JoinCommunityService {
           // Update the request
           joinCommunityRequest.status = StatusRequest.DENIED;
           joinCommunityRequest.comment = comment;
+
+          joinCommunityRequest.commit();
 
           // Save the request
           this.joinCommunityRequestRepository.save(joinCommunityRequest);

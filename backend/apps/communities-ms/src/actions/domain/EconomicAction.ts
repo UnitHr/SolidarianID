@@ -20,7 +20,13 @@ export class EconomicAction extends Action {
     const action = new EconomicAction(props, id);
     if (!id) {
       action.apply(
-        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+        new ActionCreatedEvent(
+          action.id.toString(),
+          props.causeId,
+          props.target,
+          props.type,
+          props.title,
+        ),
       );
     }
     return action;

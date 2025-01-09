@@ -4,6 +4,8 @@ import { ActionType } from '../ActionType';
 export class ActionCreatedEvent extends DomainEvent {
   constructor(
     public readonly id: string,
+    public readonly causeId: string,
+    public readonly target: number,
     public readonly actionType: ActionType,
     public readonly title: string,
   ) {

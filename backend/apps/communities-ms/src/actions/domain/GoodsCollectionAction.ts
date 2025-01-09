@@ -28,7 +28,13 @@ export class GoodsCollectionAction extends Action {
     const action = new GoodsCollectionAction(props, id);
     if (!id) {
       action.apply(
-        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+        new ActionCreatedEvent(
+          action.id.toString(),
+          props.causeId,
+          props.target,
+          props.type,
+          props.title,
+        ),
       );
     }
     return action;

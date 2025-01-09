@@ -31,8 +31,8 @@ export class HistoryEntryMapper {
 
   static toDto(entry: Domain.HistoryEntry): HistoryEntryDto {
     return {
-      entityId: entry.entityId.toString(),
       type: entry.type,
+      entityId: entry.entityId.toString(),
       timestamp: entry.timestamp,
       status: entry.status,
     };

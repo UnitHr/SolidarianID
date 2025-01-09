@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CauseModule } from '@communities-ms/causes/cause.module';
+import { CqrsModule } from '@nestjs/cqrs';
+import { EventsModule } from '@communities-ms/events/events.module';
 import { CommunityController } from './application/community.controller';
 import {
   CreateCommunityRequest,
@@ -20,6 +22,7 @@ import { JoinCommunityRequestRepository } from './repo/join-community.repository
 import { JoinCommunityRequestRepositoryMongoDb } from './infra/join-community.repository.mongodb';
 import { JoinCommunityService } from './application/join-community.service';
 import { CreateCommunityService } from './application/create-community.service';
+import { CommunityCreatedHandler } from './domain/events/community-created.handler';
 
 @Module({
   imports: [
@@ -38,6 +41,8 @@ import { CreateCommunityService } from './application/create-community.service';
         schema: JoinCommunityRequestSchema,
       },
     ]),
+    CqrsModule,
+    EventsModule,
   ],
   controllers: [CommunityController],
   providers: [
@@ -56,6 +61,7 @@ import { CreateCommunityService } from './application/create-community.service';
     CommunityService,
     JoinCommunityService,
     CreateCommunityService,
+    CommunityCreatedHandler,
   ],
 })
 export class CommunityModule {}

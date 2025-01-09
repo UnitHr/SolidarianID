@@ -1,4 +1,4 @@
-import { NewCommunityCreated } from './NewCommunityCreated';
+import { CommunityCreatedEvent } from './CommunityCreatedEvent';
 import { UserJoinedCommunity } from './UserJoinedCommunity';
 
-export { NewCommunityCreated, UserJoinedCommunity };
+export { CommunityCreatedEvent, UserJoinedCommunity };

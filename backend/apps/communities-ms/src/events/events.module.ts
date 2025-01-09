@@ -4,7 +4,7 @@ import { CommunitiesEventService } from './events.service';
 
 @Module({
   imports: [KafkaModule],
-  providers: [CommunitiesEventService],
+  providers: [CommunitiesEventService], // TODO: define interfaces for these services
   exports: [CommunitiesEventService],
 })
 export class EventsModule {}

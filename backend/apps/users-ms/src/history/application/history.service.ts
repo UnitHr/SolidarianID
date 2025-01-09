@@ -10,6 +10,11 @@ export abstract class HistoryService {
     followedUserId: string,
   ): Promise<void>;
 
+  abstract registerCommunityCreation(
+    adminId: string,
+    communityId: string,
+  ): Promise<void>;
+
   abstract registerActionContribute(
     userId: string,
     actionId: string,

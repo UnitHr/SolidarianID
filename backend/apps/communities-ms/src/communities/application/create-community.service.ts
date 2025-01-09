@@ -7,6 +7,7 @@ import {
   PaginationDefaults,
   SortDirection,
 } from '@common-lib/common-lib/common/enum';
+import { EventPublisher } from '@nestjs/cqrs';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
@@ -20,6 +21,7 @@ export class CreateCommunityService {
     private readonly createCommunityRequestRepository: CreateCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
     private readonly causeService: CauseService,
+    private readonly eventPublisher: EventPublisher,
   ) {}
 
   async getCreateCommunityRequests(
@@ -96,13 +98,15 @@ export class CreateCommunityService {
         this.createCommunityRequestRepository.save(createCommunityRequest);
 
         // Create the community
-        const newCommunity = Domain.Community.create({
-          adminId: createCommunityRequest.userId,
-          name: createCommunityRequest.communityName,
-          description: createCommunityRequest.communityDescription,
-          members: [],
-          causes: [],
-        });
+        const newCommunity = this.eventPublisher.mergeObjectContext(
+          Domain.Community.create({
+            adminId: createCommunityRequest.userId,
+            name: createCommunityRequest.communityName,
+            description: createCommunityRequest.communityDescription,
+            members: [],
+            causes: [],
+          }),
+        );
 
         // Create the cause
         const causeId = await this.causeService.createCause(
@@ -120,6 +124,7 @@ export class CreateCommunityService {
         // Save the community
         this.communityRepository.save(newCommunity);
 
+        newCommunity.commit();
         // Return the community object
         return right(Result.ok(newCommunity));
       }

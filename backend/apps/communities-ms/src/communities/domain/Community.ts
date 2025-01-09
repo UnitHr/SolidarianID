@@ -1,8 +1,7 @@
-import {
-  Entity,
-  UniqueEntityID,
-} from '@common-lib/common-lib/core/domain/Entity';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { MissingPropertiesError } from '../exceptions';
+import { CommunityCreatedEvent } from './events/CommunityCreatedEvent';
 
 interface CommunityProps {
   adminId: string;
@@ -12,7 +11,7 @@ interface CommunityProps {
   causes: string[];
 }
 
-export class Community extends Entity<CommunityProps> {
+export class Community extends EntityRoot<CommunityProps> {
   private constructor(props: CommunityProps, id?: UniqueEntityID) {
     super(props, id);
   }
@@ -58,7 +57,18 @@ export class Community extends Entity<CommunityProps> {
     if (!adminId || !name || !description || !members || !causes) {
       MissingPropertiesError.create();
     }
-    return new Community(props, id);
+    const community = new Community(props, id);
+    if (!id) {
+      community.apply(
+        new CommunityCreatedEvent(
+          adminId,
+          community.id.toString(),
+          name,
+          description,
+        ),
+      );
+    }
+    return community;
   }
 
   addMember(memberId: string): void {

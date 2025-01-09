@@ -30,6 +30,15 @@ export class HistoryServiceImpl implements HistoryService {
     await this.historyRepository.save(history);
   }
 
+  async registerCommunityCreation(
+    adminId: string,
+    communityId: string,
+  ): Promise<void> {
+    const history = await this.historyRepository.findByUserId(adminId);
+    history.addEntryCommunityCreation(communityId);
+    await this.historyRepository.save(history);
+  }
+
   async registerActionContribute(
     userId: string,
     actionId: string,

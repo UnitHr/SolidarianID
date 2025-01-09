@@ -16,10 +16,11 @@ export class HistoryRepositoryTypeOrm extends HistoryRepository {
     super();
   }
 
-  save(entity: Domain.History): Promise<Domain.History> {
-    return this.historyRepository
-      .save(HistoryMapper.toPersistence(entity))
-      .then((history) => HistoryMapper.toDomain(history));
+  async save(entity: Domain.History): Promise<Domain.History> {
+    const history = await this.historyRepository.save(
+      HistoryMapper.toPersistence(entity),
+    );
+    return HistoryMapper.toDomain(history);
   }
 
   async findById(id: string): Promise<Domain.History> {

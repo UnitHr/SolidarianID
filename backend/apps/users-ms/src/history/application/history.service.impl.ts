@@ -56,4 +56,13 @@ export class HistoryServiceImpl implements HistoryService {
     history.addEntryJoinCommunityRequest(communityId);
     await this.historyRepository.save(history);
   }
+
+  async registerUserJoinedCommunity(
+    userId: string,
+    communityId: string,
+  ): Promise<void> {
+    const history = await this.historyRepository.findByUserId(userId);
+    history.addEntryUserJoinedCommunity(communityId);
+    await this.historyRepository.save(history);
+  }
 }

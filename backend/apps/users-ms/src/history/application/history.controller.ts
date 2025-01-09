@@ -1,7 +1,10 @@
 import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { CommunityCreatedEvent } from '@communities-ms/communities/domain/events';
+import {
+  CommunityCreatedEvent,
+  UserJoinedCommunity,
+} from '@communities-ms/communities/domain/events';
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 import { HistoryService } from './history.service';
 
@@ -44,6 +47,17 @@ export class HistoryController {
     );
     this.logger.log(
       `Join community request created event handled: User ${message.userId} requested to join community ${message.communityId}`,
+    );
+  }
+
+  @EventPattern('user-joined-community')
+  async handleUserJoinedCommunity(@Payload() message: UserJoinedCommunity) {
+    await this.historyService.registerUserJoinedCommunity(
+      message.userId,
+      message.communityId,
+    );
+    this.logger.log(
+      `User joined community event handled: User ${message.userId} joined community ${message.communityId}`,
     );
   }
 }

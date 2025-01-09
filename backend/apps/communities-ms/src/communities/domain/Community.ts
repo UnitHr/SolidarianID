@@ -2,6 +2,7 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { MissingPropertiesError } from '../exceptions';
 import { CommunityCreatedEvent } from './events/CommunityCreatedEvent';
+import { UserJoinedCommunity } from './events';
 
 interface CommunityProps {
   adminId: string;
@@ -73,6 +74,7 @@ export class Community extends EntityRoot<CommunityProps> {
 
   addMember(memberId: string): void {
     this.props.members.push(memberId);
+    this.apply(new UserJoinedCommunity(memberId, this.id.toString()));
   }
 
   addCause(causeId: string): void {

@@ -70,4 +70,13 @@ export class History extends EntityRoot<HistoryProps> {
 
     this.addEntry(entry);
   }
+
+  public addEntryUserJoinedCommunity(communityId: string): void {
+    const entry = HistoryEntry.create({
+      type: HistoryEntryType.USER_JOINED_COMMUNITY,
+      entityId: new UniqueEntityID(communityId),
+    });
+
+    this.addEntry(entry);
+  }
 }

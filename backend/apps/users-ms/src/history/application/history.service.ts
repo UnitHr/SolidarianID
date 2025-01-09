@@ -24,4 +24,9 @@ export abstract class HistoryService {
     userId: string,
     communityId: string,
   ): Promise<void>;
+
+  abstract registerUserJoinedCommunity(
+    userId: string,
+    communityId: string,
+  ): Promise<void>;
 }

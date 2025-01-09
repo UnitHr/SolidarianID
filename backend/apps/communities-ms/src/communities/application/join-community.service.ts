@@ -142,16 +142,24 @@ export class JoinCommunityService {
       return left(Exceptions.JoinCommunityRequestNotFound.create(requestId));
     }
 
+    let community: Domain.Community;
     switch (status) {
       case StatusRequest.APPROVED:
         // Update the request
         joinCommunityRequest.status = StatusRequest.APPROVED;
 
+        community = this.eventPublisher.mergeObjectContext(
+          await this.communityRepository.findById(
+            joinCommunityRequest.communityId,
+          ),
+        );
+        community.addMember(joinCommunityRequest.userId);
+
         // Save the request
-        this.joinCommunityRequestRepository.save(joinCommunityRequest);
+        await this.joinCommunityRequestRepository.save(joinCommunityRequest);
+        this.communityRepository.save(community);
 
-        // Send the "joined_community" event
-
+        community.commit();
         break;
 
       case StatusRequest.DENIED:

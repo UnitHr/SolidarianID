@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { EventPublisher } from '@common-lib/common-lib/kafka/event-publisher.interface';
 import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
-import { CommunityCreatedEvent } from '@communities-ms/communities/domain/events';
+import {
+  CommunityCreatedEvent,
+  UserJoinedCommunity,
+} from '@communities-ms/communities/domain/events';
 import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 
 @Injectable()
@@ -30,5 +33,9 @@ export class CommunitiesEventService {
       'join-community-request-created',
       event,
     );
+  }
+
+  async createUserJoinedCommunity(event: UserJoinedCommunity): Promise<void> {
+    await this.eventPublisher.emitEvent('user-joined-community', event);
   }
 }

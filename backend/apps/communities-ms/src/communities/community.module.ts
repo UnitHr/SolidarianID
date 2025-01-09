@@ -24,6 +24,7 @@ import { JoinCommunityService } from './application/join-community.service';
 import { CreateCommunityService } from './application/create-community.service';
 import { CommunityCreatedHandler } from './domain/events/community-created.handler';
 import { JoinCommunityRequestCreatedHandler } from './domain/events/join-community-reques-created.handler';
+import { UserJoinedCommunityHandler } from './domain/events/user-joined-community.handler';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { JoinCommunityRequestCreatedHandler } from './domain/events/join-communi
     CreateCommunityService,
     CommunityCreatedHandler,
     JoinCommunityRequestCreatedHandler,
+    UserJoinedCommunityHandler,
   ],
 })
 export class CommunityModule {}

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
-import { CommunitiesEventsModule } from '@communities-ms/events/events.module';
+import { CommunitiesEventsModule } from '@communities-ms/events/communities-events.module';
 import { ActionService } from './application/action.service';
 import { ActionController } from './application/action.controller';
 import { Action } from './infra/persistence';

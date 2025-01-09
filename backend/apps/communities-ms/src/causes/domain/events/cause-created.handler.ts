@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
-import { CommunitiesEventService } from '@communities-ms/events/events.service';
+import { CommunitiesEventService } from '@communities-ms/events/communities-events.service';
 import { CauseCreatedEvent } from './CauseCreatedEvent';
 
 @EventsHandler(CauseCreatedEvent)

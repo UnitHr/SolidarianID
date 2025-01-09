@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CauseModule } from '@communities-ms/causes/cause.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { CommunitiesEventsModule } from '@communities-ms/events/events.module';
+import { CommunitiesEventsModule } from '@communities-ms/events/communities-events.module';
 import { CommunityController } from './application/community.controller';
 import {
   CreateCommunityRequest,

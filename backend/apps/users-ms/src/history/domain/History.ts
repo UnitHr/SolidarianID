@@ -34,11 +34,11 @@ export class History extends EntityRoot<HistoryProps> {
     return this.props.entries.filter((entry) => entry.type === type);
   }
 
+  // TODO: review - maybe this could be placed in a Factory
   public addEntryUserFollowed(followedUserId: string): void {
     const entry = HistoryEntry.create({
       type: HistoryEntryType.USER_FOLLOWED,
       entityId: new UniqueEntityID(followedUserId),
-      timestamp: new Date(),
     });
 
     this.addEntry(entry);
@@ -48,7 +48,6 @@ export class History extends EntityRoot<HistoryProps> {
     const entry = HistoryEntry.create({
       type: HistoryEntryType.COMMUNITY_ADMIN,
       entityId: new UniqueEntityID(communityId),
-      timestamp: new Date(),
     });
 
     this.addEntry(entry);
@@ -58,7 +57,15 @@ export class History extends EntityRoot<HistoryProps> {
     const entry = HistoryEntry.create({
       type: HistoryEntryType.ACTION_CONTRIBUTION,
       entityId: new UniqueEntityID(actionId),
-      timestamp: new Date(),
+    });
+
+    this.addEntry(entry);
+  }
+
+  public addEntryJoinCommunityRequest(communityId: string) {
+    const entry = HistoryEntry.create({
+      type: HistoryEntryType.JOIN_COMMUNITY_REQUEST,
+      entityId: new UniqueEntityID(communityId),
     });
 
     this.addEntry(entry);

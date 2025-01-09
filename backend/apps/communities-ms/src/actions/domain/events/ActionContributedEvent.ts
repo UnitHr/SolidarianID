@@ -7,6 +7,6 @@ export class ActionContributedEvent extends DomainEvent {
     public readonly amount: number,
     public readonly unit: string,
   ) {
-    super('ActionContributed');
+    super(ActionContributedEvent.name);
   }
 }

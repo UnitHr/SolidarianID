@@ -7,6 +7,6 @@ export class ActionCreatedEvent extends DomainEvent {
     public readonly actionType: ActionType,
     public readonly title: string,
   ) {
-    super('ActionCreated');
+    super(ActionCreatedEvent.name);
   }
 }

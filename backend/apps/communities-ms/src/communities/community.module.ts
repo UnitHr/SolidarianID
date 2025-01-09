@@ -23,6 +23,7 @@ import { JoinCommunityRequestRepositoryMongoDb } from './infra/join-community.re
 import { JoinCommunityService } from './application/join-community.service';
 import { CreateCommunityService } from './application/create-community.service';
 import { CommunityCreatedHandler } from './domain/events/community-created.handler';
+import { JoinCommunityRequestCreatedHandler } from './domain/events/join-community-reques-created.handler';
 
 @Module({
   imports: [
@@ -58,10 +59,12 @@ import { CommunityCreatedHandler } from './domain/events/community-created.handl
       provide: JoinCommunityRequestRepository,
       useClass: JoinCommunityRequestRepositoryMongoDb,
     },
+    // TODO: Create interface for Services
     CommunityService,
     JoinCommunityService,
     CreateCommunityService,
     CommunityCreatedHandler,
+    JoinCommunityRequestCreatedHandler,
   ],
 })
 export class CommunityModule {}

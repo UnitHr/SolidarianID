@@ -1,9 +1,8 @@
-import {
-  Entity,
-  UniqueEntityID,
-} from '@common-lib/common-lib/core/domain/Entity';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
+import { JoinCommunityRequestCreatedEvent } from './events/JoinCommunityRequestCreatedEvent';
 
 interface JoinCommunityRequestProps {
   userId: string;
@@ -12,7 +11,7 @@ interface JoinCommunityRequestProps {
   comment?: string;
 }
 
-export class JoinCommunityRequest extends Entity<JoinCommunityRequestProps> {
+export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> {
   private constructor(props: JoinCommunityRequestProps, id?: UniqueEntityID) {
     super(props, id);
   }
@@ -61,6 +60,12 @@ export class JoinCommunityRequest extends Entity<JoinCommunityRequestProps> {
     if (!userId || !communityId || !status) {
       MissingPropertiesError.create();
     }
-    return new JoinCommunityRequest(props, id);
+    const joinCommunityRequest = new JoinCommunityRequest(props, id);
+    if (!id) {
+      joinCommunityRequest.apply(
+        new JoinCommunityRequestCreatedEvent(userId, communityId, status),
+      );
+    }
+    return joinCommunityRequest;
   }
 }

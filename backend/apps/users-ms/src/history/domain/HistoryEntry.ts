@@ -7,7 +7,7 @@ import { HistoryEntryStatus } from './HistoryEntryStatus';
 interface HistoryEntryProps {
   type: HistoryEntryType;
   entityId: UniqueEntityID;
-  timestamp: Date;
+  timestamp?: Date;
   status?: HistoryEntryStatus;
 }
 

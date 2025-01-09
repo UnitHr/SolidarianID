@@ -127,14 +127,14 @@ export abstract class Action extends EntityRoot<ActionProps> {
 
     if (this.achieved >= this.target) this.status = ActionStatus.COMPLETED;
 
-    const event = new ActionContributedEvent(
-      contribution.userId,
-      this.id.toString(),
-      contribution.amount,
-      contribution.unit,
+    this.apply(
+      new ActionContributedEvent(
+        contribution.userId,
+        this.id.toString(),
+        contribution.amount,
+        contribution.unit,
+      ),
     );
-
-    this.apply(event);
   }
 
   static checkProperties(props: ActionProps): boolean {

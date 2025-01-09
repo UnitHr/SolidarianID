@@ -7,6 +7,6 @@ export class CommunityCreatedEvent extends DomainEvent {
     public readonly name: string,
     public readonly description: string,
   ) {
-    super('CommunityCreated');
+    super(CommunityCreatedEvent.name);
   }
 }

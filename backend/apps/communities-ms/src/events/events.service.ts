@@ -3,6 +3,7 @@ import { EventPublisher } from '@common-lib/common-lib/kafka/event-publisher.int
 import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
 import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
 import { CommunityCreatedEvent } from '@communities-ms/communities/domain/events';
+import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
 
 @Injectable()
 export class CommunitiesEventService {
@@ -20,5 +21,14 @@ export class CommunitiesEventService {
 
   async createCommunity(event: CommunityCreatedEvent): Promise<void> {
     await this.eventPublisher.emitEvent('community-created', event);
+  }
+
+  async createJoinCommunityRequest(
+    event: JoinCommunityRequestCreatedEvent,
+  ): Promise<void> {
+    await this.eventPublisher.emitEvent(
+      'join-community-request-created',
+      event,
+    );
   }
 }

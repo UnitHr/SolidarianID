@@ -1,0 +1,6 @@
+@baseUrl = http://localhost:3002
+@jwtToken = <token>
+
+### Success case: Join a community
+POST {{baseUrl}}/communities/:communityId/join-requests
+Authorization: Bearer {{jwtToken}}

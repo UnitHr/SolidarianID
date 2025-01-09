@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
+import { EventPublisher } from '@nestjs/cqrs';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CommunityRepository } from '../repo/community.repository';
@@ -14,6 +15,7 @@ export class JoinCommunityService {
   constructor(
     private readonly joinCommunityRequestRepository: JoinCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
+    private readonly eventPublisher: EventPublisher,
   ) {}
 
   async joinCommunityRequest(
@@ -69,13 +71,16 @@ export class JoinCommunityService {
     }
 
     // Create the new request
-    const newRequest = Domain.JoinCommunityRequest.create({
-      userId,
-      communityId,
-      status: StatusRequest.PENDING,
-    });
+    const newRequest = this.eventPublisher.mergeObjectContext(
+      Domain.JoinCommunityRequest.create({
+        userId,
+        communityId,
+        status: StatusRequest.PENDING,
+      }),
+    );
     this.joinCommunityRequestRepository.save(newRequest);
 
+    newRequest.commit();
     // Return the request object
     return right(Result.ok(newRequest));
   }

@@ -19,4 +19,9 @@ export abstract class HistoryService {
     userId: string,
     actionId: string,
   ): Promise<void>;
+
+  abstract registerJoinCommunityRequest(
+    userId: string,
+    communityId: string,
+  ): Promise<void>;
 }

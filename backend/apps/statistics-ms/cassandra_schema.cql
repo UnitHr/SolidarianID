@@ -19,6 +19,13 @@ CREATE TABLE IF NOT EXISTS ods_statistics (
 )
 WITH comment = 'Q1 and Q2 statistics for each ODS';
 
+CREATE TABLE IF NOT EXISTS ods_community (
+    ods_id int,
+    community_id uuid,
+    PRIMARY KEY ((ods_id), community_id)
+) 
+WITH comment = 'To ensure the uniqueness of communities by ODS';
+
 CREATE TABLE IF NOT EXISTS community_statistics (
   community_id TEXT,
   community_name TEXT,

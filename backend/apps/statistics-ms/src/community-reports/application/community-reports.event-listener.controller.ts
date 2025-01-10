@@ -57,9 +57,9 @@ export class CommunityReportsEventListenerController {
 
   @EventPattern('cause-supported')
   async handleCauseAddSupporter(@Payload() message: CauseSupportedEvent) {
-    // await this.communityReportsService.registerCauseAddSupporter(
-    //   message.causeId,
-    // );
+    await this.communityReportsService.registerCauseAddSupporter(
+      message.causeId,
+    );
     this.logger.log(
       `Cause add supporter event handled: Cause:${message.causeId} add supporter User:${message.userId}`,
     );

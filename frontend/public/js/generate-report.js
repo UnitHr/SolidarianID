@@ -25,10 +25,19 @@ const restaurarElementos = () => {
     .getElementById('community-details')
     .classList.add('border', 'border-gray-300', 'bg-gray-50');
 };
+
+function captureChartsAsImages() {
+  const charts = document.querySelectorAll('canvas');
+  charts.forEach((chart) => {
+    const img = document.createElement('img');
+    img.src = chart.toDataURL('image/png'); // Convert the canvas to an image
+    chart.parentNode.replaceChild(img, chart); // Replace the canvas with the image
+  });
+}
 // Function to generate the PDF using html2pdf
 generatePdfButton.addEventListener('click', () => {
   const element = document.getElementById('community-details');
-
+  captureChartsAsImages();
   const options = {
     filename: 'community-report.pdf',
     jsPDF: {
@@ -46,11 +55,11 @@ generatePdfButton.addEventListener('click', () => {
       type: 'jpeg',
       quality: 0.98,
     },
-    margin: [20, 20, 20, 20],
+    margin: [20, 20, 10, 10],
     pagebreak: { mode: 'avoid-all', before: '#avoid-page-break' },
   };
   ocultarElementos();
-  // Generar el PDF
+
   html2pdf()
     .from(element)
     .set(options)

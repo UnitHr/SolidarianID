@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { ValidationService } from './validation.service';
 import { HandlebarsHelpersService } from 'src/helper.service';
-import { ModuleTokenFactory } from '@nestjs/core/injector/module-token-factory';
 
 @Controller('validation')
 export class ValidationController {
@@ -32,6 +31,11 @@ export class ValidationController {
     const user = req.cookies.user;
     if (!user) {
       res.redirect('/login');
+    }
+    if (user.roles !== 'admin') {
+      return res
+        .status(403)
+        .json({ message: 'You do not have permission to access this route' });
     }
 
     try {

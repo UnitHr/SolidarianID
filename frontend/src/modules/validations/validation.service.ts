@@ -46,7 +46,6 @@ export class ValidationService {
 
   async rejectRequest(requestId: string, reason: string, token: string) {
     try {
-      console.log('Validating request:', requestId);
       await axios.post(
         Constants.COMMUNITY_MS_BASE_URL + `/creation-requests/${requestId}`,
         {
@@ -57,7 +56,6 @@ export class ValidationService {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      console.log(`Request ${requestId} validated successfully.`);
     } catch (error) {
       console.error(`Error validating request ${requestId}:`, error.message);
     }

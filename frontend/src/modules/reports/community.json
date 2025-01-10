@@ -1,32 +1,66 @@
 {
-    "communityId": "community_004",
-    "communityName": "Community 004",
-    "adminId": "admin_004",
-    "members": 1000,
+    "communityId": "community_001",
+    "communityName": "Sustainable Future",
+    "adminId": "user_001",
+    "members": 500,
     "ods": [
         {
-            "id": 14,
-            "title": "Life Below Wather",
-            "description": "Conserve and sustainably use the oceans, seas and marine resources for sustainable development",
+            "id": 1,
+            "title": "No Poverty",
+            "description": "Eradicate poverty in all its forms everywhere."
+        },
+        {
+            "id": 2,
+            "title": "Zero Hunger",
+            "description": "End hunger, achieve food security, and improve nutrition."
+        },
+        {
+            "id": 3,
+            "title": "Good Health and Well-Being",
+            "description": "Ensure healthy lives and promote well-being for all."
         }
     ],
     "causes": [
         {
-            "causeId": "cause_004",
-            "causeName": "Cause 004",
-            "supports": 1000,
+            "causeId": "cause_001",
+            "causeName": "Climate Change Awareness",
+            "supports": 150,
             "ods": [
                 {
-                    "id": 14,
-                    "title": "Life Below Wather",
-                    "description": "Conserve and sustainably use the oceans, seas and marine resources for sustainable development",
+                    "id": 13,
+                    "title": "Climate Action",
+                    "description": "Take urgent action to combat climate change and its impacts."
                 }
             ],
             "actions": [
                 {
-                    "actionId": "action_004",
-                    "actionName": "Action 004",
+                    "actionId": "action_001",
+                    "actionName": "Host Climate Webinar",
+                    "progress": 80
+                },
+                {
+                    "actionId": "action_002",
+                    "actionName": "Organize Community Clean-up",
                     "progress": 95
+                }
+            ]
+        },
+        {
+            "causeId": "cause_002",
+            "causeName": "Carbon Footprint Reduction",
+            "supports": 120,
+            "ods": [
+                {
+                    "id": 7,
+                    "title": "Affordable and Clean Energy",
+                    "description": "Ensure access to affordable, reliable, and sustainable energy."
+                }
+            ],
+            "actions": [
+                {
+                    "actionId": "action_003",
+                    "actionName": "Distribute Energy-efficient Bulbs",
+                    "progress": 85
                 }
             ]
         }

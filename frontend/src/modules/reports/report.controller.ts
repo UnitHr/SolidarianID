@@ -16,6 +16,11 @@ export class ReportController {
     if (!user) {
       return res.redirect('/login');
     }
+    if (user.roles !== 'admin') {
+      return res
+        .status(403)
+        .json({ message: 'You do not have permission to access this route' });
+    }
 
     try {
       const communities = await this.reportService.getCommunities(user.token);
@@ -36,7 +41,7 @@ export class ReportController {
     }
   }
 
-  @Post('')
+  @Post()
   @Render('platform-admin/communityDetails')
   async getCommunityDetails(
     @Req() req,

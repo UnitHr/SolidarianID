@@ -73,16 +73,14 @@
 <script src="/js/validation.js"></script>
 <script>
   function setActivePageLink() {
-    // Obtener la página actual desde la URL, o '1' si no existe
     const currentPage = String(new URLSearchParams(window.location.search).get('page') || 1);
 
-    // Selecciona el enlace correspondiente a la página actual
+    // Select the link corresponding to the current page
     const activeLink = document.getElementById(`page-${currentPage}`);
     if (activeLink) {
       activeLink.classList.add('bg-blue-600');
     }
   }
 
-  // Llamar a la función cuando el DOM esté completamente cargado
   document.addEventListener('DOMContentLoaded', setActivePageLink);
 </script>

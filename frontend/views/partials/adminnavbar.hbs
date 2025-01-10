@@ -2,7 +2,7 @@
     <div class="w-full flex justify-between">
         <ul class="flex w-full">
             <li class="w-full flex items-center justify-center">
-                <a id="link-validation" href="/Validation"
+                <a id="link-validation" href="/validation"
                     class="block w-full text-center py-2 hover:bg-gray-600 active:bg-cyan-900">Validation</a>
             </li>
             <li class=" w-full flex items-center justify-center">
@@ -24,7 +24,7 @@
         links.forEach(link => {
             link.classList.remove('bg-cyan-900');
         });
-        if (currentUrl.includes('/Validation')) {
+        if (currentUrl.includes('/validation')) {
             document.getElementById('link-validation').classList.add('bg-cyan-900');
         } else if (currentUrl.includes('/statistics')) {
             document.getElementById('link-statistics').classList.add('bg-cyan-900');
@@ -32,5 +32,5 @@
             document.getElementById('link-reports').classList.add('bg-cyan-900');
         }
     }
-    window.onload = setActiveLink;
+    document.addEventListener('DOMContentLoaded', setActiveLink);
 </script>

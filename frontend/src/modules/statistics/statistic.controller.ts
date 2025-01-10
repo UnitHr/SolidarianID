@@ -16,6 +16,11 @@ export class StatisticsController {
     if (!user) {
       return res.redirect('/login');
     }
+    if (user.roles !== 'admin') {
+      return res
+        .status(403)
+        .json({ message: 'You do not have permission to access this route' });
+    }
     try {
       const datasByOds = await this.statisticsService.getDataByODS(user.token);
 

@@ -4,5 +4,6 @@
  */
 
 import OdsStatistics from './OdsStatistics';
+import { OdsCommunity } from './OdsCommunity';
 
-export { OdsStatistics };
+export { OdsStatistics, OdsCommunity };

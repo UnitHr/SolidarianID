@@ -1,9 +1,9 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
+import { ActionContributedEvent } from '@common-lib/common-lib/events/domain/ActionContributedEvent';
 import { ActionStatus } from './ActionStatus';
 import { ActionType } from './ActionType';
 import { Contribution } from './Contribution';
-import { ActionContributedEvent } from './events/ActionContributedEvent';
 
 export interface ActionProps {
   type: ActionType;
@@ -16,6 +16,7 @@ export interface ActionProps {
   unit: string;
   achieved?: number;
   createdBy: string;
+  communityId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -94,6 +95,10 @@ export abstract class Action extends EntityRoot<ActionProps> {
     return this.props.createdAt;
   }
 
+  get communityId(): string {
+    return this.props.communityId;
+  }
+
   get updatedAt(): Date {
     return this.props.updatedAt;
   }
@@ -127,13 +132,15 @@ export abstract class Action extends EntityRoot<ActionProps> {
 
     if (this.achieved >= this.target) this.status = ActionStatus.COMPLETED;
 
-    const event = new ActionContributedEvent(
-      contribution.userId,
-      this.id.toString(),
-      contribution.amount,
+    this.apply(
+      new ActionContributedEvent(
+        contribution.userId,
+        this.id.toString(),
+        this.communityId,
+        contribution.amount,
+        contribution.unit,
+      ),
     );
-
-    this.apply(event);
   }
 
   static checkProperties(props: ActionProps): boolean {

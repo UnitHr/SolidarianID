@@ -18,4 +18,60 @@ export class CommunityStatisticsServiceImpl
   getTotalSupports(): Promise<number> {
     return this.communityStatisticsRepository.getTotalSupports();
   }
+
+  registerComunityCreation(
+    communityId: string,
+    communityName: string,
+  ): Promise<void> {
+    // Create a new community statistics
+    const communityStatistics = CommunityStatistics.create(
+      communityId,
+      communityName,
+    );
+
+    // Save
+    return this.communityStatisticsRepository.save(communityStatistics);
+  }
+
+  async registerCauseSupport(communityId: string): Promise<void> {
+    // Fetch the community statistics
+    const communityStatistics =
+      await this.communityStatisticsRepository.findOneEntity(communityId);
+
+    // Increment the support count
+    communityStatistics.incrementSupportCount();
+
+    // Save
+    return this.communityStatisticsRepository.save(communityStatistics);
+  }
+
+  async registerCausesTargeted(
+    communityId: string,
+    amount: number,
+  ): Promise<void> {
+    // Fetch the community statistics
+    const communityStatistics =
+      await this.communityStatisticsRepository.findOneEntity(communityId);
+
+    // Increment the counter
+    communityStatistics.incrementActionsTargetTotal(amount);
+
+    // Save
+    return this.communityStatisticsRepository.save(communityStatistics);
+  }
+
+  async registerCausesAchieved(
+    communityId: string,
+    amount: number,
+  ): Promise<void> {
+    // Fetch the community statistics
+    const communityStatistics =
+      await this.communityStatisticsRepository.findOneEntity(communityId);
+
+    // Increment the counter
+    communityStatistics.incrementActionsAchievedTotal(amount);
+
+    // Save
+    return this.communityStatisticsRepository.save(communityStatistics);
+  }
 }

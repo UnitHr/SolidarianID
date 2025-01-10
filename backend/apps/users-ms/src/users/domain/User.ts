@@ -7,7 +7,6 @@ import {
   UserAlreadyFollowedError,
   UserCannotFollowSelfError,
 } from '../exceptions';
-import { UserCreatedEvent } from './events/UserCreatedEvent';
 import { UserFollowedEvent } from './events/UserFollowedEvent';
 
 export interface UserProps {
@@ -97,13 +96,7 @@ export class User extends EntityRoot<UserProps> {
       );
     }
 
-    const user = new User({ ...props, followers: props.followers ?? [] }, id);
-
-    if (!id) {
-      user.apply(new UserCreatedEvent(user.id.toString()));
-    }
-
-    return user;
+    return new User({ ...props, followers: props.followers ?? [] }, id);
   }
 
   public updateProfile(updateData: Partial<UserProps>): void {

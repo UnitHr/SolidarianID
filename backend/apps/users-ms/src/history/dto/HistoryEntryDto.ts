@@ -6,4 +6,6 @@ export class HistoryEntryDto {
   timestamp: Date;
 
   status?: string;
+
+  metadata?: Record<string, unknown>;
 }

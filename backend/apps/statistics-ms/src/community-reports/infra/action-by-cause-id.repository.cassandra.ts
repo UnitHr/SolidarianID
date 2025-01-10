@@ -18,4 +18,14 @@ export default class ActionByCauseIdRepository extends BaseService<Persistence.A
     const entities = await this.findMany({ causeId });
     return entities.map(ActionByCauseIdMapper.toDomain);
   }
+
+  async findOneByActionId(actionId: string): Promise<Domain.ActionByCauseId> {
+    const entity = await this.findOne({ actionId });
+    return ActionByCauseIdMapper.toDomain(entity);
+  }
+
+  async save(action: Domain.ActionByCauseId): Promise<void> {
+    const entity = ActionByCauseIdMapper.toPersistence(action);
+    return this.saveOne(entity);
+  }
 }

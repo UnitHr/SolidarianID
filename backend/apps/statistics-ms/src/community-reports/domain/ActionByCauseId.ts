@@ -1,5 +1,5 @@
+import { Entity } from '@common-lib/common-lib/core/domain/Entity';
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
 
 interface ActionByCauseIdProps {
   causeId: string;
@@ -9,7 +9,7 @@ interface ActionByCauseIdProps {
   achieved: number;
 }
 
-export class ActionByCauseId extends ValueObject<ActionByCauseIdProps> {
+export class ActionByCauseId extends Entity<ActionByCauseIdProps> {
   private constructor(props: ActionByCauseIdProps) {
     super(props);
   }
@@ -32,6 +32,10 @@ export class ActionByCauseId extends ValueObject<ActionByCauseIdProps> {
 
   get achieved(): number {
     return this.props.achieved;
+  }
+
+  set achieved(achieved: number) {
+    this.props.achieved = achieved;
   }
 
   public static create(
@@ -67,16 +71,7 @@ export class ActionByCauseId extends ValueObject<ActionByCauseIdProps> {
         '[ActionByCauseId] Increment amount cannot be negative.',
       );
     }
-    this.props.achieved += amount;
-    return this.props.achieved;
-  }
-
-  public setTarget(newTarget: number): void {
-    if (newTarget < 0) {
-      throw new NegativeCountError(
-        '[ActionByCauseId] Target value cannot be negative.',
-      );
-    }
-    this.props.target = newTarget;
+    this.achieved += amount;
+    return this.achieved;
   }
 }

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { OdsStatisticsMapper } from './ods-statistics/ods-statistics.mapper';
+import { OdsStatisticsMapper } from './ods-statistics/mapper/ods-statistics.mapper';
 import { OdsStatisticsResponseDto } from './ods-statistics/dto/ods-statistics-response.dto';
 import { OdsStatisticsService } from './ods-statistics/application/ods-statistics.service';
 import { CommunityStatisticsResponseDto } from './community-statistics/dto/community-statistics-response.dto';

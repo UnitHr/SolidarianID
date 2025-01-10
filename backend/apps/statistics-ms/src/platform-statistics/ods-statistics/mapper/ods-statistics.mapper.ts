@@ -3,9 +3,9 @@ import {
   ODSEnum,
 } from '@common-lib/common-lib/common/ods';
 import { Utils } from '@common-lib/common-lib/common/utils';
-import { OdsStatisticsResponseDto } from './dto/ods-statistics-response.dto';
-import * as Persistence from './infra/persistence';
-import * as Domain from './domain';
+import { OdsStatisticsResponseDto } from '../dto/ods-statistics-response.dto';
+import * as Persistence from '../infra/persistence';
+import * as Domain from '../domain';
 
 export class OdsStatisticsMapper {
   static toDomain(raw: Persistence.OdsStatistics): Domain.OdsStatistics {

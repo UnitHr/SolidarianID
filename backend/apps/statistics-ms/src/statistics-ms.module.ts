@@ -3,6 +3,7 @@ import { auth } from 'cassandra-driver';
 import { CassandraModule } from 'cassandra-for-nest';
 import { PlatformStatisticsModule } from './platform-statistics/platform-statistics.module';
 import { CommunityReportsModule } from './community-reports/community-reports.module';
+import { StatisticsMsEventListenerController } from './statistics-ms.event-listener.controller';
 import { envs } from './config';
 
 @Module({
@@ -22,5 +23,6 @@ import { envs } from './config';
     PlatformStatisticsModule,
     CommunityReportsModule,
   ],
+  controllers: [StatisticsMsEventListenerController],
 })
 export class StatisticsMsModule {}

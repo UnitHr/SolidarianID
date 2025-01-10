@@ -1,4 +1,4 @@
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
+import { Entity } from '@common-lib/common-lib/core/domain/Entity';
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
 
 interface CommunityStatisticsProps {
@@ -9,7 +9,7 @@ interface CommunityStatisticsProps {
   actionsAchievedTotal: number;
 }
 
-export class CommunityStatistics extends ValueObject<CommunityStatisticsProps> {
+export class CommunityStatistics extends Entity<CommunityStatisticsProps> {
   private constructor(props: CommunityStatisticsProps) {
     super(props);
   }

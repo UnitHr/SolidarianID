@@ -7,6 +7,7 @@ import {
 } from '@common-lib/common-lib/common/enum';
 import { ActionService } from '@communities-ms/actions/application/action.service';
 import { ActionType } from '@communities-ms/actions/domain';
+import { EventPublisher } from '@nestjs/cqrs';
 import { CauseRepository } from '../cause.repository';
 import { CauseService } from './cause.service';
 import { Cause, CauseEndDate } from '../domain';
@@ -17,6 +18,7 @@ export class CauseServiceImpl implements CauseService {
   constructor(
     private readonly causeRepository: CauseRepository,
     private readonly actionService: ActionService,
+    private readonly eventPublisher: EventPublisher,
   ) {}
 
   logger = new Logger(CauseServiceImpl.name);
@@ -63,18 +65,21 @@ export class CauseServiceImpl implements CauseService {
     createdBy: string,
   ): Promise<string> {
     // Create a new cause
-    const cause = Cause.create({
-      title,
-      description,
-      ods,
-      endDate: CauseEndDate.create(endDate),
-      communityId,
-      createdBy,
-    });
+    const cause = this.eventPublisher.mergeObjectContext(
+      Cause.create({
+        title,
+        description,
+        ods,
+        endDate: CauseEndDate.create(endDate),
+        communityId,
+        createdBy,
+      }),
+    );
 
     // Create the new cause and save it
     const savedCause = await this.causeRepository.save(cause);
 
+    cause.commit();
     // Return the ID of the newly created cause
     return savedCause.id.toString();
   }
@@ -135,9 +140,13 @@ export class CauseServiceImpl implements CauseService {
   }
 
   async addCauseSupporter(id: string, userId: string): Promise<void> {
-    const cause = await this.getCause(id);
+    const cause = this.eventPublisher.mergeObjectContext(
+      await this.getCause(id),
+    );
     cause.addSupporter(userId);
+
     await this.causeRepository.save(cause);
+    cause.commit();
   }
 
   async getCauseActions(
@@ -187,6 +196,7 @@ export class CauseServiceImpl implements CauseService {
       target,
       unit,
       createdBy,
+      cause.communityId,
       goodType,
       location,
       date,

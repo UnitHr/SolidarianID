@@ -1,7 +1,4 @@
-import {
-  mapODSEnumListToDetails,
-  ODSEnum,
-} from '@common-lib/common-lib/common/ods';
+import { mapODSEnumListToDetails } from '@common-lib/common-lib/common/ods';
 import { CommunityByCommunityIdResponseDto } from '../dto/community-report-response.dto';
 import { CauseByCommunityIdMapper } from './cause-by-community-id.repository.mapper';
 import * as Persistence from '../infra/persistence';
@@ -16,7 +13,7 @@ export class CommunityByCommunityIdMapper {
       raw.communityName,
       raw.adminId,
       raw.membersCount,
-      new Set<ODSEnum>(raw.ods),
+      raw.ods,
     );
   }
 
@@ -28,7 +25,7 @@ export class CommunityByCommunityIdMapper {
       communityName: entity.communityName,
       adminId: entity.adminId,
       membersCount: entity.membersCount,
-      ods: new Set<number>(entity.ods),
+      ods: entity.ods,
     };
   }
 

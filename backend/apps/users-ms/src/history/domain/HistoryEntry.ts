@@ -1,19 +1,32 @@
-import { Entity } from '@common-lib/common-lib/core/domain/Entity';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions';
 import { HistoryEntryType } from './HistoryEntryType';
-import { HistoryEntryStatus } from './HistoryEntryStatus';
+import { EntryStatus } from './HistoryEntryStatus';
 
 interface HistoryEntryProps {
+  userId: UniqueEntityID;
   type: HistoryEntryType;
   entityId: UniqueEntityID;
-  timestamp: Date;
-  status?: HistoryEntryStatus;
+  timestamp?: Date;
+  status?: EntryStatus;
+  metadata?: {
+    entityName?: string;
+    description?: string;
+    amount?: number;
+    volunteerHours?: number;
+    location?: string;
+    role?: string;
+  };
 }
 
-export class HistoryEntry extends Entity<HistoryEntryProps> {
+export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
   get id(): UniqueEntityID {
     return this._id;
+  }
+
+  get userId(): UniqueEntityID {
+    return this.props.userId;
   }
 
   get type(): HistoryEntryType {
@@ -28,8 +41,16 @@ export class HistoryEntry extends Entity<HistoryEntryProps> {
     return this.props.timestamp;
   }
 
-  get status(): HistoryEntryStatus {
+  get status(): EntryStatus | undefined {
     return this.props.status;
+  }
+
+  set status(status: EntryStatus) {
+    this.props.status = status;
+  }
+
+  get metadata(): HistoryEntryProps['metadata'] {
+    return this.props.metadata;
   }
 
   public static create(
@@ -38,13 +59,16 @@ export class HistoryEntry extends Entity<HistoryEntryProps> {
   ): HistoryEntry {
     this.validateProps(props);
     return new HistoryEntry(
-      { ...props, timestamp: props.timestamp ?? new Date() },
+      {
+        ...props,
+        timestamp: props.timestamp ?? new Date(),
+      },
       id,
     );
   }
 
   private static validateProps(props: HistoryEntryProps): void {
-    if (!props.type || !props.entityId) {
+    if (!props.type || !props.entityId || !props.userId) {
       throw new MissingPropertiesError(
         'Missing required properties for HistoryEntry',
       );

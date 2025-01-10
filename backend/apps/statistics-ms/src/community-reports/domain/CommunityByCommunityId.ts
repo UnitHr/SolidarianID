@@ -1,5 +1,5 @@
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
+import { Entity } from '@common-lib/common-lib/core/domain/Entity';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { CauseByCommunityId } from './CauseByCommunityId';
 
@@ -8,11 +8,11 @@ interface CommunityByCommunityIdProps {
   communityName: string;
   adminId: string;
   membersCount: number;
-  ods: Set<ODSEnum>;
+  ods: ODSEnum[];
   causes: CauseByCommunityId[];
 }
 
-export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdProps> {
+export class CommunityByCommunityId extends Entity<CommunityByCommunityIdProps> {
   private constructor(props: CommunityByCommunityIdProps) {
     super(props);
   }
@@ -33,7 +33,11 @@ export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdPr
     return this.props.membersCount;
   }
 
-  get ods(): Set<ODSEnum> {
+  set membersCount(membersCount: number) {
+    this.props.membersCount = membersCount;
+  }
+
+  get ods(): ODSEnum[] {
     return this.props.ods;
   }
 
@@ -46,7 +50,7 @@ export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdPr
     communityName: string,
     adminId: string,
     membersCount: number = 0,
-    ods: Set<ODSEnum> = new Set<ODSEnum>(),
+    ods: ODSEnum[] = [],
     causes: CauseByCommunityId[] = [],
   ): CommunityByCommunityId {
     if (membersCount < 0) {
@@ -66,19 +70,23 @@ export class CommunityByCommunityId extends ValueObject<CommunityByCommunityIdPr
   }
 
   public incrementMembersCount(amount: number = 1): number {
-    this.props.membersCount += amount;
-    return this.props.membersCount;
+    this.membersCount += amount;
+    return this.membersCount;
   }
 
-  public addODS(ods: ODSEnum): void {
-    this.props.ods.add(ods);
+  public addOds(ods: ODSEnum | ODSEnum[]): void {
+    if (Array.isArray(ods)) {
+      this.ods.push(...ods);
+    } else {
+      this.ods.push(ods);
+    }
   }
 
   public addCauses(causes: CauseByCommunityId | CauseByCommunityId[]): void {
     if (Array.isArray(causes)) {
-      this.props.causes.push(...causes);
+      this.causes.push(...causes);
     } else {
-      this.props.causes.push(causes);
+      this.causes.push(causes);
     }
   }
 }

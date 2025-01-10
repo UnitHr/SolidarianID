@@ -19,5 +19,5 @@ export default class CauseByCommunityId {
   supportsCount: number; // Number of supports received for the cause
 
   @Column({ name: 'ods' })
-  ods: Set<number>; // Set of Sustainable Development Goals (SDGs)
+  ods: Array<number>; // Set of Sustainable Development Goals (SDGs)
 }

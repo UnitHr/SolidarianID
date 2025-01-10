@@ -14,6 +14,7 @@ export class ActionFactory {
     target,
     unit,
     createdBy,
+    communityId,
     goodType?,
     location?,
     date?,
@@ -26,6 +27,7 @@ export class ActionFactory {
       target,
       unit,
       createdBy,
+      communityId,
     };
     switch (type) {
       case ActionType.ECONOMIC: {

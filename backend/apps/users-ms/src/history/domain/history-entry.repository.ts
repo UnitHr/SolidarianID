@@ -4,30 +4,24 @@ import { HistoryEntryType } from './HistoryEntryType';
 import { EntryStatus } from './HistoryEntryStatus';
 
 export abstract class HistoryEntryRepository extends Repository<HistoryEntry> {
-  abstract findByUserId(
-    userId: string,
-    page?: number,
-    limit?: number,
-  ): Promise<HistoryEntry[]>;
-
-  abstract findByUserIdAndType(
-    userId: string,
-    type: HistoryEntryType,
-    page?: number,
-    limit?: number,
-  ): Promise<HistoryEntry[]>;
-
-  abstract countByUserId(userId: string): Promise<number>;
-
-  abstract countByUserIdAndType(
-    userId: string,
-    type: HistoryEntryType,
-  ): Promise<number>;
-
-  abstract findByEntityIdTypeAndStatus(
+  abstract findByUserIdEntityIdTypeAndStatus(
     userId: string,
     entityId: string,
     type: HistoryEntryType,
     status: EntryStatus,
   ): Promise<HistoryEntry | null>;
+
+  abstract findByUserIdWithFilters(
+    userId: string,
+    type?: HistoryEntryType,
+    status?: EntryStatus,
+    page?: number,
+    limit?: number,
+  ): Promise<HistoryEntry[]>;
+
+  abstract countByUserIdWithFilters(
+    userId: string,
+    type?: HistoryEntryType,
+    status?: EntryStatus,
+  ): Promise<number>;
 }

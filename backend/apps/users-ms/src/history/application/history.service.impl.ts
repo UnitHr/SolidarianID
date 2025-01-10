@@ -3,7 +3,7 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityI
 import { HistoryEntry } from '../domain/HistoryEntry';
 import { HistoryEntryType } from '../domain/HistoryEntryType';
 import { HistoryEntryRepository } from '../domain/history-entry.repository';
-import { HistoryService, GetHistoryOptions } from './history.service';
+import { HistoryService } from './history.service';
 import { EntryStatus } from '../domain/HistoryEntryStatus';
 
 @Injectable()
@@ -14,23 +14,24 @@ export class HistoryServiceImpl implements HistoryService {
 
   async getUserHistory(
     userId: string,
-    options?: GetHistoryOptions,
+    type?: HistoryEntryType,
+    status?: EntryStatus,
+    page?: number,
+    limit?: number,
   ): Promise<{ entries: HistoryEntry[]; total: number }> {
-    const { page = 1, limit = 10, type } = options ?? {};
-
-    // TODO: review - this could be improved
     const [entries, total] = await Promise.all([
-      type
-        ? this.historyEntryRepository.findByUserIdAndType(
-            userId,
-            type,
-            page,
-            limit,
-          )
-        : this.historyEntryRepository.findByUserId(userId, page, limit),
-      type
-        ? this.historyEntryRepository.countByUserIdAndType(userId, type)
-        : this.historyEntryRepository.countByUserId(userId),
+      this.historyEntryRepository.findByUserIdWithFilters(
+        userId,
+        type,
+        status,
+        page,
+        limit,
+      ),
+      this.historyEntryRepository.countByUserIdWithFilters(
+        userId,
+        type,
+        status,
+      ),
     ]);
 
     return { entries, total };
@@ -96,7 +97,7 @@ export class HistoryServiceImpl implements HistoryService {
     communityId: string,
   ): Promise<void> {
     const pendingEntry =
-      await this.historyEntryRepository.findByEntityIdTypeAndStatus(
+      await this.historyEntryRepository.findByUserIdEntityIdTypeAndStatus(
         userId,
         communityId,
         HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,

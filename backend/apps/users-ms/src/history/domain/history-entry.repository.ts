@@ -9,7 +9,7 @@ export abstract class HistoryEntryRepository extends Repository<HistoryEntry> {
     entityId: string,
     type: HistoryEntryType,
     status: EntryStatus,
-  ): Promise<HistoryEntry | null>;
+  ): Promise<HistoryEntry>;
 
   abstract findByUserIdWithFilters(
     userId: string,

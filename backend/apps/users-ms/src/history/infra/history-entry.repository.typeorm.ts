@@ -39,7 +39,7 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
     entityId: string,
     type: HistoryEntryType,
     status: EntryStatus,
-  ): Promise<DomainHistoryEntry | null> {
+  ): Promise<DomainHistoryEntry> {
     const entry = await this.historyEntryRepository.findOne({
       where: {
         userId,

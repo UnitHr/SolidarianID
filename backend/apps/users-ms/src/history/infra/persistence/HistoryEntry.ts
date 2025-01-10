@@ -1,34 +1,46 @@
 /* eslint-disable import/no-cycle */
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { HistoryEntryStatus, HistoryEntryType } from '@users-ms/history/domain';
-import { History } from './History';
+import { Entity, PrimaryColumn, Column, Index } from 'typeorm';
+import { EntryStatus, HistoryEntryType } from '@users-ms/history/domain';
 
 @Entity()
 export class HistoryEntry {
   @PrimaryColumn('uuid')
   id: string;
 
+  @Column('uuid')
+  @Index()
+  userId: string;
+
   @Column({
     type: 'enum',
     enum: HistoryEntryType,
   })
+  @Index()
   type: HistoryEntryType;
 
   @Column('uuid')
   entityId: string;
 
   @Column('timestamp')
+  @Index()
   timestamp: Date;
 
   @Column({
     name: 'status',
     type: 'enum',
-    enum: HistoryEntryStatus,
-    default: HistoryEntryStatus.ACTIVE,
+    enum: EntryStatus,
+    nullable: true,
   })
-  status: HistoryEntryStatus;
+  @Index()
+  status?: EntryStatus;
 
-  @ManyToOne(() => History, (history) => history.entries)
-  @JoinColumn({ name: 'historyId' })
-  history: History;
+  @Column('jsonb', { nullable: true })
+  metadata: {
+    entityName?: string;
+    description?: string;
+    amount?: number;
+    volunteerHours?: number;
+    location?: string;
+    role?: string;
+  };
 }

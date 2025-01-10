@@ -1,7 +1,6 @@
-export enum HistoryEntryStatus {
+export enum EntryStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
-  ACTIVE = 'ACTIVE',
   ARCHIVED = 'ARCHIVED',
 }

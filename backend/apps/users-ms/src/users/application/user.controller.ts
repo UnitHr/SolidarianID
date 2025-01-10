@@ -14,7 +14,7 @@ import {
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { HistoryService } from '@users-ms/history/application/history.service';
-import { HistoryMapper } from '@users-ms/history/history.mapper';
+import { HistoryEntryMapper } from '@users-ms/history/history-entry.mapper';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -101,8 +101,10 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ) {
-    const history = await this.historyService.getHistoryByUserId(id);
+    const history = await this.historyService.getUserHistory(id);
 
-    res.status(HttpStatus.OK).json(HistoryMapper.toDto(history));
+    res
+      .status(HttpStatus.OK)
+      .json(history.entries.map(HistoryEntryMapper.toDto));
   }
 }

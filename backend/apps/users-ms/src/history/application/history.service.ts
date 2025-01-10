@@ -1,13 +1,25 @@
-import { History } from '../domain/History';
+import { HistoryEntry } from '../domain/HistoryEntry';
+import { HistoryEntryType } from '../domain/HistoryEntryType';
+
+export interface GetHistoryOptions {
+  page?: number;
+  limit?: number;
+  type?: HistoryEntryType;
+}
 
 export abstract class HistoryService {
-  abstract createHistory(userId: string): Promise<string>;
-
-  abstract getHistoryByUserId(userId: string): Promise<History>;
+  abstract getUserHistory(
+    userId: string,
+    options?: GetHistoryOptions,
+  ): Promise<{
+    entries: HistoryEntry[];
+    total: number;
+  }>;
 
   abstract registerUserFollowed(
     userId: string,
     followedUserId: string,
+    followedUserName?: string,
   ): Promise<void>;
 
   abstract registerCommunityCreation(

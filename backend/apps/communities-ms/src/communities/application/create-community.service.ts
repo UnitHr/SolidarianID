@@ -107,6 +107,7 @@ export class CreateCommunityService {
             causes: [],
           }),
         );
+        newCommunity.commit();
 
         // Create the cause
         const causeId = await this.causeService.createCause(
@@ -124,7 +125,6 @@ export class CreateCommunityService {
         // Save the community
         this.communityRepository.save(newCommunity);
 
-        newCommunity.commit();
         // Return the community object
         return right(Result.ok(newCommunity));
       }

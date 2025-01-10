@@ -10,11 +10,16 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Req,
+  Query,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
+import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { HistoryService } from '@users-ms/history/application/history.service';
 import { HistoryEntryMapper } from '@users-ms/history/history-entry.mapper';
+import { FindHistoryDto } from '@users-ms/history/dto/find-history.dto';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -75,12 +80,11 @@ export class UsersController {
   @Post(':id/followers')
   async follow(
     @Param('id', ParseUUIDPipe) id: string,
+    @GetUserId() userId: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const followerId = req['user']?.sub.value;
-
-    await this.usersService.followUser(id, followerId);
+    await this.usersService.followUser(id, userId);
 
     res.status(HttpStatus.NO_CONTENT).send();
   }
@@ -98,13 +102,36 @@ export class UsersController {
   // TODO: Review this endpoint, only the history owner and community admins should be able to see this
   @Get(':id/history')
   async getHistory(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe) userId: string,
+    @Query() query: FindHistoryDto,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    const history = await this.historyService.getUserHistory(id);
+    const {
+      type,
+      status,
+      page = PaginationDefaults.DEFAULT_PAGE,
+      limit = PaginationDefaults.DEFAULT_LIMIT,
+    } = query;
 
-    res
-      .status(HttpStatus.OK)
-      .json(history.entries.map(HistoryEntryMapper.toDto));
+    const { entries, total } = await this.historyService.getUserHistory(
+      userId,
+      type,
+      status,
+      page,
+      limit,
+    );
+
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    const response = new PaginatedResponseDto(
+      entries.map(HistoryEntryMapper.toDto),
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    res.status(HttpStatus.OK).json(response);
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository as TypeOrmRepository } from 'typeorm';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
+import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { HistoryEntry as DomainHistoryEntry } from '../domain/HistoryEntry';
 import { HistoryEntryType } from '../domain/HistoryEntryType';
 import { HistoryEntryRepository } from '../domain/history-entry.repository';
@@ -33,56 +34,12 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
     return HistoryEntryMapper.toDomain(entry);
   }
 
-  async findByUserId(
-    userId: string,
-    page = 1,
-    limit = 10,
-  ): Promise<DomainHistoryEntry[]> {
-    const entries = await this.historyEntryRepository.find({
-      where: { userId },
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { timestamp: 'DESC' },
-    });
-    return entries.map(HistoryEntryMapper.toDomain);
-  }
-
-  async findByUserIdAndType(
-    userId: string,
-    type: HistoryEntryType,
-    page = 1,
-    limit = 10,
-  ): Promise<DomainHistoryEntry[]> {
-    const entries = await this.historyEntryRepository.find({
-      where: { userId, type },
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { timestamp: 'DESC' },
-    });
-    return entries.map(HistoryEntryMapper.toDomain);
-  }
-
-  async countByUserId(userId: string): Promise<number> {
-    return this.historyEntryRepository.count({
-      where: { userId },
-    });
-  }
-
-  async countByUserIdAndType(
-    userId: string,
-    type: HistoryEntryType,
-  ): Promise<number> {
-    return this.historyEntryRepository.count({
-      where: { userId, type },
-    });
-  }
-
-  async findByEntityIdTypeAndStatus(
+  async findByUserIdEntityIdTypeAndStatus(
     userId: string,
     entityId: string,
     type: HistoryEntryType,
     status: EntryStatus,
-  ): Promise<DomainHistoryEntry | null> {
+  ): Promise<DomainHistoryEntry> {
     const entry = await this.historyEntryRepository.findOne({
       where: {
         userId,
@@ -98,5 +55,53 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
       );
     }
     return HistoryEntryMapper.toDomain(entry);
+  }
+
+  async findByUserIdWithFilters(
+    userId: string,
+    type?: HistoryEntryType,
+    status?: EntryStatus,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<DomainHistoryEntry[]> {
+    const query = this.historyEntryRepository
+      .createQueryBuilder('history_entry')
+      .where('history_entry.userId = :userId', { userId });
+
+    if (type) {
+      query.andWhere('history_entry.type = :type', { type });
+    }
+
+    if (status) {
+      query.andWhere('history_entry.status = :status', { status });
+    }
+
+    const entries = await query
+      .orderBy('history_entry.timestamp', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return entries.map(HistoryEntryMapper.toDomain);
+  }
+
+  async countByUserIdWithFilters(
+    userId: string,
+    type?: HistoryEntryType,
+    status?: EntryStatus,
+  ): Promise<number> {
+    const query = this.historyEntryRepository
+      .createQueryBuilder('history_entry')
+      .where('history_entry.userId = :userId', { userId });
+
+    if (type) {
+      query.andWhere('history_entry.type = :type', { type });
+    }
+
+    if (status) {
+      query.andWhere('history_entry.status = :status', { status });
+    }
+
+    return query.getCount();
   }
 }

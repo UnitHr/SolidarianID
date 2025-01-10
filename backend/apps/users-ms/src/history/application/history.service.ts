@@ -1,20 +1,15 @@
 import { HistoryEntry } from '../domain/HistoryEntry';
 import { HistoryEntryType } from '../domain/HistoryEntryType';
-
-export interface GetHistoryOptions {
-  page?: number;
-  limit?: number;
-  type?: HistoryEntryType;
-}
+import { EntryStatus } from '../domain/HistoryEntryStatus';
 
 export abstract class HistoryService {
   abstract getUserHistory(
     userId: string,
-    options?: GetHistoryOptions,
-  ): Promise<{
-    entries: HistoryEntry[];
-    total: number;
-  }>;
+    type?: HistoryEntryType,
+    status?: EntryStatus,
+    page?: number,
+    limit?: number,
+  ): Promise<{ entries: HistoryEntry[]; total: number }>;
 
   abstract registerUserFollowed(
     userId: string,

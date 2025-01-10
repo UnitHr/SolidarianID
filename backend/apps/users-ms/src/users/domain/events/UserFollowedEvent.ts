@@ -6,6 +6,6 @@ export class UserFollowedEvent extends DomainEvent {
     public readonly followedUserId: string,
     public readonly userName: string,
   ) {
-    super('UserFollowed');
+    super(UserFollowedEvent.name);
   }
 }

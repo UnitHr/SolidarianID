@@ -3,7 +3,7 @@ import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { JoinCommunityRequestCreatedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestCreatedEvent';
 import { CauseSupportedEvent } from '@common-lib/common-lib/events/domain/CauseSupportedEvent';
-import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejected';
+import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejectedEvent';
 import { CauseCreatedEvent } from '@common-lib/common-lib/events/domain/CauseCreatedEvent';
 import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/CommunityCreatedEvent';
 import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';

@@ -1,7 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { JoinCommunityRequestCreatedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestCreatedEvent';
-import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejected';
+import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejectedEvent';
 import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
 
@@ -75,12 +75,7 @@ export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> 
     const joinCommunityRequest = new JoinCommunityRequest(props, id);
     if (!id) {
       joinCommunityRequest.apply(
-        new JoinCommunityRequestCreatedEvent(
-          userId,
-          communityId,
-          adminId,
-          status,
-        ),
+        new JoinCommunityRequestCreatedEvent(userId, communityId, adminId),
       );
     }
     return joinCommunityRequest;

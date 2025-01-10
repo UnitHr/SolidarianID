@@ -7,12 +7,14 @@ import {
   EmailUpdateConflictError,
 } from '@users-ms/users/exceptions';
 import { UserRepository } from '@users-ms/users/user.repository';
+import { EventPublisher } from '@nestjs/cqrs';
 
 jest.mock('@users-ms/users/user.repository');
 
 describe('UserServiceImpl', () => {
   let userService: UserServiceImpl;
   let userRepositoryMock: jest.Mocked<UserRepository>;
+  let eventPublisherMock: jest.Mocked<EventPublisher>;
 
   const createMockId = (id: string = 'default-id'): UniqueEntityID => {
     return new UniqueEntityID(id);
@@ -40,7 +42,12 @@ describe('UserServiceImpl', () => {
       delete: jest.fn(),
     } as jest.Mocked<UserRepository>;
 
-    userService = new UserServiceImpl(userRepositoryMock);
+    eventPublisherMock = {
+      mergeObjectContext: jest.fn().mockImplementation((user) => user),
+      mergeClassContext: jest.fn(),
+    } as unknown as jest.Mocked<EventPublisher>;
+
+    userService = new UserServiceImpl(userRepositoryMock, eventPublisherMock);
   });
 
   describe('createUser', () => {

@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   Req,
   Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
@@ -99,7 +100,6 @@ export class UsersController {
     res.status(HttpStatus.OK).json(followers.map(UserMapper.toProfileDto));
   }
 
-  // TODO: Review this endpoint, only the history owner and community admins should be able to see this
   @Get(':id/history')
   async getHistory(
     @Param('id', ParseUUIDPipe) historyOwner: string,
@@ -115,13 +115,9 @@ export class UsersController {
         userId,
       ))
     ) {
-      res
-        .status(HttpStatus.FORBIDDEN)
-        .json({
-          message: `You are not allowed to see the history of user: ${historyOwner}`,
-        })
-        .send();
-      return;
+      throw new ForbiddenException(
+        `You are not allowed to see the history of user: ${historyOwner}`,
+      );
     }
 
     const {

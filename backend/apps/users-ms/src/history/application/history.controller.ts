@@ -44,6 +44,7 @@ export class HistoryController {
     await this.historyService.registerJoinCommunityRequest(
       message.userId,
       message.communityId,
+      message.adminId,
     );
     this.logger.log(
       `Join community request created event handled: User ${message.userId} requested to join community ${message.communityId}`,

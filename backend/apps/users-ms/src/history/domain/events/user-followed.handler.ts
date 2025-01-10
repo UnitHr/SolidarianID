@@ -13,6 +13,7 @@ export class UserFollowedHandler implements IEventHandler<UserFollowedEvent> {
     await this.historyService.registerUserFollowed(
       event.userId,
       event.followedUserId,
+      event.userName,
     );
 
     this.logger.log(

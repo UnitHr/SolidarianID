@@ -81,12 +81,14 @@ export class HistoryServiceImpl implements HistoryService {
   async registerJoinCommunityRequest(
     userId: string,
     communityId: string,
+    communityAdminId: string,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,
       entityId: new UniqueEntityID(communityId),
       status: EntryStatus.PENDING,
+      metadata: { adminId: communityAdminId },
     });
 
     await this.historyEntryRepository.save(entry);
@@ -157,5 +159,16 @@ export class HistoryServiceImpl implements HistoryService {
     });
 
     await this.historyEntryRepository.save(entry);
+  }
+
+  async userHasJoinCommunityRequestWithAdmin(
+    userId: string,
+    adminId: string,
+  ): Promise<boolean> {
+    return this.historyEntryRepository.existsUserJoinCommunityRequestWithAdmin(
+      userId,
+      HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,
+      adminId,
+    );
   }
 }

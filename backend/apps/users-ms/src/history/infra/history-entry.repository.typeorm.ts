@@ -104,4 +104,20 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
 
     return query.getCount();
   }
+
+  async existsUserJoinCommunityRequestWithAdmin(
+    userId: string,
+    JOIN_COMMUNITY_REQUEST_SENT: HistoryEntryType,
+    adminId: string,
+  ): Promise<boolean> {
+    const entry = await this.historyEntryRepository.findOne({
+      where: {
+        userId,
+        type: JOIN_COMMUNITY_REQUEST_SENT,
+        metadata: { adminId },
+      },
+    });
+
+    return !!entry;
+  }
 }

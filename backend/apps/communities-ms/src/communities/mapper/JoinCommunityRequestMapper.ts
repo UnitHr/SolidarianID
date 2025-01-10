@@ -11,6 +11,7 @@ export class JoinCommunityRequestMapper {
       {
         userId: raw.userId,
         communityId: raw.communityId,
+        adminId: raw.adminId,
         status: raw.status,
         comment: raw.comment,
       },
@@ -25,6 +26,7 @@ export class JoinCommunityRequestMapper {
       id: entity.id.toString(),
       userId: entity.userId,
       communityId: entity.communityId,
+      adminId: entity.adminId,
       status: entity.status,
       comment: entity.comment,
     };

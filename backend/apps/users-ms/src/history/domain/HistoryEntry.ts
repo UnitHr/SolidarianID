@@ -11,6 +11,7 @@ interface HistoryEntryProps {
   timestamp?: Date;
   status?: EntryStatus;
   metadata?: {
+    adminId?: string;
     entityName?: string;
     description?: string;
     amount?: number;

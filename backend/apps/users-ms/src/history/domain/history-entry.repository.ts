@@ -24,4 +24,10 @@ export abstract class HistoryEntryRepository extends Repository<HistoryEntry> {
     type?: HistoryEntryType,
     status?: EntryStatus,
   ): Promise<number>;
+
+  abstract existsUserJoinCommunityRequestWithAdmin(
+    userId: string,
+    JOIN_COMMUNITY_REQUEST_SENT: HistoryEntryType,
+    adminId: string,
+  ): Promise<boolean>;
 }

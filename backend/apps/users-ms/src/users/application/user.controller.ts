@@ -102,11 +102,28 @@ export class UsersController {
   // TODO: Review this endpoint, only the history owner and community admins should be able to see this
   @Get(':id/history')
   async getHistory(
-    @Param('id', ParseUUIDPipe) userId: string,
+    @Param('id', ParseUUIDPipe) historyOwner: string,
+    @GetUserId() userId: string,
     @Query() query: FindHistoryDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    if (
+      historyOwner !== userId &&
+      !(await this.historyService.userHasJoinCommunityRequestWithAdmin(
+        historyOwner,
+        userId,
+      ))
+    ) {
+      res
+        .status(HttpStatus.FORBIDDEN)
+        .json({
+          message: `You are not allowed to see the history of user: ${historyOwner}`,
+        })
+        .send();
+      return;
+    }
+
     const {
       type,
       status,
@@ -115,7 +132,7 @@ export class UsersController {
     } = query;
 
     const { entries, total } = await this.historyService.getUserHistory(
-      userId,
+      historyOwner,
       type,
       status,
       page,

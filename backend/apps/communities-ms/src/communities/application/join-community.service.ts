@@ -74,6 +74,7 @@ export class JoinCommunityService {
       Domain.JoinCommunityRequest.create({
         userId,
         communityId,
+        adminId: community.adminId,
         status: StatusRequest.PENDING,
       }),
     );

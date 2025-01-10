@@ -6,6 +6,7 @@ export class JoinCommunityRequestCreatedEvent extends DomainEvent {
   constructor(
     public readonly userId: string,
     public readonly communityId: string,
+    public readonly adminId: string,
     public readonly status: string,
   ) {
     super(JoinCommunityRequestCreatedEvent.name);

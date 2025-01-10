@@ -123,7 +123,11 @@ export class User extends EntityRoot<UserProps> {
 
     followed.props.followers.push(this);
     this.apply(
-      new UserFollowedEvent(this.id.toString(), followed.id.toString()),
+      new UserFollowedEvent(
+        this.id.toString(),
+        followed.id.toString(),
+        followed.email,
+      ),
     );
   }
 }

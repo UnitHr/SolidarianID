@@ -30,6 +30,7 @@ export abstract class HistoryService {
   abstract registerJoinCommunityRequest(
     userId: string,
     communityId: string,
+    adminId: string,
   ): Promise<void>;
 
   abstract registerJoinCommunityRequestRejected(
@@ -51,4 +52,9 @@ export abstract class HistoryService {
     userId: string,
     causeId: string,
   ): Promise<void>;
+
+  abstract userHasJoinCommunityRequestWithAdmin(
+    historyOwner: string,
+    userId: string,
+  ): Promise<boolean>;
 }

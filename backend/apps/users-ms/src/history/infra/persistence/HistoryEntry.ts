@@ -36,6 +36,7 @@ export class HistoryEntry {
 
   @Column('jsonb', { nullable: true })
   metadata: {
+    adminId?: string;
     entityName?: string;
     description?: string;
     amount?: number;

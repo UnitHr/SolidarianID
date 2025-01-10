@@ -8,6 +8,7 @@ import { MissingPropertiesError } from '../exceptions';
 interface JoinCommunityRequestProps {
   userId: string;
   communityId: string;
+  adminId: string;
   status: StatusRequest;
   comment?: string;
 }
@@ -59,18 +60,27 @@ export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> 
     this.props.communityId = communityId;
   }
 
+  get adminId(): string {
+    return this.props.adminId;
+  }
+
   static create(
     props: JoinCommunityRequestProps,
     id?: UniqueEntityID,
   ): JoinCommunityRequest {
-    const { userId, communityId, status } = props;
-    if (!userId || !communityId || !status) {
+    const { userId, communityId, status, adminId } = props;
+    if (!userId || !communityId || !status || !adminId) {
       MissingPropertiesError.create();
     }
     const joinCommunityRequest = new JoinCommunityRequest(props, id);
     if (!id) {
       joinCommunityRequest.apply(
-        new JoinCommunityRequestCreatedEvent(userId, communityId, status),
+        new JoinCommunityRequestCreatedEvent(
+          userId,
+          communityId,
+          adminId,
+          status,
+        ),
       );
     }
     return joinCommunityRequest;

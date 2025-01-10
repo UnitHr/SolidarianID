@@ -11,7 +11,6 @@ import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseS
 import { JoinCommunityRequestRejectedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestRejected';
 import { HistoryService } from './history.service';
 
-// TODO: review - event pattern should be in a shared module
 @Controller()
 export class HistoryController {
   private readonly logger = new Logger(HistoryController.name);

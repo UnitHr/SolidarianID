@@ -5,8 +5,18 @@ export abstract class DomainEvent implements IEvent {
 
   public readonly date: Date;
 
+  public static readonly TOPIC?: string;
+
   constructor(type: string) {
     this.type = type;
     this.date = new Date();
+  }
+
+  public shouldPublishToKafka(): boolean {
+    return !!(this.constructor as typeof DomainEvent).TOPIC;
+  }
+
+  public getTopic(): string | undefined {
+    return (this.constructor as typeof DomainEvent).TOPIC;
   }
 }

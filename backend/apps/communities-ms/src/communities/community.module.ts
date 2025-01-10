@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CauseModule } from '@communities-ms/causes/cause.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { CommunitiesEventsModule } from '@communities-ms/events/communities-events.module';
 import { CommunityController } from './application/community.controller';
 import {
   CreateCommunityRequest,
@@ -22,10 +21,6 @@ import { JoinCommunityRequestRepository } from './repo/join-community.repository
 import { JoinCommunityRequestRepositoryMongoDb } from './infra/join-community.repository.mongodb';
 import { JoinCommunityService } from './application/join-community.service';
 import { CreateCommunityService } from './application/create-community.service';
-import { CommunityCreatedHandler } from './domain/events/community-created.handler';
-import { JoinCommunityRequestCreatedHandler } from './domain/events/join-community-reques-created.handler';
-import { UserJoinedCommunityHandler } from './domain/events/user-joined-community.handler';
-import { JoinCommunityRequestRejectedHandler } from './domain/events/join-community-request-rejected.handler';
 
 @Module({
   imports: [
@@ -45,7 +40,6 @@ import { JoinCommunityRequestRejectedHandler } from './domain/events/join-commun
       },
     ]),
     CqrsModule,
-    CommunitiesEventsModule,
   ],
   controllers: [CommunityController],
   providers: [
@@ -65,10 +59,6 @@ import { JoinCommunityRequestRejectedHandler } from './domain/events/join-commun
     CommunityService,
     JoinCommunityService,
     CreateCommunityService,
-    CommunityCreatedHandler,
-    JoinCommunityRequestCreatedHandler,
-    UserJoinedCommunityHandler,
-    JoinCommunityRequestRejectedHandler,
   ],
 })
 export class CommunityModule {}

@@ -7,6 +7,7 @@ import { CommunityModule } from './communities/community.module';
 import { CauseModule } from './causes/cause.module';
 import { ActionModule } from './actions/action.module';
 import { envs } from './config';
+import { CommunitiesEventsModule } from './events/communities-events.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { envs } from './config';
     CommunityModule,
     CauseModule,
     ActionModule,
+    CommunitiesEventsModule,
   ],
 
   providers: [

@@ -12,7 +12,7 @@ export abstract class DomainEvent implements IEvent {
     this.date = new Date();
   }
 
-  public shouldPublishToKafka(): boolean {
+  public shouldBePublishedExternally(): boolean {
     return !!(this.constructor as typeof DomainEvent).TOPIC;
   }
 

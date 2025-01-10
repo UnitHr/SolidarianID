@@ -19,7 +19,7 @@ export class CommunitiesEventsModule implements OnModuleInit {
     this.eventBus.subscribe(async (event: DomainEvent) => {
       this.logger.log(`Internal event captured: ${event.constructor.name}`);
 
-      if (event.shouldPublishToKafka()) {
+      if (event.shouldBePublishedExternally()) {
         const topic = event.getTopic();
         await this.eventsService.publish(topic!, event);
       }

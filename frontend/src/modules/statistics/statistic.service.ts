@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { Constants } from 'src/common/constants';
-
+import { readFileSync } from 'fs';
 @Injectable()
 export class StatisticsService {
   async getDataByODS(token: string) {
@@ -17,6 +17,13 @@ export class StatisticsService {
       );
 
       return response.data;
+      /*
+      const fileContent = readFileSync(
+        '../frontend/src/modules/statistics/ods.json',
+        'utf-8',
+      );
+      const data = JSON.parse(fileContent);
+      return data;*/
     } catch (error) {
       console.error('Error fetching datas by ODS:', error);
       throw new Error('Failed to fetch datas by ods from the microservice');
@@ -33,6 +40,14 @@ export class StatisticsService {
       );
 
       return response.data;
+      /*
+      const fileContent = readFileSync(
+        '../frontend/src/modules/statistics/progress.json',
+        'utf-8',
+      );
+      const data = JSON.parse(fileContent);
+      return data;
+      */
     } catch (error) {
       console.error('Error fetching datas by community', error);
       throw new Error(

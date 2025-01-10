@@ -46,8 +46,7 @@ export class PlatformStatisticsEventListenerController {
     await this.communityStatisticsService.registerCauseSupport(
       message.communityId,
     );
-    // TODO: Uncomment this line when CauseSupportedEvent contains the ods list of the cause
-    // await this.odsStatisticsService.registerCauseSupport(message.ods);
+    await this.odsStatisticsService.registerCauseSupport(message.ods);
     this.logger.log(
       `Cause add supporter event handled: Cause:${message.causeId} add supporter User:${message.userId}`,
     );

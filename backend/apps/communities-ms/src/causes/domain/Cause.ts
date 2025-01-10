@@ -130,7 +130,12 @@ export class Cause extends EntityRoot<CauseProps> {
     }
     this.props.supportersIds.push(userId);
     this.apply(
-      new CauseSupportedEvent(userId, this.id.toString(), this.communityId),
+      new CauseSupportedEvent(
+        userId,
+        this.id.toString(),
+        this.communityId,
+        this.ods,
+      ),
     );
   }
 }

@@ -16,42 +16,48 @@ export class CommunitiesEventService {
   constructor(private readonly eventsService: EventsService) {}
 
   async emitActionCreatedEvent(event: ActionCreatedEvent): Promise<void> {
-    await this.eventsService.publish('action-created', event);
+    await this.eventsService.publish(ActionCreatedEvent.TOPIC, event);
   }
 
   async emitActionContributedEvent(
     event: ActionContributedEvent,
   ): Promise<void> {
-    await this.eventsService.publish('action-contributed', event);
+    await this.eventsService.publish(ActionContributedEvent.TOPIC, event);
   }
 
   async emitCommunityCreatedEvent(event: CommunityCreatedEvent): Promise<void> {
-    await this.eventsService.publish('community-created', event);
+    await this.eventsService.publish(CommunityCreatedEvent.TOPIC, event);
   }
 
   async emitJoinCommunityRequestEvent(
     event: JoinCommunityRequestCreatedEvent,
   ): Promise<void> {
-    await this.eventsService.publish('join-community-request-created', event);
+    await this.eventsService.publish(
+      JoinCommunityRequestCreatedEvent.TOPIC,
+      event,
+    );
   }
 
   async emitUserJoinedCommunityEvent(
     event: UserJoinedCommunity,
   ): Promise<void> {
-    await this.eventsService.publish('user-joined-community', event);
+    await this.eventsService.publish(UserJoinedCommunity.TOPIC, event);
   }
 
   async emitCauseCreatedEvent(event: CauseCreatedEvent): Promise<void> {
-    await this.eventsService.publish('cause-created', event);
+    await this.eventsService.publish(CauseCreatedEvent.TOPIC, event);
   }
 
   async emitCauseSupportedEvent(event: CauseSupportedEvent): Promise<void> {
-    await this.eventsService.publish('cause-supported', event);
+    await this.eventsService.publish(CauseSupportedEvent.TOPIC, event);
   }
 
   async emitJoinCommunityRequestRejectedEvent(
     event: JoinCommunityRequestRejectedEvent,
   ): Promise<void> {
-    await this.eventsService.publish('join-community-request-rejected', event);
+    await this.eventsService.publish(
+      JoinCommunityRequestRejectedEvent.TOPIC,
+      event,
+    );
   }
 }

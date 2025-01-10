@@ -2,6 +2,8 @@ import { DomainEvent } from '@common-lib/common-lib/core/domain/DomainEvent';
 import { ActionType } from '../ActionType';
 
 export class ActionCreatedEvent extends DomainEvent {
+  public static readonly TOPIC = 'action-created';
+
   constructor(
     public readonly id: string,
     public readonly causeId: string,

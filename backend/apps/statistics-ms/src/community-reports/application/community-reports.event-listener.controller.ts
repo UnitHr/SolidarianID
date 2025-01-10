@@ -20,7 +20,7 @@ export class CommunityReportsEventListenerController {
     private readonly communityReportsService: CommunityReportsService,
   ) {}
 
-  @EventPattern('community-created')
+  @EventPattern(CommunityCreatedEvent.TOPIC)
   async handleCommunityCreated(@Payload() message: CommunityCreatedEvent) {
     await this.communityReportsService.registerCommunityCreation(
       message.communityId,
@@ -32,7 +32,7 @@ export class CommunityReportsEventListenerController {
     );
   }
 
-  @EventPattern('user-joined-community')
+  @EventPattern(UserJoinedCommunity.TOPIC)
   async handleJoinCommunityMember(@Payload() message: UserJoinedCommunity) {
     await this.communityReportsService.registerCommunityJoinMember(
       message.communityId,
@@ -42,7 +42,7 @@ export class CommunityReportsEventListenerController {
     );
   }
 
-  @EventPattern('cause-created')
+  @EventPattern(CauseCreatedEvent.TOPIC)
   async handleCauseCreated(@Payload() message: CauseCreatedEvent) {
     await this.communityReportsService.registerCauseCreation(
       message.communityId,
@@ -55,7 +55,7 @@ export class CommunityReportsEventListenerController {
     );
   }
 
-  @EventPattern('cause-supported')
+  @EventPattern(CauseSupportedEvent.TOPIC)
   async handleCauseAddSupporter(@Payload() message: CauseSupportedEvent) {
     // await this.communityReportsService.registerCauseAddSupporter(
     //   message.causeId,
@@ -65,7 +65,7 @@ export class CommunityReportsEventListenerController {
     );
   }
 
-  @EventPattern('action-created')
+  @EventPattern(ActionCreatedEvent.TOPIC)
   async handleActionCreated(@Payload() message: ActionCreatedEvent) {
     await this.communityReportsService.registerActionCreation(
       message.causeId,
@@ -78,7 +78,7 @@ export class CommunityReportsEventListenerController {
     );
   }
 
-  @EventPattern('action-contributed')
+  @EventPattern(ActionContributedEvent.TOPIC)
   async handleActionContributed(@Payload() message: ActionContributedEvent) {
     await this.communityReportsService.registerActionContributed(
       message.actionId,

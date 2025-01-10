@@ -18,7 +18,7 @@ export class PlatformStatisticsEventListenerController {
     private readonly odsStatisticsService: OdsStatisticsService,
   ) {}
 
-  @EventPattern('community-created')
+  @EventPattern(CommunityCreatedEvent.TOPIC)
   async handleCommunityCreated(@Payload() message: CommunityCreatedEvent) {
     await this.communityStatisticsService.registerComunityCreation(
       message.communityId,
@@ -29,7 +29,7 @@ export class PlatformStatisticsEventListenerController {
     );
   }
 
-  @EventPattern('cause-supported')
+  @EventPattern(CauseSupportedEvent.TOPIC)
   async handleCauseAddSupporter(@Payload() message: CauseSupportedEvent) {
     await this.communityStatisticsService.registerCauseSupport(
       message.communityId,
@@ -39,7 +39,7 @@ export class PlatformStatisticsEventListenerController {
     );
   }
 
-  @EventPattern('action-created')
+  @EventPattern(ActionCreatedEvent.TOPIC)
   async handleActionCreated(@Payload() message: ActionCreatedEvent) {
     await this.communityStatisticsService.registerCausesTargeted(
       message.communityId,
@@ -50,7 +50,7 @@ export class PlatformStatisticsEventListenerController {
     );
   }
 
-  @EventPattern('action-contributed')
+  @EventPattern(ActionContributedEvent.TOPIC)
   async handleActionContributed(@Payload() message: ActionContributedEvent) {
     await this.communityStatisticsService.registerCausesAchieved(
       message.communityId,

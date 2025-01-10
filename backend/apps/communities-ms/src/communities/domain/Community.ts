@@ -1,8 +1,8 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
+import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/CommunityCreatedEvent';
+import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';
 import { MissingPropertiesError } from '../exceptions';
-import { CommunityCreatedEvent } from './events/CommunityCreatedEvent';
-import { UserJoinedCommunity } from './events';
 
 interface CommunityProps {
   adminId: string;

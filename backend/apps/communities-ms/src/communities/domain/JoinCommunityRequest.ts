@@ -1,9 +1,9 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
+import { JoinCommunityRequestCreatedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestCreatedEvent';
+import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejected';
 import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
-import { JoinCommunityRequestCreatedEvent } from './events/JoinCommunityRequestCreatedEvent';
-import { JoinCommunityRequestRejectedEvent } from './events/JoinCommunityRequestRejected';
 
 interface JoinCommunityRequestProps {
   userId: string;

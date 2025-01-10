@@ -1,14 +1,12 @@
-import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
+import { ActionContributedEvent } from '@common-lib/common-lib/events/domain/ActionContributedEvent';
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import {
-  CommunityCreatedEvent,
-  UserJoinedCommunity,
-} from '@communities-ms/communities/domain/events';
-import { JoinCommunityRequestCreatedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestCreatedEvent';
-import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
-import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
-import { JoinCommunityRequestRejectedEvent } from '@communities-ms/communities/domain/events/JoinCommunityRequestRejected';
+import { JoinCommunityRequestCreatedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestCreatedEvent';
+import { CauseSupportedEvent } from '@common-lib/common-lib/events/domain/CauseSupportedEvent';
+import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejected';
+import { CauseCreatedEvent } from '@common-lib/common-lib/events/domain/CauseCreatedEvent';
+import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/CommunityCreatedEvent';
+import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';
 import { HistoryService } from './history.service';
 
 @Controller()

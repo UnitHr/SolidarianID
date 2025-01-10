@@ -1,9 +1,9 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
+import { ActionContributedEvent } from '@common-lib/common-lib/events/domain/ActionContributedEvent';
 import { ActionStatus } from './ActionStatus';
 import { ActionType } from './ActionType';
 import { Contribution } from './Contribution';
-import { ActionContributedEvent } from './events/ActionContributedEvent';
 
 export interface ActionProps {
   type: ActionType;

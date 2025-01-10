@@ -1,13 +1,11 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import {
-  CommunityCreatedEvent,
-  UserJoinedCommunity,
-} from '@communities-ms/communities/domain/events';
-import { ActionCreatedEvent } from '@communities-ms/actions/domain/events/ActionCreatedEvent';
-import { ActionContributedEvent } from '@communities-ms/actions/domain/events/ActionContributedEvent';
-import { CauseCreatedEvent } from '@communities-ms/causes/domain/events/CauseCreatedEvent';
-import { CauseSupportedEvent } from '@communities-ms/causes/domain/events/CauseSupportedEvent';
+import { ActionContributedEvent } from '@common-lib/common-lib/events/domain/ActionContributedEvent';
+import { CauseSupportedEvent } from '@common-lib/common-lib/events/domain/CauseSupportedEvent';
+import { ActionCreatedEvent } from '@common-lib/common-lib/events/domain/ActionCreatedEvent';
+import { CauseCreatedEvent } from '@common-lib/common-lib/events/domain/CauseCreatedEvent';
+import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/CommunityCreatedEvent';
+import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';
 import { CommunityReportsService } from './community-reports.service';
 
 @Controller()

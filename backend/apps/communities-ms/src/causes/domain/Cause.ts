@@ -2,13 +2,13 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
+import { CauseCreatedEvent } from '@common-lib/common-lib/events/domain/CauseCreatedEvent';
+import { CauseSupportedEvent } from '@common-lib/common-lib/events/domain/CauseSupportedEvent';
 import { CauseEndDate } from './CauseEndDate';
 import {
   ActionAlreadyExistsError,
   SupporterAlreadyExistsError,
 } from '../exceptions';
-import { CauseCreatedEvent } from './events/CauseCreatedEvent';
-import { CauseSupportedEvent } from './events/CauseSupportedEvent';
 
 export interface CauseProps {
   title: string;

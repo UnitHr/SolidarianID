@@ -1,3 +1,10 @@
+@baseUrl = http://localhost:3001
+@jwtToken = {replace-with-token}
+@userId = {replace-with-id}
+
 ### Get user profile, requires authentication
-GET http://localhost:3001/users/{replace-with-id}
-Authorization: Bearer {replace-with-token}
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{jwtToken}}
+
+### Get user profile without authentication returns 401
+GET {{baseUrl}}/users/{{userId}}

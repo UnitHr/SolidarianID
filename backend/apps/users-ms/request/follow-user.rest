@@ -1,10 +1,13 @@
 # Base URL
 @baseUrl = http://localhost:3001
-@jwtToken = <token>
+@jwtToken = {replace-with-token}
+@userId = {replace-with-userId}
+@followUserId = {replace-with-followUserId}
 
-POST {{baseUrl}}/users/:userId/followers
+### Success case: follow user
+POST {{baseUrl}}/users/{{followUserId}}/followers
 Authorization: Bearer {{jwtToken}}
 
 ### Success case: get user followers
-GET {{baseUrl}}/users/:userId/followers
+GET {{baseUrl}}/users/{{userId}}/followers
 Authorization: Bearer {{jwtToken}}

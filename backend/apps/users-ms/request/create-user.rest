@@ -6,15 +6,14 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "firstName": "Jane",
+  "firstName": "Joe",
   "lastName": "Doe",
   "birthDate": "1990-01-01",
   "email": "admin@example.com",
   "password": "123456Test*",
   "bio": "Hello, I'm Jane Doe!",
   "showAge": true,
-  "showEmail": false,
-  "role": "admin"
+  "showEmail": false
 }
 
 ### Success Case: Create a new user without bio
@@ -28,8 +27,7 @@ Content-Type: application/json
   "email": "jack12.doe@example.com",
   "password":"123456Test*",
   "showAge": false,
-  "showEmail": true,
-  "role": "admin"
+  "showEmail": true
 }
 
 ### Error Case: Create user with an already registered email (expected: 404 ...)
@@ -44,8 +42,22 @@ Content-Type: application/json
   "password": "123456Test*",
   "bio": "Hello, I'm John Doe!",
   "showAge": true,
-  "showEmail": false,
-  "role": "user"
+  "showEmail": false
+}
+
+### Error Case: Create user with a password that does not meet the requirements 
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "birthDate": "1992-01-01",
+  "email": "jack.doe@example.com",
+  "password": "123456Test",
+  "bio": "Hello, I'm John Doe!",
+  "showAge": true,
+  "showEmail": false
 }
 
 

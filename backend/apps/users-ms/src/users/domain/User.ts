@@ -13,7 +13,7 @@ export interface UserProps {
   firstName: string;
   lastName: string;
   birthDate: UserBirthDate;
-  email: string;
+  email: string; // TODO: this should be a ValueObject
   password: UserPassword;
   bio?: string;
   showAge: boolean;
@@ -55,6 +55,10 @@ export class User extends EntityRoot<UserProps> {
 
   set password(password: UserPassword) {
     this.props.password = password;
+  }
+
+  get userPassword(): UserPassword {
+    return this.props.password;
   }
 
   get bio(): string {

@@ -7,7 +7,7 @@ interface CauseByCommunityIdProps {
   communityId: string;
   causeId: string;
   causeName: string;
-  ods: ODSEnum[];
+  ods: Set<ODSEnum>;
   supportsCount: number;
   actions: ActionByCauseId[];
 }
@@ -29,7 +29,7 @@ export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
     return this.props.causeName;
   }
 
-  get ods(): ODSEnum[] {
+  get ods(): Set<ODSEnum> {
     return this.props.ods;
   }
 
@@ -49,7 +49,7 @@ export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
     communityId: string,
     causeId: string,
     causeName: string,
-    ods: ODSEnum[],
+    ods: Set<ODSEnum> = new Set<ODSEnum>(),
     supportsCount: number = 0,
     actions: ActionByCauseId[] = [],
   ): CauseByCommunityId {
@@ -74,11 +74,11 @@ export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
     return this.supportsCount;
   }
 
-  public addODS(ods: ODSEnum | ODSEnum[]): void {
-    if (Array.isArray(ods)) {
-      this.ods.push(...ods);
+  public addODS(ods: ODSEnum | Set<ODSEnum>): void {
+    if (ods instanceof Set) {
+      ods.forEach((item) => this.ods.add(item));
     } else {
-      this.ods.push(ods);
+      this.ods.add(ods);
     }
   }
 

@@ -7,9 +7,9 @@ export abstract class OdsStatisticsService {
   abstract getTotalSupports(): Promise<number>;
 
   abstract registerCauseCreation(
-    ods: ODSEnum[],
+    ods: Set<ODSEnum>,
     communityId: string,
   ): Promise<void>;
 
-  abstract registerCauseSupport(ods: ODSEnum[]): Promise<void>;
+  abstract registerCauseSupport(ods: Set<ODSEnum>): Promise<void>;
 }

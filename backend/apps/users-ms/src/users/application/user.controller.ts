@@ -36,7 +36,6 @@ export class UsersController {
       createUserDto.bio,
       createUserDto.showAge,
       createUserDto.showEmail,
-      createUserDto.role,
     );
 
     const locationUrl = `/users/${userId}`;

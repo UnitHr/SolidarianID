@@ -10,7 +10,6 @@ export abstract class UserService {
     bio: string,
     showAge: boolean,
     showEmail: boolean,
-    role: string,
   ): Promise<string>;
 
   abstract updateUser(id: string, email: string, bio: string): Promise<void>;

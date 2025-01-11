@@ -44,8 +44,4 @@ export class CreateUserDto {
 
   @IsOptional()
   showEmail?: boolean;
-
-  @IsString()
-  @IsNotEmpty()
-  role: string;
 }

@@ -10,6 +10,7 @@ import {
   EmailAlreadyInUseError,
 } from '../exceptions';
 import { UserPassword } from '../domain/Password';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -27,7 +28,6 @@ export class UserServiceImpl implements UserService {
     bio: string,
     showAge: boolean,
     showEmail: boolean,
-    role: string,
   ): Promise<string> {
     // Check if the email is already in use
     try {
@@ -52,7 +52,7 @@ export class UserServiceImpl implements UserService {
         bio,
         showAge,
         showEmail,
-        role,
+        role: Role.USER,
       }),
     );
 

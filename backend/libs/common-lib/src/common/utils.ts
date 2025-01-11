@@ -20,6 +20,9 @@ export class Utils {
   }
 
   static calculateAverage(amount: number, totalAmount: number): number {
+    if (totalAmount === 0) {
+      return 0;
+    }
     return parseFloat(((amount / totalAmount) * 100).toFixed(2));
   }
 }

@@ -1,10 +1,11 @@
 ### Create Cause
-POST http://localhost:3002/causes
+POST http://localhost:3002/communities/{communityId}/causes
 Content-Type: application/json
+Authorization: Bearer {jwtToken}
 
 {
-  "title": "Salvar los Océanos",
-  "description": "Iniciativa para reducir la contaminación marina y proteger los ecosistemas submarinos.",
-  "communityId": "1",
-  "ods": [13, 14] 
+  "title": "Reforestación de bosques",
+  "description": "Proyecto para plantar árboles y restaurar áreas forestales degradadas.",
+  "end": "2025-12-31T23:59:59.000Z",
+  "ods": [15] 
 }

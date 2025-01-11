@@ -17,6 +17,7 @@ import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
+import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { CauseService } from './cause.service';
 import { UpdateCauseDto } from '../dto/update-cause.dto';
 import { CauseMapper } from '../cause.mapper';
@@ -29,6 +30,7 @@ import { CreateActionDto } from '../dto/create-action.dto';
 export class CauseController {
   constructor(private readonly causeService: CauseService) {}
 
+  @ApiOperation({ summary: 'Get all causes, sort and filter' })
   @Public()
   @Get()
   async findAll(
@@ -63,6 +65,7 @@ export class CauseController {
     res.status(HttpStatus.OK).json(response);
   }
 
+  @ApiOperation({ summary: 'Get details of a specific cause by id' })
   @Public()
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
@@ -72,6 +75,7 @@ export class CauseController {
     res.status(HttpStatus.OK).json(causeDto);
   }
 
+  @ApiExcludeEndpoint()
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -88,6 +92,7 @@ export class CauseController {
     res.status(HttpStatus.NO_CONTENT).location(locationUrl).send();
   }
 
+  @ApiExcludeEndpoint()
   @Public()
   @Get(':id/actions')
   async getActions(
@@ -120,6 +125,7 @@ export class CauseController {
     res.status(HttpStatus.OK).json(response);
   }
 
+  @ApiExcludeEndpoint()
   @Post(':id/actions')
   async createAction(
     @Body() createActionDto: CreateActionDto,
@@ -149,6 +155,7 @@ export class CauseController {
     res.status(HttpStatus.CREATED).location(locationUrl).json({ id: result });
   }
 
+  @ApiExcludeEndpoint()
   @Public()
   @Get(':id/supporters')
   async getSupporters(
@@ -181,6 +188,7 @@ export class CauseController {
     res.status(HttpStatus.OK).json(response);
   }
 
+  @ApiExcludeEndpoint()
   @Post(':id/supporters')
   async addSupporter(
     @Param('id', ParseUUIDPipe) id: string,

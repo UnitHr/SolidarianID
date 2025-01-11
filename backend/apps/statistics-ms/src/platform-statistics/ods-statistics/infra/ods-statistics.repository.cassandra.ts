@@ -19,11 +19,12 @@ export default class OdsStatisticsRepository extends BaseService<Persistence.Ods
     return results.map(OdsStatisticsMapper.toDomain);
   }
 
-  async findManyEntities(
-    odsId: Array<number>,
-  ): Promise<Domain.OdsStatistics[]> {
-    const results = await this.findMany({ odsId });
-    return results.map(OdsStatisticsMapper.toDomain);
+  async findOneEntity(odsId: number): Promise<Domain.OdsStatistics> | null {
+    const entity = await this.findOne({ odsId });
+    if (!entity) {
+      return null;
+    }
+    return OdsStatisticsMapper.toDomain(entity);
   }
 
   async getTotalSupports(): Promise<number> {
@@ -33,8 +34,8 @@ export default class OdsStatisticsRepository extends BaseService<Persistence.Ods
     return totalSupports;
   }
 
-  async saveManyEntities(odsStatistics: Domain.OdsStatistics[]): Promise<void> {
-    const entities = odsStatistics.map(OdsStatisticsMapper.toPersistence);
-    await this.saveMany(entities);
+  async saveOneEntity(odsStatistics: Domain.OdsStatistics): Promise<void> {
+    const entity = OdsStatisticsMapper.toPersistence(odsStatistics);
+    await this.saveOne(entity);
   }
 }

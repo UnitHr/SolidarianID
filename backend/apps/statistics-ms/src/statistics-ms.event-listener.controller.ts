@@ -11,8 +11,8 @@ import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJo
 
 // Services
 import { CommunityReportsService } from './community-reports/application/community-reports.service';
-// import { CommunityStatisticsService } from './platform-statistics/community-statistics/application/community-statistics.service';
-// import { OdsStatisticsService } from './platform-statistics/ods-statistics/application/ods-statistics.service';
+import { CommunityStatisticsService } from './platform-statistics/community-statistics/application/community-statistics.service';
+import { OdsStatisticsService } from './platform-statistics/ods-statistics/application/ods-statistics.service';
 
 @Controller()
 export class StatisticsMsEventListenerController {
@@ -22,8 +22,8 @@ export class StatisticsMsEventListenerController {
 
   constructor(
     private readonly communityReportsService: CommunityReportsService,
-    // private readonly communityStatisticsService: CommunityStatisticsService,
-    // private readonly odsStatisticsService: OdsStatisticsService,
+    private readonly communityStatisticsService: CommunityStatisticsService,
+    private readonly odsStatisticsService: OdsStatisticsService,
   ) {}
 
   @EventPattern(CommunityCreatedEvent.TOPIC)
@@ -39,10 +39,10 @@ export class StatisticsMsEventListenerController {
         message.name,
         message.adminId,
       ),
-      // this.communityStatisticsService.registerComunityCreation(
-      // message.communityId,
-      // message.name,
-      // ),
+      this.communityStatisticsService.registerComunityCreation(
+        message.communityId,
+        message.name,
+      ),
     ]);
   }
 
@@ -70,10 +70,10 @@ export class StatisticsMsEventListenerController {
         message.causeName,
         new Set(message.ods),
       ),
-      // this.odsStatisticsService.registerCauseCreation(
-      // new Set(message.ods),
-      // message.communityId,
-      // ),
+      this.odsStatisticsService.registerCauseCreation(
+        new Set(message.ods),
+        message.communityId,
+      ),
     ]);
   }
 
@@ -89,8 +89,8 @@ export class StatisticsMsEventListenerController {
         message.communityId,
         message.causeId,
       ),
-      // this.communityStatisticsService.registerCauseSupport(message.communityId),
-      // this.odsStatisticsService.registerCauseSupport(new Set(message.ods)),
+      this.communityStatisticsService.registerCauseSupport(message.communityId),
+      this.odsStatisticsService.registerCauseSupport(new Set(message.ods)),
     ]);
   }
 
@@ -106,10 +106,10 @@ export class StatisticsMsEventListenerController {
         message.title,
         message.target,
       ),
-      // this.communityStatisticsService.registerCausesTargeted(
-      // message.communityId,
-      // message.target,
-      // ),
+      this.communityStatisticsService.registerCausesTargeted(
+        message.communityId,
+        message.target,
+      ),
     ]);
   }
 
@@ -126,10 +126,10 @@ export class StatisticsMsEventListenerController {
         message.actionId,
         message.amount,
       ),
-      // this.communityStatisticsService.registerCausesAchieved(
-      // message.communityId,
-      // message.amount,
-      // ),
+      this.communityStatisticsService.registerCausesAchieved(
+        message.communityId,
+        message.amount,
+      ),
     ]);
   }
 }

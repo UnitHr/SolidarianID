@@ -1,30 +1,44 @@
 services:
   postgres:
     image: postgres:latest
+    container_name: postgres
     ports:
       - '5432:5432'
     env_file:
-      - ./apps/users-ms/.env
+      - ./apps/users-ms/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   mongo:
     image: mongo:latest
+    container_name: mongo
     ports:
       - '27017:27017'
     env_file:
-      - ./apps/communities-ms/.env
+      - ./apps/communities-ms/.env.development
     volumes:
       - mongo_data:/data/db
 
   cassandra:
     image: bitnami/cassandra:latest
+    container_name: cassandra
     ports:
       - '9042:9042'
     env_file:
-      - ./apps/statistics-ms/.env
+      - ./apps/statistics-ms/.env.development
     volumes:
       - './apps/statistics-ms:/docker-entrypoint-initdb.d'
+
+  communities-ms:
+    build:
+      context: .
+      dockerfile: Dockerfile.communities-ms
+    container_name: communities-ms
+    ports:
+      - '3002:3002'
+    environment:
+      - NODE_ENV=production
+ 
 
 volumes:
   postgres_data:

@@ -11,7 +11,6 @@ logs
 *.log.*
 
 # Ignore build files and local IDE configurations
-**/dist
 .idea
 .vscode
 .DS_Store

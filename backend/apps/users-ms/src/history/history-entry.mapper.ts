@@ -1,7 +1,7 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import * as Domain from './domain';
 import * as Persistence from './infra/persistence';
-import { HistoryEntryDto } from './dto/HistoryEntryDto';
+import { HistoryEntryDto } from './dto/history-entry.dto';
 
 export class HistoryEntryMapper {
   static toDomain(raw: Persistence.HistoryEntry): Domain.HistoryEntry {

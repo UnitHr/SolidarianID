@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { EventPublisher } from '@nestjs/cqrs';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { UserRepository } from '../user.repository';
 import { User } from '../domain';
 import { UserService } from './user.service';
@@ -10,7 +11,6 @@ import {
   EmailAlreadyInUseError,
 } from '../exceptions';
 import { UserPassword } from '../domain/Password';
-import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 
 @Injectable()
 export class UserServiceImpl implements UserService {

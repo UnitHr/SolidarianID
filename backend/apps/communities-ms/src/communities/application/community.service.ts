@@ -11,7 +11,6 @@ import { CommunityRepository } from '../repo/community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
 import { CommunityQueryBuilder } from '../infra/filters/community-query.builder';
 
-// TODO: Create interface
 @Injectable()
 export class CommunityService {
   constructor(

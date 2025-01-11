@@ -110,7 +110,6 @@ describe('UserServiceImpl', () => {
         testUser.bio,
         testUser.showAge,
         testUser.showEmail,
-        testUser.role,
       );
 
       // Assert
@@ -141,7 +140,6 @@ describe('UserServiceImpl', () => {
           'My bio',
           true,
           false,
-          'user',
         ),
       ).rejects.toThrow(EmailAlreadyInUseError);
 
@@ -169,7 +167,6 @@ describe('UserServiceImpl', () => {
           'Underage user bio',
           true,
           true,
-          'user',
         ),
       ).rejects.toThrow(UnderageUserError);
       expect(userRepositoryMock.save).not.toHaveBeenCalled();
@@ -192,7 +189,6 @@ describe('UserServiceImpl', () => {
           'Bio',
           true,
           true,
-          'user',
         ),
       ).rejects.toThrow(InvalidPasswordError);
 
@@ -218,7 +214,6 @@ describe('UserServiceImpl', () => {
         'Bio',
         true,
         true,
-        'user',
       );
 
       // Assert

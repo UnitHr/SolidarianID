@@ -15,6 +15,8 @@ import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
+import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';

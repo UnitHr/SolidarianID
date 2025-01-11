@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { Entity, PrimaryColumn, Column, Index } from 'typeorm';
-import { EntryStatus, HistoryEntryType } from '@users-ms/history/domain';
+import { EntryStatus, ActivityType } from '@users-ms/history/domain';
 
 @Entity()
 export class HistoryEntry {
@@ -13,10 +13,10 @@ export class HistoryEntry {
 
   @Column({
     type: 'enum',
-    enum: HistoryEntryType,
+    enum: ActivityType,
   })
   @Index()
-  type: HistoryEntryType;
+  type: ActivityType;
 
   @Column('uuid')
   entityId: string;

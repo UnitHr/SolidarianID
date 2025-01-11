@@ -1,24 +1,69 @@
 <section>
-    <div class="bg-white shadow-md rounded-lg p-4">
+    <div class="bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
         <a href="/reports" class="text-blue-500 hover:underline text-sm mt-4 inline-block">
             ← Back to Community Selection
         </a>
 
         <!-- Community Details -->
         {{#if community}}
-        <div id="community-details" class="mt-6 p-4 border border-gray-300 rounded bg-gray-50">
-            <h4 class="text-xl font-medium text-center md:text-2xl p-4">Community Details</h4>
-            <p><strong>Name:</strong> {{community.name}}</p>
-            <p><strong>Members:</strong> {{community.members}}</p>
+        <div id="community-details" class="mt-6 p-4 md:p-6 lg:p-8 border border-gray-300 rounded bg-gray-50">
+            <h5 class="text-xl font-medium text-center md:text-2xl lg:text-3xl p-4">Community Details</h5>
+            <h4 class="text-base md:text-lg lg:text-xl"><strong>Name:</strong> {{community.communityName}}</h4>
+            <h4 class="text-base md:text-lg lg:text-xl"><strong>Members:</strong> {{community.members}}</h4>
+
+            <!-- Lista de ODS -->
+            <h5 class="text-lg font-semibold mt-4 md:text-xl lg:text-2xl">ODS List:</h5>
+            <ul class="ml-4 md:ml-6 lg:ml-8">
+                {{#each community.ods}}
+                <li class="mt-2 md:mt-3">
+                    <strong>{{title}}</strong>: {{description}}
+                </li>
+                {{/each}}
+            </ul>
+
+            <!-- Lista de causas -->
+            <h5 class="text-lg font-semibold mt-4 md:text-xl lg:text-2xl">Causes:</h5>
+            <ul class="ml-4 md:ml-6 lg:ml-8">
+                {{#each community.causes}}
+
+                <li class="mt-2 mb-4">
+
+                    <h6 class="text-lg font-semibold mt-4 md:text-xl lg:text-2xl"><strong>{{causeName}}</strong>
+                        ({{supports}} supporters)</h5>
+
+                        <!-- Lista de ODS relacionados -->
+                        <h6 class="text-md font-medium mt-2 md:text-lg">ODS Related:</h6>
+                        <ul class="ml-4 md:ml-6 lg:ml-8">
+                            {{#each ods}}
+                            <li class="mt-1">
+                                <strong>{{title}}</strong>: {{description}}
+                            </li>
+                            {{/each}}
+                        </ul>
+
+                        <!-- Acciones relacionadas -->
+                        <h6 class="text-md font-medium mt-2 md:text-lg">Actions:</h6>
+                        <ul class="ml-4 md:ml-6 lg:ml-8">
+                            {{#each actions}}
+                            <li class="mt-2 mb-2">
+                                <p><strong>Action Name:</strong> {{actionName}}</p>
+                                <p><strong>Progress:</strong> {{progress}}%</p>
+                            </li>
+                            {{/each}}
+                        </ul>
+                </li>
+                {{/each}}
+            </ul>
 
             <!-- Include Graphics Checkbox -->
-            <div class="mt-4 flex items-center pt-6 pb-6 pl-0 pr-0">
+            <div class="mt-4 flex items-center gap-4">
                 <input type="checkbox" id="include-graphics" name="includeGraphics" class="mr-2" checked>
-                <label for="include-graphics" id="include-graphics-text" class="text-sm md:text-base">Include Graphics
-                    in the Report</label>
+                <label for="include-graphics" id="include-graphics-text" class="text-sm md:text-base lg:text-lg">
+                    Include Graphics in the Report
+                </label>
             </div>
 
-            <div id="chart-placeholder" class="mt-4">
+            <div id="chart-placeholder" class="mt-4 chart-wrapper">
                 {{> chart}}
             </div>
         </div>
@@ -26,7 +71,7 @@
         <!-- Generate Report Button -->
         <div class="mt-4 text-center">
             <button type="button" id="generate-pdf-button"
-                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 md:px-6 md:py-3">
+                class="px-4 py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">
                 Generate PDF Report
             </button>
         </div>

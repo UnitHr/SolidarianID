@@ -1,0 +1,22 @@
+[
+    {
+        "ods": {
+            "id": 5,
+            "title": "Gender Equality",
+            "description": "Achieve gender"
+        },
+        "communitiesCount": 10,
+        "causesCount": 22,
+        "averageSupport": 3.5
+    },
+    {
+        "ods": {
+            "id": 10,
+            "title": "Reduced Inequality",
+            "description": "Achieve gender"
+        },
+        "communitiesCount": 10,
+        "causesCount": 2,
+        "averageSupport": 7.5
+    }
+]

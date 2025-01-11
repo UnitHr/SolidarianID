@@ -5,18 +5,25 @@
 .chart-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Centra las gráficas en pantallas pequeñas */
-  gap: 20px; /* Espaciado entre las gráficas */
+  justify-content: center;
+  gap: 20px;
   width: 100%;
-  align-items: center; /* Centra las gráficas verticalmente si hay más de una fila */
+  align-items: center;
 }
 
-/* Contenedor de cada gráfica */
 .chart-container {
-  flex-basis: 45%; /* Cada gráfica ocupará el 45% del espacio disponible */
-  max-width: 45%; /* Limita el ancho máximo al 45% */
-  height: auto; /* Mantiene la altura dinámica */
-  margin: 10px 10px; /* Espaciado entre las gráficas */
+  justify-content: center;
+  align-items: center;
+  flex-basis: 45%;
+  max-width: 45%;
+  height: auto;
+  margin: 10px 10px;
+}
+
+canvas {
+  display: block; /* Asegura que el canvas no sea un elemento inline */
+  max-width: 100%; /* Escala dinámicamente dentro del contenedor */
+  height: auto; /* Mantiene la proporción */
 }
 
 /* Estilos para tabletas (ancho mínimo de 768px) */
@@ -37,9 +44,9 @@
     justify-content: center;
   }
   .chart-container {
-    flex-basis: 100%; /* Cada gráfica ocupará el 100% del espacio disponible */
-    max-width: 100%; /* Limita el ancho máximo al 100% */
-    margin: 10px 0; /* Para tener un margen vertical entre las gráficas */
+    flex-basis: 100%;
+    max-width: 100%;
+    margin: 10px 0;
   }
 }
 

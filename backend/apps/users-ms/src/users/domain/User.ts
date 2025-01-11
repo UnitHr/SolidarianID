@@ -8,12 +8,13 @@ import {
   UserCannotFollowSelfError,
 } from '../exceptions';
 import { UserFollowedEvent } from './events/UserFollowedEvent';
+import { UserEmail } from './UserEmail';
 
 export interface UserProps {
   firstName: string;
   lastName: string;
   birthDate: UserBirthDate;
-  email: string; // TODO: this should be a ValueObject
+  email: UserEmail;
   password: UserPassword;
   bio?: string;
   showAge: boolean;
@@ -42,11 +43,11 @@ export class User extends EntityRoot<UserProps> {
   }
 
   get email(): string {
-    return this.props.email;
+    return this.props.email.value;
   }
 
   set email(email: string) {
-    this.props.email = email;
+    this.props.email = UserEmail.create(email);
   }
 
   get password(): string {
@@ -104,13 +105,13 @@ export class User extends EntityRoot<UserProps> {
     return new User({ ...props, followers: props.followers ?? [] }, id);
   }
 
-  public updateProfile(updateData: Partial<UserProps>): void {
-    if (updateData.email && updateData.email !== this.props.email) {
-      this.props.email = updateData.email;
+  public updateProfile({ email, bio }: { email?: string; bio?: string }): void {
+    if (email && email !== this.email) {
+      this.props.email = UserEmail.create(email);
     }
 
-    if (updateData.bio !== undefined) {
-      this.props.bio = updateData.bio.trim() || 'No bio available';
+    if (bio !== undefined) {
+      this.props.bio = bio.trim() || 'No bio available';
     }
   }
 

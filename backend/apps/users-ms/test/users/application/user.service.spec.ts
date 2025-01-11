@@ -18,6 +18,7 @@ import {
 import { UnderageUserError } from '@users-ms/users/exceptions/under-age-user.error';
 import { UserBirthDate } from '@users-ms/users/domain/UserBirthDate';
 import { UserPassword } from '@users-ms/users/domain/Password';
+import { UserEmail } from '@users-ms/users/domain/UserEmail';
 
 jest.mock('@users-ms/users/user.repository');
 
@@ -36,7 +37,7 @@ const createMockUser = async (overrides: Partial<User> = {}): Promise<User> => {
   const props = {
     firstName: 'Default',
     lastName: 'User',
-    email: TEST_USER_DATA.VALID_EMAIL,
+    email: UserEmail.create(TEST_USER_DATA.VALID_EMAIL),
     bio: 'Default bio',
     birthDate: UserBirthDate.create(TEST_USER_DATA.VALID_BIRTH_DATE),
     password,
@@ -51,6 +52,7 @@ const createMockUser = async (overrides: Partial<User> = {}): Promise<User> => {
     {
       ...props,
       ...overrides,
+      email: overrides.email ? UserEmail.create(overrides.email) : props.email,
       password: overrides.userPassword || props.password,
     },
     overrides.id || new UniqueEntityID(TEST_USER_DATA.VALID_ID),
@@ -256,8 +258,8 @@ describe('UserServiceImpl', () => {
         'new.email@example.com',
       );
       expect(existingUser.updateProfile).toHaveBeenCalledWith({
-        email: 'new.email@example.com',
         bio: 'Updated bio',
+        email: 'new.email@example.com',
       });
       expect(userRepositoryMock.save).toHaveBeenCalledWith(existingUser);
     });

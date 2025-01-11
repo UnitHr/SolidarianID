@@ -8,7 +8,7 @@ interface CommunityByCommunityIdProps {
   communityName: string;
   adminId: string;
   membersCount: number;
-  ods: ODSEnum[];
+  ods: Set<ODSEnum>;
   causes: CauseByCommunityId[];
 }
 
@@ -37,7 +37,7 @@ export class CommunityByCommunityId extends Entity<CommunityByCommunityIdProps> 
     this.props.membersCount = membersCount;
   }
 
-  get ods(): ODSEnum[] {
+  get ods(): Set<ODSEnum> {
     return this.props.ods;
   }
 
@@ -49,8 +49,8 @@ export class CommunityByCommunityId extends Entity<CommunityByCommunityIdProps> 
     communityId: string,
     communityName: string,
     adminId: string,
-    membersCount: number = 0,
-    ods: ODSEnum[] = [],
+    membersCount: number = 1,
+    ods: Set<ODSEnum> = new Set<ODSEnum>(),
     causes: CauseByCommunityId[] = [],
   ): CommunityByCommunityId {
     if (membersCount < 0) {
@@ -74,11 +74,11 @@ export class CommunityByCommunityId extends Entity<CommunityByCommunityIdProps> 
     return this.membersCount;
   }
 
-  public addOds(ods: ODSEnum | ODSEnum[]): void {
-    if (Array.isArray(ods)) {
-      this.ods.push(...ods);
+  public addOds(ods: ODSEnum | Set<ODSEnum>): void {
+    if (ods instanceof Set) {
+      ods.forEach((item) => this.ods.add(item));
     } else {
-      this.ods.push(ods);
+      this.ods.add(ods);
     }
   }
 

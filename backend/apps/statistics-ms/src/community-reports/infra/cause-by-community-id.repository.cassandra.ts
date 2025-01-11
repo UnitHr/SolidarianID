@@ -21,8 +21,11 @@ export default class CauseByCommunityIdRepository extends BaseService<Persistenc
     return entity.map(CauseByCommunityIdMapper.toDomain);
   }
 
-  async findOneByCauseId(causeId: string): Promise<Domain.CauseByCommunityId> {
-    const entity = await this.findOne({ causeId });
+  async findOneByCauseId(
+    communityId: string,
+    causeId: string,
+  ): Promise<Domain.CauseByCommunityId> {
+    const entity = await this.findOne({ communityId, causeId });
     return CauseByCommunityIdMapper.toDomain(entity);
   }
 

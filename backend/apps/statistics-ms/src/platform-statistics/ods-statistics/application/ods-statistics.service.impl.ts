@@ -27,47 +27,62 @@ export class OdsStatisticsServiceImpl implements OdsStatisticsService {
     ods: Set<ODSEnum>,
     communityId: string,
   ): Promise<void> {
-    // Fetch the ODS statistics
-    const odsStatistics = await this.odsStatisticsRepository.findManyEntities(
-      mapODSEnumSetToNumberArray(ods),
-    );
+    await Promise.all(
+      // For each ODS
+      mapODSEnumSetToNumberArray(ods).map(async (odsId) => {
+        // Fetch the ODS statistics, if it exists
+        let odsStatistic =
+          await this.odsStatisticsRepository.findOneEntity(odsId);
 
-    // Update the communities and causes count
-    odsStatistics.forEach(async (odsStatistic) => {
-      odsStatistic.incrementCausesCount(); // Increment the causes count
+        // If it doesn't exist, create it
+        if (!odsStatistic) {
+          odsStatistic = Domain.OdsStatistics.create(odsId as ODSEnum);
+        }
 
-      // Fetch the community
-      const community = await this.odsCommunityRepository.findById(communityId);
-      if (!community) {
-        const newCommunity = Domain.OdsCommunity.create(
-          odsStatistic.odsId,
+        // Increment the causes count
+        odsStatistic.incrementCausesCount();
+
+        // Fetch the community
+        const community = await this.odsCommunityRepository.findOneEntity(
+          odsId,
           communityId,
         );
+        if (!community) {
+          const newCommunity = Domain.OdsCommunity.create(
+            odsStatistic.odsId,
+            communityId,
+          );
 
-        // Save the community
-        await this.odsCommunityRepository.save(newCommunity);
+          // Save the community
+          await this.odsCommunityRepository.save(newCommunity);
 
-        // We only increment the communities count the first time for each ODS
-        odsStatistic.incrementCommunitiesCount(); // Increment the communities count
-      }
-    });
+          // We only increment the communities count the first time for each ODS
+          odsStatistic.incrementCommunitiesCount();
+        }
 
-    // Save
-    await this.odsStatisticsRepository.saveManyEntities(odsStatistics);
+        // Save the ODS statistics
+        await this.odsStatisticsRepository.saveOneEntity(odsStatistic);
+      }),
+    );
   }
 
   async registerCauseSupport(ods: Set<ODSEnum>): Promise<void> {
-    // Fetch the ODS statistics
-    const odsStatistics = await this.odsStatisticsRepository.findManyEntities(
-      Array.from(ods).map((odsEnum) => odsEnum as number),
-    );
+    // For each ODS
+    mapODSEnumSetToNumberArray(ods).map(async (odsId) => {
+      // Fetch the ODS statistics
+      let odsStatistic =
+        await this.odsStatisticsRepository.findOneEntity(odsId);
 
-    // Update the supports count
-    odsStatistics.forEach((odsStatistic) => {
+      // If it doesn't exist, create it
+      if (!odsStatistic) {
+        odsStatistic = Domain.OdsStatistics.create(odsId as ODSEnum);
+      }
+
+      // Increment the supports count
       odsStatistic.incrementSupportsCount();
-    });
 
-    // Save
-    await this.odsStatisticsRepository.saveManyEntities(odsStatistics);
+      // Save the ODS statistics
+      await this.odsStatisticsRepository.saveOneEntity(odsStatistic);
+    });
   }
 }

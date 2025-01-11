@@ -14,8 +14,11 @@ export default class OdsCommunityRepository extends BaseService<Persistence.OdsC
     super(client, mapper, Persistence.OdsCommunity);
   }
 
-  async findById(communityId: string): Promise<Domain.OdsCommunity | null> {
-    const community = await this.findOne({ communityId });
+  async findOneEntity(
+    odsId: number,
+    communityId: string,
+  ): Promise<Domain.OdsCommunity | null> {
+    const community = await this.findOne({ odsId, communityId });
     if (!community) {
       return null;
     }
@@ -23,6 +26,7 @@ export default class OdsCommunityRepository extends BaseService<Persistence.OdsC
   }
 
   async save(community: Domain.OdsCommunity): Promise<void> {
-    await this.save(community);
+    const entity = OdsCommunityMapper.toPersistence(community);
+    await this.saveOne(entity);
   }
 }

@@ -1,4 +1,3 @@
-// TODO: Rename file
 export class HistoryEntryDto {
   type: string;
 

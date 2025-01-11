@@ -27,7 +27,7 @@ jobs:
       run: npm ci
     - name: Build the project
       working-directory: ./backend
-      run: npm run build --if-present
+      run: npm run build:communities-ms
   # - name: Run tests
   #   working-directory: ./backend
   #   run: npm test

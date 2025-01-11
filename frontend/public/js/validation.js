@@ -17,7 +17,6 @@ function handleValidateFormSubmit(event) {
     event.preventDefault();
     alert('Please select at least one request to validate.');
   } else {
-    console.log(selectedRequests);
     document.getElementById('selected-requests-input').value =
       JSON.stringify(selectedRequests);
   }

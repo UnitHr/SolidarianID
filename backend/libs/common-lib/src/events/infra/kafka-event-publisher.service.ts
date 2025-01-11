@@ -1,7 +1,7 @@
 import { DomainEvent } from '@common-lib/common-lib/core/domain/DomainEvent';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { KAFKA_SERVICE } from '@common-lib/common-lib/core/constants';
+import { KAFKA_SERVICE } from '@common-lib/common-lib/common/constant';
 import { EventsService } from '../events.service';
 
 @Injectable()

@@ -6,7 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "cross-env NODE_ENV=development nest build",
+    "build:api-gateway": "nest build api-gateway",
+    "build:users-ms": "nest build users-ms",
+    "build:communities-ms": "nest build communities-ms",
+    "build:statistics-ms": "nest build statistics-ms",
     "start:dev:api-gateway": "cross-env NODE_ENV=development nest start api-gateway --watch",
     "start:dev:users-ms": "cross-env NODE_ENV=development nest start users-ms --watch",
     "start:dev:communities-ms": "cross-env NODE_ENV=development nest start communities-ms --watch",
@@ -106,6 +109,7 @@
     "moduleNameMapper": {
       "^@api-gateway/(.*)$": "<rootDir>/apps/api-gateway/src/$1",
       "^@communities-ms/(.*)$": "<rootDir>/apps/communities-ms/src/$1",
+      "^@statistics-ms/(.*)$": "<rootDir>/apps/statistics-ms/src/$1",
       "^@gateway-ms/(.*)$": "<rootDir>/apps/gateway-ms/src/$1",
       "^@users-ms/(.*)$": "<rootDir>/apps/users-ms/src/$1",
       "^@common-lib/common-lib/(.*)$": "<rootDir>/libs/common-lib/src/$1"

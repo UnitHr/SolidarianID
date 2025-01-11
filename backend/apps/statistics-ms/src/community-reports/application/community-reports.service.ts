@@ -18,10 +18,13 @@ export abstract class CommunityReportsService {
     communityId: string,
     causeId: string,
     causeName: string,
-    ods: ODSEnum[],
+    ods: Set<ODSEnum>,
   ): Promise<void>;
 
-  abstract registerCauseAddSupporter(causeId: string): Promise<void>;
+  abstract registerCauseAddSupporter(
+    communityId: string,
+    causeId: string,
+  ): Promise<void>;
 
   abstract registerActionCreation(
     causeId: string,
@@ -31,6 +34,7 @@ export abstract class CommunityReportsService {
   ): Promise<void>;
 
   abstract registerActionContributed(
+    causeId: string,
     actionId: string,
     amount: number,
   ): Promise<void>;

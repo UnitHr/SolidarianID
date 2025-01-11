@@ -1,4 +1,8 @@
-import { mapODSEnumListToDetails } from '@common-lib/common-lib/common/ods';
+import {
+  mapNumberArrayToODSEnumSet,
+  mapODSEnumSetToNumberArray,
+  mapODSEnumListToDetails,
+} from '@common-lib/common-lib/common/ods';
 import { CauseReportResponseDto } from '../dto/cause-report-response.dto';
 import * as Persistence from '../infra/persistence';
 import * as Domain from '../domain';
@@ -12,7 +16,7 @@ export class CauseByCommunityIdMapper {
       raw.communityId,
       raw.causeId,
       raw.causeName,
-      raw.ods,
+      mapNumberArrayToODSEnumSet(raw.ods),
       raw.supportsCount,
     );
   }
@@ -24,7 +28,7 @@ export class CauseByCommunityIdMapper {
       communityId: entity.communityId,
       causeId: entity.causeId,
       causeName: entity.causeName,
-      ods: entity.ods,
+      ods: mapODSEnumSetToNumberArray(entity.ods),
       supportsCount: entity.supportsCount,
     };
   }

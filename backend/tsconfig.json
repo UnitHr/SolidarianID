@@ -17,6 +17,9 @@
       "@communities-ms/*": [
         "apps/communities-ms/src/*"
       ],
+      "@statistics-ms/*": [
+        "apps/statistics-ms/src/*"
+      ],
       "@users-ms/*": [
         "apps/users-ms/src/*"
       ],

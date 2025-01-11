@@ -17,6 +17,7 @@ import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-respo
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
+import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { ActionService } from './action.service';
 import { UpdateActionDto } from '../dto/update-action.dto';
 import * as Mapper from '../mapper';
@@ -29,27 +30,7 @@ import { FindActionsDto } from '../dto/find-actions.dto';
 export class ActionController {
   constructor(private readonly actionService: ActionService) {}
 
-  @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
-    const action = await this.actionService.getActionDetails(id);
-
-    const actionDto = Mapper.ActionMapper.toDTO(action);
-    res.status(HttpStatus.OK).json(actionDto);
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateActionDto: UpdateActionDto,
-    @Res() res: Response,
-  ) {
-    const { title, description, target } = updateActionDto;
-
-    await this.actionService.updateAction(id, title, description, target);
-    const locationUrl = `/actions/${id}`;
-    res.status(HttpStatus.NO_CONTENT).location(locationUrl).send();
-  }
-
+  @ApiOperation({ summary: 'Get all actions, sort and filter' })
   @Public()
   @Get()
   async findAll(
@@ -82,6 +63,31 @@ export class ActionController {
     res.status(HttpStatus.OK).json(response);
   }
 
+  @ApiOperation({ summary: 'Get details of a specific action by id' })
+  @Public()
+  @Get(':id')
+  async findOne(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const action = await this.actionService.getActionDetails(id);
+
+    const actionDto = Mapper.ActionMapper.toDTO(action);
+    res.status(HttpStatus.OK).json(actionDto);
+  }
+
+  @ApiExcludeEndpoint()
+  @Patch(':id')
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateActionDto: UpdateActionDto,
+    @Res() res: Response,
+  ) {
+    const { title, description, target } = updateActionDto;
+
+    await this.actionService.updateAction(id, title, description, target);
+    const locationUrl = `/actions/${id}`;
+    res.status(HttpStatus.NO_CONTENT).location(locationUrl).send();
+  }
+
+  @ApiExcludeEndpoint()
   @Post(':id/contributions')
   async makeContribution(
     @Param('id', ParseUUIDPipe) actionId: string,
@@ -103,6 +109,7 @@ export class ActionController {
     res.status(HttpStatus.CREATED).location(locationUrl).json({ id: result });
   }
 
+  @ApiExcludeEndpoint()
   @Get(':id/contributions')
   async getContributions(
     @Param('id', ParseUUIDPipe) actionId: string,

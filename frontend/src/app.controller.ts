@@ -2,15 +2,12 @@ import {
   Get,
   Controller,
   Render,
-  Request,
   Body,
   Res,
   Post,
   Req,
   HttpException,
   HttpStatus,
-  Query,
-  Param,
 } from '@nestjs/common';
 import { HandlebarsHelpersService } from './helper.service';
 import axios from 'axios';
@@ -102,7 +99,7 @@ export class AppController {
 
       res.cookie('user', userData, {
         httpOnly: true,
-        maxAge: 3600000, // 1 hora
+        maxAge: 3600000, // 1h
         sameSite: 'strict',
       });
 

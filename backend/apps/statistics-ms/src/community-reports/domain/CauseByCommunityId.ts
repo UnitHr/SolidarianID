@@ -1,15 +1,18 @@
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
+import { Entity } from '@common-lib/common-lib/core/domain/Entity';
+import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { ActionByCauseId } from './ActionByCauseId';
 
 interface CauseByCommunityIdProps {
   communityId: string;
   causeId: string;
   causeName: string;
+  ods: Set<ODSEnum>;
   supportsCount: number;
-  ods: Set<number>;
+  actions: ActionByCauseId[];
 }
 
-export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
+export class CauseByCommunityId extends Entity<CauseByCommunityIdProps> {
   private constructor(props: CauseByCommunityIdProps) {
     super(props);
   }
@@ -26,20 +29,29 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
     return this.props.causeName;
   }
 
+  get ods(): Set<ODSEnum> {
+    return this.props.ods;
+  }
+
   get supportsCount(): number {
     return this.props.supportsCount;
   }
 
-  get ods(): Set<number> {
-    return this.props.ods;
+  set supportsCount(supportsCount: number) {
+    this.props.supportsCount = supportsCount;
+  }
+
+  get actions(): ActionByCauseId[] {
+    return this.props.actions;
   }
 
   public static create(
     communityId: string,
     causeId: string,
     causeName: string,
+    ods: Set<ODSEnum> = new Set<ODSEnum>(),
     supportsCount: number = 0,
-    ods: Set<number> = new Set(),
+    actions: ActionByCauseId[] = [],
   ): CauseByCommunityId {
     if (supportsCount < 0) {
       throw new NegativeCountError(
@@ -51,17 +63,30 @@ export class CauseByCommunityId extends ValueObject<CauseByCommunityIdProps> {
       communityId,
       causeId,
       causeName,
-      supportsCount,
       ods,
+      supportsCount,
+      actions,
     });
   }
 
   public incrementSupportsCount(amount: number = 1): number {
-    this.props.supportsCount += amount;
-    return this.props.supportsCount;
+    this.supportsCount += amount;
+    return this.supportsCount;
   }
 
-  public addOds(odsId: number): void {
-    this.props.ods.add(odsId);
+  public addODS(ods: ODSEnum | Set<ODSEnum>): void {
+    if (ods instanceof Set) {
+      ods.forEach((item) => this.ods.add(item));
+    } else {
+      this.ods.add(ods);
+    }
+  }
+
+  public addActions(actions: ActionByCauseId | ActionByCauseId[]): void {
+    if (Array.isArray(actions)) {
+      this.actions.push(...actions);
+    } else {
+      this.actions.push(actions);
+    }
   }
 }

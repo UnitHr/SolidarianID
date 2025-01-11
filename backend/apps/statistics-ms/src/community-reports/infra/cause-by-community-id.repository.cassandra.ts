@@ -20,4 +20,17 @@ export default class CauseByCommunityIdRepository extends BaseService<Persistenc
     const entity = await this.findMany({ communityId });
     return entity.map(CauseByCommunityIdMapper.toDomain);
   }
+
+  async findOneByCauseId(
+    communityId: string,
+    causeId: string,
+  ): Promise<Domain.CauseByCommunityId> {
+    const entity = await this.findOne({ communityId, causeId });
+    return CauseByCommunityIdMapper.toDomain(entity);
+  }
+
+  async save(cause: Domain.CauseByCommunityId): Promise<void> {
+    const entity = CauseByCommunityIdMapper.toPersistence(cause);
+    return this.saveOne(entity);
+  }
 }

@@ -30,7 +30,11 @@
     "test:watch": "cross-env NODE_ENV=test jest --watch",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=test jest --config ./apps/api-gateway/test/jest-e2e.json"
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./apps/api-gateway/test/jest-e2e.json",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "prettier:format": "prettier --write \"{apps,libs}/**/src/**/*.ts\"",
+    "prettier:check": "prettier --check \"{apps,libs}/**/src/**/*.ts\""
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
@@ -85,8 +89,8 @@
     "@types/node": "^20.3.1",
     "@types/passport-github": "^1.1.12",
     "@types/supertest": "^6.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.13.0",
-    "@typescript-eslint/parser": "^8.13.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -112,6 +116,7 @@
     "moduleNameMapper": {
       "^@api-gateway/(.*)$": "<rootDir>/apps/api-gateway/src/$1",
       "^@communities-ms/(.*)$": "<rootDir>/apps/communities-ms/src/$1",
+      "^@statistics-ms/(.*)$": "<rootDir>/apps/statistics-ms/src/$1",
       "^@gateway-ms/(.*)$": "<rootDir>/apps/gateway-ms/src/$1",
       "^@users-ms/(.*)$": "<rootDir>/apps/users-ms/src/$1",
       "^@common-lib/common-lib/(.*)$": "<rootDir>/libs/common-lib/src/$1"

@@ -44,7 +44,7 @@ function generateCombinedChart(data, elementId) {
           display: window.innerWidth >= 768,
           labels: {
             font: {
-              size: 8, // Aquí ajustas el tamaño de la fuente de la leyenda
+              size: 8,
             },
             boxWidth: 10,
             maxWidth: 5,
@@ -117,7 +117,7 @@ function generatePolarAreaChart(labels, data, elementId, title) {
   return new Chart(ctx, {
     type: 'polarArea',
     data: {
-      labels: labels, // Etiquetas de las comunidades
+      labels: labels,
       datasets: [
         {
           label: 'Actions progress',

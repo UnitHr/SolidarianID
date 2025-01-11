@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createProxyMiddleware, Options } from 'http-proxy-middleware';
+import { Options } from 'http-proxy-middleware';
 import { envs } from '@api-gateway/config';
 import { ProxyMiddleware } from './base-proxy.middleware';
 

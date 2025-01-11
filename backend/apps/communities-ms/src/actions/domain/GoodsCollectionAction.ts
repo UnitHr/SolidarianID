@@ -1,8 +1,8 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions/missing-properties.error';
+import { ActionCreatedEvent } from '@common-lib/common-lib/events/domain/ActionCreatedEvent';
 import { Action, ActionProps } from './Action';
 import { ActionType } from './ActionType';
-import { ActionCreatedEvent } from './events/ActionCreatedEvent';
 
 interface GoodsCollectionActionProps extends ActionProps {
   goodType: string;
@@ -28,7 +28,14 @@ export class GoodsCollectionAction extends Action {
     const action = new GoodsCollectionAction(props, id);
     if (!id) {
       action.apply(
-        new ActionCreatedEvent(action.id.toString(), props.type, props.title),
+        new ActionCreatedEvent(
+          action.id.toString(),
+          props.causeId,
+          props.communityId,
+          props.target,
+          props.type,
+          props.title,
+        ),
       );
     }
     return action;

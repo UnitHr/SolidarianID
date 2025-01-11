@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { envs } from './config';
+import { HistoryModule } from './history/history.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { envs } from './config';
     // Import modules
     UserModule,
     AuthModule,
+    HistoryModule,
+    NotificationsModule,
   ],
 })
 export class UsersMsModule {}

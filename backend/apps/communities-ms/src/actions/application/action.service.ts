@@ -14,6 +14,7 @@ export abstract class ActionService {
     target: number,
     unit: string,
     createdBy: string,
+    communityId: string,
     goodType?: string,
     location?: string,
     date?: Date,

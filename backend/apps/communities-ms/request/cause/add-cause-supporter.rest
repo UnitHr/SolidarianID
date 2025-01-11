@@ -1,0 +1,10 @@
+# Base URL
+@baseUrl = http://localhost:3002
+@jwtToken = <token>
+
+### Success Case: Create a new economic action
+POST {{baseUrl}}/causes/:causeID/supporters
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+

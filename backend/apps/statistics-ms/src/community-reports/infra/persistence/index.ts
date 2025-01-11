@@ -5,6 +5,6 @@
 
 import CommunityByCommunityId from './CommunityByCommunityId';
 import CauseByCommunityId from './CauseByCommunityId';
-import ActionByCommunityId from './ActionByCommunityId';
+import ActionByCauseId from './ActionByCauseId';
 
-export { CommunityByCommunityId, CauseByCommunityId, ActionByCommunityId };
+export { CommunityByCommunityId, CauseByCommunityId, ActionByCauseId };

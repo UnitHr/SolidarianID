@@ -1,8 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseFilters } from '@nestjs/common';
 import { CommunityReportsService } from './community-reports.service';
-import { CommunityReportMapper } from '../mapper/community-report.mapper';
+import { CommunityByCommunityIdMapper } from '../mapper/community-by-community-id.mapper';
+import { CommunityReportsExceptionFilter } from '../infra/filters/community-reports-domain-exception.filter';
 
 @Controller('statistics')
+@UseFilters(CommunityReportsExceptionFilter)
 export class CommunityReportsController {
   constructor(
     private readonly communityReportsService: CommunityReportsService,
@@ -12,7 +14,7 @@ export class CommunityReportsController {
   // TODO: Add ParseUUIDPipe to the id parameter
   async getCommunityReport(@Param('id') communityId: string) {
     const communityReport =
-      await this.communityReportsService.findOne(communityId);
-    return CommunityReportMapper.toPersistence(communityReport);
+      await this.communityReportsService.findCommunityReport(communityId);
+    return CommunityByCommunityIdMapper.toDto(communityReport);
   }
 }

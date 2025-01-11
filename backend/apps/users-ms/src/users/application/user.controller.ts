@@ -9,10 +9,10 @@ import {
   Res,
   HttpStatus,
   ParseUUIDPipe,
-  Req,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -70,12 +70,10 @@ export class UsersController {
   @Post(':id/followers')
   async follow(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request,
+    @GetUserId() userId: string,
     @Res() res: Response,
   ) {
-    const followerId = req['user']?.sub.value;
-
-    await this.usersService.followUser(id, followerId);
+    await this.usersService.followUser(id, userId);
 
     res.status(HttpStatus.NO_CONTENT).send();
   }

@@ -1,5 +1,5 @@
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
-import { ValueObject } from '@common-lib/common-lib/core/domain/ValueObject';
+import { Entity } from '@common-lib/common-lib/core/domain/Entity';
 import { NegativeCountError } from '@common-lib/common-lib/core/exceptions/negative-count.error';
 
 interface OdsStatisticsProps {
@@ -9,7 +9,7 @@ interface OdsStatisticsProps {
   supportsCount: number;
 }
 
-export class OdsStatistics extends ValueObject<OdsStatisticsProps> {
+export class OdsStatistics extends Entity<OdsStatisticsProps> {
   private constructor(props: OdsStatisticsProps) {
     super(props);
   }

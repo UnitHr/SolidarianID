@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectClient, InjectMapper, BaseService } from 'cassandra-for-nest';
 import { Client, mapping } from 'cassandra-driver';
-import { OdsStatisticsMapper } from '../ods-statistics.mapper';
+import { OdsStatisticsMapper } from '../mapper/ods-statistics.mapper';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
 
@@ -19,10 +19,22 @@ export default class OdsStatisticsRepository extends BaseService<Persistence.Ods
     return results.map(OdsStatisticsMapper.toDomain);
   }
 
+  async findManyEntities(
+    odsId: Array<number>,
+  ): Promise<Domain.OdsStatistics[]> {
+    const results = await this.findMany({ odsId });
+    return results.map(OdsStatisticsMapper.toDomain);
+  }
+
   async getTotalSupports(): Promise<number> {
     const cql = `SELECT SUM(supports_count) AS total_supports FROM ${this.keyspaceName}.${this.tableName}`;
     const result = await this.mapCqlAsExecution(cql, undefined, undefined)({});
     const totalSupports = result.first()?.['total_supports'] || 0;
     return totalSupports;
+  }
+
+  async saveManyEntities(odsStatistics: Domain.OdsStatistics[]): Promise<void> {
+    const entities = odsStatistics.map(OdsStatisticsMapper.toPersistence);
+    await this.saveMany(entities);
   }
 }

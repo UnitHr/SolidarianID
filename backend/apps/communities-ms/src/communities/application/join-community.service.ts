@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
+import { EventPublisher } from '@nestjs/cqrs';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CommunityRepository } from '../repo/community.repository';
@@ -14,6 +15,7 @@ export class JoinCommunityService {
   constructor(
     private readonly joinCommunityRequestRepository: JoinCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
+    private readonly eventPublisher: EventPublisher,
   ) {}
 
   async joinCommunityRequest(
@@ -28,22 +30,21 @@ export class JoinCommunityService {
       Result<Domain.JoinCommunityRequest>
     >
   > {
-    // Check if the communityId is valid
+    // Validate community exists
     const community = await this.communityRepository.findById(communityId);
-
-    if (!!community === false) {
+    if (!community) {
       return left(Exceptions.CommunityNotFound.create(communityId));
     }
 
-    // Check if the request already exists
-    const joinCommunityRequestAlreadyExists =
+    // Check existing request status
+    const existingRequest =
       await this.joinCommunityRequestRepository.findByUserIdAndCommunityId(
         userId,
         communityId,
       );
 
-    if (!!joinCommunityRequestAlreadyExists === true) {
-      switch (joinCommunityRequestAlreadyExists.status) {
+    if (existingRequest) {
+      switch (existingRequest.status) {
         case StatusRequest.PENDING:
           return left(
             Exceptions.JoinCommunityRequestAlreadyExists.create(
@@ -69,12 +70,17 @@ export class JoinCommunityService {
     }
 
     // Create the new request
-    const newRequest = Domain.JoinCommunityRequest.create({
-      userId,
-      communityId,
-      status: StatusRequest.PENDING,
-    });
-    this.joinCommunityRequestRepository.save(newRequest);
+    const newRequest = this.eventPublisher.mergeObjectContext(
+      Domain.JoinCommunityRequest.create({
+        userId,
+        communityId,
+        adminId: community.adminId,
+        status: StatusRequest.PENDING,
+      }),
+    );
+
+    await this.joinCommunityRequestRepository.save(newRequest);
+    newRequest.commit();
 
     // Return the request object
     return right(Result.ok(newRequest));
@@ -112,7 +118,7 @@ export class JoinCommunityService {
     const joinCommunityRequest =
       await this.joinCommunityRequestRepository.findById(id);
 
-    if (!!joinCommunityRequest === false) {
+    if (!joinCommunityRequest) {
       return left(Exceptions.JoinCommunityRequestNotFound.create(id));
     }
 
@@ -129,39 +135,58 @@ export class JoinCommunityService {
       Result<void>
     >
   > {
-    // Check if the request exists
-    const joinCommunityRequest =
+    // Find the join request
+    const request =
       await this.joinCommunityRequestRepository.findById(requestId);
-
-    if (!!joinCommunityRequest === false) {
+    if (!request) {
       return left(Exceptions.JoinCommunityRequestNotFound.create(requestId));
     }
 
+    // Find the associated community
+    const community = await this.communityRepository.findById(
+      request.communityId,
+    );
+    if (!community) {
+      return left(Exceptions.CommunityNotFound.create(request.communityId));
+    }
+
+    // Merge request with event publisher
+    const joinCommunityRequest =
+      this.eventPublisher.mergeObjectContext(request);
+
     switch (status) {
-      case StatusRequest.APPROVED:
-        // Update the request
+      case StatusRequest.APPROVED: {
+        // Update request status and add member to community
         joinCommunityRequest.status = StatusRequest.APPROVED;
 
-        // Save the request
-        this.joinCommunityRequestRepository.save(joinCommunityRequest);
+        const updatedCommunity =
+          this.eventPublisher.mergeObjectContext(community);
+        updatedCommunity.addMember(joinCommunityRequest.userId);
 
-        // Send the "joined_community" event
+        // Save both request and community
+        await Promise.all([
+          this.joinCommunityRequestRepository.save(joinCommunityRequest),
+          this.communityRepository.save(updatedCommunity),
+        ]);
 
+        updatedCommunity.commit();
         break;
+      }
 
-      case StatusRequest.DENIED:
-        if (comment) {
-          // Update the request
-          joinCommunityRequest.status = StatusRequest.DENIED;
-          joinCommunityRequest.comment = comment;
-
-          // Save the request
-          this.joinCommunityRequestRepository.save(joinCommunityRequest);
-        } else {
+      case StatusRequest.DENIED: {
+        if (!comment) {
           return left(Exceptions.CommentIsMandatory.create());
         }
 
+        // Update request status and add denial comment
+        joinCommunityRequest.status = StatusRequest.DENIED;
+        joinCommunityRequest.comment = comment;
+
+        // Save updated request
+        await this.joinCommunityRequestRepository.save(joinCommunityRequest);
+        joinCommunityRequest.commit();
         break;
+      }
 
       default:
         break;
@@ -174,11 +199,6 @@ export class JoinCommunityService {
     userId: string,
     communityId: string,
   ): Promise<boolean> {
-    const result = await this.communityRepository.isCommunityAdmin(
-      userId,
-      communityId,
-    );
-
-    return result;
+    return this.communityRepository.isCommunityAdmin(userId, communityId);
   }
 }

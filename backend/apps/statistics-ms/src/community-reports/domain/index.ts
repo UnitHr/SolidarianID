@@ -5,12 +5,6 @@
 
 import { CommunityByCommunityId } from './CommunityByCommunityId';
 import { CauseByCommunityId } from './CauseByCommunityId';
-import { ActionByCommunityId } from './ActionByCommunityId';
-import { CommunityReport } from './CommunityReport';
+import { ActionByCauseId } from './ActionByCauseId';
 
-export {
-  CommunityByCommunityId,
-  CauseByCommunityId,
-  ActionByCommunityId,
-  CommunityReport,
-};
+export { CommunityByCommunityId, CauseByCommunityId, ActionByCauseId };

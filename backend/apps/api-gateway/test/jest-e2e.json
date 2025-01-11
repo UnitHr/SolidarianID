@@ -9,6 +9,7 @@
   "moduleNameMapper": {
     "^@api-gateway/(.*)$": "<rootDir>/apps/api-gateway/src/$1",
     "^@communities-ms/(.*)$": "<rootDir>/apps/communities-ms/src/$1",
+    "^@statistics-ms/(.*)$": "<rootDir>/apps/statistics-ms/src/$1",
     "^@gateway-ms/(.*)$": "<rootDir>/apps/gateway-ms/src/$1",
     "^@users-ms/(.*)$": "<rootDir>/apps/users-ms/src/$1",
     "^@common-lib/common-lib/(.*)$": "<rootDir>/libs/common-lib/src/$1"

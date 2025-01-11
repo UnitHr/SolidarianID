@@ -19,7 +19,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
@@ -29,6 +31,7 @@
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "cookie-parser": "^1.4.7",
+    "cypress": "^13.17.0",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
     "hbs": "^4.2.0",

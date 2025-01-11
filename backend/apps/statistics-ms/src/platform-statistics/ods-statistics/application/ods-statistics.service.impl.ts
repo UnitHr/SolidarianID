@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import {
+  mapODSEnumSetToNumberArray,
+  ODSEnum,
+} from '@common-lib/common-lib/common/ods';
 import { OdsStatisticsService } from './ods-statistics.service';
 import OdsStatisticsRepository from '../infra/ods-statistics.repository.cassandra';
 import OdsCommunityRepository from '../infra/ods-community.repository.cassandra';
@@ -21,12 +24,13 @@ export class OdsStatisticsServiceImpl implements OdsStatisticsService {
   }
 
   async registerCauseCreation(
-    ods: ODSEnum[],
+    ods: Set<ODSEnum>,
     communityId: string,
   ): Promise<void> {
     // Fetch the ODS statistics
-    const odsStatistics =
-      await this.odsStatisticsRepository.findManyEntities(ods);
+    const odsStatistics = await this.odsStatisticsRepository.findManyEntities(
+      mapODSEnumSetToNumberArray(ods),
+    );
 
     // Update the communities and causes count
     odsStatistics.forEach(async (odsStatistic) => {
@@ -52,10 +56,11 @@ export class OdsStatisticsServiceImpl implements OdsStatisticsService {
     await this.odsStatisticsRepository.saveManyEntities(odsStatistics);
   }
 
-  async registerCauseSupport(ods: ODSEnum[]): Promise<void> {
+  async registerCauseSupport(ods: Set<ODSEnum>): Promise<void> {
     // Fetch the ODS statistics
-    const odsStatistics =
-      await this.odsStatisticsRepository.findManyEntities(ods);
+    const odsStatistics = await this.odsStatisticsRepository.findManyEntities(
+      Array.from(ods).map((odsEnum) => odsEnum as number),
+    );
 
     // Update the supports count
     odsStatistics.forEach((odsStatistic) => {

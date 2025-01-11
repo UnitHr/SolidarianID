@@ -159,4 +159,33 @@ export class CommunityService {
     // Return the request object
     return right(Result.ok(newRequest));
   }
+
+  async createCommunityCause(
+    title: string,
+    description: string,
+    ods: ODSEnum[],
+    endDate: Date,
+    communityId: string,
+    createdBy: string,
+  ): Promise<Either<Exceptions.CommunityNotFound, Result<string>>> {
+    const community = await this.communityRepository.findById(communityId);
+
+    if (!!community === false) {
+      return left(Exceptions.CommunityNotFound.create(communityId));
+    }
+
+    const causeId = await this.causeService.createCause(
+      title,
+      description,
+      ods,
+      endDate,
+      communityId,
+      createdBy,
+    );
+
+    community.addCause(causeId);
+    await this.communityRepository.save(community);
+
+    return right(Result.ok(causeId));
+  }
 }

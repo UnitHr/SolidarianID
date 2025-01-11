@@ -10,4 +10,4 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "start:prod:communities-ms"]
+CMD ["npm", "run", "start:prod:api-gateway"]

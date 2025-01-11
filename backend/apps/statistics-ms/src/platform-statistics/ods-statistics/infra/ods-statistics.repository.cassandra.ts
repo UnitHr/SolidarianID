@@ -19,7 +19,9 @@ export default class OdsStatisticsRepository extends BaseService<Persistence.Ods
     return results.map(OdsStatisticsMapper.toDomain);
   }
 
-  async findManyEntities(odsId: number[]): Promise<Domain.OdsStatistics[]> {
+  async findManyEntities(
+    odsId: Array<number>,
+  ): Promise<Domain.OdsStatistics[]> {
     const results = await this.findMany({ odsId });
     return results.map(OdsStatisticsMapper.toDomain);
   }

@@ -134,3 +134,21 @@ export function mapODSEnumToDetails(ods: ODSEnum): ODSDetail {
 export function mapODSEnumListToDetails(odsList: ODSEnum[]): ODSDetail[] {
   return odsList.map(mapODSEnumToDetails);
 }
+
+export function mapODSEnumSetToNumberArray(
+  odsSet: Set<ODSEnum> | null,
+): Array<number> {
+  if (!odsSet) {
+    return [];
+  }
+  return Array.from(odsSet).map((value) => Number(value));
+}
+
+export function mapNumberArrayToODSEnumSet(
+  odsArray: Array<number> | null,
+): Set<ODSEnum> {
+  if (!odsArray) {
+    return new Set<ODSEnum>();
+  }
+  return new Set(odsArray.map((value) => value as ODSEnum));
+}

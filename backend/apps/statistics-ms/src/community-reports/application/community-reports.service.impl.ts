@@ -75,7 +75,7 @@ export class CommunityReportsServiceImpl implements CommunityReportsService {
     communityId: string,
     causeId: string,
     causeName: string,
-    ods: ODSEnum[],
+    ods: Set<ODSEnum>,
   ): Promise<void> {
     // Fetch community
     const community =
@@ -101,10 +101,15 @@ export class CommunityReportsServiceImpl implements CommunityReportsService {
     return this.causeByCommunityIdRepository.save(cause);
   }
 
-  async registerCauseAddSupporter(causeId: string): Promise<void> {
+  async registerCauseAddSupporter(
+    communityId: string,
+    causeId: string,
+  ): Promise<void> {
     // Fetch cause
-    const cause =
-      await this.causeByCommunityIdRepository.findOneByCauseId(causeId);
+    const cause = await this.causeByCommunityIdRepository.findOneByCauseId(
+      communityId,
+      causeId,
+    );
 
     // Increment supporters count
     cause.incrementSupportsCount();
@@ -132,12 +137,15 @@ export class CommunityReportsServiceImpl implements CommunityReportsService {
   }
 
   async registerActionContributed(
+    causeId: string,
     actionId: string,
     amount: number,
   ): Promise<void> {
     // Fetch action
-    const action =
-      await this.actionByCauseIdRepository.findOneByActionId(actionId);
+    const action = await this.actionByCauseIdRepository.findOneByActionId(
+      causeId,
+      actionId,
+    );
 
     // Increment contributions count
     action.incrementAchieved(amount);

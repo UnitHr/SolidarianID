@@ -9,6 +9,7 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
@@ -30,6 +31,7 @@ import { FindCreateCommunitiesDto } from '../dto/find-create-communities.dto';
 import { CreateCommunityRequestMapper } from '../mapper/CreateCommunityRequestMapper';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
 import { CreateCauseDto } from '../dto/create-cause.dto';
+import { RolesGuard } from '@common-lib/common-lib/auth/roles.guard';
 
 @Controller('communities')
 export class CommunityController {
@@ -530,6 +532,7 @@ export class CommunityController {
 
   @ApiExcludeEndpoint()
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('creation-requests/all')
   async getCreateCommunityRequests(
     @Req() req: Request,
@@ -566,6 +569,7 @@ export class CommunityController {
 
   @ApiExcludeEndpoint()
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('creation-requests/:id')
   async getCreateCommunityRequest(
     @Param('id', ParseUUIDPipe) id: string,
@@ -601,6 +605,7 @@ export class CommunityController {
 
   @ApiExcludeEndpoint()
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Post('creation-requests/:id')
   async validateCreateCommunityRequest(
     @Param('id', ParseUUIDPipe) id: string,

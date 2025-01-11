@@ -21,6 +21,7 @@ interface EnvVars {
   CASSANDRA_CLUSTER_NAME: string;
   CASSANDRA_KEYSPACE: string;
   CASSANDRA_LOCAL_DATA_CENTER: string;
+  JWT_SECRET: string;
 }
 
 const envsSchema = joi
@@ -41,6 +42,7 @@ const envsSchema = joi
     CASSANDRA_CLUSTER_NAME: joi.string().required(),
     CASSANDRA_KEYSPACE: joi.string().required(),
     CASSANDRA_LOCAL_DATA_CENTER: joi.string().required(),
+    JWT_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -65,4 +67,5 @@ export const envs = {
   cassandraClusterName: envVars.CASSANDRA_CLUSTER_NAME,
   cassandraKeyspace: envVars.CASSANDRA_KEYSPACE,
   cassandraLocalDataCenter: envVars.CASSANDRA_LOCAL_DATA_CENTER,
+  jwtSecret: envVars.JWT_SECRET,
 };

@@ -13,16 +13,22 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CommunityNotFoundError } from '../../exceptions';
+import {
+  CommunityNotFoundError,
+  UserNotAuthorizedError,
+} from '../../exceptions';
 
 type ExceptionConstructor = new (...args: unknown[]) => Error;
 
-@Catch(CommunityNotFoundError)
+@Catch(CommunityNotFoundError, UserNotAuthorizedError)
 export class CommunityReportsExceptionFilter implements ExceptionFilter {
   private readonly exceptionStatusMap = new Map<
     ExceptionConstructor,
     HttpStatus
-  >([[CommunityNotFoundError, HttpStatus.NOT_FOUND]]);
+  >([
+    [CommunityNotFoundError, HttpStatus.NOT_FOUND],
+    [UserNotAuthorizedError, HttpStatus.FORBIDDEN],
+  ]);
 
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

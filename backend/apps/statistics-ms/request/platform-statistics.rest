@@ -1,0 +1,13 @@
+# Base URL
+@baseUrl = http://localhost:3003
+@jwtToken = <token>
+
+### Get platform statistics for ods
+GET {{baseUrl}}/statistics/ods
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+### Get platform statistics for communities
+GET {{baseUrl}}/statistics/community
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}

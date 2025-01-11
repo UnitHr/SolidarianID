@@ -16,6 +16,7 @@ export class PlatformStatisticsController {
   ) {}
 
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('ods')
   async findAllOdsStatistics(): Promise<OdsStatisticsResponseDto[]> {
     const odsStatistics = await this.odsStatisticsService.getAll();
@@ -28,6 +29,7 @@ export class PlatformStatisticsController {
   }
 
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('community')
   async findAllCommunityStatistics(): Promise<
     CommunityStatisticsResponseDto[]

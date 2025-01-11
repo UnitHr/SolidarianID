@@ -1,4 +1,4 @@
-import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { ODSDetail } from '@common-lib/common-lib/common/ods';
 import { StatusRequest } from '../domain/StatusRequest';
 
 export class CreateCommunityRequestDto {
@@ -16,7 +16,7 @@ export class CreateCommunityRequestDto {
 
   causeEndDate: Date;
 
-  causeOds: ODSEnum[];
+  causeOds: ODSDetail[];
 
   status: StatusRequest;
 

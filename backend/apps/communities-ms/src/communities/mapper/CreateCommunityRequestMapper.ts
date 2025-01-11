@@ -1,4 +1,5 @@
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { mapODSEnumListToDetails } from '@common-lib/common-lib/common/ods';
 import * as Domain from '../domain';
 import * as Persistence from '../infra/persistence';
 import { CreateCommunityRequestDto } from '../dto/create-community-request.dto';
@@ -55,7 +56,7 @@ export class CreateCommunityRequestMapper {
       causeTitle: entity.causeTitle,
       causeDescription: entity.causeDescription,
       causeEndDate: entity.causeEndDate,
-      causeOds: entity.causeOds,
+      causeOds: mapODSEnumListToDetails(entity.causeOds),
       status: entity.status,
       createdAt: entity.createdAt,
       comment: entity.comment,

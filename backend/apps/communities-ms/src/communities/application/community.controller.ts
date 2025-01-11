@@ -28,6 +28,7 @@ import { CommunityMapper } from '../mapper/CommunityMapper';
 import { FindCreateCommunitiesDto } from '../dto/find-create-communities.dto';
 import { CreateCommunityRequestMapper } from '../mapper/CreateCommunityRequestMapper';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
+import { CreateCauseDto } from '../dto/create-cause.dto';
 
 @Controller('communities')
 export class CommunityController {
@@ -36,6 +37,49 @@ export class CommunityController {
     private readonly joinCommunityService: JoinCommunityService,
     private readonly createCommunityService: CreateCommunityService,
   ) {}
+
+  @Post(':id/causes')
+  async createCommunityCause(
+    @Param('id', ParseUUIDPipe) communityId: string,
+    @GetUserId() userId: string,
+    @Body() createCause: CreateCauseDto,
+    @Res() res,
+  ) {
+    // Get the community
+    const result = await this.communityService.createCommunityCause(
+      createCause.title,
+      createCause.description,
+      createCause.ods,
+      createCause.end,
+      communityId,
+      userId,
+    );
+
+    if (result.isLeft()) {
+      const error = result.value;
+
+      // Handle the error
+      switch (error.constructor) {
+        case Exceptions.CommunityNotFound:
+          res.status(HttpStatus.NOT_FOUND);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+          return;
+        default:
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+          res.json({ errors: { message: error.errorValue().message } });
+          res.send();
+      }
+    } else {
+      // Return the community
+      const causeId = result.value;
+
+      const location = `/causes/${causeId.getValue().toString()}`;
+      res.status(HttpStatus.OK);
+      res.location(location);
+      res.send();
+    }
+  }
 
   @Post()
   async createCommunityRequest(
@@ -473,6 +517,7 @@ export class CommunityController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Get('creation-requests/all')
   async getCreateCommunityRequests(
     @Req() req: Request,
@@ -507,6 +552,7 @@ export class CommunityController {
     res.send();
   }
 
+  @Roles(Role.ADMIN)
   @Get('creation-requests/:id')
   async getCreateCommunityRequest(
     @Param('id', ParseUUIDPipe) id: string,
@@ -540,14 +586,13 @@ export class CommunityController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Post('creation-requests/:id')
   async validateCreateCommunityRequest(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() validateCommunityDto: ValidateCommunityDto,
     @Res() res: Response,
   ) {
-    console.log('id', id);
-    console.log('validateCommunityDto', validateCommunityDto);
     const result =
       await this.createCommunityService.validateCreateCommunityRequest(
         id,

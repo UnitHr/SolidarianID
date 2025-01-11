@@ -4,6 +4,7 @@ import { ActionContributedEvent } from '@common-lib/common-lib/events/domain/Act
 import { ActionStatus } from './ActionStatus';
 import { ActionType } from './ActionType';
 import { Contribution } from './Contribution';
+import * as Exceptions from '../exceptions';
 
 export interface ActionProps {
   type: ActionType;
@@ -123,20 +124,74 @@ export abstract class Action extends EntityRoot<ActionProps> {
     return (this.achieved / this.target) * 100;
   }
 
-  contribute(contribution: Contribution): void {
-    if (this.status === ActionStatus.PENDING)
-      this.status = ActionStatus.IN_PROGRESS;
-    this.addContribution(contribution);
+  contribute(userId: string, date: Date, amount: number, unit: string): string {
+    const actionId = this.id.toString();
+    this.validateContribution(actionId, unit);
 
+    const contribution = this.createContribution(
+      userId,
+      actionId,
+      date,
+      amount,
+      unit,
+    );
+    this.processContribution(contribution);
+    this.publishContributionEvent(contribution, actionId);
+    return contribution.id.toString();
+  }
+
+  private validateContribution(actionId: string, unit: string): void {
+    if (this.unit !== unit) {
+      throw new Exceptions.InvalidContributionUnitError(
+        actionId,
+        unit,
+        this.unit,
+      );
+    }
+
+    if (this.status === ActionStatus.COMPLETED) {
+      throw new Exceptions.CompletedActionError(actionId);
+    }
+  }
+
+  private createContribution(
+    userId: string,
+    actionId: string,
+    date: Date,
+    amount: number,
+    unit: string,
+  ): Contribution {
+    return Contribution.create({
+      userId,
+      actionId,
+      date,
+      amount,
+      unit,
+    });
+  }
+
+  private processContribution(contribution: Contribution): void {
+    if (this.status === ActionStatus.PENDING) {
+      this.status = ActionStatus.IN_PROGRESS;
+    }
+
+    this.addContribution(contribution);
     this.achieved += contribution.amount;
 
-    if (this.achieved >= this.target) this.status = ActionStatus.COMPLETED;
+    if (this.achieved >= this.target) {
+      this.status = ActionStatus.COMPLETED;
+    }
+  }
 
+  private publishContributionEvent(
+    contribution: Contribution,
+    actionId: string,
+  ): void {
     this.apply(
       new ActionContributedEvent(
         contribution.userId,
         this.communityId,
-        this.id.toString(),
+        actionId,
         this.causeId,
         contribution.amount,
         contribution.unit,

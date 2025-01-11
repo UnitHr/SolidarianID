@@ -139,32 +139,11 @@ export class ActionServiceImpl implements ActionService {
       await this.actionRepository.findById(actionId),
     );
 
-    // TODO: Maybe this should be in action.contribute
-    if (action.unit !== unit) {
-      throw new Exceptions.InvalidContributionUnitError(
-        actionId,
-        unit,
-        action.unit,
-      );
-    }
-
-    // Check the action is not completed
-    if (action.status === Domain.ActionStatus.COMPLETED) {
-      throw new Exceptions.CompletedActionError(actionId);
-    }
-
-    const contribution = Domain.Contribution.create({
-      userId,
-      actionId,
-      date,
-      amount,
-      unit,
-    });
-
-    action.contribute(contribution);
+    const contributionId = action.contribute(userId, date, amount, unit);
     await this.actionRepository.save(action);
+
     action.commit();
-    return contribution.id.toString();
+    return contributionId;
   }
 
   async getContributions(

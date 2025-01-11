@@ -1,99 +1,65 @@
-import { ActionContributedEvent } from '@common-lib/common-lib/events/domain/ActionContributedEvent';
-import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
-import { JoinCommunityRequestCreatedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestCreatedEvent';
-import { CauseSupportedEvent } from '@common-lib/common-lib/events/domain/CauseSupportedEvent';
-import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events/domain/JoinCommunityRequestRejectedEvent';
-import { CauseCreatedEvent } from '@common-lib/common-lib/events/domain/CauseCreatedEvent';
-import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/CommunityCreatedEvent';
-import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Req,
+  Res,
+  ParseUUIDPipe,
+  HttpStatus,
+  ForbiddenException,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { HistoryService } from './history.service';
+import { HistoryEntryMapper } from '../history-entry.mapper';
+import { FindHistoryDto } from '../dto/find-history.dto';
 
-@Controller()
+@Controller('users/:userId/history')
 export class HistoryController {
-  private readonly logger = new Logger(HistoryController.name);
-
   constructor(private readonly historyService: HistoryService) {}
 
-  @EventPattern(CommunityCreatedEvent.TOPIC)
-  async handleCommunityCreated(@Payload() message: CommunityCreatedEvent) {
-    await this.historyService.registerCommunityCreation(
-      message.adminId,
-      message.communityId,
-    );
-    this.logger.log(
-      `Community created event handled: Community ${message.communityId} created`,
-    );
-  }
-
-  @EventPattern(ActionContributedEvent.TOPIC)
-  async handleActionContributed(@Payload() message: ActionContributedEvent) {
-    await this.historyService.registerActionContribute(
-      message.userId,
-      message.actionId,
-    );
-    this.logger.log(
-      `Action contributed event handled: User ${message.userId} contributed to action ${message.actionId}`,
-    );
-  }
-
-  @EventPattern(JoinCommunityRequestCreatedEvent.TOPIC)
-  async handleJoinCommunityRequestCreated(
-    @Payload() message: JoinCommunityRequestCreatedEvent,
+  @Get()
+  async getHistory(
+    @Param('userId', ParseUUIDPipe) historyOwner: string,
+    @GetUserId() userId: string,
+    @Query() query: FindHistoryDto,
+    @Req() req: Request,
+    @Res() res: Response,
   ) {
-    await this.historyService.registerJoinCommunityRequest(
-      message.userId,
-      message.communityId,
-      message.adminId,
-    );
-    this.logger.log(
-      `Join community request created event handled: User ${message.userId} requested to join community ${message.communityId}`,
-    );
-  }
+    if (
+      historyOwner !== userId &&
+      !(await this.historyService.userHasJoinCommunityRequestWithAdmin(
+        historyOwner,
+        userId,
+      ))
+    ) {
+      throw new ForbiddenException(
+        `You are not allowed to see the history of user: ${historyOwner}`,
+      );
+    }
 
-  @EventPattern(JoinCommunityRequestRejectedEvent.TOPIC)
-  async handleJoinCommunityRequestRejected(
-    @Payload() message: JoinCommunityRequestRejectedEvent,
-  ) {
-    await this.historyService.registerJoinCommunityRequestRejected(
-      message.userId,
-      message.communityId,
-    );
-    this.logger.log(
-      `Join community request rejected event handled: User ${message.userId} requested to join community ${message.communityId}`,
-    );
-  }
+    const { type, status, page, limit } = query;
 
-  @EventPattern(UserJoinedCommunity.TOPIC)
-  async handleUserJoinedCommunity(@Payload() message: UserJoinedCommunity) {
-    await this.historyService.registerUserJoinedCommunity(
-      message.userId,
-      message.communityId,
+    const { entries, total } = await this.historyService.getUserHistory(
+      historyOwner,
+      type,
+      status,
+      page,
+      limit,
     );
-    this.logger.log(
-      `User joined community event handled: User ${message.userId} joined community ${message.communityId}`,
-    );
-  }
 
-  @EventPattern(CauseCreatedEvent.TOPIC)
-  async handleCauseCreated(@Payload() message: CauseCreatedEvent) {
-    await this.historyService.registerCauseCreation(
-      message.userId,
-      message.causeId,
-    );
-    this.logger.log(
-      `Cause created event handled: User ${message.userId} created cause ${message.causeId}`,
-    );
-  }
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
-  @EventPattern(CauseSupportedEvent.TOPIC)
-  async handleCauseSupported(@Payload() message: CauseSupportedEvent) {
-    await this.historyService.registerCauseSupported(
-      message.userId,
-      message.causeId,
+    const response = new PaginatedResponseDto(
+      entries.map(HistoryEntryMapper.toDto),
+      total,
+      page,
+      limit,
+      baseUrl,
     );
-    this.logger.log(
-      `Cause supported event handled: User ${message.userId} supported cause ${message.causeId}`,
-    );
+
+    res.status(HttpStatus.OK).json(response);
   }
 }

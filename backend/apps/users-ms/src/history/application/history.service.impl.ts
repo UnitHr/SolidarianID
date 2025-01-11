@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { EventPublisher } from '@nestjs/cqrs';
 import { HistoryEntry } from '../domain/HistoryEntry';
-import { HistoryEntryType } from '../domain/HistoryEntryType';
+import { ActivityType } from '../domain/ActivityType';
 import { HistoryEntryRepository } from '../domain/history-entry.repository';
 import { HistoryService } from './history.service';
 import { EntryStatus } from '../domain/HistoryEntryStatus';
@@ -10,11 +11,18 @@ import { EntryStatus } from '../domain/HistoryEntryStatus';
 export class HistoryServiceImpl implements HistoryService {
   constructor(
     private readonly historyEntryRepository: HistoryEntryRepository,
+    private readonly eventPublisher: EventPublisher,
   ) {}
+
+  private async saveEntryAndNotify(entry: HistoryEntry): Promise<void> {
+    const savedEntry = await this.historyEntryRepository.save(entry);
+    this.eventPublisher.mergeObjectContext(savedEntry);
+    savedEntry.commit();
+  }
 
   async getUserHistory(
     userId: string,
-    type?: HistoryEntryType,
+    type?: ActivityType,
     status?: EntryStatus,
     page?: number,
     limit?: number,
@@ -40,12 +48,14 @@ export class HistoryServiceImpl implements HistoryService {
   async registerUserFollowed(
     userId: string,
     followedUserId: string,
+    timestamp: Date,
     followedUserName?: string,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.USER_FOLLOWED,
+      type: ActivityType.USER_FOLLOWED,
       entityId: new UniqueEntityID(followedUserId),
+      timestamp,
       metadata: followedUserName ? { entityName: followedUserName } : undefined,
     });
 
@@ -55,40 +65,46 @@ export class HistoryServiceImpl implements HistoryService {
   async registerCommunityCreation(
     adminId: string,
     communityId: string,
+    timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(adminId),
-      type: HistoryEntryType.COMMUNITY_ADMIN,
+      type: ActivityType.COMMUNITY_ADMIN,
       entityId: new UniqueEntityID(communityId),
+      timestamp,
     });
 
-    await this.historyEntryRepository.save(entry);
+    await this.saveEntryAndNotify(entry);
   }
 
   async registerActionContribute(
     userId: string,
     actionId: string,
+    timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.ACTION_CONTRIBUTED,
+      type: ActivityType.ACTION_CONTRIBUTED,
       entityId: new UniqueEntityID(actionId),
+      timestamp,
     });
 
-    await this.historyEntryRepository.save(entry);
+    await this.saveEntryAndNotify(entry);
   }
 
   async registerJoinCommunityRequest(
     userId: string,
     communityId: string,
     communityAdminId: string,
+    timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,
+      type: ActivityType.JOIN_COMMUNITY_REQUEST_SENT,
       entityId: new UniqueEntityID(communityId),
       status: EntryStatus.PENDING,
       metadata: { adminId: communityAdminId },
+      timestamp,
     });
 
     await this.historyEntryRepository.save(entry);
@@ -102,7 +118,7 @@ export class HistoryServiceImpl implements HistoryService {
       await this.historyEntryRepository.findByUserIdEntityIdTypeAndStatus(
         userId,
         communityId,
-        HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,
+        ActivityType.JOIN_COMMUNITY_REQUEST_SENT,
         EntryStatus.PENDING,
       );
 
@@ -113,14 +129,16 @@ export class HistoryServiceImpl implements HistoryService {
   async registerJoinCommunityRequestRejected(
     userId: string,
     communityId: string,
+    timestamp: Date,
   ): Promise<void> {
     await this.archiveJoinCommunityPendingRequest(userId, communityId);
 
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.JOIN_COMMUNITY_REQUEST_REJECTED,
+      type: ActivityType.JOIN_COMMUNITY_REQUEST_REJECTED,
       entityId: new UniqueEntityID(communityId),
       status: EntryStatus.REJECTED,
+      timestamp,
     });
 
     await this.historyEntryRepository.save(entry);
@@ -129,36 +147,48 @@ export class HistoryServiceImpl implements HistoryService {
   async registerUserJoinedCommunity(
     userId: string,
     communityId: string,
+    timestamp: Date,
   ): Promise<void> {
     await this.archiveJoinCommunityPendingRequest(userId, communityId);
 
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.JOINED_COMMUNITY,
+      type: ActivityType.JOINED_COMMUNITY,
       entityId: new UniqueEntityID(communityId),
+      timestamp,
     });
 
-    await this.historyEntryRepository.save(entry);
+    await this.saveEntryAndNotify(entry);
   }
 
-  async registerCauseCreation(userId: string, causeId: string): Promise<void> {
+  async registerCauseCreation(
+    userId: string,
+    causeId: string,
+    timestamp: Date,
+  ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.CAUSE_CREATED,
+      type: ActivityType.CAUSE_CREATED,
       entityId: new UniqueEntityID(causeId),
+      timestamp,
     });
 
-    await this.historyEntryRepository.save(entry);
+    await this.saveEntryAndNotify(entry);
   }
 
-  async registerCauseSupported(userId: string, causeId: string): Promise<void> {
+  async registerCauseSupported(
+    userId: string,
+    causeId: string,
+    timestamp: Date,
+  ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
-      type: HistoryEntryType.CAUSE_SUPPORTED,
+      type: ActivityType.CAUSE_SUPPORTED,
       entityId: new UniqueEntityID(causeId),
+      timestamp,
     });
 
-    await this.historyEntryRepository.save(entry);
+    await this.saveEntryAndNotify(entry);
   }
 
   async userHasJoinCommunityRequestWithAdmin(
@@ -167,7 +197,7 @@ export class HistoryServiceImpl implements HistoryService {
   ): Promise<boolean> {
     return this.historyEntryRepository.existsUserJoinCommunityRequestWithAdmin(
       userId,
-      HistoryEntryType.JOIN_COMMUNITY_REQUEST_SENT,
+      ActivityType.JOIN_COMMUNITY_REQUEST_SENT,
       adminId,
     );
   }

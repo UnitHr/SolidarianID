@@ -1,10 +1,14 @@
+# Base URL
+@baseUrl = http://localhost:3002
+@jwtToken = <token>
+
 ### Create community request
-POST http://localhost:3002/communities
+POST {{baseUrl}}/communities
 Content-Type: application/json
-Authorization: Bearer {token}
+Authorization: Bearer {{jwtToken}}
 
 {
-  "name": "Mi nueva comunidad 2",
+  "name": "Mi nueva comunidad",
   "description": "Una descripción breve de la comunidad",
   "cause": {
     "title": "Causa principal",

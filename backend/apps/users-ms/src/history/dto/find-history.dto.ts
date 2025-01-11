@@ -1,12 +1,12 @@
 import { IsOptional, IsEnum } from 'class-validator';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
-import { HistoryEntryType } from '../domain/HistoryEntryType';
+import { ActivityType } from '../domain/ActivityType';
 import { EntryStatus } from '../domain/HistoryEntryStatus';
 
 export class FindHistoryDto extends QueryPaginationDto {
   @IsOptional()
-  @IsEnum(HistoryEntryType)
-  type?: HistoryEntryType;
+  @IsEnum(ActivityType)
+  type?: ActivityType;
 
   @IsOptional()
   @IsEnum(EntryStatus)

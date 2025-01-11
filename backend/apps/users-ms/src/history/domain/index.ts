@@ -1,5 +1,5 @@
 import { HistoryEntry } from './HistoryEntry';
-import { HistoryEntryType } from './HistoryEntryType';
+import { ActivityType } from './ActivityType';
 import { EntryStatus } from './HistoryEntryStatus';
 
-export { HistoryEntry, HistoryEntryType, EntryStatus };
+export { HistoryEntry, ActivityType, EntryStatus };

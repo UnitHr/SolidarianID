@@ -1,12 +1,13 @@
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions';
-import { HistoryEntryType } from './HistoryEntryType';
+import { ActivityType } from './ActivityType';
 import { EntryStatus } from './HistoryEntryStatus';
+import { HistoryRegisteredEvent } from './events/HistoryRegisteredEvent';
 
 interface HistoryEntryProps {
   userId: UniqueEntityID;
-  type: HistoryEntryType;
+  type: ActivityType;
   entityId: UniqueEntityID;
   timestamp?: Date;
   status?: EntryStatus;
@@ -30,7 +31,7 @@ export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
     return this.props.userId;
   }
 
-  get type(): HistoryEntryType {
+  get type(): ActivityType {
     return this.props.type;
   }
 
@@ -59,13 +60,22 @@ export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
     id?: UniqueEntityID,
   ): HistoryEntry {
     this.validateProps(props);
-    return new HistoryEntry(
+    const historyEntry = new HistoryEntry(
       {
         ...props,
         timestamp: props.timestamp ?? new Date(),
       },
       id,
     );
+    historyEntry.apply(
+      new HistoryRegisteredEvent(
+        historyEntry.id.toString(),
+        historyEntry.userId.toString(),
+        historyEntry.type,
+        historyEntry.entityId.toString(),
+      ),
+    );
+    return historyEntry;
   }
 
   private static validateProps(props: HistoryEntryProps): void {

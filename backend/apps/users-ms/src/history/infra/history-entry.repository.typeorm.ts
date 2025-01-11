@@ -4,7 +4,7 @@ import { Repository as TypeOrmRepository } from 'typeorm';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { HistoryEntry as DomainHistoryEntry } from '../domain/HistoryEntry';
-import { HistoryEntryType } from '../domain/HistoryEntryType';
+import { ActivityType } from '../domain/ActivityType';
 import { HistoryEntryRepository } from '../domain/history-entry.repository';
 import { HistoryEntry } from './persistence/HistoryEntry';
 import { HistoryEntryMapper } from '../history-entry.mapper';
@@ -37,7 +37,7 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
   async findByUserIdEntityIdTypeAndStatus(
     userId: string,
     entityId: string,
-    type: HistoryEntryType,
+    type: ActivityType,
     status: EntryStatus,
   ): Promise<DomainHistoryEntry> {
     const entry = await this.historyEntryRepository.findOne({
@@ -59,7 +59,7 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
 
   async findByUserIdWithFilters(
     userId: string,
-    type?: HistoryEntryType,
+    type?: ActivityType,
     status?: EntryStatus,
     page: number = PaginationDefaults.DEFAULT_PAGE,
     limit: number = PaginationDefaults.DEFAULT_LIMIT,
@@ -87,7 +87,7 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
 
   async countByUserIdWithFilters(
     userId: string,
-    type?: HistoryEntryType,
+    type?: ActivityType,
     status?: EntryStatus,
   ): Promise<number> {
     const query = this.historyEntryRepository
@@ -107,7 +107,7 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
 
   async existsUserJoinCommunityRequestWithAdmin(
     userId: string,
-    JOIN_COMMUNITY_REQUEST_SENT: HistoryEntryType,
+    JOIN_COMMUNITY_REQUEST_SENT: ActivityType,
     adminId: string,
   ): Promise<boolean> {
     const entry = await this.historyEntryRepository.findOne({

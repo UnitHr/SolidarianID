@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { OdsStatisticsMapper } from './ods-statistics/mapper/ods-statistics.mapper';
@@ -7,7 +7,6 @@ import { OdsStatisticsService } from './ods-statistics/application/ods-statistic
 import { CommunityStatisticsResponseDto } from './community-statistics/dto/community-statistics-response.dto';
 import { CommunityStatisticsService } from './community-statistics/application/community-statistics.service';
 import { CommunityStatisticsMapper } from './community-statistics/community-statistics.mapper';
-import { RolesGuard } from '@common-lib/common-lib/auth/roles.guard';
 
 @Controller('statistics')
 export class PlatformStatisticsController {

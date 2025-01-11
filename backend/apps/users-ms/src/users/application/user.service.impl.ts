@@ -11,6 +11,7 @@ import {
   EmailAlreadyInUseError,
 } from '../exceptions';
 import { UserPassword } from '../domain/Password';
+import { UserEmail } from '../domain/UserEmail';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -47,7 +48,7 @@ export class UserServiceImpl implements UserService {
         firstName,
         lastName,
         birthDate: UserBirthDate.create(birthDate),
-        email,
+        email: UserEmail.create(email),
         password: await UserPassword.create(password),
         bio,
         showAge,

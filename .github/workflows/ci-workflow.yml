@@ -5,29 +5,34 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
   pull_request:
-    branches: [ "develop" ]
+    branches: ["develop"]
 
 jobs:
-
-  build:
-
+  code-build-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Install dependencies
-      working-directory: ./backend
-      run: npm ci
-    - name: Build the project
-      working-directory: ./backend
-      run: npm run build:communities-ms
-  # - name: Run tests
-  #   working-directory: ./backend
-  #   run: npm test
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          cache-dependency-path: ./backend/package-lock.json
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      - name: Run prettier
+        working-directory: ./backend
+        run: npm run prettier:check
+      - name: Run eslint
+        working-directory: ./backend
+        run: npm run lint
+      - name: Build the project
+        working-directory: ./backend
+        run: npm run build:communities-ms &&
+          npm run build:users-ms &&
+          npm run build:api-gateway &&
+          npm run build:statistics-ms

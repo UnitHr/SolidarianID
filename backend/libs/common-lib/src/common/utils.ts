@@ -20,8 +20,8 @@ export class Utils {
   }
 
   static calculateAverage(amount: number, totalAmount: number): number {
-    if (totalAmount === 0) {
-      return 0;
+    if (totalAmount <= 0) {
+      throw new Error('Total amount must be greater than zero');
     }
     return parseFloat(((amount / totalAmount) * 100).toFixed(2));
   }

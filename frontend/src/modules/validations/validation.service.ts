@@ -7,7 +7,7 @@ export class ValidationService {
   async getCreateCommunityRequests(page: number, limit: number, token: string) {
     try {
       const response = await axios.get(
-        envs.communityMsBaseUrl + '/creation-requests/all',
+        envs.communityMsBaseUrl + '/creation-requests',
         {
           params: {
             status: 'pending',

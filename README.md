@@ -1,6 +1,6 @@
 # SolidarianID
 
-Repository for the SolidarianID project.
+Repository for the SolidarianID project..
 
 ## Main Commands
 

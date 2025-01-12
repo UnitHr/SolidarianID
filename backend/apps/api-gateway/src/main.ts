@@ -8,12 +8,14 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS
   app.enableCors({
-    origin: '*', // Aquí defines el frontend (puerto 3000 en este caso)
-    methods: 'GET,POST,PUT,DELETE', // Métodos permitidos
-    allowedHeaders: 'Content-Type, Authorization', // Encabezados permitidos
-    credentials: true, // Permite el uso de cookies y credenciales
+    origin: '*',
+    methods: 'GET,POST,PUT,DELETE', // Allowed methods
+    allowedHeaders: 'Content-Type, Authorization', // Allowed headers
+    credentials: true, // Allows the use of cookies and credentials
   });
+
   // Start the application
   await app.listen(envs.apiGatewayPort, envs.apiGatewayHost);
   logger.log(`Gateway is running on: ${await app.getUrl()}`);

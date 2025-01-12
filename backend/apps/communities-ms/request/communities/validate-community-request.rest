@@ -1,18 +1,18 @@
 # Base URL
 @baseUrl = http://localhost:3002
 @jwtToken = <token>
+@requestId = <requestId>
 
 ### Approve community creation request
-POST {{baseUrl}}/communities/creation-requests/:requestId
+POST {{baseUrl}}/communities/creation-requests/{{requestId}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiIzMDdhZjE5OC02YzY3LTRiZmMtYTU4My00YjM3Y2NlMjlkZTEifSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiYWRtaW4iLCJpYXQiOjE3MzY1NTU2NzcsImV4cCI6MTczNjU1OTI3N30.RKG736Ezi6pp9Tfwo1rY-RmjCPWjRQHoBLHv--w9u6w
-
+Authorization: Bearer {{jwtToken}}
 {
     "status": "approved"
 }
 
 ### Deny community creation request
-POST {{baseUrl}}/communities/creation-requests/:requestId
+POST {{baseUrl}}/communities/creation-requests/{{requestId}}
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 

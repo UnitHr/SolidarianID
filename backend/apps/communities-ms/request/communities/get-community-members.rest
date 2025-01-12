@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:3000/api/v1/communities
+@communityId = {replace-with-communityId}
+### Get all community members
+GET {{baseUrl}}/{{communityId}}/members
+Content-Type: application/json

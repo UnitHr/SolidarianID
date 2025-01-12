@@ -68,7 +68,6 @@ export class UserServiceImpl implements UserService {
   async updateUser(id: string, email: string, bio: string): Promise<void> {
     // Find the existing user
     const existingUser = await this.userRepository.findById(id);
-
     // Check if the email is different
     if (existingUser.email === email) {
       throw new EmailUpdateConflictError();

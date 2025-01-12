@@ -1,16 +1,18 @@
-@baseUrl = http://localhost:3002
-@jwtToken = <token>
+@baseUrl = http://localhost:3000/api/v1/communities
+@jwtToken = {replace-with-jwtToken}
+@communityId = {replace-with-communityId}
+@joinRequestId = {replace-with-joinRequestId}
 
 ### Success case: Join a community
-POST {{baseUrl}}/communities/:communityId/join-requests
+POST {{baseUrl}}/{{communityId}}/join-requests
 Authorization: Bearer {{jwtToken}}
 
 ### View all join community requests
-GET {{baseUrl}}/communities/:communityId/join-requests
+GET {{baseUrl}}/{{communityId}}/join-requests
 Authorization: Bearer {{jwtToken}}
 
 ### Validate a join community request
-POST {{baseUrl}}/communities/:communityId/join-requests/:joinRequestId
+POST {{baseUrl}}/{{communityId}}/join-requests/{{joinRequestId}}
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
@@ -18,4 +20,9 @@ Authorization: Bearer {{jwtToken}}
     "status": "denied",
     "comment": "Contact the community admin to join the community"
 }
+
+### Get join community request by id
+GET {{baseUrl}}/{{communityId}}/join-requests/{{joinRequestId}}
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
 

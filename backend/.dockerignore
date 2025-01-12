@@ -1,5 +1,5 @@
 # Ignore local node_modules (as they will be installed in the container)
-**/node_modules
+node_modules
 
 # Ignore Docker dependencies, configuration files, and Docker Compose
 docker-compose.yml
@@ -11,6 +11,7 @@ logs
 *.log.*
 
 # Ignore build files and local IDE configurations
+dist
 .idea
 .vscode
 .DS_Store

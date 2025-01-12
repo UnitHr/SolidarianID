@@ -77,9 +77,12 @@ describe('Password length boundary tests', () => {
       InvalidPasswordError,
     );
   });
-  it('Should accept a valid password with an length of 9 characters', async () => {
+  it('Should accept a valid password with a length of 9 characters', async () => {
     // Arrange
-    const shortPassword = '1234Test*';
+    const validPassword = '1234Test*';
+
+    // Act
+    const userPassword = await UserPassword.create(validPassword);
 
     // Assert
     expect(userPassword).toBeInstanceOf(UserPassword);

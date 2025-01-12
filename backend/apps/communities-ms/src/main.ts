@@ -35,7 +35,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('doc', app, document);
+  SwaggerModule.setup('doc/communities', app, document);
 
   // Start the application
   await app.listen(envs.communitiesMsPort, envs.communitiesMsHost);

@@ -14,6 +14,7 @@ interface EnvVars {
   USERS_MS_URL: string;
   COMMUNITIES_MS_URL: string;
   STATISTICS_MS_URL: string;
+  COMMUNITIES_DOCS_URL: string;
 }
 
 const envsSchema = joi
@@ -27,6 +28,7 @@ const envsSchema = joi
     USERS_MS_URL: joi.string().required(),
     COMMUNITIES_MS_URL: joi.string().required(),
     STATISTICS_MS_URL: joi.string().required(),
+    COMMUNITIES_DOCS_URL: joi.string().required(),
   })
   .unknown(true);
 
@@ -44,4 +46,5 @@ export const envs = {
   usersMsUrl: envVars.USERS_MS_URL,
   communitiesMsUrl: envVars.COMMUNITIES_MS_URL,
   statisticsMsUrl: envVars.STATISTICS_MS_URL,
+  communitiesDocsUrl: envVars.COMMUNITIES_DOCS_URL,
 };

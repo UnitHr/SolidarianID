@@ -23,6 +23,7 @@ module.exports = {
     '**/dist/**',
     '**/tmp/**',
     '**/node_modules/**',
+    '**/.stryker-tmp/**',
   ],
   settings: {
     'import/resolver': {

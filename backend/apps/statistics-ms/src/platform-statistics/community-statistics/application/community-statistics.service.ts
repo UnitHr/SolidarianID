@@ -5,7 +5,7 @@ export abstract class CommunityStatisticsService {
 
   abstract getTotalSupports(): Promise<number>;
 
-  abstract registerComunityCreation(
+  abstract registerCommunityCreation(
     communityId: string,
     communityName: string,
   ): Promise<void>;

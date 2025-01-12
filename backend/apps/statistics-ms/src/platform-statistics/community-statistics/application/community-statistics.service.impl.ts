@@ -19,7 +19,7 @@ export class CommunityStatisticsServiceImpl
     return this.communityStatisticsRepository.getTotalSupports();
   }
 
-  registerComunityCreation(
+  registerCommunityCreation(
     communityId: string,
     communityName: string,
   ): Promise<void> {

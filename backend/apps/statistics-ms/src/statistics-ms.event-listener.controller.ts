@@ -39,7 +39,7 @@ export class StatisticsMsEventListenerController {
         message.name,
         message.adminId,
       ),
-      this.communityStatisticsService.registerComunityCreation(
+      this.communityStatisticsService.registerCommunityCreation(
         message.communityId,
         message.name,
       ),

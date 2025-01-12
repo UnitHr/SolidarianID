@@ -13,6 +13,8 @@ interface EnvVars {
   API_GATEWAY_PORT: number;
   USERS_MS_URL: string;
   COMMUNITIES_MS_URL: string;
+  ACTIONS_URL: string;
+  CAUSES_URL: string;
   STATISTICS_MS_URL: string;
   USERS_DOCS_URL: string;
   COMMUNITIES_DOCS_URL: string;
@@ -28,6 +30,8 @@ const envsSchema = joi
     API_GATEWAY_PORT: joi.number().required(),
     USERS_MS_URL: joi.string().required(),
     COMMUNITIES_MS_URL: joi.string().required(),
+    CAUSES_URL: joi.string().required(),
+    ACTIONS_URL: joi.string().required(),
     STATISTICS_MS_URL: joi.string().required(),
     USERS_DOCS_URL: joi.string().required(),
     COMMUNITIES_DOCS_URL: joi.string().required(),
@@ -47,6 +51,8 @@ export const envs = {
   apiGatewayPort: envVars.API_GATEWAY_PORT,
   usersMsUrl: envVars.USERS_MS_URL,
   communitiesMsUrl: envVars.COMMUNITIES_MS_URL,
+  causesUrl: envVars.CAUSES_URL,
+  actionsUrl: envVars.ACTIONS_URL,
   statisticsMsUrl: envVars.STATISTICS_MS_URL,
   usersDocsUrl: envVars.USERS_DOCS_URL,
   communitiesDocsUrl: envVars.COMMUNITIES_DOCS_URL,

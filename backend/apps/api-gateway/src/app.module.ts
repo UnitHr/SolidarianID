@@ -9,6 +9,8 @@ import { CommunitiesProxyMiddleware } from './middlewares/communities-proxy.midd
 import { StatisticsProxyMiddleware } from './middlewares/statistics-proxy.middleware';
 import { UsersDocsProxyMiddleware } from './middlewares/users-docs-proxy.middleware';
 import { CommunitiesDocsProxyMiddleware } from './middlewares/communities-docs-proxy.middleware';
+import { CausesProxyMiddleware } from './middlewares/causes-proxy.middleware';
+import { ActionsProxyMiddleware } from './middlewares/actions-proxy.middleware';
 
 @Module({})
 export class AppModule implements NestModule {
@@ -24,6 +26,18 @@ export class AppModule implements NestModule {
       .forRoutes(
         { path: 'api/v1/communities', method: RequestMethod.ALL },
         { path: 'api/v1/communities/*', method: RequestMethod.ALL },
+      );
+    consumer
+      .apply(CausesProxyMiddleware)
+      .forRoutes(
+        { path: 'api/v1/causes', method: RequestMethod.ALL },
+        { path: 'api/v1/causes/*', method: RequestMethod.ALL },
+      );
+    consumer
+      .apply(ActionsProxyMiddleware)
+      .forRoutes(
+        { path: 'api/v1/actions', method: RequestMethod.ALL },
+        { path: 'api/v1/actions/*', method: RequestMethod.ALL },
       );
     consumer
       .apply(StatisticsProxyMiddleware)

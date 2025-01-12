@@ -1,7 +1,7 @@
 # Base URL
 @baseUrl = http://localhost:3000/api/v1/communities
-@jwtToken = {replace-with-jwtToken}
-@requestId = {replace-with-requestId}
+@jwtToken = <token>
+@requestId = <requestID>
 
 ### Approve community creation request
 POST {{baseUrl}}/creation-requests/{{requestId}}

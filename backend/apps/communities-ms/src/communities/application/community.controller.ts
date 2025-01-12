@@ -168,6 +168,43 @@ export class CommunityController {
     res.send();
   }
 
+  @ApiExcludeEndpoint()
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  @Get('creation-requests')
+  async getCreateCommunityRequests(
+    @Req() req: Request,
+    @Query() query: FindCreateCommunitiesDto,
+    @Res() res: Response,
+  ) {
+    const { createdAt, status, page, limit } = query;
+
+    const { data, total } =
+      await this.createCommunityService.getCreateCommunityRequests(
+        createdAt,
+        status,
+        page,
+        limit,
+      );
+
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data.length > 0 ? data.map(CreateCommunityRequestMapper.toDto) : [],
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    // Send the response
+    res.status(HttpStatus.OK);
+    res.json(response);
+    res.send();
+  }
+
   @ApiOperation({ summary: 'Get details of a specific community by id' })
   @Public()
   @Get(':id')
@@ -528,43 +565,6 @@ export class CommunityController {
       res.status(HttpStatus.CREATED);
       res.send();
     }
-  }
-
-  @ApiExcludeEndpoint()
-  @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
-  @Get('creation-requests/all')
-  async getCreateCommunityRequests(
-    @Req() req: Request,
-    @Query() query: FindCreateCommunitiesDto,
-    @Res() res: Response,
-  ) {
-    const { createdAt, status, page, limit } = query;
-
-    const { data, total } =
-      await this.createCommunityService.getCreateCommunityRequests(
-        createdAt,
-        status,
-        page,
-        limit,
-      );
-
-    // Build the base URL for the paginated response
-    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
-
-    // Create the paginated response
-    const response = new PaginatedResponseDto(
-      data.length > 0 ? data.map(CreateCommunityRequestMapper.toDto) : [],
-      total,
-      page,
-      limit,
-      baseUrl,
-    );
-
-    // Send the response
-    res.status(HttpStatus.OK);
-    res.json(response);
-    res.send();
   }
 
   @ApiExcludeEndpoint()

@@ -1,10 +1,11 @@
-# Base URL
-@baseUrl = http://localhost:3002
+@baseUrl = http://localhost:3000/api/v1
+@causeId = <causeId>
+@token = <token>
 
 ### Success Case: Create a new economic action
-POST {{baseUrl}}/causes/{causeId}/actions
+POST {{baseUrl}}/causes/{{causeId}}/actions
 Content-Type: application/json
-Authorization: Bearer {jwtToken}
+Authorization: Bearer {{token}}
 
 {
   "type": "economic",
@@ -15,31 +16,30 @@ Authorization: Bearer {jwtToken}
 }
 
 ### Success case: Create a new goods collection action
-POST {{baseUrl}}/actions
+POST {{baseUrl}}/causes/{{causeId}}/actions
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "type": "goods_collection",
+  "type": "goods_collection", 
   "title": "Food Aid for Communities in Somalia",
   "description": "Providing essential food supplies to families in drought-affected regions of Somalia to combat hunger and malnutrition.",
-  "causeId": "cause-001",
   "target": 5000,
   "unit": "kg",
   "goodType": "Maize Meal"
 }
 
 ### Success case: Create a new volunteer action
-POST {{baseUrl}}/actions
+POST {{baseUrl}}/causes/{{causeId}}/actions
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "type": "volunteer",
   "title": "Volunteer Help at Concert for Valencia Flood Relief.",
   "description": "Volunteers assist in organizing and managing a solidarity concert to raise funds for communities affected by the floods in Valencia, ensuring smooth event logistics and donations.",
-  "causeId": "cause-002",
   "target": 5000,
-  "unit": "hours",
+  "unit": "hours", 
   "location": "Catedral de Murcia",
   "date": "2025-01-24"
 }
-

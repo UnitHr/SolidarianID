@@ -1,5 +1,11 @@
+@baseUrl = http://localhost:3000/api/v1
+@causeId = <causeId>
+@communityId = <communityId>
+@page = 1
+@limit = 10
+
 ### Get details of a cause
-GET http://localhost:3002/causes/1
+GET {{baseUrl}}/causes/{{causeId}}
 
 ### Get all causes of a community
-GET http://localhost:3002/causes/community/1
+GET {{baseUrl}}/communities/{{communityId}}/causes?page={{page}}&limit={{limit}}

@@ -1,2 +1,16 @@
-### Obtener una acción
-GET http://localhost:3002/actions/58d38935-a104-4332-b33c-d2dcb06b7a6e
+
+
+@baseUrl = http://localhost:3000/api/v1
+@causeId = 3197fcab-39da-4280-bcb6-2c85e5387b20
+@actionId = c0ba5e1d-c45f-4c89-bf27-d45f4fcc319d
+@page = 1
+@limit = 10
+
+### Get all actions
+GET {{baseUrl}}/actions?page={{page}}&limit={{limit}}
+
+### Get an action by id
+GET {{baseUrl}}/actions/{{actionId}}
+
+### Get actions by cause id
+GET {{baseUrl}}/causes/{{causeId}}/actions

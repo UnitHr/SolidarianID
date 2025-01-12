@@ -1,3 +1,3 @@
 # SolidarianID
 
-Respository for the SolidarianID projectt
+Respository for the SolidarianID project

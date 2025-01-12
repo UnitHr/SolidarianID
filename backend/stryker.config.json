@@ -9,20 +9,9 @@
   "mutate": [
     "apps/*/src/**/*.ts",
     "libs/*/src/**/*.ts",
-    "!**/envs.ts",
-    "!**/*.spec.ts",
-    "!**/*.module.ts",
-    "!**/*config*.ts",
-    "!**/main.ts",
-    "!**/index.ts",
-    "!**/*.dto.ts",
-    "!**/*.enum.ts",
-    "!**/*.service.ts",
-    "!**/*.repository.ts",
-    "!**/*.mapper.ts",
-    "!**/*.guard.ts",
-    "!**/*.decorator.ts",
-    "!**/constant.ts"
+    "!**/*.{spec,module,dto,enum,service,repository,mapper,guard,decorator}.ts",
+    "!**/{envs,main,index,constant}.ts",
+    "!**/*config*.ts"
   ],
   "ignoreStatic": true
 }

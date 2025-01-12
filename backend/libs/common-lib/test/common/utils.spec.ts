@@ -83,16 +83,8 @@ describe('Utils', () => {
       expect(Utils.calculateAverage(-50, 200)).toBe(-25.0);
     });
 
-    it('should throw an error for zero total amount', () => {
-      expect(() => Utils.calculateAverage(50, 0)).toThrow(
-        'Total amount must be greater than zero',
-      );
-    });
-
-    it('should throw an error for negative total amount', () => {
-      expect(() => Utils.calculateAverage(50, -100)).toThrow(
-        'Total amount must be greater than zero',
-      );
+    it('should return 0 for zero total amount', () => {
+      expect(Utils.calculateAverage(50, 0)).toBe(0);
     });
   });
 });

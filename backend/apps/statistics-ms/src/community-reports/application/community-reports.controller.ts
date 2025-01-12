@@ -4,13 +4,10 @@ import {
   Param,
   ParseUUIDPipe,
   UseFilters,
-  UseGuards,
 } from '@nestjs/common';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { GetUserRole } from '@common-lib/common-lib/auth/decorator/getUserRole.decorator';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
-import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
-import { RolesGuard } from '@common-lib/common-lib/auth/roles.guard';
 import { CommunityReportsService } from './community-reports.service';
 import { CommunityByCommunityIdMapper } from '../mapper/community-by-community-id.mapper';
 import { CommunityReportsExceptionFilter } from '../infra/filters/community-reports-domain-exception.filter';

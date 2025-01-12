@@ -19,17 +19,17 @@ import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { CreateCommunityDto } from '../dto/create-community.dto';
-import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
-import { JoinCommunityService } from './join-community.service';
-import { CreateCommunityService } from './create-community.service';
 import { FindCommunitiesDto } from '../dto/find-communities.dto';
 import { CommunityMapper } from '../mapper/CommunityMapper';
 import { FindCreateCommunitiesDto } from '../dto/find-create-communities.dto';
 import { CreateCommunityRequestMapper } from '../mapper/CreateCommunityRequestMapper';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
 import { CreateCauseDto } from '../dto/create-cause.dto';
+import { CommunityService } from './community.service';
+import { JoinCommunityService } from './join-community.service';
+import { CreateCommunityService } from './create-community.service';
 
 @Controller('communities')
 export class CommunityController {

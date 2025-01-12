@@ -9,13 +9,28 @@ This only starts the databases and message broker. You should start the microser
 To start the development environment, run:
 
 ```sh
-docker-compose -f docker-compose-dev.yml up --build -d
+make run-dev
 ```
 
 To stop the development environment, run:
 
 ```sh
-docker-compose -f docker-compose-dev.yml down -v
+make stop-dev
+```
+
+To start the microservices locally, run:
+
+```sh
+npm run start:dev:api-gateway
+npm run start:dev:users-ms
+npm run start:dev:communities-ms
+npm run start:dev:statistics-ms
+```
+
+To see other commands of interest, run:
+
+```sh
+make help
 ```
 
 ## Production
@@ -23,11 +38,17 @@ docker-compose -f docker-compose-dev.yml down -v
 To start the production environment, run:
 
 ```sh
-docker-compose -f docker-compose-prod.yml up --build -d
+make run-prod
 ```
 
 To stop the production environment, run:
 
 ```sh
-docker-compose -f docker-compose-prod.yml down -v
+make stop-prod
+```
+
+To see other commands of interest, run:
+
+```sh
+make help
 ```

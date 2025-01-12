@@ -10,7 +10,7 @@ import {
 import { Community, CommunitySchema } from './infra/persistence/Community';
 import { CreateCommunityRequestRepository } from './repo/create-community.repository';
 import { CreateCommunityRequestRepositoryMongoDb } from './infra/create-community.repository.mongodb';
-import { CommunityService } from './application/community.service';
+import { CommunityServiceImpl } from './application/community.service.impl';
 import { CommunityRepository } from './repo/community.repository';
 import { CommunityRepositoryMongoDb } from './infra/community.repository.mongodb';
 import {
@@ -19,6 +19,9 @@ import {
 } from './infra/persistence/JoinCommunityRequest';
 import { JoinCommunityRequestRepository } from './repo/join-community.repository';
 import { JoinCommunityRequestRepositoryMongoDb } from './infra/join-community.repository.mongodb';
+import { JoinCommunityServiceImpl } from './application/join-community.service.impl';
+import { CreateCommunityServiceImpl } from './application/create-community.service.impl';
+import { CommunityService } from './application/community.service';
 import { JoinCommunityService } from './application/join-community.service';
 import { CreateCommunityService } from './application/create-community.service';
 
@@ -55,10 +58,18 @@ import { CreateCommunityService } from './application/create-community.service';
       provide: JoinCommunityRequestRepository,
       useClass: JoinCommunityRequestRepositoryMongoDb,
     },
-    // TODO: Create interface for Services
-    CommunityService,
-    JoinCommunityService,
-    CreateCommunityService,
+    {
+      provide: CommunityService,
+      useClass: CommunityServiceImpl,
+    },
+    {
+      provide: JoinCommunityService,
+      useClass: JoinCommunityServiceImpl,
+    },
+    {
+      provide: CreateCommunityService,
+      useClass: CreateCommunityServiceImpl,
+    },
   ],
 })
 export class CommunityModule {}

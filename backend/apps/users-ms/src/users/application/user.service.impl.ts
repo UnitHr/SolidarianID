@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { EventPublisher } from '@nestjs/cqrs';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { UserRepository } from '../user.repository';
 import { User } from '../domain';
 import { UserService } from './user.service';
@@ -10,6 +11,7 @@ import {
   EmailAlreadyInUseError,
 } from '../exceptions';
 import { UserPassword } from '../domain/Password';
+import { UserEmail } from '../domain/UserEmail';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -27,7 +29,6 @@ export class UserServiceImpl implements UserService {
     bio: string,
     showAge: boolean,
     showEmail: boolean,
-    role: string,
   ): Promise<string> {
     // Check if the email is already in use
     try {
@@ -47,12 +48,12 @@ export class UserServiceImpl implements UserService {
         firstName,
         lastName,
         birthDate: UserBirthDate.create(birthDate),
-        email,
+        email: UserEmail.create(email),
         password: await UserPassword.create(password),
         bio,
         showAge,
         showEmail,
-        role,
+        role: Role.USER,
       }),
     );
 

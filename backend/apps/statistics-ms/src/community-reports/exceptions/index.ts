@@ -7,5 +7,6 @@
  */
 
 import { CommunityNotFoundError } from './community-not-found.error';
+import { UserNotAuthorizedError } from './user-not-authorized.error';
 
-export { CommunityNotFoundError };
+export { CommunityNotFoundError, UserNotAuthorizedError };

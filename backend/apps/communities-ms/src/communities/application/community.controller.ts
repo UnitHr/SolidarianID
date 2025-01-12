@@ -9,6 +9,7 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
@@ -17,18 +18,20 @@ import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-respo
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
+import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
+import { RolesGuard } from '@common-lib/common-lib/auth/roles.guard';
 import { CreateCommunityDto } from '../dto/create-community.dto';
-import { CommunityService } from './community.service';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
-import { JoinCommunityService } from './join-community.service';
-import { CreateCommunityService } from './create-community.service';
 import { FindCommunitiesDto } from '../dto/find-communities.dto';
 import { CommunityMapper } from '../mapper/CommunityMapper';
 import { FindCreateCommunitiesDto } from '../dto/find-create-communities.dto';
 import { CreateCommunityRequestMapper } from '../mapper/CreateCommunityRequestMapper';
 import { JoinCommunityRequestMapper } from '../mapper/JoinCommunityRequestMapper';
 import { CreateCauseDto } from '../dto/create-cause.dto';
+import { CommunityService } from './community.service';
+import { JoinCommunityService } from './join-community.service';
+import { CreateCommunityService } from './create-community.service';
 
 @Controller('communities')
 export class CommunityController {
@@ -38,6 +41,7 @@ export class CommunityController {
     private readonly createCommunityService: CreateCommunityService,
   ) {}
 
+  @ApiExcludeEndpoint()
   @Post(':id/causes')
   async createCommunityCause(
     @Param('id', ParseUUIDPipe) communityId: string,
@@ -81,6 +85,7 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Post()
   async createCommunityRequest(
     @Body() createCommunityDto: CreateCommunityDto,
@@ -129,6 +134,7 @@ export class CommunityController {
     }
   }
 
+  @ApiOperation({ summary: 'Get all communities, sort and filter' })
   @Public()
   @Get()
   async getCommunities(
@@ -162,6 +168,7 @@ export class CommunityController {
     res.send();
   }
 
+  @ApiOperation({ summary: 'Get details of a specific community by id' })
   @Public()
   @Get(':id')
   async getCommunity(
@@ -198,6 +205,7 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Public()
   @Get(':id/members')
   async getCommunityMembers(
@@ -250,6 +258,7 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Public()
   @Get(':id/causes')
   async getCommunityCauses(
@@ -302,6 +311,7 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Post(':id/join-requests')
   async joinCommunityRequest(
     @Param('id', ParseUUIDPipe) communityId: string,
@@ -352,6 +362,7 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Get(':id/join-requests')
   async getJoinCommunityRequests(
     @Query() query: QueryPaginationDto,
@@ -404,6 +415,7 @@ export class CommunityController {
     res.send();
   }
 
+  @ApiExcludeEndpoint()
   @Get(':id/join-requests/:reqId')
   async getJoinCommunityRequest(
     @Param('id', ParseUUIDPipe) communityId: string,
@@ -459,6 +471,7 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Post(':id/join-requests/:reqId')
   async validateJoinCommunityRequest(
     @Param('id', ParseUUIDPipe) communityId: string,
@@ -517,7 +530,9 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('creation-requests/all')
   async getCreateCommunityRequests(
     @Req() req: Request,
@@ -552,7 +567,9 @@ export class CommunityController {
     res.send();
   }
 
+  @ApiExcludeEndpoint()
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('creation-requests/:id')
   async getCreateCommunityRequest(
     @Param('id', ParseUUIDPipe) id: string,
@@ -586,7 +603,9 @@ export class CommunityController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Post('creation-requests/:id')
   async validateCreateCommunityRequest(
     @Param('id', ParseUUIDPipe) id: string,

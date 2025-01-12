@@ -1,1 +1,9 @@
-GET  http://localhost:3003/statistics/community/{communityId}/report
+# Base URL
+@baseUrl = http://localhost:3003
+@jwtToken = <token>
+@communityId = <communityId>
+
+### Get community report
+GET {{baseUrl}}/statistics/community/{{communityId}}/report
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}

@@ -17,3 +17,5 @@ export const PASSWORD_PATTERN =
 // - A minimum length of 8 characters
 
 export const PASSWORD_HASH_SALT_ROUNDS = 10; // The number of rounds for hashing
+
+export const KAFKA_SERVICE = 'KAFKA_SERVICE';

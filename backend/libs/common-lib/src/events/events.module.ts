@@ -3,12 +3,13 @@ import { ClientsModule } from '@nestjs/microservices';
 import { kafkaConfig } from './infra/kafka.config';
 import { EventsService } from './events.service';
 import { KafkaEventPublisherService } from './infra/kafka-event-publisher.service';
+import { KAFKA_SERVICE } from '../common/constant';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'KAFKA_SERVICE',
+        name: KAFKA_SERVICE,
         ...kafkaConfig,
       },
     ]),

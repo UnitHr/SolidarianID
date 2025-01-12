@@ -4,12 +4,14 @@ import { UserProfileDto } from './dto/user-profile.dto';
 import * as Persistence from './infra/persistence';
 import { UserBirthDate } from './domain/UserBirthDate';
 import { UserPassword } from './domain/Password';
+import { UserEmail } from './domain/UserEmail';
 
 export class UserMapper {
   static toDomain(raw: Persistence.User): Domain.User {
     const user = Domain.User.create(
       {
         ...raw,
+        email: UserEmail.create(raw.email),
         birthDate: UserBirthDate.create(new Date(raw.birthDate)),
         password: UserPassword.fromHashedPassword(raw.password),
         followers: raw.followers?.map((follower) =>

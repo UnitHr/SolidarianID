@@ -8,14 +8,15 @@ import {
   Res,
   ParseUUIDPipe,
   HttpStatus,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { NotificationService } from './notification.service';
 import { NotificationMapper } from '../notification.mapper';
 
-// TODO: review privacy control for notifications, only allow the user to see his own notifications (?)
 @Controller('users/:userId/notifications')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
@@ -24,9 +25,16 @@ export class NotificationController {
   async getNotifications(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Query() query: QueryPaginationDto,
+    @GetUserId() requestingUserId: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    if (requestingUserId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to view this user notifications',
+      );
+    }
+
     const { page, limit } = query;
 
     const { notifications, total } =

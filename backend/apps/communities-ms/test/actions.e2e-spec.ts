@@ -28,6 +28,7 @@ describe('ActionModule (e2e)', () => {
       unit: 'euros',
       achieved: 0,
       createdBy: '1',
+      communityId: '1',
     },
     {
       id: new UniqueEntityID().toString(),
@@ -40,6 +41,7 @@ describe('ActionModule (e2e)', () => {
       unit: 'items',
       achieved: 0,
       createdBy: '1',
+      communityId: '1',
       goodType: 'clothes',
     },
     {
@@ -53,6 +55,7 @@ describe('ActionModule (e2e)', () => {
       unit: 'hours',
       achieved: 0,
       createdBy: '1',
+      communityId: '1',
       location: 'Paris',
       date: new Date('2021-12-01'),
     },

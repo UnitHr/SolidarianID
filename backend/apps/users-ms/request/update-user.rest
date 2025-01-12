@@ -1,7 +1,22 @@
-### Actualizar información del usuario
-PATCH http://localhost:3001/users/{replace-with-id}
+@baseUrl = http://localhost:3001
+@jwtToken = {replace-with-token}
+@userId = {replace-with-id}
+
+### Update user request success case
+PATCH {{baseUrl}}/users/{{userId}}
 Content-Type: application/json
-Authorization: Bearer {replace-with-token}
+Authorization: Bearer {{jwtToken}}
+
+{
+  "email": "newemail@example.com",
+  "bio": "Updated bio"
+}
+
+### Update user request failure case
+PATCH {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
 {
   "email": "newemail@example.com",
   "bio": "Updated bio"

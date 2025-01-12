@@ -1,4 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
+import { RolesGuard } from '@common-lib/common-lib/auth/roles.guard';
 import { OdsStatisticsMapper } from './ods-statistics/mapper/ods-statistics.mapper';
 import { OdsStatisticsResponseDto } from './ods-statistics/dto/ods-statistics-response.dto';
 import { OdsStatisticsService } from './ods-statistics/application/ods-statistics.service';
@@ -13,6 +16,8 @@ export class PlatformStatisticsController {
     private readonly communityStatisticsService: CommunityStatisticsService,
   ) {}
 
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('ods')
   async findAllOdsStatistics(): Promise<OdsStatisticsResponseDto[]> {
     const odsStatistics = await this.odsStatisticsService.getAll();
@@ -24,6 +29,8 @@ export class PlatformStatisticsController {
     );
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Get('community')
   async findAllCommunityStatistics(): Promise<
     CommunityStatisticsResponseDto[]

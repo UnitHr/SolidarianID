@@ -1,6 +1,7 @@
 import { DomainEvent } from '@common-lib/common-lib/core/domain/DomainEvent';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { KAFKA_SERVICE } from '@common-lib/common-lib/common/constant';
 import { EventsService } from '../events.service';
 
 @Injectable()
@@ -8,7 +9,7 @@ export class KafkaEventPublisherService extends EventsService {
   private readonly logger = new Logger(KafkaEventPublisherService.name);
 
   constructor(
-    @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka, // TODO: Improve the token injection
+    @Inject(KAFKA_SERVICE) private readonly kafkaClient: ClientKafka,
   ) {
     super();
   }

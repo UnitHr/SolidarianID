@@ -1,12 +1,13 @@
 @baseUrl = http://localhost:3001
-@jwtToken = <token>
-
+@jwtToken = {replace-with-jwtToken}
+@userId = {replace-with-userId}
+@notificationId = {replace-with-notificationId}
 
 ### Get user notifications
-GET {{baseUrl}}/users/:userId/notifications
+GET {{baseUrl}}/users/{{userId}}/notifications
 Authorization: Bearer {{jwtToken}}
 
 
 ### Mark notification as read
-PATCH {{baseUrl}}/users/:userId/notifications/:notificationId
+PATCH {{baseUrl}}/users/{{userId}}/notifications/{{notificationId}}
 Authorization: Bearer {{jwtToken}}

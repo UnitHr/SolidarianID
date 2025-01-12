@@ -1,24 +1,25 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Test, TestingModule } from '@nestjs/testing';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
-import { CommunityService } from '../../../src/communities/application/community.service';
+import { CommunityServiceImpl } from '../../../src/communities/application/community.service.impl';
 import { CreateCommunityRequestRepository } from '../../../src/communities/repo/create-community.repository';
 import { StatusRequest } from '../../../src/communities/domain/StatusRequest';
 import * as Domain from '../../../src/communities/domain';
 import { ODSEnum } from '../../../../../libs/common-lib/src/common/ods';
 import { CommunityRepository } from '../../../src/communities/repo/community.repository';
 import * as Exceptions from '../../../src/communities/exceptions';
+import { CauseService } from '../../../src/causes/application/cause.service';
 
 describe('CommunityService', () => {
-  let service: CommunityService;
-
+  let service: CommunityServiceImpl;
+  const causeEndDate = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000); // 10 days in the future
   const mockProps = {
     userId: 'f50e799b-7a27-4666-a831-bd7552c0632d',
     communityName: 'CommunityA',
     communityDescription: 'This is the description of the community',
     causeTitle: 'This is the title of the cause',
     causeDescription: 'This is the description of the cause',
-    causeEndDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+    causeEndDate,
     causeOds: [ODSEnum.NoPoverty, ODSEnum.ZeroHunger],
   };
 
@@ -29,7 +30,7 @@ describe('CommunityService', () => {
       communityDescription: mockProps.communityDescription,
       causeTitle: mockProps.causeTitle,
       causeDescription: mockProps.causeDescription,
-      causeEndDate: new Date(),
+      causeEndDate,
       causeOds: mockProps.causeOds,
       status: StatusRequest.PENDING,
       createdAt: new Date(),
@@ -62,10 +63,22 @@ describe('CommunityService', () => {
     delete: jest.fn(),
   };
 
+  const mockCauseService = {
+    createCause: jest.fn(),
+    getCause: jest.fn(),
+    updateCause: jest.fn(),
+    getAllCauses: jest.fn(),
+    validateCauseEndDate: jest.fn(),
+    getCauseSupporters: jest.fn(),
+    addCauseSupporter: jest.fn(),
+    getCauseActions: jest.fn(),
+    addCauseAction: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CommunityService,
+        CommunityServiceImpl,
         {
           provide: CreateCommunityRequestRepository,
           useValue: mockCreateCommunityRequestRepository,
@@ -74,10 +87,14 @@ describe('CommunityService', () => {
           provide: CommunityRepository,
           useValue: mockCommunityRepository,
         },
+        {
+          provide: CauseService,
+          useValue: mockCauseService,
+        },
       ],
     }).compile();
 
-    service = module.get<CommunityService>(CommunityService);
+    service = module.get<CommunityServiceImpl>(CommunityServiceImpl);
   });
 
   afterEach(() => {
@@ -93,6 +110,8 @@ describe('CommunityService', () => {
       mockCreateCommunityRequestRepository.save.mockReturnValue(
         mockCreateCommunityRequest,
       );
+      mockCommunityRepository.findByName.mockReturnValue(null);
+      mockCauseService.validateCauseEndDate.mockReturnValue(true);
 
       const result = await service.createCommunityRequest(mockProps);
 

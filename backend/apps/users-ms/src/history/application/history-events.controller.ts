@@ -7,8 +7,10 @@ import { JoinCommunityRequestRejectedEvent } from '@common-lib/common-lib/events
 import { CauseCreatedEvent } from '@common-lib/common-lib/events/domain/CauseCreatedEvent';
 import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/CommunityCreatedEvent';
 import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';
+import { ApiExcludeController } from '@nestjs/swagger';
 import { HistoryService } from './history.service';
 
+@ApiExcludeController()
 @Controller()
 export class HistoryEventsController {
   private readonly logger = new Logger(HistoryEventsController.name);

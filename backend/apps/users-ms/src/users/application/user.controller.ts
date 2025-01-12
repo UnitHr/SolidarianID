@@ -13,6 +13,7 @@ import {
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
+import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -24,6 +25,7 @@ import { UserMapper } from '../user.mapper';
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
+  @ApiExcludeEndpoint()
   @Public()
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
@@ -42,6 +44,7 @@ export class UsersController {
     res.status(HttpStatus.CREATED).location(locationUrl).json({ id: userId });
   }
 
+  @ApiExcludeEndpoint()
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -58,6 +61,8 @@ export class UsersController {
     res.status(HttpStatus.NO_CONTENT).location(locationUrl).send();
   }
 
+  @ApiOperation({ summary: "Get a user's public profile" })
+  @Public()
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const user = await this.usersService.getUserProfile(id);
@@ -66,6 +71,7 @@ export class UsersController {
     res.status(HttpStatus.OK).json(userDto);
   }
 
+  @ApiExcludeEndpoint()
   @Post(':id/followers')
   async follow(
     @Param('id', ParseUUIDPipe) id: string,
@@ -77,6 +83,7 @@ export class UsersController {
     res.status(HttpStatus.NO_CONTENT).send();
   }
 
+  @ApiExcludeEndpoint()
   @Get(':id/followers')
   async getFollowers(
     @Param('id', ParseUUIDPipe) id: string,

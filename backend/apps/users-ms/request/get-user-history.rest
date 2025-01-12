@@ -1,8 +1,7 @@
-# Base URL
-@baseUrl = http://localhost:3001
+@baseUrl = http://localhost:3000/api/v1/users
 @jwtToken = {replace-with-jwtToken}
 @userId = {replace-with-userId}
 
-
-GET {{baseUrl}}/users/{{userId}}/history
+### Get user history, requires authentication
+GET {{baseUrl}}/{{userId}}/history
 Authorization: Bearer {{jwtToken}}

@@ -1,9 +1,9 @@
 # Base URL
-@baseUrl = http://localhost:3002
-@jwtToken = <token>
+@baseUrl = http://localhost:3000/api/v1/communities
+@jwtToken = {replace-with-jwtToken}
 
 ### Create community request
-POST {{baseUrl}}/communities
+POST {{baseUrl}}
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 

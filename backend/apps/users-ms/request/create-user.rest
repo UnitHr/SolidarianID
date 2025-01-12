@@ -1,15 +1,15 @@
 # Base URL
-@baseUrl = http://localhost:3001
+@baseUrl = http://localhost:3000/api/v1/users
 
 ### Success Case: Create a new user
-POST {{baseUrl}}/users
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
   "firstName": "Joe",
   "lastName": "Doe",
   "birthDate": "1990-01-01",
-  "email": "admin@example.com",
+  "email": "joe@example.com",
   "password": "123456Test*",
   "bio": "Hello, I'm Jane Doe!",
   "showAge": true,
@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Success Case: Create a new user without bio
-POST {{baseUrl}}/users
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 
 ### Error Case: Create user with an already registered email (expected: 404 ...)
-POST {{baseUrl}}/users
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
@@ -46,7 +46,7 @@ Content-Type: application/json
 }
 
 ### Error Case: Create user with a password that does not meet the requirements 
-POST {{baseUrl}}/users
+POST {{baseUrl}}
 Content-Type: application/json
 
 {

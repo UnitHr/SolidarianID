@@ -1,3 +1,13 @@
+@baseUrl = http://localhost:3000/api/v1/communities
+@CommunityId = {replace-with-communityId}
 ### Get all Communities
-GET http://localhost:3002/communities
+GET {{baseUrl}}
+Content-Type: application/json
+
+### Get all Communities with pagination
+GET {{baseUrl}}?page=1&limit=10
+Content-Type: application/json
+
+### Get community by id
+GET {{baseUrl}}/{{CommunityId}}
 Content-Type: application/json

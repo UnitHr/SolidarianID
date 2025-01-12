@@ -1,20 +1,24 @@
 # Base URL
-@baseUrl = http://localhost:3002
-@jwtToken = <token>
-
+@baseUrl = http://localhost:3000/api/v1/communities
+@jwtToken = {replace-with-jwtToken}
+@requestId = {replace-with-requestId}
 ### Get all create community requests
-GET {{baseUrl}}/communities/creation-requests/all
+GET {{baseUrl}}/creation-requests/all
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
 ### Get create community request with pending status
-GET {{baseUrl}}/communities/creation-requests/all?status=pending
+GET {{baseUrl}}/creation-requests/all?status=pending
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
 ### Get create community request with pagination
-GET {{baseUrl}}/communities/creation-requests/all?page=1&limit=10
+GET {{baseUrl}}/creation-requests/all?page=1&limit=10
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
+### Get create community request by id
+GET {{baseUrl}}/creation-requests/{{requestId}}
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
 

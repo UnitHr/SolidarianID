@@ -1,19 +1,18 @@
-@baseUrl = http://localhost:3001
-@jwtToken = {replace-with-token}
-@userId = {replace-with-id}
-
+@baseUrl = http://localhost:3000/api/v1/users
+@jwtToken = {replace-with-jwtToken}
+@userId = {replace-with-userId}
 ### Update user request success case
-PATCH {{baseUrl}}/users/{{userId}}
+PATCH {{baseUrl}}/{{userId}}
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
 {
-  "email": "newemail@example.com",
+  "email": "email@example.com",
   "bio": "Updated bio"
 }
 
 ### Update user request failure case
-PATCH {{baseUrl}}/users/{{userId}}
+PATCH {{baseUrl}}/{{userId}}
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 

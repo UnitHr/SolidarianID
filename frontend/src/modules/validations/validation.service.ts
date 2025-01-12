@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Constants } from 'src/common/constants';
+import { envs } from 'src/config';
 
 @Injectable()
 export class ValidationService {
   async getCreateCommunityRequests(page: number, limit: number, token: string) {
     try {
       const response = await axios.get(
-        Constants.COMMUNITY_MS_BASE_URL + '/creation-requests/all',
+        envs.communityMsBaseUrl + '/creation-requests/all',
         {
           params: {
             status: 'pending',
@@ -30,7 +30,7 @@ export class ValidationService {
     for (const requestId of selectedRequests) {
       try {
         await axios.post(
-          Constants.COMMUNITY_MS_BASE_URL + `/creation-requests/${requestId}`,
+          envs.communityMsBaseUrl + `/creation-requests/${requestId}`,
           {
             status: 'approved',
           },
@@ -47,7 +47,7 @@ export class ValidationService {
   async rejectRequest(requestId: string, reason: string, token: string) {
     try {
       await axios.post(
-        Constants.COMMUNITY_MS_BASE_URL + `/creation-requests/${requestId}`,
+        envs.communityMsBaseUrl + `/creation-requests/${requestId}`,
         {
           status: 'denied',
           comment: reason,

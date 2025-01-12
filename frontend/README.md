@@ -22,13 +22,13 @@ npm run start:dev
 To run the production environment in detached mode, run:
 
 ```sh
-make run
+make run-prod
 ```
 
 To stop the production environment, run:
 
 ```sh
-make stop
+make stop-prod
 ```
 
 To see other commands of interest, run:

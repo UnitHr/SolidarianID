@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { readFileSync } from 'fs';
-import { Constants } from 'src/common/constants';
+import { envs } from 'src/config';
 
 @Injectable()
 export class ReportService {
   async getCommunities(token: string) {
     try {
-      const response = await axios.get(Constants.COMMUNITY_MS_BASE_URL, {
+      const response = await axios.get(envs.communityMsBaseUrl, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.data;
@@ -20,7 +19,7 @@ export class ReportService {
   async getCommunityDetails(token: string, communityId: string) {
     try {
       const response = await axios.get(
-        Constants.STATISTICS_MS_BASE_URL + `/community/${communityId}/report`,
+        envs.statisticsMsBaseUrl + `/community/${communityId}/report`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },

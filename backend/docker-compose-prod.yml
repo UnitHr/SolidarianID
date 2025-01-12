@@ -145,3 +145,4 @@ volumes:
 networks:
   solidarianid-network:
     driver: bridge
+    external: true

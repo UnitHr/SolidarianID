@@ -12,8 +12,8 @@ import {
 import { HandlebarsHelpersService } from './helper.service';
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
-import { Constants } from './common/constants';
 import { AppService } from './app.service';
+import { envs } from './config';
 
 @Controller()
 export class AppController {
@@ -45,7 +45,7 @@ export class AppController {
     }
 
     try {
-      const loginResponse = await axios.post(Constants.USER_MS_LOGIN, body, {
+      const loginResponse = await axios.post(envs.userMsLogin, body, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -65,7 +65,7 @@ export class AppController {
 
       let playload;
       try {
-        playload = jwt.verify(token, Constants.TOKEN_SECRET);
+        playload = jwt.verify(token, envs.tokenSecret);
       } catch (err) {
         console.error('Invalid token:', err.message);
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
@@ -79,12 +79,9 @@ export class AppController {
         );
       }
 
-      const userResponse = await axios.get(
-        `${Constants.USER_MS_bASE_URL}/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const userResponse = await axios.get(`${envs.userMsBaseUrl}/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (!userResponse || !userResponse.data) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);

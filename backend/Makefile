@@ -10,12 +10,14 @@ run-dev:
 	docker-compose -f $(COMPOSE_DEV_FILE) up -d --build
 
 run-prod:
+	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_PROD_FILE) up -d --build
 
 run-dev-foreground:
 	docker-compose -f $(COMPOSE_DEV_FILE) up --build
 
 run-prod-foreground:
+	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_PROD_FILE) up --build
 
 stop-dev:
@@ -28,6 +30,7 @@ restart-dev:
 	docker-compose -f $(COMPOSE_DEV_FILE) down && docker-compose -f $(COMPOSE_DEV_FILE) up -d --build
 
 restart-prod:
+	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_PROD_FILE) down && docker-compose -f $(COMPOSE_PROD_FILE) up -d --build
 
 # Cleaning
@@ -56,6 +59,13 @@ build-dev:
 build-prod:
 	docker-compose -f $(COMPOSE_PROD_FILE) build
 
+# Network
+create-network:
+	docker network create --driver bridge solidarianid-network || true
+
+delete-network:
+	docker network rm solidarianid-network
+
 # Help
 help:
 	@echo "Available commands:"
@@ -75,3 +85,5 @@ help:
 	@echo "  status-prod            - Show status of production environment"
 	@echo "  build-dev              - Build development environment"
 	@echo "  build-prod             - Build production environment"
+	@echo "  create-network         - Create Docker network"
+	@echo "  delete-network         - Delete Docker network"

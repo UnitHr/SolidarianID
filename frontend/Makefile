@@ -5,40 +5,52 @@ default: help
 COMPOSE_FILE := docker-compose-prod.yml
 
 # Docker commands
-run:
+run-prod:
+	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_FILE) up -d --build
 
-run-foreground:
+run-foreground-prod:
+	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_FILE) up --build
 
-stop:
+stop-prod:
 	docker-compose -f $(COMPOSE_FILE) down
 
-restart:
+restart-prod:
+	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_FILE) down && docker-compose -f $(COMPOSE_FILE) up -d --build
 
 # Cleaning
-clean:
+clean-prod:
 	docker-compose -f $(COMPOSE_FILE) down --volumes --remove-orphans
 
 # Utility commands
-logs:
+logs-prod:
 	docker-compose -f $(COMPOSE_FILE) logs -f
 
-status:
+status-prod:
 	docker-compose -f $(COMPOSE_FILE) ps
 
-build:
+build-prod:
 	docker-compose -f $(COMPOSE_FILE) build
 
+# Network
+create-network:
+	docker network create --driver bridge solidarianid-network || true
+
+delete-network:
+	docker network rm solidarianid-network
+	
 # Help
 help:
 	@echo "Available commands:"
-	@echo "  run               - Run production environment in detached mode"
-	@echo "  run-foreground    - Run production environment in foreground mode"
-	@echo "  stop              - Stop production environment"
-	@echo "  restart           - Restart production environment"
-	@echo "  clean             - Clean production environment (remove volumes and orphans)"
-	@echo "  logs              - Show logs for production environment"
-	@echo "  status            - Show status of production environment"
-	@echo "  build             - Build production environment"
+	@echo "  run-prod               - Run production environment in detached mode"
+	@echo "  run-foreground-prod    - Run production environment in foreground mode"
+	@echo "  stop-prod              - Stop production environment"
+	@echo "  restart-prod           - Restart production environment"
+	@echo "  clean-prod             - Clean production environment (remove volumes and orphans)"
+	@echo "  logs-prod              - Show logs for production environment"
+	@echo "  status-prod            - Show status of production environment"
+	@echo "  build-prod             - Build production environment"
+	@echo "  create-network         - Create Docker network"
+	@echo "  delete-network         - Delete Docker network"

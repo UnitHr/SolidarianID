@@ -1,10 +1,12 @@
 # Base URL
-@baseUrl = http://localhost:3002
+@baseUrl = http://localhost:3000/api/v1
+@causeId = {replace-with-causeId}
+@jwtToken = {replace-with-token}
 
 ### Success Case: Create a new contribution to an Action
 POST  {{baseUrl}}/actions/{actionId}/contributions
 Content-Type: application/json
-Authorization: Bearer {jwtToken}
+Authorization: Bearer {{jwtToken}}
 
 {
   "date": "2025-01-24",

@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3000/api/v1
-@causeId = <causeId>
-@token = <token>
+@causeId = {replace-with-causeId}
+@token = {replace-with-token}
 
 ### Success Case: Create a new economic action
 POST {{baseUrl}}/causes/{{causeId}}/actions

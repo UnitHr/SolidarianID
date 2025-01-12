@@ -1,9 +1,11 @@
 # Base URL
-@baseUrl = http://localhost:3002
-
+@baseUrl = http://localhost:3000/api/v1/actions
+@actionId = {replace-with-actionId}
+@jwtToken = {replace-with-jwtToken}
 ### Success Case: Create a new economic action
-PATCH {{baseUrl}}/actions/a30d65d3-fcbf-428c-a85d-c7e514c28714
+PATCH {{baseUrl}}/{{actionId}}
 Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
 
 {
   // "location": "Calle Mayor, 8",

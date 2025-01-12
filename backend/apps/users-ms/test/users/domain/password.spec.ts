@@ -88,3 +88,44 @@ describe('Password length boundary tests', () => {
     expect(userPassword).toBeInstanceOf(UserPassword);
   });
 });
+
+describe('UserPassword fromHashedPassword method', () => {
+  it('Should create password from hashed value', () => {
+    // Arrange
+    const hashedPassword = '$2b$10$someHashedPasswordValue';
+
+    // Act
+    const userPassword = UserPassword.fromHashedPassword(hashedPassword);
+
+    // Assert
+    expect(userPassword).toBeInstanceOf(UserPassword);
+    expect(userPassword.value).toBe(hashedPassword);
+  });
+});
+
+describe('UserPassword compare method', () => {
+  it('Should correctly compare matching passwords', async () => {
+    // Arrange
+    const plainPassword = '123456Test*';
+    const userPassword = await UserPassword.create(plainPassword);
+
+    // Act
+    const isMatch = await userPassword.compare(plainPassword);
+
+    // Assert
+    expect(isMatch).toBe(true);
+  });
+
+  it('Should correctly compare non-matching passwords', async () => {
+    // Arrange
+    const originalPassword = '123456Test*';
+    const wrongPassword = '123456Test#';
+    const userPassword = await UserPassword.create(originalPassword);
+
+    // Act
+    const isMatch = await userPassword.compare(wrongPassword);
+
+    // Assert
+    expect(isMatch).toBe(false);
+  });
+});

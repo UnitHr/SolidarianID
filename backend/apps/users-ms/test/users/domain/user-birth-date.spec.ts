@@ -5,10 +5,10 @@ import { AGE_OF_MAJORITY } from '@common-lib/common-lib/common/constant';
 
 describe('UserBirthDate', () => {
   describe('create', () => {
-    it('should create a valid UserBirthDate object for an adult', () => {
+    it('should create a valid UserBirthDate object for someone exactly at age of majority', () => {
       // Arrange
       const date = new Date();
-      date.setFullYear(date.getFullYear() - AGE_OF_MAJORITY - 1);
+      date.setFullYear(date.getFullYear() - AGE_OF_MAJORITY);
 
       // Act
       const birthDate = UserBirthDate.create(date);
@@ -16,6 +16,34 @@ describe('UserBirthDate', () => {
       // Assert
       expect(birthDate).toBeInstanceOf(UserBirthDate);
       expect(birthDate.value).toEqual(date);
+      expect(birthDate.age).toEqual(AGE_OF_MAJORITY);
+    });
+
+    it('should create a valid UserBirthDate object for someone one year above age of majority', () => {
+      // Arrange
+      const date = new Date();
+      date.setFullYear(date.getFullYear() - (AGE_OF_MAJORITY + 1));
+
+      // Act
+      const birthDate = UserBirthDate.create(date);
+
+      // Assert
+      expect(birthDate).toBeInstanceOf(UserBirthDate);
+      expect(birthDate.value).toEqual(date);
+      expect(birthDate.age).toEqual(AGE_OF_MAJORITY + 1);
+    });
+
+    it('should create a valid UserBirthDate object for someone well above age of majority', () => {
+      // Arrange
+      const date = new Date();
+      date.setFullYear(date.getFullYear() - (AGE_OF_MAJORITY + 10));
+      // Act
+      const birthDate = UserBirthDate.create(date);
+
+      // Assert
+      expect(birthDate).toBeInstanceOf(UserBirthDate);
+      expect(birthDate.value).toEqual(date);
+      expect(birthDate.age).toEqual(AGE_OF_MAJORITY + 10);
     });
 
     it('should throw UnderageUserError for users younger than age of majority', () => {

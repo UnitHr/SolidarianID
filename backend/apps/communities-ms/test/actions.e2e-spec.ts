@@ -107,27 +107,23 @@ describe('ActionModule (e2e)', () => {
   describe('GET /actions/:id', () => {
     it('should return action details for a valid id', async () => {
       const id = predefinedActionsIds[0];
-      const response = await request(app.getHttpServer())
-        .get(`/actions/${id}`)
-        .set('Authorization', `Bearer ${token}`);
+      const response = await request(app.getHttpServer()).get(`/actions/${id}`);
       expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveProperty('id', predefinedActionsIds[0]);
       expect(response.body).toHaveProperty('title', 'Action 1');
     });
     it('should return 404 for an invalid id', async () => {
       const id = new UniqueEntityID().toString();
-      const response = await request(app.getHttpServer())
-        .get(`/actions/${id}`)
-        .set('Authorization', `Bearer ${token}`);
+      const response = await request(app.getHttpServer()).get(`/actions/${id}`);
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
   });
 
   describe('GET /actions', () => {
     it('should return paginated actions', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/actions?page=1&limit=2')
-        .set('Authorization', `Bearer ${token}`);
+      const response = await request(app.getHttpServer()).get(
+        '/actions?page=1&limit=2',
+      );
 
       expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.data).toHaveLength(2);
@@ -150,6 +146,10 @@ describe('ActionModule (e2e)', () => {
 
       expect(response.status).toBe(HttpStatus.CREATED);
       expect(response.body).toHaveProperty('id');
+      await expect(actionModel.findOne({ id })).resolves.toHaveProperty(
+        'status',
+        'IN_PROGRESS',
+      );
     });
 
     it('should return 400 Bad Request for invalid unit field', async () => {

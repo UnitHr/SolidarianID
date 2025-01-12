@@ -3,7 +3,7 @@ import * as dotenvExpand from 'dotenv-expand';
 import * as joi from 'joi';
 
 const env = dotenv.config({
-  path: `.env`,
+  path: `.env.${process.env.NODE_ENV}`,
 });
 dotenvExpand.expand(env);
 

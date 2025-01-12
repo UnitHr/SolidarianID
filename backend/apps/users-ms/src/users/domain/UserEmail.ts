@@ -6,7 +6,8 @@ interface UserEmailProps {
 }
 
 export class UserEmail extends ValueObject<UserEmailProps> {
-  private static EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  private static EMAIL_REGEX =
+    /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   get value(): string {
     return this.props.value;

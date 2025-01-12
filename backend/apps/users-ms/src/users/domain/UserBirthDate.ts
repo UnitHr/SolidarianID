@@ -25,6 +25,9 @@ export class UserBirthDate extends ValueObject<UserBirthDateProps> {
     if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
       throw new InvalidDateProvidedError();
     }
+    if (value > new Date()) {
+      throw new InvalidDateProvidedError();
+    }
     if (Utils.calculateAge(value) < AGE_OF_MAJORITY) {
       throw new UnderageUserError(AGE_OF_MAJORITY);
     }

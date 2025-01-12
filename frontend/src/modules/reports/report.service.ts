@@ -25,12 +25,6 @@ export class ReportService {
         },
       );
       return response.data;
-      /*const fileContent = readFileSync(
-        '../frontend/src/modules/reports/community.json',
-        'utf-8',
-      );
-      const data = JSON.parse(fileContent);
-      return data;*/
     } catch (error) {
       console.error('Error fetching communities details:', error);
       return [];

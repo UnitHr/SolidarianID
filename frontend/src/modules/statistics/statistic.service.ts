@@ -14,13 +14,6 @@ export class StatisticsService {
       });
 
       return response.data;
-      /*
-      const fileContent = readFileSync(
-        '../frontend/src/modules/statistics/ods.json',
-        'utf-8',
-      );
-      const data = JSON.parse(fileContent);
-      return data;*/
     } catch (error) {
       console.error('Error fetching datas by ODS:', error);
       throw new Error('Failed to fetch datas by ods from the microservice');
@@ -37,14 +30,6 @@ export class StatisticsService {
       );
 
       return response.data;
-      /*
-      const fileContent = readFileSync(
-        '../frontend/src/modules/statistics/progress.json',
-        'utf-8',
-      );
-      const data = JSON.parse(fileContent);
-      return data;
-      */
     } catch (error) {
       console.error('Error fetching datas by community', error);
       throw new Error(

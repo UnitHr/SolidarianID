@@ -4,7 +4,7 @@ import * as hbs from 'hbs';
 @Injectable()
 export class HandlebarsHelpersService {
   constructor() {
-    // equal helper
+    // Equal helper
     hbs.registerHelper('eq', function (v1, v2) {
       return v1 === v2;
     });

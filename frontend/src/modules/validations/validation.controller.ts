@@ -27,7 +27,7 @@ export class ValidationController {
     @Req() req,
     @Res() res,
   ) {
-    // check if user is authenticated
+    // Check if user is authenticated
     const user = req.cookies.user;
     if (!user) {
       res.redirect('/login');

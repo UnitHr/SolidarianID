@@ -21,13 +21,12 @@
 }
 
 canvas {
-  display: block; /* Asegura que el canvas no sea un elemento inline */
-  max-width: 100%; /* Escala dinámicamente dentro del contenedor */
-  height: auto; /* Mantiene la proporción */
+  display: block; /* Ensures the canvas is not an inline element */
+  max-width: 100%; /* Dynamically scales within the container */
+  height: auto; /* Maintains the aspect ratio */
 }
 
-/* Estilos para tabletas (ancho mínimo de 768px) */
-
+/* Styles for tablets (minimum width of 768px) */
 @media (max-width: 1024px) {
   .chart-wrapper {
     justify-content: center;
@@ -38,7 +37,7 @@ canvas {
   }
 }
 
-/* Estilos para dispositivos móviles (ancho menor de 640px) */
+/* Styles for mobile devices (width less than 640px) */
 @media (max-width: 639px) {
   .chart-wrapper {
     justify-content: center;

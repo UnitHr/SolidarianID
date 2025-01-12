@@ -2,11 +2,7 @@
 @causeId = {replace-with-causeId}
 @jwtToken = {replace-with-jwtToken}
 
-### Change cause details
-PATCH {{baseUrl}}/{{causeId}}
+### Support a cause
+POST {{baseUrl}}/{{causeId}}/supporters
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
-
-{
-    "description": "This is a new description"
-}

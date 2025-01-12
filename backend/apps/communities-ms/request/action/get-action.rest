@@ -1,16 +1,18 @@
-
-
-@baseUrl = http://localhost:3000/api/v1
-@causeId = 3197fcab-39da-4280-bcb6-2c85e5387b20
-@actionId = c0ba5e1d-c45f-4c89-bf27-d45f4fcc319d
-@page = 1
-@limit = 10
+@baseUrl = http://localhost:3000/api/v1/actions
+@causeId = {replace-with-causeId}
+@actionId = {replace-with-actionId}
+@page = {replace-with-page}
+@limit = {replace-with-limit}
 
 ### Get all actions
-GET {{baseUrl}}/actions?page={{page}}&limit={{limit}}
+GET {{baseUrl}}
+content-type: application/json
+
+### Get all actions with pagination
+GET {{baseUrl}}?page={{page}}&limit={{limit}}
+content-type: application/json
 
 ### Get an action by id
-GET {{baseUrl}}/actions/{{actionId}}
+GET {{baseUrl}}/{{actionId}}
+Content-Type: application/json
 
-### Get actions by cause id
-GET {{baseUrl}}/causes/{{causeId}}/actions

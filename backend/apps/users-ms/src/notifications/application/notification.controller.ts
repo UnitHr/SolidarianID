@@ -14,9 +14,11 @@ import { Request, Response } from 'express';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
+import { ApiExcludeController } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
 import { NotificationMapper } from '../notification.mapper';
 
+@ApiExcludeController()
 @Controller('users/:userId/notifications')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}

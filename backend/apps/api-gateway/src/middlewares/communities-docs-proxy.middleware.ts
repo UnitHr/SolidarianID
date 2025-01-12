@@ -3,7 +3,7 @@ import { envs } from '@api-gateway/config';
 import { ProxyMiddleware } from './base-proxy.middleware';
 
 @Injectable()
-export class DocsProxyMiddleware extends ProxyMiddleware {
+export class CommunitiesDocsProxyMiddleware extends ProxyMiddleware {
   protected getOptions() {
     return {
       target: envs.communitiesDocsUrl,

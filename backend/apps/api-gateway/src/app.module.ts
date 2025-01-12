@@ -7,7 +7,8 @@ import {
 import { UsersProxyMiddleware } from './middlewares/users-proxy.middleware';
 import { CommunitiesProxyMiddleware } from './middlewares/communities-proxy.middleware';
 import { StatisticsProxyMiddleware } from './middlewares/statistics-proxy.middleware';
-import { DocsProxyMiddleware } from './middlewares/docs-proxy.middleware';
+import { UsersDocsProxyMiddleware } from './middlewares/users-docs-proxy.middleware';
+import { CommunitiesDocsProxyMiddleware } from './middlewares/communities-docs-proxy.middleware';
 
 @Module({})
 export class AppModule implements NestModule {
@@ -31,10 +32,16 @@ export class AppModule implements NestModule {
         { path: 'api/v1/statistics/*', method: RequestMethod.ALL },
       );
     consumer
-      .apply(DocsProxyMiddleware)
+      .apply(UsersDocsProxyMiddleware)
       .forRoutes(
-        { path: 'api/v1/doc', method: RequestMethod.ALL },
-        { path: 'api/v1/doc/*', method: RequestMethod.ALL },
+        { path: 'api/v1/doc/users', method: RequestMethod.ALL },
+        { path: 'api/v1/doc/users/*', method: RequestMethod.ALL },
+      );
+    consumer
+      .apply(CommunitiesDocsProxyMiddleware)
+      .forRoutes(
+        { path: 'api/v1/doc/communities', method: RequestMethod.ALL },
+        { path: 'api/v1/doc/communities/*', method: RequestMethod.ALL },
       );
   }
 }

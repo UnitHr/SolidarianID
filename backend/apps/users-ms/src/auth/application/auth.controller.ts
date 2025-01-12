@@ -11,8 +11,10 @@ import {
 } from '@nestjs/common';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiExcludeController } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
+@ApiExcludeController()
 @Controller('users/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

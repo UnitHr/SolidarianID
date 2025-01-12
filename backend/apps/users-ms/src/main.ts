@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Transport } from '@nestjs/microservices'; // Añadir esta importación
 import { UsersMsModule } from './users-ms.module';
 import { envs } from './config';
@@ -44,6 +45,17 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
+
+  // Swagger config
+  const config = new DocumentBuilder()
+    .setTitle('SolidarianID Users Microservice')
+    .setDescription('SolidarianID Users Microservice')
+    .setVersion('1.0')
+    .addTag('SolidarianID')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('doc/users', app, document);
 
   // Start the application
   await app.listen(envs.usersMsPort, envs.usersMsHost);

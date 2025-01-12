@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:3000/api/v1/causes
+@causeId = {replace-with-causeId}
+@page = {replace-with-page}
+@limit = {replace-with-limit}
+
+### Get all supports of a cause
+GET {{baseUrl}}/{{causeId}}/supporters
+Content-Type: application/json
+
+### Get all supports of a cause with pagination
+GET {{baseUrl}}/{{causeId}}/supporters?page={{page}}&limit={{limit}}

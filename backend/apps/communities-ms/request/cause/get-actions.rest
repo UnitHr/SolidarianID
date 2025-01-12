@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:3000/api/v1/causes
+@causeId = {replace-with-causeId}
+@communityId = {replace-with-communityId}
+@page = {replace-with-page}
+@limit = {replace-with-limit}
+
+### Get all actions of a cause
+GET {{baseUrl}}/{{causeId}}/actions
+Content-Type: application/json
+
+### Get all actions of a cause with pagination
+GET {{baseUrl}}/{{causeId}}/actions?page={{page}}&limit={{limit}}

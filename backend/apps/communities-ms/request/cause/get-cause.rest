@@ -1,11 +1,18 @@
-@baseUrl = http://localhost:3000/api/v1
-@causeId = <causeId>
-@communityId = <communityId>
-@page = 1
-@limit = 10
+@baseUrl = http://localhost:3000/api/v1/causes
+@causeId = {replace-with-causeId}
+@jwtToken = {replace-with-jwtToken}
+@communityId = {replace-with-communityId}
+@page = {replace-with-page}
+@limit = {replace-with-limit}
+
+### Get all causes
+GET {{baseUrl}}
+Content-Type: application/json
+
+### Get all causes with pagination
+GET {{baseUrl}}?page={{page}}&limit={{limit}}
+Content-Type: application/json
 
 ### Get details of a cause
-GET {{baseUrl}}/causes/{{causeId}}
-
-### Get all causes of a community
-GET {{baseUrl}}/communities/{{communityId}}/causes?page={{page}}&limit={{limit}}
+GET {{baseUrl}}/{{causeId}}
+Content-Type: application/json

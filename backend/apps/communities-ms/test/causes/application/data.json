@@ -1,0 +1,100 @@
+{
+    "data": [
+        {
+            "id": "f13e3b65-f450-40e8-996c-68f73bc9b1c3",
+            "title": "Causa B",
+            "description": "This is a new description",
+            "ods": [
+                {
+                    "id": 1,
+                    "title": "No Poverty",
+                    "description": "Eradicate poverty in all its forms everywhere."
+                }
+            ],
+            "endDate": "2025-12-31T23:59:59.000Z",
+            "communityId": "180a7af4-a2b3-488b-bd68-26ee9c04337f",
+            "createdBy": "0ef6af41-d991-4f90-9a0f-e3f2eea165e5",
+            "createdAt": "2025-01-09T15:59:08.996Z",
+            "updatedAt": "2025-01-12T17:37:51.660Z"
+        },
+        {
+            "id": "de44e99f-3e8b-468d-b719-6da1748c6385",
+            "title": "Causa principal",
+            "description": "Descripción de la causa principal",
+            "ods": [
+                {
+                    "id": 1,
+                    "title": "No Poverty",
+                    "description": "Eradicate poverty in all its forms everywhere."
+                }
+            ],
+            "endDate": "2025-12-31T23:59:59.000Z",
+            "communityId": "31e2ef02-5ff7-484a-bf38-0823037a10ad",
+            "createdBy": "0ef6af41-d991-4f90-9a0f-e3f2eea165e5",
+            "createdAt": "2025-01-09T15:59:25.489Z",
+            "updatedAt": "2025-01-09T15:59:25.489Z"
+        },
+        {
+            "id": "75d632f6-96a0-4264-8e13-d10ef162d329",
+            "title": "Causa A",
+            "description": "Descripción de la causa principal",
+            "ods": [
+                {
+                    "id": 1,
+                    "title": "No Poverty",
+                    "description": "Eradicate poverty in all its forms everywhere."
+                }
+            ],
+            "endDate": "2025-12-31T23:59:59.000Z",
+            "communityId": "19cd16fb-afdd-48b0-8c22-fcf166fc0ec0",
+            "createdBy": "0ef6af41-d991-4f90-9a0f-e3f2eea165e5",
+            "createdAt": "2025-01-09T17:19:57.729Z",
+            "updatedAt": "2025-01-09T17:19:57.729Z"
+        },
+        {
+            "id": "6d237c21-20ed-43e2-8716-784038e90501",
+            "title": "Causa F",
+            "description": "Descripción de la causa principal",
+            "ods": [
+                {
+                    "id": 1,
+                    "title": "No Poverty",
+                    "description": "Eradicate poverty in all its forms everywhere."
+                }
+            ],
+            "endDate": "2025-12-31T23:59:59.000Z",
+            "communityId": "e2b46538-9428-4d2b-aa41-3d0364f83616",
+            "createdBy": "0ef6af41-d991-4f90-9a0f-e3f2eea165e5",
+            "createdAt": "2025-01-09T17:30:33.396Z",
+            "updatedAt": "2025-01-09T17:30:33.396Z"
+        },
+        {
+            "id": "a943d10e-c021-4833-ae91-a5f5fb33f99c",
+            "title": "Causa D",
+            "description": "Descripción de la causa principal",
+            "ods": [
+                {
+                    "id": 1,
+                    "title": "No Poverty",
+                    "description": "Eradicate poverty in all its forms everywhere."
+                }
+            ],
+            "endDate": "2025-12-31T23:59:59.000Z",
+            "communityId": "14617095-643b-4a92-a1b3-aaa1e49f2de0",
+            "createdBy": "0ef6af41-d991-4f90-9a0f-e3f2eea165e5",
+            "createdAt": "2025-01-09T17:30:34.526Z",
+            "updatedAt": "2025-01-09T17:30:34.526Z"
+        }
+    ],
+    "meta": {
+        "total": 9,
+        "page": 1,
+        "limit": 10,
+        "totalPages": 1,
+        "hasNextPage": false,
+        "hasPreviousPage": false
+    },
+    "links": {
+        "self": "http://localhost:3002/causes/?page=1&limit=10"
+    }
+}

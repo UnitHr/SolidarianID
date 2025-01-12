@@ -57,6 +57,3 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # stryker temp files
 .stryker-tmp
-
-# stryker reports
-/reports/* 

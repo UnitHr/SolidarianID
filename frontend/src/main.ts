@@ -30,7 +30,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   // Start the application
-  await app.listen(envs.frontendPort, envs.frontendHost);
+  await app.listen(envs.frontendPort, '0.0.0.0');
   logger.log(`Frontend is running on: ${await app.getUrl()}`);
 }
 bootstrap();

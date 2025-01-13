@@ -202,7 +202,6 @@ graph TB
     end
 
     subgraph "External Microservices"
-        UserMS["User Microservice<br>(External Service)"]
         CommunityMS["Community Microservice<br>(External Service)"]
         StatisticsMS["Statistics Microservice<br>(External Service)"]
     end
@@ -232,8 +231,8 @@ graph TB
     ViewEngine -->|"Serves"| Validation
 
     %% External service connections
-    ReportService -->|"Fetches data"| UserMS
     ReportService -->|"Fetches data"| CommunityMS
+    ValidService -->|"Fetches data"| CommunityMS
     StatService -->|"Fetches statistics"| StatisticsMS
 ```
 

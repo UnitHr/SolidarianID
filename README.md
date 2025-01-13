@@ -46,7 +46,7 @@ API-Gateway URL: [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
 - **Community Microservice Base URL:** [http://localhost:3002/communities](http://localhost:3002/communities)
 - **Statistics Microservice Base URL:** [http://localhost:3003/statistics](http://localhost:3003/statistics)
 
-### Public Documentation
+## Public Documentation
 
 - [User API Documentation](http://localhost:3000/api/v1/doc/users)
 - [Community API Documentation](http://localhost:3000/api/v1/doc/communities)

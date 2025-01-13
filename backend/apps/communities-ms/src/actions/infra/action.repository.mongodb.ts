@@ -16,7 +16,7 @@ import {
 export class ActionRepositoryMongoDB extends ActionRepository {
   constructor(
     @InjectModel(Persistence.Action.name)
-    private actionModel: Model<Persistence.Action>,
+    private readonly actionModel: Model<Persistence.Action>,
   ) {
     super();
   }

@@ -16,7 +16,7 @@ import * as Persistence from './persistence';
 export class CauseRepositoryMongoDB extends CauseRepository {
   constructor(
     @InjectModel(Persistence.Cause.name)
-    private causeModel: Model<Persistence.Cause>,
+    private readonly causeModel: Model<Persistence.Cause>,
   ) {
     super();
   }

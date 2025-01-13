@@ -12,7 +12,7 @@ import { StatusRequest } from '../domain/StatusRequest';
 export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestRepository {
   constructor(
     @InjectModel(Persistence.JoinCommunityRequest.name)
-    private joinCommunityModel: Model<Persistence.JoinCommunityRequest>,
+    private readonly joinCommunityModel: Model<Persistence.JoinCommunityRequest>,
   ) {
     super();
   }

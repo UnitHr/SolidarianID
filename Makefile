@@ -30,7 +30,13 @@ build-prod:
 clean-prod:
 	$(MAKE) -C backend clean-prod
 	$(MAKE) -C frontend clean-prod
-	$(MAKE) -C backend delete-network
+
+# Network
+create-network:
+	docker network create --driver bridge solidarianid-network
+
+delete-network:
+	docker network rm solidarianid-network
 
 # Help
 help:
@@ -42,3 +48,5 @@ help:
 	@echo "  status-prod            - Show status of production environment"
 	@echo "  build-prod             - Build production environment"
 	@echo "  clean-prod             - Clean production environment (remove volumes and orphans)"
+	@echo "  create-network         - Create Docker network"
+	@echo "  delete-network         - Delete Docker network"

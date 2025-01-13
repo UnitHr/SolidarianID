@@ -6,18 +6,15 @@ COMPOSE_FILE := docker-compose-prod.yml
 
 # Docker commands
 run-prod:
-	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_FILE) up -d --build
 
 run-foreground-prod:
-	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_FILE) up --build
 
 stop-prod:
 	docker-compose -f $(COMPOSE_FILE) down
 
 restart-prod:
-	$(MAKE) create-network
 	docker-compose -f $(COMPOSE_FILE) down && docker-compose -f $(COMPOSE_FILE) up -d --build
 
 # Cleaning
@@ -36,7 +33,7 @@ build-prod:
 
 # Network
 create-network:
-	docker network create --driver bridge solidarianid-network || true
+	docker network create --driver bridge solidarianid-network
 
 delete-network:
 	docker network rm solidarianid-network

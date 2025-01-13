@@ -19,6 +19,12 @@ npm run start:dev
 
 ## Production
 
+To create the necessary network for the production environment, run:
+
+```sh
+make create-network
+```
+
 To run the production environment in detached mode, run:
 
 ```sh

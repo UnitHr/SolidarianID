@@ -14,7 +14,7 @@ import {
 export class CommunityRepositoryMongoDb extends CommunityRepository {
   constructor(
     @InjectModel(Persistence.Community.name)
-    private communityModel: Model<Persistence.Community>,
+    private readonly communityModel: Model<Persistence.Community>,
   ) {
     super();
   }

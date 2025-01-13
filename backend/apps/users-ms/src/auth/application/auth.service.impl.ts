@@ -8,8 +8,8 @@ export class AuthServiceImpl implements AuthService {
   logger = new Logger(AuthServiceImpl.name);
 
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signIn(

@@ -35,6 +35,12 @@ make help
 
 ## Production
 
+To create the necessary network for the production environment, run:
+
+```sh
+make create-network
+```
+
 To start the production environment, run:
 
 ```sh

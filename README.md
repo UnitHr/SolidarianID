@@ -4,6 +4,12 @@ Repository for the SolidarianID project.
 
 ## Main Commands
 
+To create the necessary network for the production environment, run:
+
+```sh
+make create-network
+```
+
 To start the production application, run:
 
 ```sh

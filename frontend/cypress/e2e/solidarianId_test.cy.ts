@@ -39,31 +39,55 @@ describe('SolidarianId', () => {
     });
   });
 
-  it('should successfully view community report', () => {
-    cy.login(TEST_USER.email, TEST_USER.password);
+  it('should successfully accept a pending request', () => {
+    cy.login(TEST_USER.email, TEST_USER.password).then(() => {
+      cy.getCookie('user').then((cookie) => {
+        const rawValue = decodeURIComponent(cookie.value);
+        const userData =
+          typeof rawValue === 'string' && rawValue.startsWith('j:')
+            ? JSON.parse(rawValue.slice(2))
+            : JSON.parse(rawValue);
 
-    // Navigate to reports
-    cy.contains('Dashboard').click();
-    cy.contains('Reports').click();
+        const token = userData.token;
+        const communityName = 'Community Test';
 
-    // Select a community from the dropdown
-    cy.contains('Select Community').click();
-    // Verify that the dropdown is visible
-    cy.get('#community-select').should('be.visible');
+        // Create a community request
+        cy.request({
+          method: 'POST',
+          url: 'http://localhost:3000/api/v1/communities',
+          body: {
+            name: communityName,
+            description: 'This is a test community created for Cypress tests.',
+            cause: {
+              title: 'Causa principal',
+              description: 'Descripción de la causa principal',
+              end: '2025-12-31T23:59:59.000Z',
+              ods: [1, 2],
+            },
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-    // Select the first element (excluding the placeholder) by index
-    cy.get('#community-select')
-      .find('option')
-      .eq(1)
-      .then((option) => {
-        const value = option.val();
-        cy.get('#community-select').select(value);
+        cy.contains('Dashboard').click();
+        cy.contains('Validation').click();
+
+        cy.contains(communityName)
+          .should('be.visible')
+          .parent()
+          .parent()
+          .within(() => {
+            // Select the checkbox
+            cy.get('input[type="checkbox"]').check();
+          });
+
+        cy.contains('button', 'Validate').click();
+
+        // Verify request removal and success notification
+        cy.contains(communityName).should('not.exist');
       });
-
-    // View and verify report
-    cy.contains('button', 'View Report').click();
-    cy.contains('Community Details').should('be.visible');
-    cy.contains('Name').should('be.visible');
-    cy.contains('Members').should('be.visible');
+    });
   });
 });

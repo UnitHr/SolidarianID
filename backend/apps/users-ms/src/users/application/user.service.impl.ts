@@ -75,7 +75,7 @@ export class UserServiceImpl implements UserService, OnModuleInit {
         bio,
         showAge,
         showEmail,
-        role: role,
+        role,
       }),
     );
 

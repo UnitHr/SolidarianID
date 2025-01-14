@@ -23,6 +23,8 @@ interface EnvVars {
   KAFKA_CLIENT_ID: string;
   KAFKA_BROKERS: string;
   KAFKA_GROUP_ID: string;
+  ADMIN_EMAIL: string;
+  ADMIN_PASSWORD: string;
 }
 
 const envsSchema = joi
@@ -45,6 +47,8 @@ const envsSchema = joi
     KAFKA_CLIENT_ID: joi.string().required(),
     KAFKA_BROKERS: joi.string().required(),
     KAFKA_GROUP_ID: joi.string().required(),
+    ADMIN_EMAIL: joi.string().required(),
+    ADMIN_PASSWORD: joi.string().required(),
   })
   .unknown(true);
 
@@ -71,4 +75,6 @@ export const envs = {
   kafkaClientId: process.env.KAFKA_CLIENT_ID,
   kafkaBrokers: process.env.KAFKA_BROKERS.split(','),
   kafkaGroupId: process.env.KAFKA_GROUP_ID,
+  adminEmail: envVars.ADMIN_EMAIL,
+  adminPassword: envVars.ADMIN_PASSWORD,
 };

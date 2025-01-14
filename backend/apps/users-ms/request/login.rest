@@ -5,8 +5,17 @@ POST  {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "joe@example.com",
-  "password": "123456Test*"
+  "email": "jack12.doe@example.com",
+  "password":"123456Test*"
+}
+
+### Login admin
+POST  {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com",
+  "password":"123456Test*"
 }
 
 ### Login failed

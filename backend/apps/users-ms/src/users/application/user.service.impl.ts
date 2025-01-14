@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { EventPublisher } from '@nestjs/cqrs';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
+import { envs } from '@users-ms/config';
 import { UserRepository } from '../user.repository';
 import { User } from '../domain';
 import { UserService } from './user.service';
@@ -14,11 +15,31 @@ import { UserPassword } from '../domain/Password';
 import { UserEmail } from '../domain/UserEmail';
 
 @Injectable()
-export class UserServiceImpl implements UserService {
+export class UserServiceImpl implements UserService, OnModuleInit {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly eventPublisher: EventPublisher,
   ) {}
+
+  async onModuleInit() {
+    try {
+      await this.createUser(
+        'Admin',
+        'Admin',
+        new Date('1990-01-01'),
+        envs.adminEmail,
+        envs.adminPassword,
+        '',
+        false,
+        false,
+        Role.ADMIN,
+      );
+    } catch (error) {
+      if (!(error instanceof EmailAlreadyInUseError)) {
+        throw error;
+      }
+    }
+  }
 
   async createUser(
     firstName: string,
@@ -29,6 +50,7 @@ export class UserServiceImpl implements UserService {
     bio: string,
     showAge: boolean,
     showEmail: boolean,
+    role = Role.USER,
   ): Promise<string> {
     // Check if the email is already in use
     try {
@@ -53,7 +75,7 @@ export class UserServiceImpl implements UserService {
         bio,
         showAge,
         showEmail,
-        role: Role.USER,
+        role: role,
       }),
     );
 

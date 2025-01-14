@@ -44,10 +44,10 @@ describe('Login Form', () => {
       const emailInput = screen.getByLabelText(/email/i);
       const passwordInput = screen.getByLabelText(/password/i);
 
-      await userEvent.type(emailInput, 'admin@example.com');
+      await userEvent.type(emailInput, 'admin@admin.com');
       await userEvent.type(passwordInput, '123456Test*');
 
-      expect(emailInput).toHaveValue('admin@example.com');
+      expect(emailInput).toHaveValue('admin@admin.com');
       expect(passwordInput).toHaveValue('123456Test*');
     });
 

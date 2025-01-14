@@ -1,3 +1,4 @@
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { User } from '../domain';
 
 export abstract class UserService {
@@ -10,6 +11,7 @@ export abstract class UserService {
     bio: string,
     showAge: boolean,
     showEmail: boolean,
+    role?: Role,
   ): Promise<string>;
 
   abstract updateUser(id: string, email: string, bio: string): Promise<void>;

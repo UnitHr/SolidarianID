@@ -8,7 +8,7 @@ describe('SolidarianId', () => {
 
   // Constants to avoid repetition and make maintenance easier
   const TEST_USER = {
-    email: 'admin@example.com',
+    email: 'admin@admin.com',
     password: '123456Test*',
   };
 

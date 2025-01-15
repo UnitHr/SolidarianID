@@ -3,7 +3,7 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityI
 import { EventPublisher } from '@nestjs/cqrs';
 import { HistoryEntry } from '../domain/HistoryEntry';
 import { ActivityType } from '../domain/ActivityType';
-import { HistoryEntryRepository } from '../domain/history-entry.repository';
+import { HistoryEntryRepository } from '../history-entry.repository';
 import { HistoryService } from './history.service';
 import { EntryStatus } from '../domain/HistoryEntryStatus';
 

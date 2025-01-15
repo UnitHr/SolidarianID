@@ -5,7 +5,7 @@ import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/enti
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { HistoryEntry as DomainHistoryEntry } from '../domain/HistoryEntry';
 import { ActivityType } from '../domain/ActivityType';
-import { HistoryEntryRepository } from '../domain/history-entry.repository';
+import { HistoryEntryRepository } from '../history-entry.repository';
 import { HistoryEntry } from './persistence/HistoryEntry';
 import { HistoryEntryMapper } from '../history-entry.mapper';
 import { EntryStatus } from '../domain/HistoryEntryStatus';

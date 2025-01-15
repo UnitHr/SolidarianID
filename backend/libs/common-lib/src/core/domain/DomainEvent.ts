@@ -7,9 +7,9 @@ export abstract class DomainEvent implements IEvent {
 
   public static readonly TOPIC?: string;
 
-  constructor(type: string) {
+  constructor(type: string, date?: Date) {
     this.type = type;
-    this.date = new Date();
+    this.date = date ?? new Date();
   }
 
   public shouldBePublishedExternally(): boolean {

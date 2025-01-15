@@ -7,7 +7,8 @@ export class HistoryRegisteredEvent extends DomainEvent {
     public readonly userId: string,
     public readonly activityType: ActivityType,
     public readonly entityId: string,
+    public readonly date: Date,
   ) {
-    super(HistoryRegisteredEvent.name);
+    super(HistoryRegisteredEvent.name, date);
   }
 }

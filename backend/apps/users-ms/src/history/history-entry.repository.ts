@@ -1,7 +1,7 @@
 import { Repository } from '@common-lib/common-lib/core/repository';
-import { HistoryEntry } from './HistoryEntry';
-import { ActivityType } from './ActivityType';
-import { EntryStatus } from './HistoryEntryStatus';
+import { HistoryEntry } from './domain/HistoryEntry';
+import { ActivityType } from './domain/ActivityType';
+import { EntryStatus } from './domain/HistoryEntryStatus';
 
 export abstract class HistoryEntryRepository extends Repository<HistoryEntry> {
   abstract findByUserIdEntityIdTypeAndStatus(

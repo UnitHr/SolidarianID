@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 import { HistoryEntry } from './infra/persistence/HistoryEntry';
-import { HistoryEntryRepository } from './domain/history-entry.repository';
+import { HistoryEntryRepository } from './history-entry.repository';
 import { HistoryEntryRepositoryTypeorm } from './infra/history-entry.repository.typeorm';
 import { HistoryService } from './application/history.service';
 import { HistoryServiceImpl } from './application/history.service.impl';

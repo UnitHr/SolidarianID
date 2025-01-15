@@ -51,6 +51,10 @@ API-Gateway URL: [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
 - [User API Documentation](http://localhost:3000/api/v1/doc/users)
 - [Community API Documentation](http://localhost:3000/api/v1/doc/communities)
 
+## Container Architecture Diagram
+
+![Container Architecture Diagram](./doc/diagrams/containerArchitectureDiagram.png)
+
 ## Backend Software Architecture Diagram
 
 ```mermaid

@@ -5,7 +5,8 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class CreateCommunityRequest {
-  @Prop()
+  @Prop({ index: true }) // For findById
+  @Prop({ required: true, unique: true })
   id: string;
 
   @Prop()
@@ -48,3 +49,5 @@ export type CreateCommunityRequestDocument =
 export const CreateCommunityRequestSchema = SchemaFactory.createForClass(
   CreateCommunityRequest,
 );
+
+CreateCommunityRequestSchema.index({ status: 1, createdAt: -1 }); // For findAll

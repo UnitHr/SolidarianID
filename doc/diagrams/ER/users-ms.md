@@ -35,8 +35,14 @@ erDiagram
         timestamp updatedAt
     }
 
+    USER_FOLLOWERS {
+        uuid followed_id FK
+        uuid follower_id FK
+    }
+
     USER ||--o{ NOTIFICATION : "receives"
     USER ||--o{ HISTORY_ENTRY : "has entries"
-    USER ||--o{ USER : "follows"
+    USER ||--o{ USER_FOLLOWERS : "follows"
+    USER ||--o{ USER_FOLLOWERS : "is followed by"
     NOTIFICATION ||--|| HISTORY_ENTRY : "references"
 ```

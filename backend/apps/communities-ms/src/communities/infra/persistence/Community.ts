@@ -3,13 +3,14 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class Community {
-  @Prop()
+  @Prop({ index: true }) // For findById
+  @Prop({ required: true, unique: true })
   id: string;
 
   @Prop()
   adminId: string;
 
-  @Prop()
+  @Prop({ index: true }) // For findByName
   name: string;
 
   @Prop()
@@ -25,3 +26,5 @@ export class Community {
 export type CommunityDocument = HydratedDocument<Community>;
 
 export const CommunitySchema = SchemaFactory.createForClass(Community);
+
+CommunitySchema.index({ adminId: 1, id: 1 }); // For isCommunityAdmin

@@ -4,13 +4,14 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class JoinCommunityRequest {
-  @Prop()
+  @Prop({ index: true }) // For findById
+  @Prop({ required: true, unique: true })
   id: string;
 
   @Prop()
   userId: string;
 
-  @Prop()
+  @Prop({ index: true }) // For countDocuments
   communityId: string;
 
   @Prop()
@@ -28,3 +29,6 @@ export type JoinCommunityRequestDocument =
 
 export const JoinCommunityRequestSchema =
   SchemaFactory.createForClass(JoinCommunityRequest);
+
+JoinCommunityRequestSchema.index({ communityId: 1, status: 1 }); // For findAll (PENDING)
+JoinCommunityRequestSchema.index({ userId: 1, communityId: 1 }); // For findByUserIdAndCommunityId

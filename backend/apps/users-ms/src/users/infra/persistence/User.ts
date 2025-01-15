@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToMany,
+  JoinTable,
+  Index,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -14,6 +21,7 @@ export class User {
   @Column('date')
   birthDate: Date;
 
+  @Index()
   @Column({ unique: true })
   email: string;
 

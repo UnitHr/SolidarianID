@@ -30,20 +30,15 @@ export class JoinCommunityRequestRepositoryMongoDb extends JoinCommunityRequestR
   async save(
     entity: Domain.JoinCommunityRequest,
   ): Promise<Domain.JoinCommunityRequest> {
-    const existsRequest = await this.joinCommunityModel.findOne({
-      id: entity.id.toString(),
-    });
-
     const document = JoinCommunityRequestMapper.toPersistence(entity);
 
-    if (!!existsRequest === false) {
-      return this.joinCommunityModel
-        .create(document)
-        .then((doc) => JoinCommunityRequestMapper.toDomain(doc));
-    }
     return this.joinCommunityModel
-      .updateOne({ id: entity.id.toString() }, document)
-      .then(() => this.findById(entity.id.toString()));
+      .findOneAndUpdate({ id: entity.id.toString() }, document, {
+        upsert: true,
+        new: true,
+      })
+      .exec()
+      .then((doc) => JoinCommunityRequestMapper.toDomain(doc));
   }
 
   async findAll(

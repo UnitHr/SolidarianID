@@ -33,20 +33,15 @@ export class CreateCommunityRequestRepositoryMongoDb extends CreateCommunityRequ
   async save(
     entity: Domain.CreateCommunityRequest,
   ): Promise<Domain.CreateCommunityRequest> {
-    const existsRequest = await this.createCommunityModel.findOne({
-      id: entity.id.toString(),
-    });
-
     const document = CreateCommunityRequestMapper.toPersistence(entity);
 
-    if (!!existsRequest === false) {
-      return this.createCommunityModel
-        .create(document)
-        .then((doc) => CreateCommunityRequestMapper.toDomain(doc));
-    }
     return this.createCommunityModel
-      .updateOne({ id: entity.id.toString() }, document)
-      .then(() => this.findById(entity.id.toString()));
+      .findOneAndUpdate({ id: entity.id.toString() }, document, {
+        upsert: true,
+        new: true,
+      })
+      .exec()
+      .then((doc) => CreateCommunityRequestMapper.toDomain(doc));
   }
 
   async findAll(

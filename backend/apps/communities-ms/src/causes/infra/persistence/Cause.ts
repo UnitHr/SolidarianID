@@ -3,6 +3,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ timestamps: true }) // Handles createdAt and updatedAt automatically
 export class Cause {
+  @Prop({ index: true }) // For save, findById
   @Prop({ required: true, unique: true })
   id: string;
 
@@ -41,3 +42,5 @@ export class Cause {
 }
 
 export const CauseSchema = SchemaFactory.createForClass(Cause);
+
+CauseSchema.index({ ods: 1, title: 1, createdAt: -1 }); // For findAll

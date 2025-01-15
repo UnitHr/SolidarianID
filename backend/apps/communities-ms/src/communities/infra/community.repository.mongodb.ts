@@ -56,20 +56,15 @@ export class CommunityRepositoryMongoDb extends CommunityRepository {
   }
 
   async save(entity: Domain.Community): Promise<Domain.Community> {
-    const existsCommunity = await this.communityModel.findOne({
-      id: entity.id.toString(),
-    });
-
     const document = CommunityMapper.toPersistence(entity);
 
-    if (!!existsCommunity === false) {
-      return this.communityModel
-        .create(document)
-        .then((doc) => CommunityMapper.toDomain(doc));
-    }
     return this.communityModel
-      .updateOne({ id: entity.id.toString() }, document)
-      .then(() => this.findById(entity.id.toString()));
+      .findOneAndUpdate({ id: entity.id.toString() }, document, {
+        upsert: true,
+        new: true,
+      })
+      .exec()
+      .then((doc) => CommunityMapper.toDomain(doc));
   }
 
   async findAll(

@@ -5,6 +5,7 @@ import { Contribution, ContributionSchema } from './Contribution';
 
 @Schema({ timestamps: true }) // Handles createdAt and updatedAt automatically
 export class Action {
+  @Prop({ index: true }) // For save, findById
   @Prop({ required: true, unique: true })
   id: string;
 
@@ -20,7 +21,8 @@ export class Action {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ index: true }) // For save, findByCauseId
+  @Prop({ required: true, unique: true })
   causeId: string;
 
   @Prop({ type: [ContributionSchema], default: [] })
@@ -57,3 +59,5 @@ export class Action {
 }
 
 export const ActionSchema = SchemaFactory.createForClass(Action);
+
+ActionSchema.index({ status: 1, title: 1, createdAt: -1, type: 1 }); // For findAll

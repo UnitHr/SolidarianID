@@ -3,12 +3,12 @@ import { Entity, PrimaryColumn, Column, Index } from 'typeorm';
 import { EntryStatus, ActivityType } from '@users-ms/history/domain';
 
 @Entity()
+@Index(['userId', 'type', 'status', 'timestamp'])
 export class HistoryEntry {
   @PrimaryColumn('uuid')
   id: string;
 
   @Column('uuid')
-  @Index()
   userId: string;
 
   @Column({
@@ -22,7 +22,6 @@ export class HistoryEntry {
   entityId: string;
 
   @Column('timestamp')
-  @Index()
   timestamp: Date;
 
   @Column({
@@ -31,7 +30,6 @@ export class HistoryEntry {
     enum: EntryStatus,
     nullable: true,
   })
-  @Index()
   status?: EntryStatus;
 
   @Column('jsonb', { nullable: true })

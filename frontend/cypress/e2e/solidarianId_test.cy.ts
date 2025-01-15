@@ -39,7 +39,7 @@ describe('SolidarianId', () => {
     });
   });
 
-  it('should successfully accept a pending request', () => {
+  it('should successfully reject a pending request', () => {
     cy.login(TEST_USER.email, TEST_USER.password).then(() => {
       cy.getCookie('user').then((cookie) => {
         const rawValue = decodeURIComponent(cookie.value);
@@ -49,7 +49,7 @@ describe('SolidarianId', () => {
             : JSON.parse(rawValue);
 
         const token = userData.token;
-        const communityName = 'Community Test';
+        const communityName = 'Community for Test';
 
         // Create a community request
         cy.request({
@@ -83,7 +83,17 @@ describe('SolidarianId', () => {
             cy.get('input[type="checkbox"]').check();
           });
 
-        cy.contains('button', 'Validate').click();
+        cy.contains(communityName)
+          .parent()
+          .parent()
+          .parent()
+          .within(() => {
+            cy.contains('button', 'Reject').click();
+          });
+
+        // Type the reason for rejection and click submit
+        cy.get('textarea').type('This is a test rejection.');
+        cy.contains('button', 'Submit').click();
 
         // Verify request removal and success notification
         cy.contains(communityName).should('not.exist');

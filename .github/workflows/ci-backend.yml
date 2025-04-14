@@ -1,0 +1,53 @@
+name: SolidarianID CI - Backend
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+
+jobs:
+  lint-test-build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: ./backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      # LINT & FORMAT
+      - name: Run Prettier check
+        working-directory: ./backend
+        run: npm run prettier:check
+
+      - name: Run ESLint
+        working-directory: ./backend
+        run: npm run lint
+
+      # TESTS
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm run test
+
+      - name: Run backend e2e tests
+        working-directory: ./backend
+        run: npm run test:e2e
+
+      # BUILD
+      - name: Build backend
+        working-directory: ./backend
+        run: |
+          npm run build:communities-ms
+          npm run build:users-ms
+          npm run build:api-gateway
+          npm run build:statistics-ms

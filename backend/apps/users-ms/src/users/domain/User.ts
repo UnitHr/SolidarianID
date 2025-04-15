@@ -23,6 +23,7 @@ export interface UserProps {
   // review: in a future we will need to optimize this, because we will have a lot of followers. For MVP we will use this. Optimal for 1k - 5k users.
   // eslint-disable-next-line no-use-before-define
   followers?: User[];
+  githubId?: string;
 }
 
 export class User extends EntityRoot<UserProps> {
@@ -92,6 +93,14 @@ export class User extends EntityRoot<UserProps> {
 
   get followers(): User[] {
     return this.props.followers;
+  }
+
+  get githubId(): string {
+    return this.props.githubId;
+  }
+
+  set githubId(githubId: string) {
+    this.props.githubId = githubId;
   }
 
   public static create(props: UserProps, id?: UniqueEntityID): User {

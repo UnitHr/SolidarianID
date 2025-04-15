@@ -13,11 +13,15 @@ import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { UserService } from '../../users/application/user.service';
 
 @ApiExcludeController()
 @Controller('users/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UserService,
+  ) {}
 
   @Public()
   @HttpCode(HttpStatus.OK)
@@ -42,9 +46,21 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubCallback(@Req() req, @Res() res) {
-    // Generates the JWT token with the user's information
-    const token = await this.authService.signOauth2(req.user.email);
-    // Returns the JWT token as part of the response
-    return res.json({ token });
+    const { githubId } = req.user; // Solo tomamos el githubId del perfil
+
+    const user = await this.usersService.findByGithubId(githubId);
+
+    if (user) {
+      // Si el usuario existe, generamos el token JWT
+      const token = await this.authService.signOauth2(
+        user.id,
+        user.email,
+        user.role,
+      );
+      return res.json({ exists: true, githubId, ...token });
+    }
+
+    // Si no existe, respondemos con la info de que debe registrarse
+    return res.json({ exists: false, githubId });
   }
 }

@@ -40,6 +40,9 @@ export class User {
   @Column()
   role: string;
 
+  @Column({ nullable: true })
+  githubId?: string;
+
   @ManyToMany(() => User)
   @JoinTable({
     name: 'user_followers',

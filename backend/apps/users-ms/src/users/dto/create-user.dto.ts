@@ -44,4 +44,9 @@ export class CreateUserDto {
 
   @IsOptional()
   showEmail?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  githubId?: string;
 }

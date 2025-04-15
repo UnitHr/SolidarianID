@@ -50,6 +50,7 @@ export class UserServiceImpl implements UserService, OnModuleInit {
     bio: string,
     showAge: boolean,
     showEmail: boolean,
+    githubId?: string,
     role = Role.USER,
   ): Promise<string> {
     // Check if the email is already in use
@@ -134,5 +135,9 @@ export class UserServiceImpl implements UserService, OnModuleInit {
   async getUserFollowers(id: string): Promise<User[]> {
     const user = await this.userRepository.findById(id);
     return user.followers;
+  }
+
+  async findByGithubId(githubId: string): Promise<User> {
+    return this.userRepository.findByGithubId(githubId);
   }
 }

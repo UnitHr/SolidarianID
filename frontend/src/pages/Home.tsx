@@ -2,8 +2,11 @@ import { Col, Container, Row, Image, Button } from "react-bootstrap";
 import girlImage from "../assets/chica-solidarianid.png";
 import logo from "../assets/logo-solidarianid.png";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
+import { useNavigate } from "react-router-dom";
 
 export function Home() {
+  const navigate = useNavigate();
+
   return (
     <>
       <SolidarianNavbar></SolidarianNavbar>
@@ -48,17 +51,26 @@ export function Home() {
           <Row>
             <Col className="mx-4 my-4">
               <Row>
-                <Button variant="primary">Find Communities</Button>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate("/communities")}
+                >
+                  Find Communities
+                </Button>
               </Row>
             </Col>
             <Col className="mx-4 my-4">
               <Row>
-                <Button variant="primary">Find Causes</Button>
+                <Button variant="primary" onClick={() => navigate("/causes")}>
+                  Find Causes
+                </Button>
               </Row>
             </Col>
             <Col className="mx-4 my-4">
               <Row>
-                <Button variant="primary">Find Actions</Button>
+                <Button variant="primary" onClick={() => navigate("/actions")}>
+                  Find Actions
+                </Button>
               </Row>
             </Col>
           </Row>

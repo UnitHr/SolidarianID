@@ -1,6 +1,8 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Image } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { FormFilterCommunities } from "../components/FormFilterCommunities";
+import { CommunityCard } from "../components/CommunityCard";
+import image from "../assets/filter-community-image.png";
 
 export function SearchCommunities() {
   return (
@@ -8,8 +10,8 @@ export function SearchCommunities() {
       <SolidarianNavbar></SolidarianNavbar>
       <Container>
         <Row>
-          <Row className="my-4">
-            <h1>Filter Communities</h1>
+          <Row className="my-5">
+            <h1 className="text-center">Filter Communities</h1>
           </Row>
           <Row className="my-4">
             <h3 className="px-4 py-4 text-justify">
@@ -19,14 +21,68 @@ export function SearchCommunities() {
             </h3>
           </Row>
         </Row>
-        <Row>
-          <Col></Col>
-          <Col>
+        <Row className="align-items-center">
+          <Col className="d-flex justify-content-center align-items-center">
             <FormFilterCommunities></FormFilterCommunities>
           </Col>
-          <Col></Col>
+          <Col>
+            <Image src={image} fluid />
+          </Col>
         </Row>
-        <Row></Row>
+        <Row className="my-4">
+          <Row className="mt-3 mb-2">
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+          </Row>
+          <Row className="mt-3 mb-2">
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+            <Col>
+              <CommunityCard
+                name="Community 1"
+                description="This is a description for community 1"
+              ></CommunityCard>
+            </Col>
+          </Row>
+        </Row>
       </Container>
     </>
   );

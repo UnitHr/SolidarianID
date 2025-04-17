@@ -3,7 +3,7 @@ import { Card, Form, Row, Button } from "react-bootstrap";
 export function FormFilterCommunities() {
   return (
     <>
-      <Card className="p-4 shadow-sm mb-4">
+      <Card border="primary" bg="light" className="p-4 shadow-sm mb-4">
         <Card.Body>
           <Card.Title className="mb-4">
             <h2>Filtering Options</h2>

@@ -1,18 +1,18 @@
 import { Button, Card } from "react-bootstrap";
 
-interface CommunityCardProps {
+interface CauseCardProps {
   name: string;
   description: string;
 }
 
-export function CommunityCard(props: CommunityCardProps) {
+export function CauseCard(props: CauseCardProps) {
   return (
     <>
       <Card style={{ width: "18rem" }}>
         <Card.Body>
           <Card.Title>{props.name}</Card.Title>
           <Card.Text>{props.description}</Card.Text>
-          <Button variant="primary">Go to the community</Button>
+          <Button variant="primary">Go to the cause</Button>
         </Card.Body>
       </Card>
     </>

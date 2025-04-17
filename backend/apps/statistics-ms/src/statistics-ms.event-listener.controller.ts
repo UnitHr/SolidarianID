@@ -26,7 +26,7 @@ export class StatisticsMsEventListenerController {
     private readonly odsStatisticsService: OdsStatisticsService,
   ) {}
 
-  @EventPattern(CommunityCreatedEvent.TOPIC)
+  @EventPattern(CommunityCreatedEvent.EVENT_TYPE)
   async handleCommunityCreated(@Payload() message: CommunityCreatedEvent) {
     this.logger.log(
       `Community created event handled: ${JSON.stringify(message)}`,
@@ -46,7 +46,7 @@ export class StatisticsMsEventListenerController {
     ]);
   }
 
-  @EventPattern(UserJoinedCommunity.TOPIC)
+  @EventPattern(UserJoinedCommunity.EVENT_TYPE)
   async handleJoinCommunityMember(@Payload() message: UserJoinedCommunity) {
     this.logger.log(
       `User joined community event handled: ${JSON.stringify(message)}`,
@@ -58,7 +58,7 @@ export class StatisticsMsEventListenerController {
     );
   }
 
-  @EventPattern(CauseCreatedEvent.TOPIC)
+  @EventPattern(CauseCreatedEvent.EVENT_TYPE)
   async handleCauseCreated(@Payload() message: CauseCreatedEvent) {
     this.logger.log(`Cause created event handled: ${JSON.stringify(message)}`);
 
@@ -77,7 +77,7 @@ export class StatisticsMsEventListenerController {
     ]);
   }
 
-  @EventPattern(CauseSupportedEvent.TOPIC)
+  @EventPattern(CauseSupportedEvent.EVENT_TYPE)
   async handleCauseAddSupporter(@Payload() message: CauseSupportedEvent) {
     this.logger.log(
       `Cause add supporter event handled: ${JSON.stringify(message)}`,
@@ -94,7 +94,7 @@ export class StatisticsMsEventListenerController {
     ]);
   }
 
-  @EventPattern(ActionCreatedEvent.TOPIC)
+  @EventPattern(ActionCreatedEvent.EVENT_TYPE)
   async handleActionCreated(@Payload() message: ActionCreatedEvent) {
     this.logger.log(`Action created event handled: ${JSON.stringify(message)}`);
 
@@ -113,7 +113,7 @@ export class StatisticsMsEventListenerController {
     ]);
   }
 
-  @EventPattern(ActionContributedEvent.TOPIC)
+  @EventPattern(ActionContributedEvent.EVENT_TYPE)
   async handleActionContributed(@Payload() message: ActionContributedEvent) {
     this.logger.log(
       `Action contributed event handled: ${JSON.stringify(message)}`,

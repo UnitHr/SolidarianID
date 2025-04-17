@@ -2,7 +2,7 @@ import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { DomainEvent } from '@common-lib/common-lib/core/domain/DomainEvent';
 
 export class CauseSupportedEvent extends DomainEvent {
-  public static readonly TOPIC = 'cause-supported';
+  public static readonly EVENT_TYPE = 'cause-supported';
 
   constructor(
     public readonly userId: string,

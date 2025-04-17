@@ -17,7 +17,7 @@ export class HistoryEventsController {
 
   constructor(private readonly historyService: HistoryService) {}
 
-  @EventPattern(CommunityCreatedEvent.TOPIC)
+  @EventPattern(CommunityCreatedEvent.EVENT_TYPE)
   async handleCommunityCreated(@Payload() message: CommunityCreatedEvent) {
     await this.historyService.registerCommunityCreation(
       message.adminId,
@@ -29,7 +29,7 @@ export class HistoryEventsController {
     );
   }
 
-  @EventPattern(ActionContributedEvent.TOPIC)
+  @EventPattern(ActionContributedEvent.EVENT_TYPE)
   async handleActionContributed(@Payload() message: ActionContributedEvent) {
     await this.historyService.registerActionContribute(
       message.userId,
@@ -41,7 +41,7 @@ export class HistoryEventsController {
     );
   }
 
-  @EventPattern(JoinCommunityRequestCreatedEvent.TOPIC)
+  @EventPattern(JoinCommunityRequestCreatedEvent.EVENT_TYPE)
   async handleJoinCommunityRequestCreated(
     @Payload() message: JoinCommunityRequestCreatedEvent,
   ) {
@@ -56,7 +56,7 @@ export class HistoryEventsController {
     );
   }
 
-  @EventPattern(JoinCommunityRequestRejectedEvent.TOPIC)
+  @EventPattern(JoinCommunityRequestRejectedEvent.EVENT_TYPE)
   async handleJoinCommunityRequestRejected(
     @Payload() message: JoinCommunityRequestRejectedEvent,
   ) {
@@ -70,7 +70,7 @@ export class HistoryEventsController {
     );
   }
 
-  @EventPattern(UserJoinedCommunity.TOPIC)
+  @EventPattern(UserJoinedCommunity.EVENT_TYPE)
   async handleUserJoinedCommunity(@Payload() message: UserJoinedCommunity) {
     await this.historyService.registerUserJoinedCommunity(
       message.userId,
@@ -82,7 +82,7 @@ export class HistoryEventsController {
     );
   }
 
-  @EventPattern(CauseCreatedEvent.TOPIC)
+  @EventPattern(CauseCreatedEvent.EVENT_TYPE)
   async handleCauseCreated(@Payload() message: CauseCreatedEvent) {
     await this.historyService.registerCauseCreation(
       message.userId,
@@ -94,7 +94,7 @@ export class HistoryEventsController {
     );
   }
 
-  @EventPattern(CauseSupportedEvent.TOPIC)
+  @EventPattern(CauseSupportedEvent.EVENT_TYPE)
   async handleCauseSupported(@Payload() message: CauseSupportedEvent) {
     await this.historyService.registerCauseSupported(
       message.userId,

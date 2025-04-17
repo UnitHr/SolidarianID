@@ -5,7 +5,7 @@ export abstract class DomainEvent implements IEvent {
 
   public readonly date: Date;
 
-  public static readonly TOPIC?: string;
+  public static readonly EVENT_TYPE?: string;
 
   constructor(type: string, date?: Date) {
     this.type = type;
@@ -13,10 +13,10 @@ export abstract class DomainEvent implements IEvent {
   }
 
   public shouldBePublishedExternally(): boolean {
-    return !!(this.constructor as typeof DomainEvent).TOPIC;
+    return !!(this.constructor as typeof DomainEvent).EVENT_TYPE;
   }
 
-  public getTopic(): string | undefined {
-    return (this.constructor as typeof DomainEvent).TOPIC;
+  public getEventType(): string | undefined {
+    return (this.constructor as typeof DomainEvent).EVENT_TYPE;
   }
 }

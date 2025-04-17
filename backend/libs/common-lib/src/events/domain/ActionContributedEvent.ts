@@ -1,7 +1,7 @@
 import { DomainEvent } from '@common-lib/common-lib/core/domain/DomainEvent';
 
 export class ActionContributedEvent extends DomainEvent {
-  public static readonly TOPIC = 'action-contributed';
+  public static readonly EVENT_TYPE = 'action-contributed';
 
   constructor(
     public readonly userId: string,

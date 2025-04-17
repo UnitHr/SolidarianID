@@ -2,7 +2,7 @@ import { DomainEvent } from '@common-lib/common-lib/core/domain/DomainEvent';
 import { ActionType } from '@communities-ms/actions/domain/ActionType';
 
 export class ActionCreatedEvent extends DomainEvent {
-  public static readonly TOPIC = 'action-created';
+  public static readonly EVENT_TYPE = 'action-created';
 
   constructor(
     public readonly id: string,

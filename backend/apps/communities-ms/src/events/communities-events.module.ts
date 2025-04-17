@@ -20,8 +20,8 @@ export class CommunitiesEventsModule implements OnModuleInit {
       this.logger.log(`Internal event captured: ${event.constructor.name}`);
 
       if (event.shouldBePublishedExternally()) {
-        const topic = event.getTopic();
-        await this.eventsService.publish(topic!, event);
+        const eventType = event.getEventType();
+        await this.eventsService.publish(eventType!, event);
       }
     });
   }

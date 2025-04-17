@@ -27,7 +27,7 @@ export function Home() {
                 <h1>and Actions</h1>
               </Row>
             </Row>
-            <Row clasName="">
+            <Row className="">
               <h3 className="px-4 py-4 text-justify">
                 Discover and contribute to various communities and charitable
                 causes Whether you're looking to support or to take action, get

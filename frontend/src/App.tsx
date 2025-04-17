@@ -1,4 +1,6 @@
 import { Home } from "./pages/Home";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
 import { SearchActions } from "./pages/SearchActions";
 import { SearchCauses } from "./pages/SearchCauses";
 import { SearchCommunities } from "./pages/SearchCommunities";
@@ -11,6 +13,8 @@ function App() {
       <Route path="/actions" element={<SearchActions />} />
       <Route path="/causes" element={<SearchCauses />} />
       <Route path="/communities" element={<SearchCommunities />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 }

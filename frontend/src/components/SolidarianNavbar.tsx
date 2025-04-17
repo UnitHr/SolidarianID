@@ -1,6 +1,32 @@
 import { Navbar, Nav } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function SolidarianNavbar() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+
+    const user = localStorage.getItem("user");
+    if (user) {
+      const userData = JSON.parse(user);
+      const fullName = `${userData.firstName} ${userData.lastName}`;
+      setUsername(fullName);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsAuthenticated(false);
+    setUsername("");
+    navigate("/");
+  };
+
   return (
     <>
       <Navbar bg="primary" data-bs-theme="dark">
@@ -13,8 +39,17 @@ export function SolidarianNavbar() {
           <Nav.Link href="/actions">Actions</Nav.Link>
         </Nav>
         <Nav className="mx-4">
-          <Nav.Link href="/login">Login</Nav.Link>
-          <Nav.Link href="/register">Register</Nav.Link>
+          {!isAuthenticated ? (
+            <>
+              <Nav.Link href="/login">Login</Nav.Link>
+              <Nav.Link href="/register">Register</Nav.Link>
+            </>
+          ) : (
+            <>
+            <Nav.Link href="/profile">{username}</Nav.Link>
+            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+            </>
+          )}
         </Nav>
       </Navbar>
     </>

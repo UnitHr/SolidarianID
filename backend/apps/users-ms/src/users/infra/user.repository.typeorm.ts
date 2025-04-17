@@ -44,7 +44,7 @@ export class UserRepositoryTypeOrm extends UserRepository {
   async findByGithubId(githubId: string): Promise<Domain.User> {
     const user = await this.userRepository.findOneBy({ githubId });
     if (!user) {
-      throw new EntityNotFoundError(`User with githubId ${githubId} not found`);
+      return null;
     }
     return UserMapper.toDomain(user);
   }

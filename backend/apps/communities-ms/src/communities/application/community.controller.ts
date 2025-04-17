@@ -60,21 +60,11 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      // Handle the error
-      switch (error.constructor) {
-        case Exceptions.CommunityNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       // Return the community
       const causeId = result.value;
 
@@ -82,7 +72,7 @@ export class CommunityController {
       res.status(HttpStatus.OK);
       res.location(location);
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -104,26 +94,11 @@ export class CommunityController {
     });
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      // Handle the error
-      switch (error.constructor) {
-        case Exceptions.CommunityNameIsTaken:
-          res.status(HttpStatus.CONFLICT);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        case Exceptions.InvalidDateProvided:
-          res.status(HttpStatus.BAD_REQUEST);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       // Return the location of the created resource
       const request = result.value;
 
@@ -131,7 +106,7 @@ export class CommunityController {
       res.status(HttpStatus.CREATED);
       res.location(location);
       res.send();
-    }
+    
   }
 
   @ApiOperation({ summary: 'Get all communities, sort and filter' })
@@ -216,21 +191,11 @@ export class CommunityController {
     const result = await this.communityService.getCommunity(id);
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      // Handle the error
-      switch (error.constructor) {
-        case Exceptions.CommunityNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       // Return the community
       const community = result.value.getValue();
 
@@ -239,7 +204,7 @@ export class CommunityController {
         data: CommunityMapper.toDto(community),
       });
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -260,21 +225,11 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      // Handle the error
-      switch (error.constructor) {
-        case Exceptions.CommunityNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       const { data, total } = result.value;
       // Build the base URL for the paginated response
       const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
@@ -292,7 +247,7 @@ export class CommunityController {
       res.status(HttpStatus.OK);
       res.json(response);
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -313,21 +268,11 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      // Handle the error
-      switch (error.constructor) {
-        case Exceptions.CommunityNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       const { data, total } = result.value;
       // Build the base URL for the paginated response
       const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
@@ -345,7 +290,7 @@ export class CommunityController {
       res.status(HttpStatus.OK);
       res.json(response);
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -361,42 +306,18 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      switch (error.constructor) {
-        case Exceptions.CommunityNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        case Exceptions.JoinCommunityRequestAlreadyExists:
-          res.status(HttpStatus.CONFLICT);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        case Exceptions.UserIsAlreadyMember:
-          res.status(HttpStatus.CONFLICT);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        case Exceptions.JoinCommunityRequestDenied:
-          res.status(HttpStatus.CONFLICT);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       const request = result.value.getValue();
 
       const location = `/communities/${communityId}/join-requests/${request.id.toString()}`;
       res.status(HttpStatus.CREATED);
       res.location(location);
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -481,22 +402,12 @@ export class CommunityController {
     const result =
       await this.joinCommunityService.getJoinCommunityRequest(requestId);
 
-    if (result.isLeft()) {
-      const error = result.value;
+      if (result.isLeft()) {
 
-      // Return the error
-      switch (error.constructor) {
-        case Exceptions.JoinCommunityRequestNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
+        const error = result.value;
+        this.handleError(error, res);
+        return;
       }
-    } else {
       const request = result.value.getValue();
 
       // Return the request
@@ -505,7 +416,7 @@ export class CommunityController {
         data: JoinCommunityRequestMapper.toDto(request),
       });
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -541,30 +452,15 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      // Return the error
-      switch (error.constructor) {
-        case Exceptions.JoinCommunityRequestNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        case Exceptions.CommentIsMandatory:
-          res.status(HttpStatus.BAD_REQUEST);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
       // Return the success
       res.status(HttpStatus.CREATED);
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -578,21 +474,13 @@ export class CommunityController {
     const result =
       await this.createCommunityService.getCreateCommunityRequest(id);
 
-    if (result.isLeft()) {
-      const error = result.value;
+      if (result.isLeft()) {
 
-      switch (error.constructor) {
-        case Exceptions.CreateCommunityRequestNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
+        const error = result.value;
+        this.handleError(error, res);
+        return;
       }
-    } else {
+    
       const request = result.value.getValue();
 
       res.status(HttpStatus.OK);
@@ -600,7 +488,7 @@ export class CommunityController {
         data: CreateCommunityRequestMapper.toDto(request),
       });
       res.send();
-    }
+    
   }
 
   @ApiExcludeEndpoint()
@@ -620,25 +508,12 @@ export class CommunityController {
       );
 
     if (result.isLeft()) {
-      const error = result.value;
 
-      switch (error.constructor) {
-        case Exceptions.CreateCommunityRequestNotFound:
-          res.status(HttpStatus.NOT_FOUND);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        case Exceptions.CommentIsMandatory:
-          res.status(HttpStatus.BAD_REQUEST);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-          return;
-        default:
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-          res.json({ errors: { message: error.errorValue().message } });
-          res.send();
-      }
-    } else {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
+  
       const newCommunity = result.value.getValue();
 
       if (!newCommunity) {
@@ -651,6 +526,33 @@ export class CommunityController {
       res.status(HttpStatus.CREATED);
       res.location(location);
       res.send();
-    }
+    
   }
+
+  private handleError(error: any, res: Response) {
+    switch (error.constructor) {
+      case Exceptions.CommunityNotFound:
+        res.status(HttpStatus.NOT_FOUND);
+        break;
+      case Exceptions.CommunityNameIsTaken:
+      case Exceptions.JoinCommunityRequestAlreadyExists:
+      case Exceptions.UserIsAlreadyMember:
+      case Exceptions.JoinCommunityRequestDenied:
+        res.status(HttpStatus.CONFLICT);
+        break;
+      case Exceptions.InvalidDateProvided:
+      case Exceptions.CommentIsMandatory:
+        res.status(HttpStatus.BAD_REQUEST);
+        break;
+      case Exceptions.CreateCommunityRequestNotFound:
+      case Exceptions.JoinCommunityRequestNotFound:
+        res.status(HttpStatus.NOT_FOUND);
+        break;
+      default:
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  
+    res.json({ errors: { message: error.errorValue().message } });
+    res.send();
+
 }

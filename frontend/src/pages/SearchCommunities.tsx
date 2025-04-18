@@ -3,15 +3,22 @@ import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { FormFilterCommunities } from "../components/FormFilterCommunities";
 import { CommunityCard } from "../components/CommunityCard";
 import image from "../assets/filter-community-image.png";
+import { useState } from "react";
 
 export function SearchCommunities() {
+  const [name, setName] = useState("asvc");
+
+  function changeName(e: React.ChangeEvent<HTMLInputElement>) {
+    setName(e.target.value);
+  }
+
   return (
     <>
       <SolidarianNavbar></SolidarianNavbar>
       <Container>
         <Row>
           <Row className="my-5">
-            <h1 className="text-center">Filter Communities</h1>
+            <h1 className="text-center">Filter Communities {name}</h1>
           </Row>
           <Row className="my-4">
             <h3 className="px-4 py-4 text-justify">
@@ -23,7 +30,10 @@ export function SearchCommunities() {
         </Row>
         <Row className="align-items-center">
           <Col className="d-flex justify-content-center align-items-center">
-            <FormFilterCommunities></FormFilterCommunities>
+            <FormFilterCommunities
+              name={name}
+              changeName={changeName}
+            ></FormFilterCommunities>
           </Col>
           <Col>
             <Image src={image} fluid />

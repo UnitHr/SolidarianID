@@ -1,6 +1,6 @@
 import { Card, Form, Row, Button } from "react-bootstrap";
 
-export function FormFilterCommunities() {
+export function FormFilterCommunities({ name, changeName }) {
   return (
     <>
       <Card border="primary" bg="light" className="p-4 shadow-sm mb-4">
@@ -12,7 +12,12 @@ export function FormFilterCommunities() {
             <Row className="g-3">
               <Form.Group controlId="filterCommunity">
                 <Form.Label>Community name</Form.Label>
-                <Form.Control type="text" name="community" />
+                <Form.Control
+                  type="text"
+                  name="community"
+                  value={name}
+                  onChange={changeName}
+                />
               </Form.Group>
             </Row>
             <Row className="my-4 mx-2">

@@ -20,6 +20,8 @@ import { Roles } from '@common-lib/common-lib/auth/decorator/roles.decorator';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { RolesGuard } from '@common-lib/common-lib/auth/roles.guard';
+import { DomainError } from '@common-lib/common-lib/core/exceptions';
+import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import * as Exceptions from '../exceptions';
 import { ValidateCommunityDto } from '../dto/validate-community.dto';
@@ -60,19 +62,17 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      // Return the community
-      const causeId = result.value;
+    // Return the community
+    const causeId = result.value;
 
-      const location = `/causes/${causeId.getValue().toString()}`;
-      res.status(HttpStatus.OK);
-      res.location(location);
-      res.send();
-    
+    const location = `/causes/${causeId.getValue().toString()}`;
+    res.status(HttpStatus.OK);
+    res.location(location);
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -94,19 +94,17 @@ export class CommunityController {
     });
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      // Return the location of the created resource
-      const request = result.value;
+    // Return the location of the created resource
+    const request = result.value;
 
-      const location = `/communities/creation-requests/${request.getValue().id.toString()}`;
-      res.status(HttpStatus.CREATED);
-      res.location(location);
-      res.send();
-    
+    const location = `/communities/creation-requests/${request.getValue().id.toString()}`;
+    res.status(HttpStatus.CREATED);
+    res.location(location);
+    res.send();
   }
 
   @ApiOperation({ summary: 'Get all communities, sort and filter' })
@@ -191,20 +189,18 @@ export class CommunityController {
     const result = await this.communityService.getCommunity(id);
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      // Return the community
-      const community = result.value.getValue();
+    // Return the community
+    const community = result.value.getValue();
 
-      res.status(HttpStatus.OK);
-      res.json({
-        data: CommunityMapper.toDto(community),
-      });
-      res.send();
-    
+    res.status(HttpStatus.OK);
+    res.json({
+      data: CommunityMapper.toDto(community),
+    });
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -225,29 +221,27 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      const { data, total } = result.value;
-      // Build the base URL for the paginated response
-      const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+    const { data, total } = result.value;
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
-      // Create the paginated response
-      const response = new PaginatedResponseDto(
-        data,
-        total,
-        page,
-        limit,
-        baseUrl,
-      );
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data,
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
 
-      // Send the response
-      res.status(HttpStatus.OK);
-      res.json(response);
-      res.send();
-    
+    // Send the response
+    res.status(HttpStatus.OK);
+    res.json(response);
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -268,29 +262,27 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      const { data, total } = result.value;
-      // Build the base URL for the paginated response
-      const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+    const { data, total } = result.value;
+    // Build the base URL for the paginated response
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
-      // Create the paginated response
-      const response = new PaginatedResponseDto(
-        data,
-        total,
-        page,
-        limit,
-        baseUrl,
-      );
+    // Create the paginated response
+    const response = new PaginatedResponseDto(
+      data,
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
 
-      // Send the response
-      res.status(HttpStatus.OK);
-      res.json(response);
-      res.send();
-    
+    // Send the response
+    res.status(HttpStatus.OK);
+    res.json(response);
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -306,18 +298,16 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      const request = result.value.getValue();
+    const request = result.value.getValue();
 
-      const location = `/communities/${communityId}/join-requests/${request.id.toString()}`;
-      res.status(HttpStatus.CREATED);
-      res.location(location);
-      res.send();
-    
+    const location = `/communities/${communityId}/join-requests/${request.id.toString()}`;
+    res.status(HttpStatus.CREATED);
+    res.location(location);
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -402,21 +392,19 @@ export class CommunityController {
     const result =
       await this.joinCommunityService.getJoinCommunityRequest(requestId);
 
-      if (result.isLeft()) {
+    if (result.isLeft()) {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
+    const request = result.value.getValue();
 
-        const error = result.value;
-        this.handleError(error, res);
-        return;
-      }
-      const request = result.value.getValue();
-
-      // Return the request
-      res.status(HttpStatus.OK);
-      res.json({
-        data: JoinCommunityRequestMapper.toDto(request),
-      });
-      res.send();
-    
+    // Return the request
+    res.status(HttpStatus.OK);
+    res.json({
+      data: JoinCommunityRequestMapper.toDto(request),
+    });
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -452,15 +440,13 @@ export class CommunityController {
     );
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-      // Return the success
-      res.status(HttpStatus.CREATED);
-      res.send();
-    
+    // Return the success
+    res.status(HttpStatus.CREATED);
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -474,21 +460,19 @@ export class CommunityController {
     const result =
       await this.createCommunityService.getCreateCommunityRequest(id);
 
-      if (result.isLeft()) {
+    if (result.isLeft()) {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
 
-        const error = result.value;
-        this.handleError(error, res);
-        return;
-      }
-    
-      const request = result.value.getValue();
+    const request = result.value.getValue();
 
-      res.status(HttpStatus.OK);
-      res.json({
-        data: CreateCommunityRequestMapper.toDto(request),
-      });
-      res.send();
-    
+    res.status(HttpStatus.OK);
+    res.json({
+      data: CreateCommunityRequestMapper.toDto(request),
+    });
+    res.send();
   }
 
   @ApiExcludeEndpoint()
@@ -508,28 +492,26 @@ export class CommunityController {
       );
 
     if (result.isLeft()) {
-
       const error = result.value;
       this.handleError(error, res);
       return;
     }
-  
-      const newCommunity = result.value.getValue();
 
-      if (!newCommunity) {
-        res.status(HttpStatus.OK);
-        res.send();
-        return;
-      }
+    const newCommunity = result.value.getValue();
 
-      const location = `/communities/${newCommunity.id.toString()}`;
-      res.status(HttpStatus.CREATED);
-      res.location(location);
+    if (!newCommunity) {
+      res.status(HttpStatus.OK);
       res.send();
-    
+      return;
+    }
+
+    const location = `/communities/${newCommunity.id.toString()}`;
+    res.status(HttpStatus.CREATED);
+    res.location(location);
+    res.send();
   }
 
-  private handleError(error: any, res: Response) {
+  private handleError(error: Result<DomainError>, res: Response) {
     switch (error.constructor) {
       case Exceptions.CommunityNotFound:
         res.status(HttpStatus.NOT_FOUND);
@@ -551,8 +533,8 @@ export class CommunityController {
       default:
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  
+
     res.json({ errors: { message: error.errorValue().message } });
     res.send();
-
+  }
 }

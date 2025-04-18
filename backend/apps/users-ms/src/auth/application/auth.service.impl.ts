@@ -1,8 +1,8 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { UserService } from '../../users/application/user.service';
 import { AuthService } from './auth.service';
-import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 
 @Injectable()
 export class AuthServiceImpl implements AuthService {

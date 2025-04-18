@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { HistoryService } from '@users-ms/history/application/history.service';
-import { UserFollowedEvent } from '@users-ms/users/domain/events/UserFollowedEvent';
 import { Logger } from '@nestjs/common';
+import { HistoryService } from '@users-ms/history/application/history.service';
+import { UserFollowedEvent } from '@users-ms/followers/domain/events/UserFollowedEvent';
 
 @EventsHandler(UserFollowedEvent)
 export class UserFollowedHandler implements IEventHandler<UserFollowedEvent> {
@@ -14,11 +14,11 @@ export class UserFollowedHandler implements IEventHandler<UserFollowedEvent> {
       event.userId,
       event.followedUserId,
       event.date,
-      event.userName,
+      event.followedUserEmail,
     );
 
     this.logger.log(
-      `Internal user followed event handled: User with id: ${event.userId} followed user with id: ${event.followedUserId}`,
+      `User followed event handled: User ${event.userId} followed user ${event.followedUserId}`,
     );
   }
 }

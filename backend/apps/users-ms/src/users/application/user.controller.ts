@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -69,28 +68,5 @@ export class UsersController {
 
     const userDto = UserMapper.toProfileDto(user);
     res.status(HttpStatus.OK).json(userDto);
-  }
-
-  @ApiExcludeEndpoint()
-  @Post(':id/followers')
-  async follow(
-    @Param('id', ParseUUIDPipe) id: string,
-    @GetUserId() userId: string,
-    @Res() res: Response,
-  ) {
-    await this.usersService.followUser(id, userId);
-
-    res.status(HttpStatus.NO_CONTENT).send();
-  }
-
-  @ApiExcludeEndpoint()
-  @Get(':id/followers')
-  async getFollowers(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res() res: Response,
-  ) {
-    const followers = await this.usersService.getUserFollowers(id);
-
-    res.status(HttpStatus.OK).json(followers.map(UserMapper.toProfileDto));
   }
 }

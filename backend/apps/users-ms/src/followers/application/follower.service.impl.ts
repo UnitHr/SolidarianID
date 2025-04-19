@@ -45,8 +45,17 @@ export class FollowerServiceImpl implements FollowerService {
     follower.commit();
   }
 
-  async getUserFollowers(userId: string): Promise<Follower[]> {
-    return this.followerRepository.findFollowers(userId);
+  async getUserFollowers(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ followers: Follower[]; total: number }> {
+    const [followers, total] = await this.followerRepository.findFollowers(
+      userId,
+      page,
+      limit,
+    );
+    return { followers, total };
   }
 
   async isFollowing(

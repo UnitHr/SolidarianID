@@ -7,11 +7,15 @@ import {
   Res,
   HttpStatus,
   ParseUUIDPipe,
+  Query,
+  Req,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { FollowerService } from './follower.service';
 import { FollowerMapper } from '../follower.mapper';
 import { FollowerDomainExceptionFilter } from '../infra/filters/follower-domain-exception.filter';
@@ -34,15 +38,34 @@ export class FollowersController {
     res.status(HttpStatus.NO_CONTENT).send();
   }
 
-  @ApiOperation({ summary: "Get a user's followers" })
+  @ApiOperation({ summary: "Get a user's followers with pagination" })
   @Public()
   @Get()
   async getFollowers(
     @Param('userId', ParseUUIDPipe) userId: string,
+    @Query() query: QueryPaginationDto,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
-    const followers = await this.followerService.getUserFollowers(userId);
-    res.status(HttpStatus.OK).json(followers.map(FollowerMapper.toDto));
+    const { page, limit } = query;
+
+    const { followers, total } = await this.followerService.getUserFollowers(
+      userId,
+      page,
+      limit,
+    );
+
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
+    const response = new PaginatedResponseDto(
+      followers.map(FollowerMapper.toDto),
+      total,
+      page,
+      limit,
+      baseUrl,
+    );
+
+    res.status(HttpStatus.OK).json(response);
   }
 
   @ApiOperation({ summary: "Count a user's followers" })

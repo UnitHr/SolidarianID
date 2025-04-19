@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository as TypeOrmRepository } from 'typeorm';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
+import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { FollowerRepository } from '../follower.repository';
 import * as Domain from '../domain';
 import * as Persistence from './persistence';
@@ -40,9 +41,19 @@ export class FollowerRepositoryTypeOrm extends FollowerRepository {
     return FollowerMapper.toDomain(follower);
   }
 
-  async findFollowers(followedId: string): Promise<Domain.Follower[]> {
-    const followers = await this.followerRepository.findBy({ followedId });
-    return followers.map(FollowerMapper.toDomain);
+  async findFollowers(
+    followedId: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<[Domain.Follower[], number]> {
+    const [followers, total] = await this.followerRepository.findAndCount({
+      where: { followedId },
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { followedAt: 'DESC' },
+    });
+
+    return [followers.map(FollowerMapper.toDomain), total];
   }
 
   async countFollowers(followedId: string): Promise<number> {

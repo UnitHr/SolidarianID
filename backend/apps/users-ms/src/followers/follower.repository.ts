@@ -12,7 +12,11 @@ export abstract class FollowerRepository extends Repository<Domain.Follower> {
     followedId: string,
   ): Promise<Domain.Follower | null>;
 
-  abstract findFollowers(followedId: string): Promise<Domain.Follower[]>;
+  abstract findFollowers(
+    followedId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<[Domain.Follower[], number]>;
 
   abstract countFollowers(followedId: string): Promise<number>;
 }

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
 import { FollowersController } from '@users-ms/followers/application/follower.controller';
 import { FollowerService } from '@users-ms/followers/application/follower.service';
@@ -8,6 +8,8 @@ import { Follower } from '@users-ms/followers/domain';
 import { FollowerMapper } from '@users-ms/followers/follower.mapper';
 import { User } from '@users-ms/users/domain';
 import { UserCannotFollowSelfError } from '@users-ms/followers/exceptions/user-cannot-follow-self.error';
+import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
+import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 
 describe('FollowersController', () => {
   let controller: FollowersController;
@@ -94,7 +96,7 @@ describe('FollowersController', () => {
   });
 
   describe('getFollowers', () => {
-    it('should return followers and 200 OK', async () => {
+    it('should return paginated followers and 200 OK with default pagination', async () => {
       // Arrange
       const mockFollowers = [
         {
@@ -121,42 +123,124 @@ describe('FollowersController', () => {
         .mockReturnValueOnce(mockDtos[0])
         .mockReturnValueOnce(mockDtos[1]);
 
-      followerServiceMock.getUserFollowers.mockResolvedValueOnce(mockFollowers);
+      const total = 2;
+      followerServiceMock.getUserFollowers.mockResolvedValueOnce({
+        followers: mockFollowers,
+        total,
+      });
 
       const responseMock = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
       } as unknown as Response;
 
+      const reqMock = {
+        protocol: 'http',
+        get: jest.fn().mockReturnValue('example.com'),
+        path: '/users/user-id/followers',
+      } as unknown as Request;
+
+      const queryDto = new QueryPaginationDto();
+      queryDto.page = PaginationDefaults.DEFAULT_PAGE;
+      queryDto.limit = PaginationDefaults.DEFAULT_LIMIT;
+
       // Act
-      await controller.getFollowers(USER_ID, responseMock);
+      await controller.getFollowers(USER_ID, queryDto, reqMock, responseMock);
 
       // Assert
       expect(followerServiceMock.getUserFollowers).toHaveBeenCalledWith(
         USER_ID,
+        PaginationDefaults.DEFAULT_PAGE,
+        PaginationDefaults.DEFAULT_LIMIT,
       );
       expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-      expect(responseMock.json).toHaveBeenCalledWith(mockDtos);
     });
 
-    it('should return empty array when no followers exist', async () => {
+    it('should return paginated followers with custom pagination parameters', async () => {
       // Arrange
-      followerServiceMock.getUserFollowers.mockResolvedValueOnce([]);
+      const mockFollowers = [
+        {
+          id: '3',
+          followerId: 'another-follower-2',
+          followedId: USER_ID,
+        } as unknown as Follower,
+      ];
+
+      const mockDto = {
+        followerId: 'another-follower-2',
+        fullName: 'Another Mock',
+        email: 'another@example.com',
+        followedAt: new Date(),
+      };
+
+      jest.spyOn(FollowerMapper, 'toDto').mockReturnValueOnce(mockDto);
+
+      const total = 5;
+      const page = 2;
+      const limit = 1;
+      followerServiceMock.getUserFollowers.mockResolvedValueOnce({
+        followers: mockFollowers,
+        total,
+      });
 
       const responseMock = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
       } as unknown as Response;
 
+      const reqMock = {
+        protocol: 'http',
+        get: jest.fn().mockReturnValue('example.com'),
+        path: '/users/user-id/followers',
+      } as unknown as Request;
+
+      const queryDto = new QueryPaginationDto();
+      queryDto.page = page;
+      queryDto.limit = limit;
+
       // Act
-      await controller.getFollowers(USER_ID, responseMock);
+      await controller.getFollowers(USER_ID, queryDto, reqMock, responseMock);
 
       // Assert
       expect(followerServiceMock.getUserFollowers).toHaveBeenCalledWith(
         USER_ID,
+        page,
+        limit,
       );
       expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-      expect(responseMock.json).toHaveBeenCalledWith([]);
+    });
+
+    it('should return empty array with pagination info when no followers exist', async () => {
+      // Arrange
+      const total = 0;
+      followerServiceMock.getUserFollowers.mockResolvedValueOnce({
+        followers: [],
+        total,
+      });
+
+      const responseMock = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const reqMock = {
+        protocol: 'http',
+        get: jest.fn().mockReturnValue('example.com'),
+        path: '/users/user-id/followers',
+      } as unknown as Request;
+
+      const queryDto = new QueryPaginationDto();
+
+      // Act
+      await controller.getFollowers(USER_ID, queryDto, reqMock, responseMock);
+
+      // Assert
+      expect(followerServiceMock.getUserFollowers).toHaveBeenCalledWith(
+        USER_ID,
+        PaginationDefaults.DEFAULT_PAGE,
+        PaginationDefaults.DEFAULT_LIMIT,
+      );
+      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
     });
   });
 

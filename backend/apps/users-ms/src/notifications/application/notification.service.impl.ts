@@ -30,6 +30,7 @@ export class NotificationServiceImpl implements NotificationService {
     await this.notificationRepository.markAsRead(userId, notificationId);
   }
 
+  /* eslint-disable no-await-in-loop */ // TODO: review if this could be improved, batch processing
   async createNotificationsForFollowers(
     historyEntryId: string,
     userId: string,
@@ -37,21 +38,43 @@ export class NotificationServiceImpl implements NotificationService {
     entityId: string,
     timestamp: Date,
   ): Promise<void> {
-    const followers = await this.followerService.getUserFollowers(userId);
+    const pageSize = 100;
+    let page = 1;
+    let totalNotified = 0;
+    let totalFollowers: number;
 
-    const notifications = followers.map((follower) =>
-      Notification.create({
-        historyEntryId: new UniqueEntityID(historyEntryId),
-        userId: follower.followerId,
-        activityType,
-        entityId: new UniqueEntityID(entityId),
-        read: false,
-        timestamp,
-      }),
-    );
+    do {
+      // 1. Fetch the current page
+      const { followers, total } = await this.followerService.getUserFollowers(
+        userId,
+        page,
+        pageSize,
+      );
 
-    if (notifications.length > 0) {
-      await this.notificationRepository.createMany(notifications);
-    }
+      // On the first iteration, store the total to know when to stop
+      if (page === 1) {
+        totalFollowers = total;
+        if (followers.length === 0) {
+          return;
+        }
+      }
+
+      // 2. Create and persist the batch of notifications for these followers
+      const batch = followers.map((f) =>
+        Notification.create({
+          historyEntryId: new UniqueEntityID(historyEntryId),
+          userId: f.followerId,
+          activityType,
+          entityId: new UniqueEntityID(entityId),
+          read: false,
+          timestamp,
+        }),
+      );
+      await this.notificationRepository.createMany(batch);
+
+      totalNotified += followers.length;
+      page += 1;
+    } while (totalNotified < totalFollowers);
   }
+  /* eslint-enable no-await-in-loop */
 }

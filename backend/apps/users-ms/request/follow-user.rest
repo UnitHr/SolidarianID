@@ -7,6 +7,14 @@
 POST {{baseUrl}}/{{followUserId}}/followers
 Authorization: Bearer {{jwtToken}}
 
-### Success case: get user followers
+### Success case: get user followers with default pagination
 GET {{baseUrl}}/{{followUserId}}/followers
+Authorization: Bearer {{jwtToken}}
+
+### Success case: get user followers with custom pagination
+GET {{baseUrl}}/{{followUserId}}/followers?page=2&limit=5
+Authorization: Bearer {{jwtToken}}
+
+### Success case: get user followers count
+GET {{baseUrl}}/{{followUserId}}/followers/count
 Authorization: Bearer {{jwtToken}}

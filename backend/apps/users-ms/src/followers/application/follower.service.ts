@@ -6,7 +6,11 @@ export abstract class FollowerService {
     followerUserId: string,
   ): Promise<void>;
 
-  abstract getUserFollowers(userId: string): Promise<Follower[]>;
+  abstract getUserFollowers(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ followers: Follower[]; total: number }>;
 
   abstract isFollowing(
     followedUserId: string,

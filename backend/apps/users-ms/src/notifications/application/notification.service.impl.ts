@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
-import { UserService } from '@users-ms/users/application/user.service';
 import { ActivityType } from '@users-ms/history/domain';
+import { FollowerService } from '@users-ms/followers/application/follower.service';
 import { NotificationService } from './notification.service';
 import { NotificationRepository } from '../domain/notification.repository';
 import { Notification } from '../domain/Notification';
@@ -10,7 +10,7 @@ import { Notification } from '../domain/Notification';
 export class NotificationServiceImpl implements NotificationService {
   constructor(
     private readonly notificationRepository: NotificationRepository,
-    private readonly userService: UserService,
+    private readonly followerService: FollowerService,
   ) {}
 
   async getUserNotifications(
@@ -30,28 +30,56 @@ export class NotificationServiceImpl implements NotificationService {
     await this.notificationRepository.markAsRead(userId, notificationId);
   }
 
+  /* eslint-disable no-await-in-loop */ // TODO: review if this could be improved, batch processing
   async createNotificationsForFollowers(
     historyEntryId: string,
     userId: string,
     activityType: ActivityType,
-    entityId: string,
-    timestamp: Date,
+    entityId?: string,
+    timestamp: Date = new Date(),
   ): Promise<void> {
-    const followers = await this.userService.getUserFollowers(userId);
+    const pageSize = 100;
+    let page = 1;
+    let totalNotified = 0;
+    const totalFollowers =
+      await this.followerService.countUserFollowers(userId);
 
-    const notifications = followers.map((follower) =>
-      Notification.create({
-        historyEntryId: new UniqueEntityID(historyEntryId),
-        userId: follower.id,
-        activityType,
-        entityId: new UniqueEntityID(entityId),
-        read: false,
-        timestamp,
-      }),
-    );
-
-    if (notifications.length > 0) {
-      await this.notificationRepository.createMany(notifications);
+    if (totalFollowers === 0) {
+      return;
     }
+
+    do {
+      // 1. Fetch the current page
+      const { followers } = await this.followerService.getUserFollowers(
+        userId,
+        page,
+        pageSize,
+      );
+
+      if (followers.length === 0) {
+        return;
+      }
+
+      // 2. Create and persist the batch of notifications for these followers
+      const batch = followers.map((f) => {
+        return Notification.create({
+          historyEntryId: new UniqueEntityID(historyEntryId),
+          userId: f.followerId,
+          primaryEntityId: new UniqueEntityID(userId),
+          activityType,
+          secondaryEntityId: entityId
+            ? new UniqueEntityID(entityId)
+            : undefined,
+          read: false,
+          timestamp,
+        });
+      });
+
+      await this.notificationRepository.createMany(batch);
+
+      totalNotified += followers.length;
+      page += 1;
+    } while (totalNotified < totalFollowers);
   }
+  /* eslint-enable no-await-in-loop */
 }

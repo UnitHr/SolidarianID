@@ -21,8 +21,10 @@ export class Notification {
   activityType: ActivityType;
 
   @Column('uuid')
-  @Index()
-  entityId: string;
+  primaryEntityId: string;
+
+  @Column('uuid', { nullable: true })
+  secondaryEntityId: string;
 
   @Column('boolean', { default: false })
   read: boolean;

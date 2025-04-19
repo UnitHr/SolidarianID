@@ -21,9 +21,5 @@ export abstract class UserService {
 
   abstract getUserByEmail(email: string): Promise<User>;
 
-  abstract followUser(id: string, followerId: string): Promise<void>;
-
-  abstract getUserFollowers(id: string): Promise<User[]>;
-
   abstract findByGithubId(githubId: string): Promise<User>;
 }

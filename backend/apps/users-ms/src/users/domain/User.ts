@@ -2,12 +2,7 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
 import { UserBirthDate } from './UserBirthDate';
 import { UserPassword } from './Password';
-import {
-  MissingPropertiesError,
-  UserAlreadyFollowedError,
-  UserCannotFollowSelfError,
-} from '../exceptions';
-import { UserFollowedEvent } from './events/UserFollowedEvent';
+import { MissingPropertiesError } from '../exceptions';
 import { UserEmail } from './UserEmail';
 
 export interface UserProps {
@@ -20,9 +15,6 @@ export interface UserProps {
   showAge: boolean;
   showEmail: boolean;
   role: string;
-  // review: in a future we will need to optimize this, because we will have a lot of followers. For MVP we will use this. Optimal for 1k - 5k users.
-  // eslint-disable-next-line no-use-before-define
-  followers?: User[];
   githubId?: string;
 }
 
@@ -37,6 +29,10 @@ export class User extends EntityRoot<UserProps> {
 
   get lastName(): string {
     return this.props.lastName;
+  }
+
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
   }
 
   get birthDate(): UserBirthDate {
@@ -91,10 +87,6 @@ export class User extends EntityRoot<UserProps> {
     return this.birthDate.age;
   }
 
-  get followers(): User[] {
-    return this.props.followers;
-  }
-
   get githubId(): string {
     return this.props.githubId;
   }
@@ -111,7 +103,7 @@ export class User extends EntityRoot<UserProps> {
       );
     }
 
-    return new User({ ...props, followers: props.followers ?? [] }, id);
+    return new User(props, id);
   }
 
   public updateProfile({ email, bio }: { email?: string; bio?: string }): void {
@@ -126,23 +118,5 @@ export class User extends EntityRoot<UserProps> {
 
   public async isValidPassword(password: string): Promise<boolean> {
     return this.props.password.compare(password);
-  }
-
-  public followUser(followed: User) {
-    if (this.equals(followed)) {
-      throw new UserCannotFollowSelfError();
-    }
-    if (followed.props.followers.find((user) => user.equals(this))) {
-      throw new UserAlreadyFollowedError(followed.id.toString());
-    }
-
-    followed.props.followers.push(this);
-    this.apply(
-      new UserFollowedEvent(
-        this.id.toString(),
-        followed.id.toString(),
-        followed.email,
-      ),
-    );
   }
 }

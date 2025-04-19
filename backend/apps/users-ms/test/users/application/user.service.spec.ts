@@ -12,7 +12,6 @@ import {
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
   InvalidPasswordError,
-  UserCannotFollowSelfError,
 } from '@users-ms/users/exceptions';
 
 import { UnderageUserError } from '@users-ms/users/exceptions/under-age-user.error';
@@ -59,7 +58,6 @@ const createMockUser = async (overrides: Partial<User> = {}): Promise<User> => {
   );
 
   jest.spyOn(user, 'updateProfile');
-  jest.spyOn(user, 'followUser');
   jest.spyOn(user, 'commit');
 
   return user;
@@ -461,185 +459,6 @@ describe('UserServiceImpl', () => {
       expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(
         'john.doe@example.com',
       );
-    });
-  });
-
-  // ---------------------------------------------------------------------------------------
-  // followUser
-  // ---------------------------------------------------------------------------------------
-  describe('followUser', () => {
-    it('allows one user to follow another user successfully', async () => {
-      // Arrange
-      const follower = await createMockUser({
-        id: new UniqueEntityID('follower-id'),
-      });
-      const followed = await createMockUser({
-        id: new UniqueEntityID('followed-id'),
-      });
-
-      userRepositoryMock.findById
-        .mockResolvedValueOnce(follower) // for follower
-        .mockResolvedValueOnce(followed); // for followed
-
-      // Act
-      await userService.followUser('followed-id', 'follower-id');
-
-      // Assert
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith('follower-id');
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith('followed-id');
-      expect(follower.followUser).toHaveBeenCalledWith(followed);
-      expect(userRepositoryMock.save).toHaveBeenCalledWith(followed);
-      expect(eventPublisherMock.mergeObjectContext).toHaveBeenCalledWith(
-        follower,
-      );
-      expect(follower.commit).toHaveBeenCalled();
-    });
-
-    it('throws EntityNotFoundError if follower user does not exist', async () => {
-      // Arrange
-      userRepositoryMock.findById.mockRejectedValueOnce(
-        new EntityNotFoundError('Follower user not found'),
-      );
-
-      // Act & Assert
-      await expect(
-        userService.followUser('followed-id', 'non-existent-follower-id'),
-      ).rejects.toThrow(EntityNotFoundError);
-
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith(
-        'non-existent-follower-id',
-      );
-      expect(userRepositoryMock.save).not.toHaveBeenCalled();
-    });
-
-    it('throws EntityNotFoundError if followed user does not exist', async () => {
-      // Arrange
-      const follower = await createMockUser({
-        id: new UniqueEntityID('follower-id'),
-      });
-      userRepositoryMock.findById
-        .mockResolvedValueOnce(follower)
-        .mockRejectedValueOnce(
-          new EntityNotFoundError('Followed user not found'),
-        );
-
-      // Act & Assert
-      await expect(
-        userService.followUser('non-existent-followed-id', 'follower-id'),
-      ).rejects.toThrow(EntityNotFoundError);
-
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith('follower-id');
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith(
-        'non-existent-followed-id',
-      );
-      expect(userRepositoryMock.save).not.toHaveBeenCalled();
-    });
-
-    it('prevents user from following themselves', async () => {
-      // Arrange
-      const userId = TEST_USER_DATA.VALID_ID;
-      const user = await createMockUser({ id: new UniqueEntityID(userId) });
-
-      // Mock followUser to throw the expected error
-      (user.followUser as jest.Mock).mockImplementation(() => {
-        throw new UserCannotFollowSelfError();
-      });
-
-      userRepositoryMock.findById
-        .mockResolvedValueOnce(user)
-        .mockResolvedValueOnce(user);
-
-      // Act & Assert
-      await expect(userService.followUser(userId, userId)).rejects.toThrow(
-        UserCannotFollowSelfError,
-      );
-
-      expect(userRepositoryMock.findById).toHaveBeenCalledTimes(2);
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith(userId);
-      expect(userRepositoryMock.save).not.toHaveBeenCalled();
-    });
-
-    it('handles following an already followed user', async () => {
-      // Arrange
-      const follower = await createMockUser({
-        id: new UniqueEntityID('follower-id'),
-      });
-      const followed = await createMockUser({
-        id: new UniqueEntityID('followed-id'),
-      });
-
-      (follower.followUser as jest.Mock).mockImplementation(() => {
-        throw new Error('Already following this user');
-      });
-
-      userRepositoryMock.findById
-        .mockResolvedValueOnce(follower)
-        .mockResolvedValueOnce(followed);
-
-      // Act & Assert
-      await expect(
-        userService.followUser('followed-id', 'follower-id'),
-      ).rejects.toThrow('Already following this user');
-
-      expect(userRepositoryMock.save).not.toHaveBeenCalled();
-    });
-  });
-
-  // ---------------------------------------------------------------------------------------
-  // getUserFollowers
-  // ---------------------------------------------------------------------------------------
-  describe('getUserFollowers', () => {
-    it('returns list of followers for a given user', async () => {
-      // Arrange
-      const followers = [
-        await createMockUser({ id: new UniqueEntityID('follower-1') }),
-        await createMockUser({ id: new UniqueEntityID('follower-2') }),
-      ];
-
-      const user = await createMockUser({
-        id: new UniqueEntityID('user-id'),
-        followers,
-      });
-      userRepositoryMock.findById.mockResolvedValueOnce(user);
-
-      // Act
-      const result = await userService.getUserFollowers('user-id');
-
-      // Assert
-      expect(result).toEqual(followers);
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith('user-id');
-    });
-
-    it('throws EntityNotFoundError if user does not exist', async () => {
-      // Arrange
-      userRepositoryMock.findById.mockRejectedValueOnce(
-        new EntityNotFoundError('User not found'),
-      );
-
-      // Act & Assert
-      await expect(
-        userService.getUserFollowers('non-existent-id'),
-      ).rejects.toThrow(EntityNotFoundError);
-
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith(
-        'non-existent-id',
-      );
-    });
-
-    it('returns an empty array when user has no followers', async () => {
-      // Arrange
-      const user = await createMockUser({
-        id: new UniqueEntityID('user-id'),
-        followers: [],
-      });
-      userRepositoryMock.findById.mockResolvedValueOnce(user);
-
-      // Act
-      const result = await userService.getUserFollowers('user-id');
-
-      // Assert
-      expect(result).toEqual([]);
-      expect(userRepositoryMock.findById).toHaveBeenCalledWith('user-id');
     });
   });
 });

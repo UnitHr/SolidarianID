@@ -15,6 +15,6 @@ export abstract class NotificationService {
     userId: string,
     activityType: ActivityType,
     entityId: string,
-    timestamp: Date,
+    timestamp?: Date,
   ): Promise<void>;
 }

@@ -35,41 +35,46 @@ export class NotificationServiceImpl implements NotificationService {
     historyEntryId: string,
     userId: string,
     activityType: ActivityType,
-    entityId: string,
-    timestamp: Date,
+    entityId?: string,
+    timestamp: Date = new Date(),
   ): Promise<void> {
     const pageSize = 100;
     let page = 1;
     let totalNotified = 0;
-    let totalFollowers: number;
+    const totalFollowers =
+      await this.followerService.countUserFollowers(userId);
+
+    if (totalFollowers === 0) {
+      return;
+    }
 
     do {
       // 1. Fetch the current page
-      const { followers, total } = await this.followerService.getUserFollowers(
+      const { followers } = await this.followerService.getUserFollowers(
         userId,
         page,
         pageSize,
       );
 
-      // On the first iteration, store the total to know when to stop
-      if (page === 1) {
-        totalFollowers = total;
-        if (followers.length === 0) {
-          return;
-        }
+      if (followers.length === 0) {
+        return;
       }
 
       // 2. Create and persist the batch of notifications for these followers
-      const batch = followers.map((f) =>
-        Notification.create({
+      const batch = followers.map((f) => {
+        return Notification.create({
           historyEntryId: new UniqueEntityID(historyEntryId),
           userId: f.followerId,
+          primaryEntityId: new UniqueEntityID(userId),
           activityType,
-          entityId: new UniqueEntityID(entityId),
+          secondaryEntityId: entityId
+            ? new UniqueEntityID(entityId)
+            : undefined,
           read: false,
           timestamp,
-        }),
-      );
+        });
+      });
+
       await this.notificationRepository.createMany(batch);
 
       totalNotified += followers.length;

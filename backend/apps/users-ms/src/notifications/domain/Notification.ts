@@ -5,8 +5,9 @@ import { ActivityType } from '@users-ms/history/domain';
 
 interface NotificationProps {
   userId: UniqueEntityID;
+  primaryEntityId: UniqueEntityID;
   activityType: ActivityType;
-  entityId: UniqueEntityID;
+  secondaryEntityId?: UniqueEntityID;
   read: boolean;
   historyEntryId: UniqueEntityID;
   timestamp?: Date;
@@ -25,12 +26,16 @@ export class Notification extends Entity<NotificationProps> {
     return this.props.historyEntryId;
   }
 
+  get primaryEntityId(): UniqueEntityID {
+    return this.props.primaryEntityId;
+  }
+
   get activityType(): ActivityType {
     return this.props.activityType;
   }
 
-  get entityId(): UniqueEntityID {
-    return this.props.entityId;
+  get secondaryEntityId(): UniqueEntityID | undefined {
+    return this.props.secondaryEntityId;
   }
 
   get read(): boolean {
@@ -66,7 +71,7 @@ export class Notification extends Entity<NotificationProps> {
   }
 
   private static validateProps(props: NotificationProps): void {
-    if (!props.userId || !props.historyEntryId) {
+    if (!props.userId || !props.historyEntryId || !props.primaryEntityId) {
       throw new MissingPropertiesError(
         'Missing required properties for Notification',
       );

@@ -5,17 +5,19 @@ import { NotificationDto } from './dto/notification.dto';
 
 export class NotificationMapper {
   public static toDomain(raw: Persistence.Notification): Domain.Notification {
-    return Domain.Notification.create(
-      {
-        userId: new UniqueEntityID(raw.userId),
-        historyEntryId: new UniqueEntityID(raw.historyEntryId),
-        activityType: raw.activityType,
-        entityId: new UniqueEntityID(raw.entityId),
-        read: raw.read,
-        timestamp: raw.timestamp,
-      },
-      new UniqueEntityID(raw.id),
-    );
+    const props = {
+      userId: new UniqueEntityID(raw.userId),
+      historyEntryId: new UniqueEntityID(raw.historyEntryId),
+      primaryEntityId: new UniqueEntityID(raw.primaryEntityId),
+      activityType: raw.activityType,
+      secondaryEntityId: raw.secondaryEntityId
+        ? new UniqueEntityID(raw.secondaryEntityId)
+        : undefined,
+      read: raw.read,
+      timestamp: raw.timestamp,
+    };
+
+    return Domain.Notification.create(props, new UniqueEntityID(raw.id));
   }
 
   public static toPersistence(
@@ -25,8 +27,9 @@ export class NotificationMapper {
       id: notification.id.toString(),
       userId: notification.userId.toString(),
       historyEntryId: notification.historyEntryId.toString(),
+      primaryEntityId: notification.primaryEntityId.toString(),
       activityType: notification.activityType,
-      entityId: notification.entityId.toString(),
+      secondaryEntityId: notification.secondaryEntityId?.toString(),
       read: notification.read,
       timestamp: notification.timestamp,
       updatedAt: new Date(),
@@ -37,8 +40,9 @@ export class NotificationMapper {
     return {
       id: notification.id.toString(),
       userId: notification.userId.toString(),
+      primaryEntityId: notification.primaryEntityId.toString(),
       activityType: notification.activityType,
-      entityId: notification.entityId.toString(),
+      secondaryEntityId: notification.secondaryEntityId?.toString(),
       read: notification.read,
       timestamp: notification.timestamp,
       historyEntryId: notification.historyEntryId.toString(),

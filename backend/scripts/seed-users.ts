@@ -2,6 +2,7 @@ import { Client } from 'pg';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 interface Usuario {
   firstName: string;
@@ -22,7 +23,7 @@ const client = new Client({
   port: 5432,
 });
 
-async function seed() {
+async function seedUsers() {
   try {
     await client.connect();
     console.log('📡 Conectado a PostgreSQL');
@@ -30,7 +31,10 @@ async function seed() {
     const jsonPath = path.join(__dirname, 'usuarios_solidarios.json');
     const data: Usuario[] = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
-    for (const u of data) {
+    for (const user of data) {
+      // Encriptar la contraseña
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+
       await client.query(
         `
         INSERT INTO "user" (
@@ -49,27 +53,27 @@ async function seed() {
         ON CONFLICT (email) DO NOTHING
         `,
         [
-          uuidv4(), // Generamos un UUID para el id
-          u.firstName,
-          u.lastName,
-          new Date(u.birthDate), // Convertimos la fecha a objeto Date
-          u.email,
-          u.password,
-          u.bio ?? 'No bio available',
-          u.showAge,
-          u.showEmail,
-          'user', // rol por defecto
+          uuidv4(),
+          user.firstName,
+          user.lastName,
+          new Date(user.birthDate),
+          user.email,
+          hashedPassword, // Contraseña encriptada
+          user.bio ?? 'No bio available',
+          user.showAge,
+          user.showEmail,
+          'user', // Rol por defecto
         ],
       );
     }
 
     console.log('✅ Usuarios insertados correctamente');
-  } catch (err) {
-    console.error('❌ Error insertando usuarios:', err);
+  } catch (error) {
+    console.error('❌ Error insertando usuarios:', error);
   } finally {
     await client.end();
     console.log('🔌 Conexión cerrada');
   }
 }
 
-seed();
+seedUsers();

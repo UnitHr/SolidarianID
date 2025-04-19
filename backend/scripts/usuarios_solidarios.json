@@ -20,15 +20,6 @@
     "bio": "Me especializo en logística y coordinación de eventos solidarios. He participado en campañas de donación de sangre, colectas para emergencias y distribución de ayuda humanitaria. Siempre dispuesto a organizar, movilizar y actuar."
   },
   {
-    "firstName": "Dominga",
-    "lastName": "Mena Royo",
-    "birthDate": "1965-08-04",
-    "email": "herminiorius@melero.es",
-    "password": "@X8kUEDfTpQ)",
-    "showAge": false,
-    "showEmail": false
-  },
-  {
     "firstName": "Américo",
     "lastName": "Tomé Gil",
     "birthDate": "1990-11-17",
@@ -37,15 +28,6 @@
     "showAge": false,
     "showEmail": false,
     "bio": "Desde muy joven participo en actividades de voluntariado, especialmente relacionadas con el cuidado del medio ambiente y la reforestación. Me gusta aportar con ideas y tiempo a cualquier causa que tenga un impacto positivo."
-  },
-  {
-    "firstName": "Rosario",
-    "lastName": "Pablo Arévalo",
-    "birthDate": "1982-04-29",
-    "email": "mpalomino@gmail.com",
-    "password": "%K_UCCka#3dV",
-    "showAge": false,
-    "showEmail": true
   },
   {
     "firstName": "Seve",
@@ -98,15 +80,6 @@
     "bio": "Desde la secundaria participo en proyectos contra el hambre infantil. Hoy soy parte de una fundación que brinda talleres de nutrición y asistencia alimentaria. Creo que todos tenemos derecho a vivir con dignidad."
   },
   {
-    "firstName": "Azahar",
-    "lastName": "Alonso Tejada",
-    "birthDate": "2006-08-19",
-    "email": "sevillanoeutimio@luis-menendez.com",
-    "password": "$lYWfrwC1A&O",
-    "showAge": true,
-    "showEmail": true
-  },
-  {
     "firstName": "Galo",
     "lastName": "Hoyos Ariño",
     "birthDate": "1993-02-13",
@@ -115,15 +88,6 @@
     "showAge": false,
     "showEmail": false,
     "bio": "Me especializo en logística y coordinación de eventos solidarios. He participado en campañas de donación de sangre, colectas para emergencias y distribución de ayuda humanitaria. Siempre dispuesto a organizar, movilizar y actuar."
-  },
-  {
-    "firstName": "Ruy",
-    "lastName": "Hidalgo Crespo",
-    "birthDate": "1977-07-16",
-    "email": "santosbas@hotmail.com",
-    "password": "8L6sNzWzu^)V",
-    "showAge": true,
-    "showEmail": true
   },
   {
     "firstName": "Nayara",
@@ -144,15 +108,6 @@
     "showAge": true,
     "showEmail": true,
     "bio": "Desde muy joven participo en actividades de voluntariado, especialmente relacionadas con el cuidado del medio ambiente y la reforestación. Me gusta aportar con ideas y tiempo a cualquier causa que tenga un impacto positivo."
-  },
-  {
-    "firstName": "Nidia",
-    "lastName": "Téllez Azorin",
-    "birthDate": "2004-10-01",
-    "email": "flavia23@buendia-manzanares.com",
-    "password": "D83Xsspa^Q01",
-    "showAge": false,
-    "showEmail": false
   },
   {
     "firstName": "Calista",
@@ -185,15 +140,6 @@
     "bio": "Desde muy joven participo en actividades de voluntariado, especialmente relacionadas con el cuidado del medio ambiente y la reforestación. Me gusta aportar con ideas y tiempo a cualquier causa que tenga un impacto positivo."
   },
   {
-    "firstName": "Miguela",
-    "lastName": "Querol Lucas",
-    "birthDate": "1989-07-22",
-    "email": "almaserrano@villalonga.net",
-    "password": ")I9ZwIKcNn4K",
-    "showAge": true,
-    "showEmail": false
-  },
-  {
     "firstName": "Glauco",
     "lastName": "Sáez Luna",
     "birthDate": "2000-01-11",
@@ -213,15 +159,7 @@
     "showEmail": true,
     "bio": "Soy estudiante de sociología. Me involucro activamente en movimientos juveniles que promueven la equidad, la justicia social y la educación gratuita. Me interesa aprender de otras personas y generar redes de apoyo entre comunidades."
   },
-  {
-    "firstName": "Eva María",
-    "lastName": "Durán Fuster",
-    "birthDate": "1995-03-29",
-    "email": "constanza20@hotmail.com",
-    "password": "T&9fLfGn2b*3",
-    "showAge": true,
-    "showEmail": true
-  },
+
   {
     "firstName": "Irene",
     "lastName": "Mateos Domínguez",
@@ -231,15 +169,6 @@
     "showAge": false,
     "showEmail": true,
     "bio": "Después de una experiencia de vida difícil, decidí dedicar parte de mi tiempo a ayudar a personas en situación de calle. Organizo donaciones de ropa y alimento con un grupo de amigos. Para mí, la solidaridad es un compromiso diario."
-  },
-  {
-    "firstName": "Narcisa",
-    "lastName": "Aller Martorell",
-    "birthDate": "1981-11-21",
-    "email": "arrietanerea@martinez.es",
-    "password": "iXCvi!wp&+4G",
-    "showAge": false,
-    "showEmail": false
   },
   {
     "firstName": "María Del Carmen",
@@ -260,15 +189,6 @@
     "showAge": true,
     "showEmail": false,
     "bio": "Trabajo en una ONG enfocada en la infancia y colaboro de manera voluntaria con comedores comunitarios. Me mueve la esperanza de construir un mundo más justo, donde cada niño y niña tenga acceso a oportunidades reales."
-  },
-  {
-    "firstName": "Viviana",
-    "lastName": "Beltrán Belda",
-    "birthDate": "1980-07-13",
-    "email": "tcalzada@gmail.com",
-    "password": "u$QtC^zfy+73",
-    "showAge": false,
-    "showEmail": true
   },
   {
     "firstName": "Sabas",
@@ -441,15 +361,6 @@
     "bio": "Desde la secundaria participo en proyectos contra el hambre infantil. Hoy soy parte de una fundación que brinda talleres de nutrición y asistencia alimentaria. Creo que todos tenemos derecho a vivir con dignidad."
   },
   {
-    "firstName": "Concepción",
-    "lastName": "Leon Torrents",
-    "birthDate": "1984-09-12",
-    "email": "albano00@agustin.net",
-    "password": "M7(SW^Do_Atq",
-    "showAge": true,
-    "showEmail": false
-  },
-  {
     "firstName": "Román",
     "lastName": "Soria Oliva",
     "birthDate": "1964-10-18",
@@ -518,15 +429,6 @@
     "showAge": false,
     "showEmail": false,
     "bio": "Soy donante frecuente de sangre y médula ósea. Promuevo estas prácticas a través de charlas y redes sociales. Me motiva saber que, con un pequeño gesto, puedo salvar vidas. También colaboro con campañas médicas rurales."
-  },
-  {
-    "firstName": "Carmelo",
-    "lastName": "Tovar Arjona",
-    "birthDate": "1970-06-28",
-    "email": "epozuelo@catalan.es",
-    "password": "47d&9ddY9ujG",
-    "showAge": false,
-    "showEmail": true
   },
   {
     "firstName": "Asunción",

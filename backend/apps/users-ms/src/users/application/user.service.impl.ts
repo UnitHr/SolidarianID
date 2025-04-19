@@ -32,6 +32,7 @@ export class UserServiceImpl implements UserService, OnModuleInit {
         '',
         false,
         false,
+        undefined,
         Role.ADMIN,
       );
     } catch (error) {

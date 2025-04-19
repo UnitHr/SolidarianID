@@ -37,7 +37,7 @@ export class Follower extends EntityRoot<FollowerProps> {
 
   public static create(props: FollowerProps, id?: UniqueEntityID): Follower {
     const { followerId, followedId, fullName, email, followedAt } = props;
-    if (!followerId || !followedId || !fullName || !email || !followedAt) {
+    if (!followerId || !followedId || !fullName || !email) {
       throw new Error('Missing properties');
     }
 

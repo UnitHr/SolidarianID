@@ -34,7 +34,7 @@ export class FollowerRepositoryTypeOrm extends FollowerRepository {
     });
 
     if (!follower) {
-      return null; // TODO maybe thrown an EntityNotFoundError
+      return null;
     }
 
     return FollowerMapper.toDomain(follower);

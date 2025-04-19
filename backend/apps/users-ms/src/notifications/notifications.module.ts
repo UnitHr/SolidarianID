@@ -1,6 +1,6 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from '@users-ms/users/user.module';
+import { FollowersModule } from '@users-ms/followers/followers.module';
 import { Notification } from './infra/persistence/Notification';
 import { NotificationRepository } from './domain/notification.repository';
 import { NotificationRepositoryTypeorm } from './infra/notification.repository.typeorm';
@@ -10,10 +10,7 @@ import { HistoryRegisteredHandler } from './domain/events/history-registered.han
 import { NotificationController } from './application/notification.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Notification]),
-    forwardRef(() => UserModule),
-  ],
+  imports: [TypeOrmModule.forFeature([Notification]), FollowersModule],
   providers: [
     {
       provide: NotificationRepository,

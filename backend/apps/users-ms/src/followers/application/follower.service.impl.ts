@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventPublisher } from '@nestjs/cqrs';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { UserService } from '@users-ms/users/application/user.service';
 import { FollowerService } from './follower.service';
 import { FollowerRepository } from '../follower.repository';
 import { Follower } from '../domain';
@@ -11,14 +12,13 @@ import { UserCannotFollowSelfError } from '../exceptions/user-cannot-follow-self
 export class FollowerServiceImpl implements FollowerService {
   constructor(
     private readonly followerRepository: FollowerRepository,
+    private readonly userService: UserService,
     private readonly eventPublisher: EventPublisher,
   ) {}
 
   async followUser(
     followedUserId: string,
     followerUserId: string,
-    followerName: string,
-    followerEmail: string,
   ): Promise<void> {
     if (followedUserId === followerUserId) {
       throw new UserCannotFollowSelfError();
@@ -28,12 +28,15 @@ export class FollowerServiceImpl implements FollowerService {
       throw new UserAlreadyFollowedError(followedUserId);
     }
 
+    const followedUser = await this.userService.getUserProfile(followedUserId);
+    await this.userService.getUserProfile(followerUserId);
+
     const follower = this.eventPublisher.mergeObjectContext(
       Follower.create({
         followerId: new UniqueEntityID(followerUserId),
         followedId: new UniqueEntityID(followedUserId),
-        fullName: followerName,
-        email: followerEmail,
+        fullName: followedUser.fullName,
+        email: followedUser.email,
         followedAt: new Date(),
       }),
     );
@@ -54,8 +57,7 @@ export class FollowerServiceImpl implements FollowerService {
       followerUserId,
       followedUserId,
     );
-
-    return follower !== null;
+    return !!follower;
   }
 
   async countUserFollowers(userId: string): Promise<number> {

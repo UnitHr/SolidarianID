@@ -10,7 +10,6 @@ import { FollowerService } from './application/follower.service';
 import { FollowerServiceImpl } from './application/follower.service.impl';
 import { FollowersController } from './application/follower.controller';
 import { FollowerDomainExceptionFilter } from './infra/filters/follower-domain-exception.filter';
-import { UserFollowedHandler } from './domain/events/user-followed.handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Follower]), CqrsModule, UserModule],
@@ -28,7 +27,6 @@ import { UserFollowedHandler } from './domain/events/user-followed.handler';
       provide: APP_FILTER,
       useClass: FollowerDomainExceptionFilter,
     },
-    UserFollowedHandler,
   ],
   exports: [FollowerService],
 })

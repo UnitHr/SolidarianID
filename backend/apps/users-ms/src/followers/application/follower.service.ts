@@ -4,8 +4,6 @@ export abstract class FollowerService {
   abstract followUser(
     followedUserId: string,
     followerUserId: string,
-    followerName: string,
-    followerEmail: string,
   ): Promise<void>;
 
   abstract getUserFollowers(userId: string): Promise<Follower[]>;

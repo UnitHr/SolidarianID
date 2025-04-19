@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Delete,
   Param,
   UseFilters,
   Res,
@@ -15,17 +14,13 @@ import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { FollowerService } from './follower.service';
 import { FollowerMapper } from '../follower.mapper';
-import { UserService } from '../../users/application/user.service';
 import { FollowerDomainExceptionFilter } from '../infra/filters/follower-domain-exception.filter';
 
 @ApiTags('followers')
 @Controller('users/:userId/followers')
 @UseFilters(FollowerDomainExceptionFilter)
 export class FollowersController {
-  constructor(
-    private readonly followerService: FollowerService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly followerService: FollowerService) {}
 
   @ApiOperation({ summary: 'Follow a user' })
   @Post()
@@ -34,14 +29,7 @@ export class FollowersController {
     @GetUserId() followerId: string,
     @Res() res: Response,
   ) {
-    const followerUser = await this.userService.getUserProfile(followerId);
-
-    await this.followerService.followUser(
-      userId,
-      followerId,
-      followerUser.fullName,
-      followerUser.email,
-    );
+    await this.followerService.followUser(userId, followerId);
 
     res.status(HttpStatus.NO_CONTENT).send();
   }

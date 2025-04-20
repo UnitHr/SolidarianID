@@ -19,7 +19,7 @@ export function CreateCommunityRequest() {
   };
 
   // Manejar el envío del formulario
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const communityName = (
@@ -39,13 +39,43 @@ export function CreateCommunityRequest() {
     ).value;
     const selectedIds = Array.from(selectedOds); // Convertir el Set a Array
 
-    console.log("Form Data:");
-    console.log("Community Name:", communityName);
-    console.log("Community Description:", communityDescription);
-    console.log("Cause Title:", causeTitle);
-    console.log("Cause Description:", causeDescription);
-    console.log("Cause End Date:", causeEndDate);
-    console.log("Selected ODS IDs:", selectedIds);
+    // Construir el cuerpo de la solicitud
+    const requestBody = {
+      name: communityName,
+      description: communityDescription,
+      cause: {
+        title: causeTitle,
+        description: causeDescription,
+        end: causeEndDate,
+        ods: selectedIds,
+      },
+    };
+
+    console.log("Request Body:", requestBody); // Para depuración
+
+    try {
+      // Enviar la solicitud al servidor
+      const response = await fetch("http://localhost:3002/communities", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Reemplaza con tu método para obtener el token
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : null;
+      console.log("Community Request created successfully:", data);
+
+      alert("Community Request created successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create community request. Please try again.");
+    }
   };
 
   return (

@@ -6,6 +6,7 @@ export class JoinCommunityRequestRejectedEvent extends DomainEvent {
   constructor(
     public readonly userId: string,
     public readonly communityId: string,
+    public readonly communityName: string,
   ) {
     super(JoinCommunityRequestRejectedEvent.name);
   }

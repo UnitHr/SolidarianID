@@ -65,6 +65,7 @@ export class Community extends EntityRoot<CommunityProps> {
           adminId,
           community.id.toString(),
           name,
+          name,
           description,
         ),
       );
@@ -74,7 +75,9 @@ export class Community extends EntityRoot<CommunityProps> {
 
   addMember(memberId: string): void {
     this.props.members.push(memberId);
-    this.apply(new UserJoinedCommunity(memberId, this.id.toString()));
+    this.apply(
+      new UserJoinedCommunity(memberId, this.id.toString(), this.name),
+    );
   }
 
   addCause(causeId: string): void {

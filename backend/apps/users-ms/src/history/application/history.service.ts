@@ -15,24 +15,27 @@ export abstract class HistoryService {
     userId: string,
     followedUserId: string,
     timestamp: Date,
-    followedUserName?: string,
+    followerUserName?: string,
   ): Promise<void>;
 
   abstract registerCommunityCreation(
     adminId: string,
     communityId: string,
+    communityName: string,
     timestamp: Date,
   ): Promise<void>;
 
   abstract registerActionContribute(
     userId: string,
     actionId: string,
+    actionName: string,
     timestamp: Date,
   ): Promise<void>;
 
   abstract registerJoinCommunityRequest(
     userId: string,
     communityId: string,
+    communityName: string,
     adminId: string,
     timestamp: Date,
   ): Promise<void>;
@@ -40,29 +43,33 @@ export abstract class HistoryService {
   abstract registerJoinCommunityRequestRejected(
     userId: string,
     communityId: string,
+    communityName: string,
     timestamp: Date,
   ): Promise<void>;
 
   abstract registerUserJoinedCommunity(
     userId: string,
     communityId: string,
+    communityName: string,
     timestamp: Date,
   ): Promise<void>;
 
   abstract registerCauseCreation(
     userId: string,
     causeId: string,
+    causeName: string,
     timestamp: Date,
   ): Promise<void>;
 
   abstract registerCauseSupported(
     userId: string,
     causeId: string,
+    causeName: string,
     timestamp: Date,
   ): Promise<void>;
 
   abstract userHasJoinCommunityRequestWithAdmin(
-    historyOwner: string,
     userId: string,
+    adminId: string,
   ): Promise<boolean>;
 }

@@ -165,18 +165,23 @@ describe('Follower', () => {
       const fullName = 'John Doe';
       const email = 'john@example.com';
       const followedAt = new Date();
+      const followedEmail = 'followed@example.com';
 
       // Spy on the apply method
       const applySpy = jest.spyOn(Follower.prototype, 'apply');
 
       // Act
-      Follower.create({
-        followerId,
-        followedId,
-        fullName,
-        email,
-        followedAt,
-      });
+      Follower.create(
+        {
+          followerId,
+          followedId,
+          fullName,
+          email,
+          followedAt,
+        },
+        undefined,
+        followedEmail,
+      );
 
       // Assert
       expect(applySpy).toHaveBeenCalledWith(
@@ -184,7 +189,7 @@ describe('Follower', () => {
           type: 'UserFollowedEvent',
           userId: 'follower-id',
           followedUserId: 'followed-id',
-          followedUserEmail: email,
+          followerUserEmail: followedEmail,
           date: followedAt,
         }),
       );

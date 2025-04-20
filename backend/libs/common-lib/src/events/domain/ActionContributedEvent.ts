@@ -7,6 +7,7 @@ export class ActionContributedEvent extends DomainEvent {
     public readonly userId: string,
     public readonly communityId: string,
     public readonly actionId: string,
+    public readonly actionName: string,
     public readonly causeId: string,
     public readonly amount: number,
     public readonly unit: string,

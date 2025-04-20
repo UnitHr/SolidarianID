@@ -7,6 +7,7 @@ export class CauseSupportedEvent extends DomainEvent {
   constructor(
     public readonly userId: string,
     public readonly causeId: string,
+    public readonly causeName: string,
     public readonly communityId: string,
     public readonly ods: ODSEnum[],
   ) {

@@ -75,6 +75,7 @@ export class JoinCommunityServiceImpl implements JoinCommunityService {
       Domain.JoinCommunityRequest.create({
         userId,
         communityId,
+        communityName: community.name,
         adminId: community.adminId,
         status: StatusRequest.PENDING,
       }),

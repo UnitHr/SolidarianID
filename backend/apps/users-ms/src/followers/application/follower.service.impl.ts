@@ -28,17 +28,21 @@ export class FollowerServiceImpl implements FollowerService {
       throw new UserAlreadyFollowedError(followedUserId);
     }
 
-    await this.userService.getUserProfile(followedUserId);
+    const followedUser = await this.userService.getUserProfile(followedUserId);
     const followerUser = await this.userService.getUserProfile(followerUserId);
 
     const follower = this.eventPublisher.mergeObjectContext(
-      Follower.create({
-        followerId: new UniqueEntityID(followerUserId),
-        followedId: new UniqueEntityID(followedUserId),
-        fullName: followerUser.fullName,
-        email: followerUser.email,
-        followedAt: new Date(),
-      }),
+      Follower.create(
+        {
+          followerId: new UniqueEntityID(followerUserId),
+          followedId: new UniqueEntityID(followedUserId),
+          fullName: followerUser.fullName,
+          email: followerUser.email,
+          followedAt: new Date(),
+        },
+        undefined,
+        followedUser.email,
+      ),
     );
 
     await this.followerRepository.save(follower);

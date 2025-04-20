@@ -8,6 +8,7 @@ import { MissingPropertiesError } from '../exceptions';
 interface JoinCommunityRequestProps {
   userId: string;
   communityId: string;
+  communityName: string;
   adminId: string;
   status: StatusRequest;
   comment?: string;
@@ -31,7 +32,11 @@ export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> 
 
     if (status === StatusRequest.DENIED) {
       this.apply(
-        new JoinCommunityRequestRejectedEvent(this.userId, this.communityId),
+        new JoinCommunityRequestRejectedEvent(
+          this.userId,
+          this.communityId,
+          this.communityName,
+        ),
       );
     }
   }
@@ -56,8 +61,8 @@ export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> 
     return this.props.communityId;
   }
 
-  set communityId(communityId: string) {
-    this.props.communityId = communityId;
+  get communityName(): string {
+    return this.props.communityName;
   }
 
   get adminId(): string {
@@ -68,14 +73,19 @@ export class JoinCommunityRequest extends EntityRoot<JoinCommunityRequestProps> 
     props: JoinCommunityRequestProps,
     id?: UniqueEntityID,
   ): JoinCommunityRequest {
-    const { userId, communityId, status, adminId } = props;
-    if (!userId || !communityId || !status || !adminId) {
+    const { userId, communityId, communityName, status, adminId } = props;
+    if (!userId || !communityId || !communityName || !status || !adminId) {
       MissingPropertiesError.create();
     }
     const joinCommunityRequest = new JoinCommunityRequest(props, id);
     if (!id) {
       joinCommunityRequest.apply(
-        new JoinCommunityRequestCreatedEvent(userId, communityId, adminId),
+        new JoinCommunityRequestCreatedEvent(
+          userId,
+          communityId,
+          communityName,
+          adminId,
+        ),
       );
     }
     return joinCommunityRequest;

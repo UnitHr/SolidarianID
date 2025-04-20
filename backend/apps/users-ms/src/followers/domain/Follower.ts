@@ -35,7 +35,11 @@ export class Follower extends EntityRoot<FollowerProps> {
     return this.props.followedAt;
   }
 
-  public static create(props: FollowerProps, id?: UniqueEntityID): Follower {
+  public static create(
+    props: FollowerProps,
+    id?: UniqueEntityID,
+    followedEmail?: string,
+  ): Follower {
     const { followerId, followedId, fullName, email, followedAt } = props;
     if (!followerId || !followedId || !fullName || !email) {
       throw new Error('Missing properties');
@@ -51,7 +55,7 @@ export class Follower extends EntityRoot<FollowerProps> {
         new UserFollowedEvent(
           followerId.toString(),
           followedId.toString(),
-          email,
+          followedEmail,
           follower.followedAt,
         ),
       );

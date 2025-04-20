@@ -15,6 +15,9 @@ export class JoinCommunityRequest {
   communityId: string;
 
   @Prop()
+  communityName: string;
+
+  @Prop()
   adminId: string;
 
   @Prop({ type: String, enum: StatusRequest })

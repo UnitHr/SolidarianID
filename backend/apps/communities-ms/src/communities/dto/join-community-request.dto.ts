@@ -7,6 +7,8 @@ export class JoinCommunityRequestDto {
 
   communityId: string;
 
+  communityName: string;
+
   status: StatusRequest;
 
   comment?: string;

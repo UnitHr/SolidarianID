@@ -22,6 +22,7 @@ export class HistoryEventsController {
     await this.historyService.registerCommunityCreation(
       message.adminId,
       message.communityId,
+      message.communityName,
       message.date,
     );
     this.logger.log(
@@ -34,6 +35,7 @@ export class HistoryEventsController {
     await this.historyService.registerActionContribute(
       message.userId,
       message.actionId,
+      message.actionName,
       message.date,
     );
     this.logger.log(
@@ -48,6 +50,7 @@ export class HistoryEventsController {
     await this.historyService.registerJoinCommunityRequest(
       message.userId,
       message.communityId,
+      message.communityName,
       message.adminId,
       message.date,
     );
@@ -63,6 +66,7 @@ export class HistoryEventsController {
     await this.historyService.registerJoinCommunityRequestRejected(
       message.userId,
       message.communityId,
+      message.communityName,
       message.date,
     );
     this.logger.log(
@@ -75,6 +79,7 @@ export class HistoryEventsController {
     await this.historyService.registerUserJoinedCommunity(
       message.userId,
       message.communityId,
+      message.communityName,
       message.date,
     );
     this.logger.log(
@@ -87,6 +92,7 @@ export class HistoryEventsController {
     await this.historyService.registerCauseCreation(
       message.userId,
       message.causeId,
+      message.causeName,
       message.date,
     );
     this.logger.log(
@@ -99,6 +105,7 @@ export class HistoryEventsController {
     await this.historyService.registerCauseSupported(
       message.userId,
       message.causeId,
+      message.causeName,
       message.date,
     );
     this.logger.log(

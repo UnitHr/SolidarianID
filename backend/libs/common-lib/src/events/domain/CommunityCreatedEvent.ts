@@ -6,6 +6,7 @@ export class CommunityCreatedEvent extends DomainEvent {
   constructor(
     public readonly adminId: string,
     public readonly communityId: string,
+    public readonly communityName: string,
     public readonly name: string,
     public readonly description: string,
   ) {

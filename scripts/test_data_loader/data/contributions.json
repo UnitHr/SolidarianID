@@ -1,0 +1,17 @@
+[
+  {
+    "amount": 250,
+    "unit": "euros",
+    "date": "2037-08-15"
+  },
+  {
+    "amount": 20,
+    "unit": "unidades",
+    "date": "2037-08-15"
+  },
+  {
+    "amount": 4,
+    "unit": "hours",
+    "date": "2037-08-15"
+  }
+]

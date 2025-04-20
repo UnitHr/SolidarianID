@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { envs } from './config';
 import { HistoryModule } from './history/history.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { FollowersModule } from './followers/followers.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     AuthModule,
     HistoryModule,
     NotificationsModule,
+    FollowersModule,
   ],
 })
 export class UsersMsModule {}

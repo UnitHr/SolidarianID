@@ -3,9 +3,9 @@ export class HistoryEntryDto {
 
   entityId: string;
 
+  entityName?: string;
+
   timestamp: Date;
 
   status?: string;
-
-  metadata?: Record<string, unknown>;
 }

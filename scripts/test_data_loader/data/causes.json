@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Reforestación de la Amazonía",
+    "description": "Campaña para recuperar zonas deforestadas del Amazonas.",
+    "end": "2037-12-31T23:59:59.000Z",
+    "ods": [15]
+  },
+  {
+    "title": "Alimentos para Siria",
+    "description": "Distribución de comida en regiones afectadas por conflicto.",
+    "end": "2037-10-15T23:59:59.000Z",
+    "ods": [2]
+  },
+  {
+    "title": "Agua potable en Etiopía",
+    "description": "Proyecto de acceso a agua limpia mediante pozos.",
+    "end": "2036-03-30T23:59:59.000Z",
+    "ods": [6]
+  }
+]

@@ -11,13 +11,19 @@ import { FormFilterCommunities } from "../components/FormFilterCommunities";
 import { CommunityCard } from "../components/CommunityCard";
 import image from "../assets/filter-communities-image-2.png";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function SearchCommunities() {
   const [name, setName] = useState("asvc");
+  const navigate = useNavigate();
   const [search, setSearch] = useState(false);
 
   function changeName(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
+  }
+
+  function handleCreateCommunity() {
+    navigate("/create-community");
   }
 
   return (
@@ -27,6 +33,28 @@ export function SearchCommunities() {
         <Row>
           <Row className="my-5">
             <h1 className="text-center">Search Communities</h1>
+          </Row>
+          <Row className="my-3 text-center">
+            <p>
+              or create a new one{" "}
+              <button
+                className="btn btn-primary"
+                onClick={handleCreateCommunity}
+              >
+                Create Community
+              </button>
+            </p>
+          </Row>
+          <Row className="my-3 text-center">
+            <p>
+              or create a new one{" "}
+              <button
+                className="btn btn-primary"
+                onClick={handleCreateCommunity}
+              >
+                Create Community
+              </button>
+            </p>
           </Row>
           <Row className="my-4">
             <h3 className="px-4 py-4 text-justify">

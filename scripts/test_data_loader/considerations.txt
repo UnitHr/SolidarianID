@@ -1,0 +1,7 @@
+1.- Run only with all databases empty.
+
+2.- Execute only once; multiple executions may result in inconsistent data.
+
+3.- Adding new data to the data/*.json files may cause execution errors.
+
+4.- The actions and contributions JSON files must be in sync: the first contribution must correspond to the first action.

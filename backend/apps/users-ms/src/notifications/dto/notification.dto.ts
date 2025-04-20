@@ -5,9 +5,11 @@ export class NotificationDto {
 
   userId: string;
 
+  primaryEntityId: string;
+
   activityType: ActivityType;
 
-  entityId: string;
+  secondaryEntityId?: string;
 
   read: boolean;
 

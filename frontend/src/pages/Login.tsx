@@ -11,8 +11,10 @@ export function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Email:", email);
+    console.log("Password:", password);
     try {
-      const response = await fetch("http://localhost:3001/users/auth/login", {
+      const response = await fetch("http://localhost:3000/api/v1/users/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,7 +24,7 @@ export function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        
+        console.log("Login response:", data);
         const playload = jwtDecode<{ 
           email: string;
           sub: { value: string };
@@ -34,7 +36,7 @@ export function Login() {
           alert("Invalid user");
           return;
         }
-        const userResponse = await fetch(`http://localhost:3001/users/${userId}`, {
+        const userResponse = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -47,13 +49,13 @@ export function Login() {
           const userResponseData = await userResponse.json();
 
           const userData = {
+            userId: userId,
             firstName: userResponseData.firstName,
             lastName: userResponseData.lastName,
             roles: playload.roles,
             token: data.access_token,
           };
 
-          console.log("User data:", userData);
           localStorage.setItem("user", JSON.stringify(userData));
 
         }

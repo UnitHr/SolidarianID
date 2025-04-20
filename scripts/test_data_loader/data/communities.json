@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Green Planet",
+    "description": "Community focused on reforestation and climate awareness.",
+    "cause": {
+      "title": "Reforestación de bosques",
+      "description": "Proyecto para plantar árboles y restaurar áreas forestales degradadas.",
+      "end": "2025-12-31T23:59:59.000Z",
+      "ods": [15]
+    }
+  },
+  {
+    "name": "Zero Hunger",
+    "description": "Initiatives to end hunger worldwide.",
+    "cause": {
+      "title": "Lucha contra el hambre",
+      "description": "Distribución de alimentos y creación de bancos de comida para comunidades vulnerables.",
+      "end": "2025-10-01T23:59:59.000Z",
+      "ods": [2]
+    }
+  },
+  {
+    "name": "Clean Water Movement",
+    "description": "Efforts to bring clean water and sanitation to rural areas.",
+    "cause": {
+      "title": "Acceso al agua potable",
+      "description": "Construcción de pozos y sistemas de purificación para regiones sin acceso al agua.",
+      "end": "2026-03-01T23:59:59.000Z",
+      "ods": [6]
+    }
+  },
+  {
+    "name": "Tech for Education",
+    "description": "Bringing technology and internet access to underserved schools.",
+    "cause": {
+      "title": "Educación digital para todos",
+      "description": "Campaña para distribuir dispositivos y formación tecnológica en zonas remotas.",
+      "end": "2026-06-15T23:59:59.000Z",
+      "ods": [4, 9]
+    }
+  },
+  {
+    "name": "Health First",
+    "description": "Health awareness and medical help for vulnerable communities.",
+    "cause": {
+      "title": "Atención médica gratuita",
+      "description": "Campañas de vacunación y acceso a salud básica para comunidades marginalizadas.",
+      "end": "2026-01-30T23:59:59.000Z",
+      "ods": [3]
+    }
+  }
+]

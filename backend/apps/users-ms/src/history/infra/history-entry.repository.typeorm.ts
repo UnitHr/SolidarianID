@@ -114,7 +114,7 @@ export class HistoryEntryRepositoryTypeorm extends HistoryEntryRepository {
       where: {
         userId,
         type: JOIN_COMMUNITY_REQUEST_SENT,
-        metadata: { adminId },
+        adminId,
       },
     });
 

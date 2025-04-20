@@ -14,9 +14,6 @@ export class UserMapper {
         email: UserEmail.create(raw.email),
         birthDate: UserBirthDate.create(new Date(raw.birthDate)),
         password: UserPassword.fromHashedPassword(raw.password),
-        followers: raw.followers?.map((follower) =>
-          UserMapper.toDomain(follower),
-        ),
       },
       new UniqueEntityID(raw.id),
     );
@@ -35,9 +32,7 @@ export class UserMapper {
       showAge: user.showAge,
       showEmail: user.showEmail,
       role: user.role,
-      followers: user.followers?.map((follower) =>
-        UserMapper.toPersistence(follower),
-      ),
+      githubId: user.githubId,
     };
   }
 

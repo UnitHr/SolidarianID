@@ -32,6 +32,7 @@ export class UserServiceImpl implements UserService, OnModuleInit {
         '',
         false,
         false,
+        undefined,
         Role.ADMIN,
       );
     } catch (error) {
@@ -77,6 +78,7 @@ export class UserServiceImpl implements UserService, OnModuleInit {
         showAge,
         showEmail,
         role,
+        githubId,
       }),
     );
 
@@ -119,22 +121,6 @@ export class UserServiceImpl implements UserService, OnModuleInit {
 
   async getUserByEmail(email: string): Promise<User> {
     return this.userRepository.findByEmail(email);
-  }
-
-  async followUser(id: string, followerId: string): Promise<void> {
-    const follower = this.eventPublisher.mergeObjectContext(
-      await this.userRepository.findById(followerId),
-    );
-    const followed = await this.userRepository.findById(id);
-
-    follower.followUser(followed);
-    await this.userRepository.save(followed);
-    follower.commit();
-  }
-
-  async getUserFollowers(id: string): Promise<User[]> {
-    const user = await this.userRepository.findById(id);
-    return user.followers;
   }
 
   async findByGithubId(githubId: string): Promise<User> {

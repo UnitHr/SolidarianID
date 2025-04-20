@@ -17,14 +17,12 @@ import {
   InvalidDateProvidedError,
 } from '@common-lib/common-lib/core/exceptions';
 import { Response } from 'express';
-import { UserCannotFollowSelfError } from '@users-ms/users/exceptions/user-cannot-follow-self.error';
 import { InvalidEmailError } from '@users-ms/users/exceptions/invalid-email.error';
 import {
   MissingPropertiesError,
   EmailAlreadyInUseError,
   EmailUpdateConflictError,
   UnderageUserError,
-  UserAlreadyFollowedError,
 } from '../../exceptions';
 
 type ExceptionConstructor = new (...args: unknown[]) => Error;
@@ -36,8 +34,6 @@ type ExceptionConstructor = new (...args: unknown[]) => Error;
   EmailUpdateConflictError,
   InvalidDateProvidedError,
   UnderageUserError,
-  UserAlreadyFollowedError,
-  UserCannotFollowSelfError,
   InvalidEmailError,
 )
 export class UserDomainExceptionFilter implements ExceptionFilter {
@@ -49,8 +45,6 @@ export class UserDomainExceptionFilter implements ExceptionFilter {
     [EntityNotFoundError, HttpStatus.NOT_FOUND],
     [EmailAlreadyInUseError, HttpStatus.CONFLICT],
     [EmailUpdateConflictError, HttpStatus.CONFLICT],
-    [UserCannotFollowSelfError, HttpStatus.CONFLICT],
-    [UserAlreadyFollowedError, HttpStatus.CONFLICT],
     [InvalidDateProvidedError, HttpStatus.BAD_REQUEST],
     [UnderageUserError, HttpStatus.BAD_REQUEST],
     [InvalidEmailError, HttpStatus.BAD_REQUEST],

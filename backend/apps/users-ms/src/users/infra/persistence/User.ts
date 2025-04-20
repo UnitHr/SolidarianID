@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryColumn,
-  ManyToMany,
-  JoinTable,
-  Index,
-} from 'typeorm';
+import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 
 @Entity()
 export class User {
@@ -42,13 +35,4 @@ export class User {
 
   @Column({ nullable: true })
   githubId?: string;
-
-  @ManyToMany(() => User)
-  @JoinTable({
-    name: 'user_followers',
-    joinColumn: { name: 'followed_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'follower_id', referencedColumnName: 'id' },
-  })
-  // eslint-disable-next-line no-use-before-define
-  followers: User[];
 }

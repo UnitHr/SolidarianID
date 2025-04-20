@@ -49,14 +49,14 @@ export class HistoryServiceImpl implements HistoryService {
     userId: string,
     followedUserId: string,
     timestamp: Date,
-    followedUserName?: string,
+    followerUserName?: string,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: ActivityType.USER_FOLLOWED,
       entityId: new UniqueEntityID(followedUserId),
+      entityName: followerUserName,
       timestamp,
-      metadata: followedUserName ? { entityName: followedUserName } : undefined,
     });
 
     await this.historyEntryRepository.save(entry);
@@ -65,12 +65,14 @@ export class HistoryServiceImpl implements HistoryService {
   async registerCommunityCreation(
     adminId: string,
     communityId: string,
+    communityName: string,
     timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(adminId),
       type: ActivityType.COMMUNITY_ADMIN,
       entityId: new UniqueEntityID(communityId),
+      entityName: communityName,
       timestamp,
     });
 
@@ -80,12 +82,14 @@ export class HistoryServiceImpl implements HistoryService {
   async registerActionContribute(
     userId: string,
     actionId: string,
+    actionName: string,
     timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: ActivityType.ACTION_CONTRIBUTED,
       entityId: new UniqueEntityID(actionId),
+      entityName: actionName,
       timestamp,
     });
 
@@ -95,6 +99,7 @@ export class HistoryServiceImpl implements HistoryService {
   async registerJoinCommunityRequest(
     userId: string,
     communityId: string,
+    communityName: string,
     communityAdminId: string,
     timestamp: Date,
   ): Promise<void> {
@@ -102,8 +107,9 @@ export class HistoryServiceImpl implements HistoryService {
       userId: new UniqueEntityID(userId),
       type: ActivityType.JOIN_COMMUNITY_REQUEST_SENT,
       entityId: new UniqueEntityID(communityId),
+      entityName: communityName,
+      adminId: communityAdminId,
       status: EntryStatus.PENDING,
-      metadata: { adminId: communityAdminId },
       timestamp,
     });
 
@@ -129,6 +135,7 @@ export class HistoryServiceImpl implements HistoryService {
   async registerJoinCommunityRequestRejected(
     userId: string,
     communityId: string,
+    communityName: string,
     timestamp: Date,
   ): Promise<void> {
     await this.archiveJoinCommunityPendingRequest(userId, communityId);
@@ -137,6 +144,7 @@ export class HistoryServiceImpl implements HistoryService {
       userId: new UniqueEntityID(userId),
       type: ActivityType.JOIN_COMMUNITY_REQUEST_REJECTED,
       entityId: new UniqueEntityID(communityId),
+      entityName: communityName,
       status: EntryStatus.REJECTED,
       timestamp,
     });
@@ -147,6 +155,7 @@ export class HistoryServiceImpl implements HistoryService {
   async registerUserJoinedCommunity(
     userId: string,
     communityId: string,
+    communityName: string,
     timestamp: Date,
   ): Promise<void> {
     await this.archiveJoinCommunityPendingRequest(userId, communityId);
@@ -155,6 +164,7 @@ export class HistoryServiceImpl implements HistoryService {
       userId: new UniqueEntityID(userId),
       type: ActivityType.JOINED_COMMUNITY,
       entityId: new UniqueEntityID(communityId),
+      entityName: communityName,
       timestamp,
     });
 
@@ -164,12 +174,14 @@ export class HistoryServiceImpl implements HistoryService {
   async registerCauseCreation(
     userId: string,
     causeId: string,
+    causeName: string,
     timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: ActivityType.CAUSE_CREATED,
       entityId: new UniqueEntityID(causeId),
+      entityName: causeName,
       timestamp,
     });
 
@@ -179,12 +191,14 @@ export class HistoryServiceImpl implements HistoryService {
   async registerCauseSupported(
     userId: string,
     causeId: string,
+    causeName: string,
     timestamp: Date,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: ActivityType.CAUSE_SUPPORTED,
       entityId: new UniqueEntityID(causeId),
+      entityName: causeName,
       timestamp,
     });
 

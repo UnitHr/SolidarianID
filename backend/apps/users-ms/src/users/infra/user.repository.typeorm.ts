@@ -23,10 +23,7 @@ export class UserRepositoryTypeOrm extends UserRepository {
   }
 
   async findById(id: string): Promise<Domain.User> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: ['followers'],
-    });
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new EntityNotFoundError(`User with id ${id} not found`);
     }
@@ -44,7 +41,7 @@ export class UserRepositoryTypeOrm extends UserRepository {
   async findByGithubId(githubId: string): Promise<Domain.User> {
     const user = await this.userRepository.findOneBy({ githubId });
     if (!user) {
-      return null;
+      return null; // TODO maybe throw an EntityNotFoundError
     }
     return UserMapper.toDomain(user);
   }

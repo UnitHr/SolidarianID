@@ -1,0 +1,31 @@
+[
+  {
+    "firstName": "Joe",
+    "lastName": "Doe",
+    "birthDate": "1990-01-01",
+    "email": "joe@example.com",
+    "password": "123456Test*",
+    "bio": "Hello, I'm Joe!",
+    "showAge": true,
+    "showEmail": false
+  },
+  {
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "birthDate": "1995-05-20",
+    "email": "alice@example.com",
+    "password": "AlicePass123*",
+    "bio": "Community builder",
+    "showAge": true,
+    "showEmail": true
+  },
+  {
+    "firstName": "Jack",
+    "lastName": "Doe",
+    "birthDate": "1980-01-01",
+    "email": "jack12.doe@example.com",
+    "password": "123456Test*",
+    "showAge": false,
+    "showEmail": true
+  }
+]

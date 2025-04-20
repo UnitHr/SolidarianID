@@ -1,0 +1,26 @@
+[
+  {
+    "type": "economic",
+    "title": "Fondo para víctimas de incendios",
+    "description": "Recaudación económica para familias afectadas por incendios forestales.",
+    "target": 10000,
+    "unit": "euros"
+  },
+  {
+    "type": "goods_collection",
+    "title": "Recogida de mantas y ropa de abrigo",
+    "description": "Campaña para ayudar a personas sin hogar durante el invierno.",
+    "target": 500,
+    "unit": "unidades",
+    "goodType": "mantas"
+  },
+  {
+    "type": "volunteer",
+    "title": "Voluntariado en refugio de animales",
+    "description": "Necesitamos voluntarios para limpiar, alimentar y cuidar animales rescatados.",
+    "target": 300,
+    "unit": "hours",
+    "location": "Refugio El Hogar, Valencia",
+    "date": "2037-08-15"
+  }
+]

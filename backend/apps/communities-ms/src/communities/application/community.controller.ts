@@ -70,7 +70,7 @@ export class CommunityController {
     const causeId = result.value;
 
     const location = `/causes/${causeId.getValue().toString()}`;
-    res.status(HttpStatus.OK);
+    res.status(HttpStatus.CREATED);
     res.location(location);
     res.send();
   }

@@ -133,6 +133,7 @@ export class Cause extends EntityRoot<CauseProps> {
       new CauseSupportedEvent(
         userId,
         this.id.toString(),
+        this.title,
         this.communityId,
         this.ods,
       ),

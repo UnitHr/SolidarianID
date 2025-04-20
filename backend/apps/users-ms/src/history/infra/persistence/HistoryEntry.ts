@@ -4,6 +4,9 @@ import { EntryStatus, ActivityType } from '@users-ms/history/domain';
 
 @Entity()
 @Index(['userId', 'type', 'status', 'timestamp'])
+@Index(['adminId', 'type'])
+@Index(['entityId', 'entityName'])
+@Index(['userId', 'adminId', 'type'])
 export class HistoryEntry {
   @PrimaryColumn('uuid')
   id: string;
@@ -21,6 +24,14 @@ export class HistoryEntry {
   @Column('uuid')
   entityId: string;
 
+  @Column('varchar', { nullable: true })
+  @Index()
+  entityName: string;
+
+  @Column('uuid', { nullable: true })
+  @Index()
+  adminId: string; // This will work for the MVP, later we need to discus if we need to change it to a Hierarchy of this class based on the use cases
+
   @Column('timestamp')
   timestamp: Date;
 
@@ -31,15 +42,4 @@ export class HistoryEntry {
     nullable: true,
   })
   status?: EntryStatus;
-
-  @Column('jsonb', { nullable: true })
-  metadata: {
-    adminId?: string;
-    entityName?: string;
-    description?: string;
-    amount?: number;
-    volunteerHours?: number;
-    location?: string;
-    role?: string;
-  };
 }

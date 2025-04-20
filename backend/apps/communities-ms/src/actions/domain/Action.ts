@@ -192,6 +192,7 @@ export abstract class Action extends EntityRoot<ActionProps> {
         contribution.userId,
         this.communityId,
         actionId,
+        this.title,
         this.causeId,
         contribution.amount,
         contribution.unit,

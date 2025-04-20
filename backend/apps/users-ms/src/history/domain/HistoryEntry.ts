@@ -9,17 +9,10 @@ interface HistoryEntryProps {
   userId: UniqueEntityID;
   type: ActivityType;
   entityId: UniqueEntityID;
+  entityName?: string;
+  adminId?: string;
   timestamp?: Date;
   status?: EntryStatus;
-  metadata?: {
-    adminId?: string;
-    entityName?: string;
-    description?: string;
-    amount?: number;
-    volunteerHours?: number;
-    location?: string;
-    role?: string;
-  };
 }
 
 export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
@@ -39,6 +32,14 @@ export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
     return this.props.entityId;
   }
 
+  get entityName(): string {
+    return this.props.entityName;
+  }
+
+  get adminId(): string {
+    return this.props.adminId;
+  }
+
   get timestamp(): Date {
     return this.props.timestamp;
   }
@@ -49,10 +50,6 @@ export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
 
   set status(status: EntryStatus) {
     this.props.status = status;
-  }
-
-  get metadata(): HistoryEntryProps['metadata'] {
-    return this.props.metadata;
   }
 
   public static create(

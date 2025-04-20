@@ -55,8 +55,8 @@ export class HistoryServiceImpl implements HistoryService {
       userId: new UniqueEntityID(userId),
       type: ActivityType.USER_FOLLOWED,
       entityId: new UniqueEntityID(followedUserId),
+      entityName: followedUserName,
       timestamp,
-      metadata: followedUserName ? { entityName: followedUserName } : undefined,
     });
 
     await this.historyEntryRepository.save(entry);
@@ -102,8 +102,8 @@ export class HistoryServiceImpl implements HistoryService {
       userId: new UniqueEntityID(userId),
       type: ActivityType.JOIN_COMMUNITY_REQUEST_SENT,
       entityId: new UniqueEntityID(communityId),
+      adminId: communityAdminId,
       status: EntryStatus.PENDING,
-      metadata: { adminId: communityAdminId },
       timestamp,
     });
 

@@ -4,6 +4,7 @@ import { Register } from "./pages/Register";
 import { SearchActions } from "./pages/SearchActions";
 import { SearchCauses } from "./pages/SearchCauses";
 import { SearchCommunities } from "./pages/SearchCommunities";
+import { CreateCommunityRequest } from "./pages/CreateCommunityRequest";
 import { Route, Routes } from "react-router-dom";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <Route path="/communities" element={<SearchCommunities />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/create-community" element={<CreateCommunityRequest />} />
     </Routes>
   );
 }

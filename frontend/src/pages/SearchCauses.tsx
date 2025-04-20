@@ -1,10 +1,14 @@
-import { Col, Row, Image, Container } from "react-bootstrap";
+import { Col, Row, Image, Container, Alert } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { FormFilterCauses } from "../components/FormFilterCauses";
 import image from "../assets/filter-causes-image.png";
 import { useState } from "react";
 
 export function SearchCauses() {
+  const urlBase = "http://localhost:8080/api/causes";
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("success");
   const [name, setName] = useState("");
   const [ods, setOds] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("title");
@@ -31,18 +35,47 @@ export function SearchCauses() {
     setSortDirection(event.target.value);
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    setShowAlert(true);
+    setAlertMessage("Causes filtered successfully!");
+    setAlertVariant("success");
+
+    /*
     event.preventDefault();
-    alert(
-      `Name: ${name}, ODS: ${ods.join(
-        ", "
-      )}, Sort By: ${sortBy}, Sort Direction: ${sortDirection}`
-    );
+    const queryParams = {
+      name,
+      ods: ods.join(","),
+      sortBy,
+      sortDirection,
+    };
+    const urlWithQueryParams =
+      urlBase + "?" + new URLSearchParams(queryParams).toString();
+
+    const response = await fetch(urlWithQueryParams);
+    if (response.ok) {
+      const data = await response.json();
+      setShowAlert(true);
+      setAlertMessage("Causes filtered successfully!");
+      setAlertVariant("success");
+    } else {
+      setShowAlert(true);
+      setAlertMessage("Error filtering causes");
+      setAlertVariant("danger");
+    }*/
   }
 
   return (
     <>
       <SolidarianNavbar></SolidarianNavbar>
+      {showAlert && (
+        <Alert
+          variant={alertVariant}
+          onClose={(e) => setShowAlert(false)}
+          dismissible
+        >
+          {alertMessage}
+        </Alert>
+      )}
       <Container>
         <Row className="my-5">
           <h1 className="text-center">Filter Causes</h1>
@@ -69,9 +102,6 @@ export function SearchCauses() {
                 handleSubmit={handleSubmit}
               ></FormFilterCauses>
             </Row>
-          </Col>
-          <Col>
-            <Image src={image} fluid />
           </Col>
         </Row>
       </Container>

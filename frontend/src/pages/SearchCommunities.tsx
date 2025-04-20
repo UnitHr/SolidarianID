@@ -1,12 +1,20 @@
-import { Col, Container, Row, Image } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Row,
+  Image,
+  ListGroup,
+  Pagination,
+} from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { FormFilterCommunities } from "../components/FormFilterCommunities";
 import { CommunityCard } from "../components/CommunityCard";
-import image from "../assets/filter-community-image.png";
+import image from "../assets/filter-communities-image-2.png";
 import { useState } from "react";
 
 export function SearchCommunities() {
   const [name, setName] = useState("asvc");
+  const [search, setSearch] = useState(false);
 
   function changeName(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
@@ -18,7 +26,7 @@ export function SearchCommunities() {
       <Container>
         <Row>
           <Row className="my-5">
-            <h1 className="text-center">Filter Communities {name}</h1>
+            <h1 className="text-center">Search Communities</h1>
           </Row>
           <Row className="my-4">
             <h3 className="px-4 py-4 text-justify">
@@ -29,69 +37,99 @@ export function SearchCommunities() {
           </Row>
         </Row>
         <Row className="align-items-center">
+          <Col>
+            <Image src={image} fluid />
+          </Col>
           <Col className="d-flex justify-content-center align-items-center">
             <FormFilterCommunities
               name={name}
               changeName={changeName}
             ></FormFilterCommunities>
           </Col>
-          <Col>
-            <Image src={image} fluid />
-          </Col>
         </Row>
         <Row className="my-4">
-          <Row className="mt-3 mb-2">
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-          </Row>
-          <Row className="mt-3 mb-2">
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-            <Col>
-              <CommunityCard
-                name="Community 1"
-                description="This is a description for community 1"
-              ></CommunityCard>
-            </Col>
-          </Row>
+          <Container>
+            <Row>
+              {search && (
+                <>
+                  <h3>Results: </h3>
+                </>
+              )}
+            </Row>
+            {search && (
+              <>
+                <Row>
+                  <ListGroup className="my-2">
+                    <ListGroup.Item variant="secondary">
+                      <Row className="mt-3 mb-2">
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                  </ListGroup>
+                  <ListGroup className="my-2">
+                    <ListGroup.Item variant="secondary">
+                      <Row className="mt-3 mb-2">
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                        <Col>
+                          <CommunityCard
+                            name="Community 1"
+                            description="This is a description for community 1"
+                          ></CommunityCard>
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                  </ListGroup>
+                </Row>
+                <Pagination>
+                  <Pagination.First />
+                  <Pagination.Prev />
+                  <Pagination.Item>{1}</Pagination.Item>
+                  <Pagination.Next />
+                  <Pagination.Last />
+                </Pagination>
+              </>
+            )}
+          </Container>
         </Row>
       </Container>
     </>

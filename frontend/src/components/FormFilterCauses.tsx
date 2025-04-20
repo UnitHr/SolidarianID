@@ -1,5 +1,22 @@
 import { useState } from "react";
-import { Card, Form, Row, Button, Col } from "react-bootstrap";
+import { Card, Form, Row, Button, Col, Image } from "react-bootstrap";
+import ods1 from "../assets/ods/goal-1.png";
+import ods2 from "../assets/ods/goal-2.png";
+import ods3 from "../assets/ods/goal-3.png";
+import ods4 from "../assets/ods/goal-4.png";
+import ods5 from "../assets/ods/goal-5.png";
+import ods6 from "../assets/ods/goal-6.png";
+import ods7 from "../assets/ods/goal-7.png";
+import ods8 from "../assets/ods/goal-8.png";
+import ods9 from "../assets/ods/goal-9.png";
+import ods10 from "../assets/ods/goal-10.png";
+import ods11 from "../assets/ods/goal-11.png";
+import ods12 from "../assets/ods/goal-12.png";
+import ods13 from "../assets/ods/goal-13.png";
+import ods14 from "../assets/ods/goal-14.png";
+import ods15 from "../assets/ods/goal-15.png";
+import ods16 from "../assets/ods/goal-16.png";
+import ods17 from "../assets/ods/goal-17.png";
 
 export function FormFilterCauses({
   name,
@@ -20,7 +37,7 @@ export function FormFilterCauses({
             <h2>Filtering Options</h2>
           </Card.Title>
           <Form>
-            <Row className="my-3">
+            <Row className="my-5">
               <Col>
                 <Form.Group controlId="filterCommunity">
                   <Form.Label>Name</Form.Label>
@@ -50,15 +67,24 @@ export function FormFilterCauses({
                 </Form.Select>
               </Col>
             </Row>
-            <Row className="my-3">
-              <Form.Group controlId="filterOds">
+            <Row className="my-4">
+              <Form.Group
+                controlId="filterOds"
+                className="d-flex flex-wrap gap-3"
+              >
                 <Form.Label>ODS</Form.Label>
                 <br />
                 <Form.Check
                   inline
                   type="checkbox"
                   id="ods1"
-                  label="No Poverty"
+                  label={
+                    <Image
+                      src={ods1}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("1")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -66,7 +92,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods2"
-                  label="Zero Hunger"
+                  label={
+                    <Image
+                      src={ods2}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("2")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -74,7 +106,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods3"
-                  label="Good Health and Well-Being"
+                  label={
+                    <Image
+                      src={ods3}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("3")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -82,7 +120,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods4"
-                  label="Quality Education"
+                  label={
+                    <Image
+                      src={ods4}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("4")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -90,7 +134,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods5"
-                  label="Gender Equality"
+                  label={
+                    <Image
+                      src={ods5}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("5")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -98,7 +148,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods6"
-                  label="Clean Water and Sanitation"
+                  label={
+                    <Image
+                      src={ods6}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("6")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -106,7 +162,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods7"
-                  label="Affordable and Clean Energy"
+                  label={
+                    <Image
+                      src={ods7}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("7")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -114,7 +176,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods8"
-                  label="Decent Work and Economic Growth"
+                  label={
+                    <Image
+                      src={ods8}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("8")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -122,7 +190,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods9"
-                  label="Industry, Innovation and Infrastructure"
+                  label={
+                    <Image
+                      src={ods9}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("9")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -130,7 +204,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods10"
-                  label="Reduced Inequalities"
+                  label={
+                    <Image
+                      src={ods10}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("10")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -138,7 +218,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods11"
-                  label="Sustainable Cities and Communities"
+                  label={
+                    <Image
+                      src={ods11}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("11")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -146,7 +232,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods12"
-                  label="Responsible Consumption and Production"
+                  label={
+                    <Image
+                      src={ods12}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("12")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -154,7 +246,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods13"
-                  label="Climate Action"
+                  label={
+                    <Image
+                      src={ods13}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("13")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -162,7 +260,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods14"
-                  label="Life Below Water"
+                  label={
+                    <Image
+                      src={ods14}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("14")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -170,7 +274,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods15"
-                  label="Life on Land"
+                  label={
+                    <Image
+                      src={ods15}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("15")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -178,7 +288,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods16"
-                  label="Peace, Justice and Strong Institutions"
+                  label={
+                    <Image
+                      src={ods16}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("16")}
                   onChange={changeOds}
                 ></Form.Check>
@@ -186,7 +302,13 @@ export function FormFilterCauses({
                   inline
                   type="checkbox"
                   id="ods17"
-                  label="Partnerships for the Goals"
+                  label={
+                    <Image
+                      src={ods17}
+                      className="img-fluid"
+                      style={{ width: "150px", borderRadius: "8px" }}
+                    />
+                  }
                   checked={ods.includes("17")}
                   onChange={changeOds}
                 ></Form.Check>

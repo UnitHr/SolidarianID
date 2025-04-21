@@ -138,7 +138,7 @@ export class CommunityController {
     // Send the response
     res.status(HttpStatus.OK);
     res.json(response);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()

@@ -1,6 +1,6 @@
 import { Card, Form, Row, Button } from "react-bootstrap";
 
-export function FormFilterCommunities({ name, changeName }) {
+export function FormFilterCommunities({ name, changeName, handleSearch }) {
   return (
     <>
       <Card border="primary" bg="light" className="p-4 shadow-sm mb-4">
@@ -21,7 +21,7 @@ export function FormFilterCommunities({ name, changeName }) {
               </Form.Group>
             </Row>
             <Row className="my-4 mx-2">
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" onClick={handleSearch}>
                 Search
               </Button>
             </Row>

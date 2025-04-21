@@ -5,18 +5,38 @@ import {
   Image,
   ListGroup,
   Pagination,
+  Alert,
 } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { FormFilterCommunities } from "../components/FormFilterCommunities";
 import { CommunityCard } from "../components/CommunityCard";
 import image from "../assets/filter-communities-image-2.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface CommunityValues {
+  id: string;
+  adminId: string;
+  name: string;
+  description: string;
+}
+
 export function SearchCommunities() {
-  const [name, setName] = useState("asvc");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
+  const urlBase = "http://localhost:3000/api/v1/communities";
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("success");
   const [search, setSearch] = useState(false);
+  const limit = 4;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [communities, setCommunities] = useState<CommunityValues[]>([]);
+
+  useEffect(() => {
+    fetchCommunities();
+  }, [page, name]);
 
   function changeName(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
@@ -26,30 +46,62 @@ export function SearchCommunities() {
     navigate("/create-community");
   }
 
+  async function handleSearch(e) {
+    e.preventDefault();
+    fetchCommunities();
+  }
+
+  async function fetchCommunities() {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (name !== "") {
+      params.append("name", name);
+    }
+
+    const url = `${urlBase}?${params.toString()}`;
+
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      setTotalPages(data.meta.totalPages);
+      setCommunities(data.data);
+      setSearch(true);
+
+      setAlertMessage("Communities filtered successfully!");
+      setAlertVariant("success");
+      setShowAlert(true);
+    } else {
+      setAlertMessage("Backend error. Try again later.");
+      setAlertVariant("danger");
+      setShowAlert(true);
+    }
+  }
+
   return (
     <>
       <SolidarianNavbar></SolidarianNavbar>
+      {showAlert && (
+        <Alert
+          variant={alertVariant}
+          onClose={(e) => setShowAlert(false)}
+          dismissible
+        >
+          {alertMessage}
+        </Alert>
+      )}
       <Container>
         <Row>
-          <Row className="my-5">
+          <Row className="mt-5 mb-2">
             <h1 className="text-center">Search Communities</h1>
           </Row>
-          <Row className="my-3 text-center">
+          <Row className="mb-5 text-center">
             <p>
-              or create a new one{" "}
+              or create a new one:{" "}
               <button
-                className="btn btn-primary"
-                onClick={handleCreateCommunity}
-              >
-                Create Community
-              </button>
-            </p>
-          </Row>
-          <Row className="my-3 text-center">
-            <p>
-              or create a new one{" "}
-              <button
-                className="btn btn-primary"
+                className="btn btn-primary mx-2"
                 onClick={handleCreateCommunity}
               >
                 Create Community
@@ -66,12 +118,13 @@ export function SearchCommunities() {
         </Row>
         <Row className="align-items-center">
           <Col>
-            <Image src={image} fluid />
+            <Image src={image} className="rounded-pill" fluid />
           </Col>
           <Col className="d-flex justify-content-center align-items-center">
             <FormFilterCommunities
               name={name}
               changeName={changeName}
+              handleSearch={handleSearch}
             ></FormFilterCommunities>
           </Col>
         </Row>
@@ -88,73 +141,47 @@ export function SearchCommunities() {
               <>
                 <Row>
                   <ListGroup className="my-2">
-                    <ListGroup.Item variant="secondary">
-                      <Row className="mt-3 mb-2">
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  </ListGroup>
-                  <ListGroup className="my-2">
-                    <ListGroup.Item variant="secondary">
-                      <Row className="mt-3 mb-2">
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                        <Col>
-                          <CommunityCard
-                            name="Community 1"
-                            description="This is a description for community 1"
-                          ></CommunityCard>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
+                    {communities.length > 0 ? (
+                      <>
+                        <ListGroup.Item variant="secondary">
+                          <Row className="d-flex flex-wrap gap-4 justify-content-center">
+                            {communities.map((community) => (
+                              <CommunityCard
+                                name={community.name}
+                                description={community.description}
+                              />
+                            ))}
+                          </Row>
+                        </ListGroup.Item>
+                        <Pagination className="mt-3">
+                          <Pagination.First
+                            onClick={() => {
+                              setPage(1);
+                            }}
+                          />
+                          <Pagination.Prev
+                            onClick={() => {
+                              setPage(page > 1 ? page - 1 : page);
+                            }}
+                          />
+                          <Pagination.Item>{page}</Pagination.Item>
+                          <Pagination.Next
+                            onClick={() => {
+                              setPage(page < totalPages ? page + 1 : page);
+                            }}
+                          />
+                          <Pagination.Last
+                            onClick={() => {
+                              setPage(totalPages);
+                            }}
+                          />
+                        </Pagination>
+                      </>
+                    ) : (
+                      <ListGroup.Item>No results found</ListGroup.Item>
+                    )}
                   </ListGroup>
                 </Row>
-                <Pagination>
-                  <Pagination.First />
-                  <Pagination.Prev />
-                  <Pagination.Item>{1}</Pagination.Item>
-                  <Pagination.Next />
-                  <Pagination.Last />
-                </Pagination>
               </>
             )}
           </Container>

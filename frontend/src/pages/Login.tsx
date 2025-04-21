@@ -29,6 +29,7 @@ export function Login() {
           email: string;
           sub: { value: string };
           roles: string;
+          exp: number;
         }>(data.access_token);
 
         const userId = playload.sub?.value;
@@ -54,6 +55,7 @@ export function Login() {
             lastName: userResponseData.lastName,
             roles: playload.roles,
             token: data.access_token,
+            exp: playload.exp,
           };
 
           localStorage.setItem("user", JSON.stringify(userData));

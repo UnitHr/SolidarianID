@@ -18,6 +18,7 @@ type User = {
   lastName: string;
   roles: string[];
   token: string;
+  exp: number;
 };
 
 export function UserHistory() {
@@ -38,9 +39,11 @@ export function UserHistory() {
       navigate("/login");
       return;
     }
-
     const parsedUser = JSON.parse(storedUser);
+    
     setUser(parsedUser);
+    
+    
 
     async function fetchHistory() {
       try {
@@ -107,6 +110,24 @@ export function UserHistory() {
   if (loading || !user) {
     return <p>Loading...</p>;
   }
+
+  const getRouteBase = (entryType: string) => {
+    switch (entryType) {
+      case "COMMUNITY_ADMIN":
+      case "JOINED_COMMUNITY":
+        return "community";
+      case "CAUSE_SUPPORT":
+        return "cause";
+      case "ACTION_CONTRIBUTED":
+        return "action";
+      case "JOIN_COMMUNITY_REQUEST_SENT":
+        return "request";
+      case "USER_FOLLOWED":
+        return "user";
+      default:
+        return "entity";
+    }
+  };
 
   return (
     <>
@@ -182,7 +203,7 @@ export function UserHistory() {
                       .map((entry) => (
                         <li key={entry.entityId} className="mb-3">
                           <Link
-                            to={`/entity/${entry.entityId}`}
+                            to={`/${getRouteBase(entry.type)}/${entry.entityId}`}
                             className="entity-link"
                             style={{ paddingLeft: "20px" }}
                           >
@@ -214,7 +235,7 @@ export function UserHistory() {
             {followingEntries.length > 0 ? (
               followingEntries.map((entry) => (
                 <li key={entry.entityId} className="mb-3">
-                  <Link to={`/entity/${entry.entityId}`} className="entity-link">
+                  <Link to={`/${getRouteBase(entry.type)}/${entry.entityId}`} className="entity-link">
                     {entry.entityName}
                   </Link>
                 </li>

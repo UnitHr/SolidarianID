@@ -1,11 +1,38 @@
-import { Col, Row, Image, Container, Alert } from "react-bootstrap";
+import {
+  Col,
+  Row,
+  Image,
+  Container,
+  Alert,
+  ListGroup,
+  Pagination,
+} from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { FormFilterCauses } from "../components/FormFilterCauses";
 import image from "../assets/filter-causes-image.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CauseCard } from "../components/CauseCard";
+
+export interface CauseValues {
+  id: string;
+  title: string;
+  description: string;
+  ods: OdsValues[];
+  endDate: Date;
+  communityId: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface OdsValues {
+  id: number;
+  title: string;
+  description: string;
+}
 
 export function SearchCauses() {
-  const urlBase = "http://localhost:8080/api/causes";
+  const urlBase = "http://localhost:3000/api/v1/causes";
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("success");
@@ -13,6 +40,15 @@ export function SearchCauses() {
   const [ods, setOds] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("title");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [search, setSearch] = useState(false);
+  const limit = 4;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [causes, setCauses] = useState<CauseValues[]>([]);
+
+  useEffect(() => {
+    fetchCauses();
+  }, [page]);
 
   function changeName(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
@@ -35,33 +71,45 @@ export function SearchCauses() {
     setSortDirection(event.target.value);
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    setShowAlert(true);
-    setAlertMessage("Causes filtered successfully!");
-    setAlertVariant("success");
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    fetchCauses();
+  }
 
-    /*
-    event.preventDefault();
-    const queryParams = {
-      name,
-      ods: ods.join(","),
-      sortBy,
-      sortDirection,
-    };
-    const urlWithQueryParams =
-      urlBase + "?" + new URLSearchParams(queryParams).toString();
+  async function fetchCauses() {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-    const response = await fetch(urlWithQueryParams);
+    if (name !== "") {
+      params.append("name", name);
+    }
+
+    if (ods.length > 0) {
+      params.append("ods", ods.join(","));
+    }
+
+    params.append("sortBy", sortBy);
+    params.append("sortDirection", sortDirection);
+
+    const url = `${urlBase}?${params.toString()}`;
+
+    const response = await fetch(url);
     if (response.ok) {
       const data = await response.json();
-      setShowAlert(true);
+      setTotalPages(data.meta.totalPages);
+      setCauses(data.data);
+      setSearch(true);
+
       setAlertMessage("Causes filtered successfully!");
       setAlertVariant("success");
-    } else {
       setShowAlert(true);
-      setAlertMessage("Error filtering causes");
+    } else {
+      setAlertMessage("Backend error. Try again later.");
       setAlertVariant("danger");
-    }*/
+      setShowAlert(true);
+    }
   }
 
   return (
@@ -103,6 +151,72 @@ export function SearchCauses() {
               ></FormFilterCauses>
             </Row>
           </Col>
+        </Row>
+        <Row className="my-4">
+          <Container>
+            <Row>
+              {search && (
+                <>
+                  <h3>Results: </h3>
+                </>
+              )}
+            </Row>
+            {search && (
+              <>
+                <Row>
+                  <ListGroup className="my-2">
+                    {causes.length > 0 ? (
+                      <>
+                        <ListGroup.Item variant="secondary">
+                          <Row className="d-flex flex-wrap gap-4 justify-content-center">
+                            {causes.map((cause) => (
+                              <CauseCard
+                                key={cause.id}
+                                id={cause.id}
+                                title={cause.title}
+                                description={cause.description}
+                                ods={cause.ods}
+                                endDate={cause.endDate}
+                                communityId={cause.communityId}
+                                createdBy={cause.createdBy}
+                                createdAt={cause.createdAt}
+                                updatedAt={cause.updatedAt}
+                              />
+                            ))}
+                          </Row>
+                        </ListGroup.Item>
+                        <Pagination className="mt-3">
+                          <Pagination.First
+                            onClick={() => {
+                              setPage(1);
+                            }}
+                          />
+                          <Pagination.Prev
+                            onClick={() => {
+                              setPage(page > 1 ? page - 1 : page);
+                            }}
+                          />
+                          <Pagination.Item>{page}</Pagination.Item>
+                          <Pagination.Next
+                            onClick={() => {
+                              setPage(page < totalPages ? page + 1 : page);
+                            }}
+                          />
+                          <Pagination.Last
+                            onClick={() => {
+                              setPage(totalPages);
+                            }}
+                          />
+                        </Pagination>
+                      </>
+                    ) : (
+                      <ListGroup.Item>No results found</ListGroup.Item>
+                    )}
+                  </ListGroup>
+                </Row>
+              </>
+            )}
+          </Container>
         </Row>
       </Container>
     </>

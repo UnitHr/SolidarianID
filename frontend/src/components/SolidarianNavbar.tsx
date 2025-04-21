@@ -1,6 +1,7 @@
 import { Navbar, Nav } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaBell } from "react-icons/fa";
 
 export function SolidarianNavbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -39,6 +40,9 @@ export function SolidarianNavbar() {
           <Nav.Link href="/actions">Actions</Nav.Link>
         </Nav>
         <Nav className="mx-4">
+          <Nav.Link href="/notifications" className="d-flex align-items-center">
+            <FaBell size={20} /> {/* Ícono de campanita */}
+          </Nav.Link>
           {!isAuthenticated ? (
             <>
               <Nav.Link href="/login">Login</Nav.Link>
@@ -46,8 +50,8 @@ export function SolidarianNavbar() {
             </>
           ) : (
             <>
-            <Nav.Link href="/profile">{username}</Nav.Link>
-            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+              <Nav.Link href="/profile">{username}</Nav.Link>
+              <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
             </>
           )}
         </Nav>

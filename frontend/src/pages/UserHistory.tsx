@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Container, Row, Col, Card, Image, Modal, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Modal, Button, Tooltip, OverlayTrigger } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import girlImage from "../assets/chica-solidarianid.png";
 import altImage from "../assets/chico.png";
+import "../styles/links.css";
 
 type HistoryEntry = {
   type: string;
@@ -40,10 +41,10 @@ export function UserHistory() {
       return;
     }
     const parsedUser = JSON.parse(storedUser);
-    
+
     setUser(parsedUser);
-    
-    
+
+
 
     async function fetchHistory() {
       try {
@@ -115,15 +116,15 @@ export function UserHistory() {
     switch (entryType) {
       case "COMMUNITY_ADMIN":
       case "JOINED_COMMUNITY":
-        return "community";
+        return "communities";
       case "CAUSE_SUPPORT":
-        return "cause";
+        return "causes";
       case "ACTION_CONTRIBUTED":
-        return "action";
+        return "actions";
       case "JOIN_COMMUNITY_REQUEST_SENT":
-        return "request";
+        return "requests";
       case "USER_FOLLOWED":
-        return "user";
+        return "users";
       default:
         return "entity";
     }
@@ -202,13 +203,16 @@ export function UserHistory() {
                       ?.keys.flatMap((key) => history[key] || [])
                       .map((entry) => (
                         <li key={entry.entityId} className="mb-3">
-                          <Link
-                            to={`/${getRouteBase(entry.type)}/${entry.entityId}`}
-                            className="entity-link"
-                            style={{ paddingLeft: "20px" }}
+
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={<Tooltip id={`tooltip-${entry.entityId}`}>Show details</Tooltip>}
                           >
-                            {entry.entityName}
-                          </Link>
+                            <Link
+                              to={`/${getRouteBase(entry.type)}/${entry.entityId}`} className="entity-link ps-3">
+                              {entry.entityName}
+                            </Link>
+                          </OverlayTrigger>
                         </li>
                       ))}
 
@@ -289,24 +293,6 @@ export function UserHistory() {
           </Row>
         </Modal.Body>
       </Modal>
-
-      <style>
-        {`
-          .entity-link {
-            color: #000;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-          }
-
-          .entity-link:hover {
-            color: #007bff;
-            background-color: rgba(0, 123, 255, 0.1);
-            padding: 3px 5px;
-            border-radius: 4px;
-          }
-        `}
-      </style>
     </>
   );
 }

@@ -29,9 +29,9 @@ function App() {
           <Route path="/profile" element={<UserHistory />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/create-community" element={<CreateCommunityRequest />} />
-          <Route path="/community/:communityId" element={<CommunityDetails />} />
-          <Route path="/action/:causeId" element={<ActionDetails />} />
-          <Route path="/cause/:actionId" element={<CauseDetails />} />
+          <Route path="/communities/:communityId" element={<CommunityDetails />} />
+          <Route path="/actions/:actionId" element={<ActionDetails />} />
+          <Route path="/causes/:causeId" element={<CauseDetails />} />
         </Routes>
       </div>
       <Footer />

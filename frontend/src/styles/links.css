@@ -1,0 +1,9 @@
+.entity-link {
+    color: #3d3c3c;
+    text-decoration: none;
+    transition: color 0.3s ease;  /* Transición suave solo al color */
+  }
+  
+  .entity-link:hover {
+    color: #007bff;  /* Cambiar solo el color al hacer hover */
+  }

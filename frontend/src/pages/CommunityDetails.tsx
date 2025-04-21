@@ -1,8 +1,9 @@
-import { Col, Container, Row, Image } from "react-bootstrap";
+import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import communityLogo from "../assets/community-logo.png"; // Asegúrate de que esta ruta sea correcta
+import { Link, useParams } from "react-router-dom";
+import communityLogo from "../assets/community-logo.png";
+import "../styles/links.css";
 
 type CommunityDetails = {
   id: string;
@@ -11,36 +12,69 @@ type CommunityDetails = {
   adminId: string;
 };
 
+type CauseDetails = {
+  id: string;
+  title: string;
+  description: string;
+};
+
 export function CommunityDetails() {
   const { communityId } = useParams();
   const [community, setCommunity] = useState<CommunityDetails | null>(null);
+  const [causes, setCauses] = useState<CauseDetails[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!communityId) {
-      setError("Comunidad no encontrada");
       return;
     }
 
     async function fetchCommunityDetails(communityId: string) {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/communities/${communityId}`, {
+        const community = await fetch(`http://localhost:3000/api/v1/communities/${communityId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        if (!response.ok) {
+        if (!community.ok) {
           throw new Error("Error fetching community details");
         }
 
-        const data = await response.json();
+        const data = await community.json();
         setCommunity(data.data);
+
+        //Get causes of the community
+        const causes = await fetch(`http://localhost:3000/api/v1/communities/${communityId}/causes`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!causes.ok) {
+          throw new Error("Error fetching causes of community");
+        }
+
+        const causesData = await causes.json();
+
+        const detailRequests = causesData.data.map((id: string) =>
+          fetch(`http://localhost:3000/api/v1/causes/${id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          ).then(res => res.json())
+        );
+
+        const entityDetails = await Promise.all(detailRequests);
+        setCauses(entityDetails);
+
       } catch (error) {
         console.error("Error:", error);
-        setError("Error fetching community details");
       } finally {
         setLoading(false);
       }
@@ -51,10 +85,6 @@ export function CommunityDetails() {
 
   if (loading) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
   }
 
   return (
@@ -80,17 +110,45 @@ export function CommunityDetails() {
                       }}
                     />
                   </Col>
-                  <Col xs={12} md={9}>
+                  <Col xs={12} md={6}>
                     <h2 className="mb-1">{community.name}</h2>
                   </Col>
+                  <Col xs={12} md={3} className="d-flex align-items-start">
+                    <Link to={`/join/${community.id}`} className="btn btn-primary mt-5 w-100">
+                      Join Community
+                    </Link>
+                  </Col>
                 </Row>
-
                 <hr className="my-4" />
 
                 <Row>
                   <Col>
-                    <p><strong>Community Description</strong></p>
+                    <h4 className="mb-3">Community Description</h4>
                     <p>{community.description}</p>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {causes.length > 0 && (
+                      <>
+                        <h4 className="mb-3">Related Causes</h4>
+                        {causes.map((cause) => (
+                          <div key={cause.id} className="mb-4">
+                            <h5>
+                              <OverlayTrigger
+                                placement="top"
+                                overlay={<Tooltip id={`tooltip-${cause.id}`}>Show details</Tooltip>}
+                              >
+                                <Link to={`/causes/${cause.id}`} className="entity-link">
+                                  {cause.title}
+                                </Link>
+                              </OverlayTrigger>
+                            </h5>
+                            <p>{cause.description}</p>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </Col>
                 </Row>
               </div>

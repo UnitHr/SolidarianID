@@ -142,7 +142,7 @@ export function CauseDetails() {
         setCommunity(communityData.data);
 
         //Get actions of the cause
-        const actions = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/actions`, {
+        const actions = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/actions?page=${page}&limit=${limit}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -155,16 +155,9 @@ export function CauseDetails() {
 
         const actionsData = await actions.json();
 
-        const allActionIds: string[] = actionsData.data;
+        setTotalPages(actionsData.meta.totalPages);
 
-        const start = (page - 1) * limit;
-        const end = start + limit;
-        const paginatedIds = allActionIds.slice(start, end);
-
-        // Calcular total de páginas
-        setTotalPages(Math.ceil(allActionIds.length / limit));
-
-        const detailRequests = paginatedIds.map((id: string) =>
+        const detailRequests = actionsData.data.map((id: string) =>
           fetch(`http://localhost:3000/api/v1/actions/${id}`).then(res => res.json())
         );
 

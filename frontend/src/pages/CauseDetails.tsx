@@ -1,9 +1,11 @@
 import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import odsImages from "../utils/odsImages"
 import "../styles/links.css";
+import { Paginate } from "../components/Pagination";
+import { ThumbsUp } from "lucide-react";
 
 type CommunityDetails = {
   id: string;
@@ -35,13 +37,29 @@ type ActionDetails = {
   status: string;
 };
 
+type User = {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  roles: string[];
+  token: string;
+  exp: number;
+};
+
 export function CauseDetails() {
+  const navigate = useNavigate();
   const { causeId } = useParams();
   const [cause, setCause] = useState<CauseDetails | null>(null);
   const [community, setCommunity] = useState<CommunityDetails | null>(null);
   const [actions, setActions] = useState<ActionDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [fullName, setFullName] = useState<string | null>(null);
+  const limit = 6;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [hasSupported, setHasSupported] = useState(false);
+  const [supportCount, setSupportCount] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -52,6 +70,15 @@ export function CauseDetails() {
   };
 
   useEffect(() => {
+
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      navigate("/login");
+      return;
+    }
+    const parsedUser = JSON.parse(storedUser);
+    setUser(parsedUser);
+
     if (!causeId) {
       return;
     }
@@ -71,6 +98,21 @@ export function CauseDetails() {
 
         const data = await cause.json();
         setCause(data);
+
+        //Get supporters of the cause
+        const supportersResponse = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!supportersResponse.ok) {
+          throw new Error("Error fetching supporters of cause");
+        }
+        const supportersData = await supportersResponse.json();
+        setHasSupported(supportersData.data.includes(parsedUser.userId));
+        setSupportCount(supportersData.data.length);
 
         //Get creator of the cause
         const creator = await fetch(`http://localhost:3000/api/v1/users/${data.createdBy}`, {
@@ -112,7 +154,17 @@ export function CauseDetails() {
         }
 
         const actionsData = await actions.json();
-        const detailRequests = actionsData.data.map((id: string) =>
+
+        const allActionIds: string[] = actionsData.data;
+
+        const start = (page - 1) * limit;
+        const end = start + limit;
+        const paginatedIds = allActionIds.slice(start, end);
+
+        // Calcular total de páginas
+        setTotalPages(Math.ceil(allActionIds.length / limit));
+
+        const detailRequests = paginatedIds.map((id: string) =>
           fetch(`http://localhost:3000/api/v1/actions/${id}`).then(res => res.json())
         );
 
@@ -127,11 +179,32 @@ export function CauseDetails() {
     }
 
     fetchCauseDetails(causeId);
-  }, [causeId]);
+  }, [causeId, page]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const handleSupport = async () => {
+    if (!causeId || hasSupported || !user?.userId) return;
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${user.token}`,
+        }
+      });
+
+      if (!res.ok) throw new Error("Error supporting the cause");
+
+      setHasSupported(true);
+      setSupportCount(prev => prev + 1);
+    } catch (err) {
+      console.error("Support error:", err);
+    }
+  };
 
   return (
     <>
@@ -194,6 +267,17 @@ export function CauseDetails() {
                     </p>
                   </Col>
                 </Row>
+
+                <div className="text-end mb-4">
+                  <ThumbsUp
+                    size={28}
+                    style={{ cursor: hasSupported ? "default" : "pointer" }}
+                    color={hasSupported ? "#facc15" : "#a3a3a3"}
+                    fill={hasSupported ? "#facc15" : "none"}
+                    onClick={!hasSupported ? handleSupport : undefined}
+                  />
+                  <p className="mt-2 text-muted text-end">{supportCount} Supports</p>
+                </div>
                 <hr className="my-4" />
 
                 <Row>
@@ -226,13 +310,18 @@ export function CauseDetails() {
                             <p>Status: {action.status}</p>
                           </div>
                         ))}
+                        <Paginate
+                          currentPage={page}
+                          totalPages={totalPages}
+                          onPageChange={(newPage) => setPage(newPage)}
+                        />
                       </>
                     )}
                   </Col>
                 </Row>
               </div>
             ) : (
-              <p>No se encontraron detalles para esta comunidad.</p>
+              <p>Data not found.</p>
             )}
           </Col>
         </Row>

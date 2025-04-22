@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import communityLogo from "../assets/community-logo.png";
 import "../styles/links.css";
+import { Paginate } from "../components/Pagination";
 
 type CommunityDetails = {
   id: string;
@@ -23,6 +24,9 @@ export function CommunityDetails() {
   const [community, setCommunity] = useState<CommunityDetails | null>(null);
   const [causes, setCauses] = useState<CauseDetails[]>([]);
   const [loading, setLoading] = useState(true);
+  const limit = 6;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (!communityId) {
@@ -59,15 +63,21 @@ export function CommunityDetails() {
 
         const causesData = await causes.json();
 
-        const detailRequests = causesData.data.map((id: string) =>
-          fetch(`http://localhost:3000/api/v1/causes/${id}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          ).then(res => res.json())
+        const allCauseIds: string[] = causesData.data;
+
+        const start = (page - 1) * limit;
+        const end = start + limit;
+        const paginatedIds = allCauseIds.slice(start, end);
+
+        // Calcular total de páginas
+        setTotalPages(Math.ceil(allCauseIds.length / limit));
+
+        // Obtener detalles solo para los causes de esta página
+        const detailRequests = paginatedIds.map((id: string) =>
+          fetch(`http://localhost:3000/api/v1/causes/${id}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }).then((res) => res.json())
         );
 
         const entityDetails = await Promise.all(detailRequests);
@@ -81,7 +91,7 @@ export function CommunityDetails() {
     }
 
     fetchCommunityDetails(communityId);
-  }, [communityId]);
+  }, [communityId, page]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -147,13 +157,20 @@ export function CommunityDetails() {
                             <p>{cause.description}</p>
                           </div>
                         ))}
+                        <Paginate
+                          currentPage={page}
+                          totalPages={totalPages}
+                          onPageChange={(newPage) => setPage(newPage)}
+                        />
+
                       </>
                     )}
+
                   </Col>
                 </Row>
               </div>
             ) : (
-              <p>No se encontraron detalles para esta comunidad.</p>
+              <p>No data found.</p>
             )}
           </Col>
         </Row>

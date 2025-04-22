@@ -1,15 +1,13 @@
 import { Entity } from '@common-lib/common-lib/core/domain/Entity';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { MissingPropertiesError } from '@common-lib/common-lib/core/exceptions';
-import { ActivityType } from '@users-ms/history/domain';
+import { HistoryEntry } from '@users-ms/history/domain';
 
 interface NotificationProps {
-  userId: UniqueEntityID;
-  primaryEntityId: UniqueEntityID;
-  activityType: ActivityType;
-  secondaryEntityId?: UniqueEntityID;
-  read: boolean;
+  recipientId: UniqueEntityID;
   historyEntryId: UniqueEntityID;
+  historyEntry?: HistoryEntry;
+  read: boolean;
   timestamp?: Date;
 }
 
@@ -18,24 +16,16 @@ export class Notification extends Entity<NotificationProps> {
     return this._id;
   }
 
-  get userId(): UniqueEntityID {
-    return this.props.userId;
+  get recipientId(): UniqueEntityID {
+    return this.props.recipientId;
   }
 
   get historyEntryId(): UniqueEntityID {
     return this.props.historyEntryId;
   }
 
-  get primaryEntityId(): UniqueEntityID {
-    return this.props.primaryEntityId;
-  }
-
-  get activityType(): ActivityType {
-    return this.props.activityType;
-  }
-
-  get secondaryEntityId(): UniqueEntityID | undefined {
-    return this.props.secondaryEntityId;
+  get historyEntry(): HistoryEntry | undefined {
+    return this.props.historyEntry;
   }
 
   get read(): boolean {
@@ -71,7 +61,7 @@ export class Notification extends Entity<NotificationProps> {
   }
 
   private static validateProps(props: NotificationProps): void {
-    if (!props.userId || !props.historyEntryId || !props.primaryEntityId) {
+    if (!props.recipientId || !props.historyEntryId) {
       throw new MissingPropertiesError(
         'Missing required properties for Notification',
       );

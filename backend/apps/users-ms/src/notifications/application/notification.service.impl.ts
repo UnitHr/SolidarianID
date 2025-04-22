@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
-import { ActivityType } from '@users-ms/history/domain';
 import { FollowerService } from '@users-ms/followers/application/follower.service';
 import { NotificationService } from './notification.service';
 import { NotificationRepository } from '../domain/notification.repository';
@@ -34,8 +33,6 @@ export class NotificationServiceImpl implements NotificationService {
   async createNotificationsForFollowers(
     historyEntryId: string,
     userId: string,
-    activityType: ActivityType,
-    entityId?: string,
     timestamp: Date = new Date(),
   ): Promise<void> {
     const pageSize = 100;
@@ -64,12 +61,7 @@ export class NotificationServiceImpl implements NotificationService {
       const batch = followers.map((f) => {
         return Notification.create({
           historyEntryId: new UniqueEntityID(historyEntryId),
-          userId: f.followerId,
-          primaryEntityId: new UniqueEntityID(userId),
-          activityType,
-          secondaryEntityId: entityId
-            ? new UniqueEntityID(entityId)
-            : undefined,
+          recipientId: f.followerId,
           read: false,
           timestamp,
         });

@@ -1,4 +1,3 @@
-import { ActivityType } from '@users-ms/history/domain';
 import { Notification } from '../domain/Notification';
 
 export abstract class NotificationService {
@@ -13,8 +12,6 @@ export abstract class NotificationService {
   abstract createNotificationsForFollowers(
     historyEntryId: string,
     userId: string,
-    activityType: ActivityType,
-    entityId: string,
     timestamp?: Date,
   ): Promise<void>;
 }

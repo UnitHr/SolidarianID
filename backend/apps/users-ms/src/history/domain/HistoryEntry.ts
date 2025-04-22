@@ -12,7 +12,7 @@ interface HistoryEntryProps {
   entityName?: string;
   adminId?: string;
   timestamp?: Date;
-  status?: EntryStatus;
+  status?: EntryStatus; // TODO: review if this is necessary, the activity type should be enough
 }
 
 export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
@@ -68,8 +68,6 @@ export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
       new HistoryRegisteredEvent(
         historyEntry.id.toString(),
         historyEntry.userId.toString(),
-        historyEntry.type,
-        historyEntry.entityId.toString(),
         historyEntry.timestamp,
       ),
     );

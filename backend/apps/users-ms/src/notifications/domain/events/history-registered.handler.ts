@@ -16,12 +16,10 @@ export class HistoryRegisteredHandler
     this.notificationService.createNotificationsForFollowers(
       event.historyEntryId,
       event.userId,
-      event.activityType,
-      event.entityId,
       event.date,
     );
     this.logger.log(
-      `Created notifications for followers of user ${event.userId} for activity type ${event.activityType}`,
+      `Created notifications for followers of user ${event.userId} for history activity entry ${event.historyEntryId}`,
     );
   }
 }

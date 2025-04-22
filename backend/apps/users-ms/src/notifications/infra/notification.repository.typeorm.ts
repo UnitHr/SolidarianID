@@ -25,7 +25,11 @@ export class NotificationRepositoryTypeorm extends NotificationRepository {
   }
 
   async findById(id: string): Promise<DomainNotification> {
-    const notification = await this.notificationRepository.findOneBy({ id });
+    const notification = await this.notificationRepository.findOne({
+      where: { id },
+      relations: ['historyEntry'],
+    });
+
     if (!notification) {
       throw new EntityNotFoundError(`Notification with id ${id} not found`);
     }
@@ -38,7 +42,8 @@ export class NotificationRepositoryTypeorm extends NotificationRepository {
     limit: number = PaginationDefaults.DEFAULT_LIMIT,
   ): Promise<DomainNotification[]> {
     const notifications = await this.notificationRepository.find({
-      where: { userId },
+      where: { recipientId: userId },
+      relations: ['historyEntry'],
       skip: (page - 1) * limit,
       take: limit,
       order: { timestamp: 'DESC' },
@@ -48,13 +53,13 @@ export class NotificationRepositoryTypeorm extends NotificationRepository {
 
   async countByUserId(userId: string): Promise<number> {
     return this.notificationRepository.count({
-      where: { userId },
+      where: { recipientId: userId },
     });
   }
 
   async markAsRead(userId: string, notificationId: string): Promise<void> {
     const notification = await this.notificationRepository.findOne({
-      where: { id: notificationId, userId },
+      where: { id: notificationId, recipientId: userId },
     });
 
     if (!notification) {

@@ -7,18 +7,17 @@ export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
   const pageSize = 5;
 
   // Fetch user role and pending requests
   useEffect(() => {
     const fetchUserRoleAndRequests = async () => {
       try {
-        // Get user role from localStorage
         const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
         const isAdminRole = userRoles.includes('admin');
         setIsAdmin(isAdminRole);
 
-        // Fetch pending requests if user is admin
         if (isAdminRole) {
           const requestsResponse = await fetch(
             'http://localhost:3002/communities/creation-requests?status=pending',
@@ -32,7 +31,6 @@ export function Notifications() {
             throw new Error('Failed to fetch pending requests');
           }
           const requestsData = await requestsResponse.json();
-          console.log(requestsData);
           setPendingRequests(requestsData.data);
         }
       } catch (error) {
@@ -42,6 +40,45 @@ export function Notifications() {
 
     fetchUserRoleAndRequests();
   }, []);
+
+  // Handle notification permission and subscription
+  const handleEnableNotifications = async () => {
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        navigator.serviceWorker.register('/javascripts/sw.js').then(async (registration) => {
+          const subscription = await registration.pushManager.getSubscription();
+          if (!subscription) {
+            const response = await fetch('https://127.0.0.1:4000/push/vapidPublicKey');
+            const vapidPublicKey = await response.text();
+            const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+            const newSubscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: convertedVapidKey,
+            });
+
+            await fetch('https://127.0.0.1:4000/push/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ subscription: newSubscription }),
+            });
+
+            console.log('Usuario suscrito:', newSubscription);
+          } else {
+            console.log('Usuario ya está suscrito:', subscription);
+          }
+          setNotificationsEnabled(true); // Actualiza el estado
+        });
+      } else {
+        console.log('Permiso de notificaciones denegado');
+      }
+    } else {
+      console.log('Notificaciones o Service Workers no son compatibles con este navegador');
+    }
+  };
 
   // Calculate paginated data
   const startIndex = (currentPage - 1) * pageSize;
@@ -68,6 +105,15 @@ export function Notifications() {
         <Row>
           <Row className="my-5">
             <h1 className="text-center">Notifications</h1>
+          </Row>
+          <Row className="my-3">
+            <Button
+              variant="primary"
+              onClick={handleEnableNotifications}
+              disabled={notificationsEnabled}
+            >
+              {notificationsEnabled ? 'Notificaciones activadas' : 'Activar notificaciones'}
+            </Button>
           </Row>
           {isAdmin && (
             <Row className="my-5">
@@ -130,4 +176,26 @@ export function Notifications() {
       </Container>
     </>
   );
+}
+
+function urlBase64ToUint8Array(base64String: string) {
+  if (!base64String) {
+    throw new Error('El valor de base64String está vacío o es inválido.');
+  }
+
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+
+  try {
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  } catch (error) {
+    console.error('Error al decodificar Base64:', error);
+    throw new Error('El valor de base64String no es válido.');
+  }
 }

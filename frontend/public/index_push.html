@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <meta charset="utf-8">
+  <title>Push Notification with payload - ServiceWorker Cookbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="/images/blog_16.png">
+  <style>
+    body {
+      font-family: monospace;
+      font-size: 1rem;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+<p>This demo shows how to send push notifications with a payload.</p>
+<button id="notifications" >Activar Notificaciones</button>
+
+<form>
+Notification payload: <input id='notification-payload' type='text' value='Insert here a payload'></input>
+Notification delay: <input id='notification-delay' type='number' value='5'></input> seconds
+Notification Time-To-Live: <input id='notification-ttl' type='number' value='0'></input> seconds
+</form>
+
+<button id="doIt">Request sending a notification!</button>
+
+<script src="/javascripts/tools.js"></script>
+<script src="./javascripts/index_push.js"></script>
+</body>
+</html>

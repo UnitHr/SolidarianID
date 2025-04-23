@@ -147,6 +147,8 @@ export function SearchCommunities() {
                           <Row className="d-flex flex-wrap gap-4 justify-content-center">
                             {communities.map((community) => (
                               <CommunityCard
+                                key={community.id}
+                                id={community.id}
                                 name={community.name}
                                 description={community.description}
                               />

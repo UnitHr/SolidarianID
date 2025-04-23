@@ -50,7 +50,8 @@ export function CommunityDetails() {
         setCommunity(data.data);
 
         //Get causes of the community
-        const causes = await fetch(`http://localhost:3000/api/v1/communities/${communityId}/causes`, {
+        const causes = await fetch(`http://localhost:3000/api/v1/communities/${communityId}/causes?page=${page}&limit=${limit}`
+          , {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -63,17 +64,10 @@ export function CommunityDetails() {
 
         const causesData = await causes.json();
 
-        const allCauseIds: string[] = causesData.data;
-
-        const start = (page - 1) * limit;
-        const end = start + limit;
-        const paginatedIds = allCauseIds.slice(start, end);
-
-        // Calcular total de páginas
-        setTotalPages(Math.ceil(allCauseIds.length / limit));
+        setTotalPages(causesData.meta.totalPages);
 
         // Obtener detalles solo para los causes de esta página
-        const detailRequests = paginatedIds.map((id: string) =>
+        const detailRequests = causesData.data.map((id: string) =>
           fetch(`http://localhost:3000/api/v1/causes/${id}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },

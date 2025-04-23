@@ -7,6 +7,7 @@ import { HistoryEntryRepository } from '../history-entry.repository';
 import { HistoryService } from './history.service';
 import { EntryStatus } from '../domain/HistoryEntryStatus';
 
+// Review how to manage notifications that are admin specific
 @Injectable()
 export class HistoryServiceImpl implements HistoryService {
   constructor(

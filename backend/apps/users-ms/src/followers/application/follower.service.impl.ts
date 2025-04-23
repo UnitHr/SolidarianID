@@ -36,8 +36,8 @@ export class FollowerServiceImpl implements FollowerService {
         {
           followerId: new UniqueEntityID(followerUserId),
           followedId: new UniqueEntityID(followedUserId),
-          fullName: followerUser.fullName,
-          email: followerUser.email,
+          followerFullName: followerUser.fullName,
+          followerEmail: followerUser.email,
           followedAt: new Date(),
         },
         undefined,

@@ -13,10 +13,10 @@ export class Follower {
   followedId: string;
 
   @Column()
-  fullName: string;
+  followerFullName: string;
 
   @Column()
-  email: string;
+  followerEmail: string;
 
   @Column({ type: 'timestamp' })
   followedAt: Date;

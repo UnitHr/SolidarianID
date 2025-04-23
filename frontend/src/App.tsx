@@ -9,6 +9,9 @@ import { Notifications } from "./pages/Notifications";
 import { CreateCommunityRequest } from "./pages/CreateCommunityRequest";
 import { Route, Routes } from "react-router-dom";
 import { Footer } from "./components/Footer";
+import { CommunityDetails } from "./pages/CommunityDetails";
+import { CauseDetails } from "./pages/CauseDetails";
+import { ActionDetails } from "./pages/ActionDetails";
 
 function App() {
   return (
@@ -25,10 +28,10 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<UserHistory />} />
           <Route path="/notifications" element={<Notifications />} />
-          <Route
-            path="/create-community"
-            element={<CreateCommunityRequest />}
-          />
+          <Route path="/create-community" element={<CreateCommunityRequest />} />
+          <Route path="/communities/:communityId" element={<CommunityDetails />} />
+          <Route path="/actions/:actionId" element={<ActionDetails />} />
+          <Route path="/causes/:causeId" element={<CauseDetails />} />
         </Routes>
       </div>
       <Footer />

@@ -1,4 +1,4 @@
-import { ActivityType } from '@users-ms/history/domain';
+import { HistoryEntry } from '@users-ms/history/infra/persistence';
 import {
   Entity,
   PrimaryColumn,
@@ -6,6 +6,8 @@ import {
   Index,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -15,16 +17,7 @@ export class Notification {
 
   @Column('uuid')
   @Index()
-  userId: string;
-
-  @Column('enum', { enum: ActivityType })
-  activityType: ActivityType;
-
-  @Column('uuid')
-  primaryEntityId: string;
-
-  @Column('uuid', { nullable: true })
-  secondaryEntityId: string;
+  recipientId: string;
 
   @Column('boolean', { default: false })
   read: boolean;
@@ -32,6 +25,10 @@ export class Notification {
   @Column('uuid')
   @Index()
   historyEntryId: string;
+
+  @ManyToOne(() => HistoryEntry)
+  @JoinColumn({ name: 'historyEntryId' })
+  historyEntry: HistoryEntry;
 
   @CreateDateColumn({ type: 'timestamp' })
   @Index()

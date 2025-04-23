@@ -3,17 +3,16 @@ import { ActivityType } from '@users-ms/history/domain';
 export class NotificationDto {
   id: string;
 
-  userId: string;
-
-  primaryEntityId: string;
-
-  activityType: ActivityType;
-
-  secondaryEntityId?: string;
-
   read: boolean;
 
-  historyEntryId: string;
-
   timestamp: Date;
+
+  // HistoryEntry related data
+  userId?: string;
+
+  type?: ActivityType;
+
+  entityId?: string;
+
+  entityName?: string;
 }

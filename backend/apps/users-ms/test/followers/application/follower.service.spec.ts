@@ -59,8 +59,8 @@ describe('FollowerServiceImpl', () => {
       {
         followerId: new UniqueEntityID(followerId),
         followedId: new UniqueEntityID(followedId),
-        fullName: FOLLOWER_NAME,
-        email: FOLLOWER_EMAIL,
+        followerFullName: FOLLOWER_NAME,
+        followerEmail: FOLLOWER_EMAIL,
         followedAt: new Date(),
       },
       customId ? new UniqueEntityID(customId) : undefined,
@@ -99,8 +99,8 @@ describe('FollowerServiceImpl', () => {
           props: expect.objectContaining({
             followerId: expect.objectContaining({ value: FOLLOWER_ID }),
             followedId: expect.objectContaining({ value: FOLLOWED_ID }),
-            fullName: FOLLOWER_NAME,
-            email: FOLLOWER_EMAIL,
+            followerFullName: FOLLOWER_NAME,
+            followerEmail: FOLLOWER_EMAIL,
           }),
         }),
       );

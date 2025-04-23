@@ -21,8 +21,8 @@ export class FollowerMapper {
       id: follower.id.toString(),
       followerId: follower.followerId.toString(),
       followedId: follower.followedId.toString(),
-      fullName: follower.fullName,
-      email: follower.email,
+      followerFullName: follower.followerFullName,
+      followerEmail: follower.followerEmail,
       followedAt: follower.followedAt,
     };
   }
@@ -30,8 +30,8 @@ export class FollowerMapper {
   static toDto(follower: Domain.Follower): FollowerDto {
     return {
       followerId: follower.followerId.toString(),
-      fullName: follower.fullName,
-      email: follower.email,
+      fullName: follower.followerFullName,
+      email: follower.followerEmail,
       followedAt: follower.followedAt,
     };
   }

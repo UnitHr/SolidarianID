@@ -7,16 +7,16 @@ describe('Follower', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
 
       // Act
       const follower = Follower.create({
         followerId,
         followedId,
-        fullName,
-        email,
+        followerFullName,
+        followerEmail,
         followedAt,
       });
 
@@ -24,8 +24,8 @@ describe('Follower', () => {
       expect(follower).toBeInstanceOf(Follower);
       expect(follower.followerId.toString()).toBe('follower-id');
       expect(follower.followedId.toString()).toBe('followed-id');
-      expect(follower.fullName).toBe(fullName);
-      expect(follower.email).toBe(email);
+      expect(follower.followerFullName).toBe(followerFullName);
+      expect(follower.followerEmail).toBe(followerEmail);
       expect(follower.followedAt).toBe(followedAt);
     });
 
@@ -33,16 +33,16 @@ describe('Follower', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const beforeCreate = new Date();
 
       // Act
       const follower = Follower.create({
         followerId,
         followedId,
-        fullName,
-        email,
+        followerFullName,
+        followerEmail,
       });
       const afterCreate = new Date();
 
@@ -61,8 +61,8 @@ describe('Follower', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
       const customId = new UniqueEntityID('custom-id');
 
@@ -71,8 +71,8 @@ describe('Follower', () => {
         {
           followerId,
           followedId,
-          fullName,
-          email,
+          followerFullName,
+          followerEmail,
           followedAt,
         },
         customId,
@@ -85,8 +85,8 @@ describe('Follower', () => {
     it('should throw an error when followerId is missing', () => {
       // Arrange
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -94,8 +94,8 @@ describe('Follower', () => {
         Follower.create({
           followerId: undefined,
           followedId,
-          fullName,
-          email,
+          followerFullName,
+          followerEmail,
           followedAt,
         }),
       ).toThrow('Missing properties');
@@ -104,8 +104,8 @@ describe('Follower', () => {
     it('should throw an error when followedId is missing', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -113,18 +113,18 @@ describe('Follower', () => {
         Follower.create({
           followerId,
           followedId: undefined,
-          fullName,
-          email,
+          followerFullName,
+          followerEmail,
           followedAt,
         }),
       ).toThrow('Missing properties');
     });
 
-    it('should throw an error when fullName is missing', () => {
+    it('should throw an error when followerFullName is missing', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const email = 'john@example.com';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -132,18 +132,18 @@ describe('Follower', () => {
         Follower.create({
           followerId,
           followedId,
-          fullName: undefined,
-          email,
+          followerFullName: undefined,
+          followerEmail,
           followedAt,
         }),
       ).toThrow('Missing properties');
     });
 
-    it('should throw an error when email is missing', () => {
+    it('should throw an error when followerEmail is missing', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
+      const followerFullName = 'John Doe';
       const followedAt = new Date();
 
       // Act & Assert
@@ -151,8 +151,8 @@ describe('Follower', () => {
         Follower.create({
           followerId,
           followedId,
-          fullName,
-          email: undefined,
+          followerFullName,
+          followerEmail: undefined,
           followedAt,
         }),
       ).toThrow('Missing properties');
@@ -162,8 +162,8 @@ describe('Follower', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
       const followedEmail = 'followed@example.com';
 
@@ -175,8 +175,8 @@ describe('Follower', () => {
         {
           followerId,
           followedId,
-          fullName,
-          email,
+          followerFullName,
+          followerEmail,
           followedAt,
         },
         undefined,
@@ -200,8 +200,8 @@ describe('Follower', () => {
       // Arrange
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
-      const fullName = 'John Doe';
-      const email = 'john@example.com';
+      const followerFullName = 'John Doe';
+      const followerEmail = 'john@example.com';
       const followedAt = new Date();
       const customId = new UniqueEntityID('custom-id');
 
@@ -213,8 +213,8 @@ describe('Follower', () => {
         {
           followerId,
           followedId,
-          fullName,
-          email,
+          followerFullName,
+          followerEmail,
           followedAt,
         },
         customId,

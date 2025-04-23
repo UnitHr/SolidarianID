@@ -5,8 +5,8 @@ import { UserFollowedEvent } from './events/UserFollowedEvent';
 export interface FollowerProps {
   followerId: UniqueEntityID;
   followedId: UniqueEntityID;
-  fullName: string;
-  email: string;
+  followerFullName: string;
+  followerEmail: string;
   followedAt?: Date;
 }
 
@@ -23,12 +23,12 @@ export class Follower extends EntityRoot<FollowerProps> {
     return this.props.followedId;
   }
 
-  get fullName(): string {
-    return this.props.fullName;
+  get followerFullName(): string {
+    return this.props.followerFullName;
   }
 
-  get email(): string {
-    return this.props.email;
+  get followerEmail(): string {
+    return this.props.followerEmail;
   }
 
   get followedAt(): Date {
@@ -40,8 +40,14 @@ export class Follower extends EntityRoot<FollowerProps> {
     id?: UniqueEntityID,
     followedEmail?: string,
   ): Follower {
-    const { followerId, followedId, fullName, email, followedAt } = props;
-    if (!followerId || !followedId || !fullName || !email) {
+    const {
+      followerId,
+      followedId,
+      followerFullName,
+      followerEmail,
+      followedAt,
+    } = props;
+    if (!followerId || !followedId || !followerFullName || !followerEmail) {
       throw new Error('Missing properties');
     }
 

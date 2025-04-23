@@ -57,26 +57,22 @@ export const odsData: Record<ODSEnum, ODSDetail> = {
   [ODSEnum.CleanWaterAndSanitation]: {
     id: ODSEnum.CleanWaterAndSanitation,
     title: 'Clean Water and Sanitation',
-    description:
-      'Ensure availability and sustainable management of water and sanitation.',
+    description: 'Ensure availability and sustainable management of water and sanitation.',
   },
   [ODSEnum.AffordableAndCleanEnergy]: {
     id: ODSEnum.AffordableAndCleanEnergy,
     title: 'Affordable and Clean Energy',
-    description:
-      'Ensure access to affordable, reliable, and sustainable energy.',
+    description: 'Ensure access to affordable, reliable, and sustainable energy.',
   },
   [ODSEnum.DecentWorkAndEconomicGrowth]: {
     id: ODSEnum.DecentWorkAndEconomicGrowth,
     title: 'Decent Work and Economic Growth',
-    description:
-      'Promote sustained, inclusive, and sustainable economic growth.',
+    description: 'Promote sustained, inclusive, and sustainable economic growth.',
   },
   [ODSEnum.IndustryInnovationAndInfrastructure]: {
     id: ODSEnum.IndustryInnovationAndInfrastructure,
     title: 'Industry, Innovation, and Infrastructure',
-    description:
-      'Build resilient infrastructure and promote inclusive industrialization.',
+    description: 'Build resilient infrastructure and promote inclusive industrialization.',
   },
   [ODSEnum.ReducedInequalities]: {
     id: ODSEnum.ReducedInequalities,
@@ -101,8 +97,7 @@ export const odsData: Record<ODSEnum, ODSDetail> = {
   [ODSEnum.LifeBelowWater]: {
     id: ODSEnum.LifeBelowWater,
     title: 'Life Below Water',
-    description:
-      'Conserve and sustainably use the oceans, seas, and marine resources.',
+    description: 'Conserve and sustainably use the oceans, seas, and marine resources.',
   },
   [ODSEnum.LifeOnLand]: {
     id: ODSEnum.LifeOnLand,
@@ -112,14 +107,12 @@ export const odsData: Record<ODSEnum, ODSDetail> = {
   [ODSEnum.PeaceJusticeAndStrongInstitutions]: {
     id: ODSEnum.PeaceJusticeAndStrongInstitutions,
     title: 'Peace, Justice, and Strong Institutions',
-    description:
-      'Promote peaceful and inclusive societies for sustainable development.',
+    description: 'Promote peaceful and inclusive societies for sustainable development.',
   },
   [ODSEnum.PartnershipsForTheGoals]: {
     id: ODSEnum.PartnershipsForTheGoals,
     title: 'Partnerships for the Goals',
-    description:
-      'Strengthen the means of implementation and revitalize the global partnership.',
+    description: 'Strengthen the means of implementation and revitalize the global partnership.',
   },
 };
 
@@ -135,18 +128,14 @@ export function mapODSEnumListToDetails(odsList: ODSEnum[]): ODSDetail[] {
   return odsList.map(mapODSEnumToDetails);
 }
 
-export function mapODSEnumSetToNumberArray(
-  odsSet: Set<ODSEnum> | null,
-): Array<number> {
+export function mapODSEnumSetToNumberArray(odsSet: Set<ODSEnum> | null): Array<number> {
   if (!odsSet) {
     return [];
   }
   return Array.from(odsSet).map((value) => Number(value));
 }
 
-export function mapNumberArrayToODSEnumSet(
-  odsArray: Array<number> | null,
-): Set<ODSEnum> {
+export function mapNumberArrayToODSEnumSet(odsArray: Array<number> | null): Set<ODSEnum> {
   if (!odsArray) {
     return new Set<ODSEnum>();
   }

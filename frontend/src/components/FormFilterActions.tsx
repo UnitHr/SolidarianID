@@ -1,4 +1,4 @@
-import { Card, Form, Row, Button, Col } from "react-bootstrap";
+import { Card, Form, Row, Button, Col } from 'react-bootstrap';
 
 export function FormFilterActions({
   name,
@@ -23,12 +23,7 @@ export function FormFilterActions({
               <Col>
                 <Form.Group controlId="filterCommunity">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="community"
-                    value={name}
-                    onChange={changeName}
-                  />
+                  <Form.Control type="text" name="community" value={name} onChange={changeName} />
                 </Form.Group>
               </Col>
               <Col>
@@ -40,10 +35,7 @@ export function FormFilterActions({
               </Col>
               <Col>
                 <Form.Label>Sort direction</Form.Label>
-                <Form.Select
-                  value={sortDirection}
-                  onChange={changeSortDirection}
-                >
+                <Form.Select value={sortDirection} onChange={changeSortDirection}>
                   <option value="asc">Ascending</option>
                   <option value="desc">Descending</option>
                 </Form.Select>

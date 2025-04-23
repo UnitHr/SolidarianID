@@ -1,11 +1,11 @@
-import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import odsImages from "../utils/odsImages"
-import "../styles/links.css";
-import { Paginate } from "../components/Pagination";
-import { ThumbsUp } from "lucide-react";
+import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useEffect, useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import odsImages from '../utils/odsImages';
+import '../styles/links.css';
+import { Paginate } from '../components/Pagination';
+import { ThumbsUp } from 'lucide-react';
 
 type CommunityDetails = {
   id: string;
@@ -70,10 +70,9 @@ export function CauseDetails() {
   };
 
   useEffect(() => {
-
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem('user');
     if (!storedUser) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
     const parsedUser = JSON.parse(storedUser);
@@ -86,29 +85,32 @@ export function CauseDetails() {
     async function fetchCauseDetails(causeId: string) {
       try {
         const cause = await fetch(`http://localhost:3000/api/v1/causes/${causeId}`, {
-          method: "GET",
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
         if (!cause.ok) {
-          throw new Error("Error fetching community details");
+          throw new Error('Error fetching community details');
         }
 
         const data = await cause.json();
         setCause(data);
 
         //Get supporters of the cause
-        const supportersResponse = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        
+        const supportersResponse = await fetch(
+          `http://localhost:3000/api/v1/causes/${causeId}/supporters`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
         if (!supportersResponse.ok) {
-          throw new Error("Error fetching supporters of cause");
+          throw new Error('Error fetching supporters of cause');
         }
         const supportersData = await supportersResponse.json();
         setHasSupported(supportersData.data.includes(parsedUser.userId));
@@ -116,41 +118,47 @@ export function CauseDetails() {
 
         //Get creator of the cause
         const creator = await fetch(`http://localhost:3000/api/v1/users/${data.createdBy}`, {
-          method: "GET",
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
         if (!creator.ok) {
-          throw new Error("Error fetching creator details");
+          throw new Error('Error fetching creator details');
         }
         const creatorData = await creator.json();
         setFullName(`${creatorData.firstName} ${creatorData.lastName}`);
 
         //Get community of the cause
-        const community = await fetch(`http://localhost:3000/api/v1/communities/${data.communityId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const community = await fetch(
+          `http://localhost:3000/api/v1/communities/${data.communityId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
         if (!community.ok) {
-          throw new Error("Error fetching community details");
+          throw new Error('Error fetching community details');
         }
         const communityData = await community.json();
         setCommunity(communityData.data);
 
         //Get actions of the cause
-        const actions = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/actions?page=${page}&limit=${limit}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const actions = await fetch(
+          `http://localhost:3000/api/v1/causes/${causeId}/actions?page=${page}&limit=${limit}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
         if (!actions.ok) {
-          throw new Error("Error fetching actions of cause");
+          throw new Error('Error fetching actions of cause');
         }
 
         const actionsData = await actions.json();
@@ -158,14 +166,13 @@ export function CauseDetails() {
         setTotalPages(actionsData.meta.totalPages);
 
         const detailRequests = actionsData.data.map((id: string) =>
-          fetch(`http://localhost:3000/api/v1/actions/${id}`).then(res => res.json())
+          fetch(`http://localhost:3000/api/v1/actions/${id}`).then((res) => res.json())
         );
 
         const entityDetails = await Promise.all(detailRequests);
         setActions(entityDetails);
-
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -183,19 +190,19 @@ export function CauseDetails() {
 
     try {
       const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${user.token}`,
-        }
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
       });
 
-      if (!res.ok) throw new Error("Error supporting the cause");
+      if (!res.ok) throw new Error('Error supporting the cause');
 
       setHasSupported(true);
-      setSupportCount(prev => prev + 1);
+      setSupportCount((prev) => prev + 1);
     } catch (err) {
-      console.error("Support error:", err);
+      console.error('Support error:', err);
     }
   };
 
@@ -231,9 +238,9 @@ export function CauseDetails() {
                             alt={odsItem.title}
                             className="img-fluid"
                             style={{
-                              width: "100px",
-                              borderRadius: "8px",
-                              border: "2px solid #ddd",
+                              width: '100px',
+                              borderRadius: '8px',
+                              border: '2px solid #ddd',
                             }}
                           />
                         </OverlayTrigger>
@@ -247,13 +254,12 @@ export function CauseDetails() {
                     <p className="text-center text-muted mt-3">
                       <OverlayTrigger
                         placement="top"
-                        overlay={
-                          <Tooltip id={`tooltip-ods-${community?.id}`}>
-                            Community
-                          </Tooltip>
-                        }
+                        overlay={<Tooltip id={`tooltip-ods-${community?.id}`}>Community</Tooltip>}
                       >
-                        <Link to={`/communities/${community?.id}`} className="fw-bold text-decoration-none entity-link">
+                        <Link
+                          to={`/communities/${community?.id}`}
+                          className="fw-bold text-decoration-none entity-link"
+                        >
                           {community?.name}
                         </Link>
                       </OverlayTrigger>
@@ -264,9 +270,9 @@ export function CauseDetails() {
                 <div className="text-end mb-4">
                   <ThumbsUp
                     size={28}
-                    style={{ cursor: hasSupported ? "default" : "pointer" }}
-                    color={hasSupported ? "#facc15" : "#a3a3a3"}
-                    fill={hasSupported ? "#facc15" : "none"}
+                    style={{ cursor: hasSupported ? 'default' : 'pointer' }}
+                    color={hasSupported ? '#facc15' : '#a3a3a3'}
+                    fill={hasSupported ? '#facc15' : 'none'}
                     onClick={!hasSupported ? handleSupport : undefined}
                   />
                   <p className="mt-2 text-muted text-end">{supportCount} Supports</p>
@@ -275,9 +281,15 @@ export function CauseDetails() {
 
                 <Row>
                   <Col>
-                    <p><strong>Created by:</strong> {fullName}</p>
-                    <p><strong>Created on:</strong> {formatDate(cause.createdAt)}</p>
-                    <p><strong>End date:</strong> {formatDate(cause.endDate)}</p>
+                    <p>
+                      <strong>Created by:</strong> {fullName}
+                    </p>
+                    <p>
+                      <strong>Created on:</strong> {formatDate(cause.createdAt)}
+                    </p>
+                    <p>
+                      <strong>End date:</strong> {formatDate(cause.endDate)}
+                    </p>
                   </Col>
                 </Row>
                 <Row>
@@ -292,7 +304,9 @@ export function CauseDetails() {
                             <h5>
                               <OverlayTrigger
                                 placement="top"
-                                overlay={<Tooltip id={`tooltip-${action.id}`}>Show details</Tooltip>}
+                                overlay={
+                                  <Tooltip id={`tooltip-${action.id}`}>Show details</Tooltip>
+                                }
                               >
                                 <Link to={`/actions/${action.id}`} className="entity-link">
                                   {action.title}

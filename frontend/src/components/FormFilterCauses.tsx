@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { Card, Form, Row, Button, Col, Image } from "react-bootstrap";
-import ods1 from "../assets/ods/goal-1.png";
-import ods2 from "../assets/ods/goal-2.png";
-import ods3 from "../assets/ods/goal-3.png";
-import ods4 from "../assets/ods/goal-4.png";
-import ods5 from "../assets/ods/goal-5.png";
-import ods6 from "../assets/ods/goal-6.png";
-import ods7 from "../assets/ods/goal-7.png";
-import ods8 from "../assets/ods/goal-8.png";
-import ods9 from "../assets/ods/goal-9.png";
-import ods10 from "../assets/ods/goal-10.png";
-import ods11 from "../assets/ods/goal-11.png";
-import ods12 from "../assets/ods/goal-12.png";
-import ods13 from "../assets/ods/goal-13.png";
-import ods14 from "../assets/ods/goal-14.png";
-import ods15 from "../assets/ods/goal-15.png";
-import ods16 from "../assets/ods/goal-16.png";
-import ods17 from "../assets/ods/goal-17.png";
+import { useState } from 'react';
+import { Card, Form, Row, Button, Col, Image } from 'react-bootstrap';
+import ods1 from '../assets/ods/goal-1.png';
+import ods2 from '../assets/ods/goal-2.png';
+import ods3 from '../assets/ods/goal-3.png';
+import ods4 from '../assets/ods/goal-4.png';
+import ods5 from '../assets/ods/goal-5.png';
+import ods6 from '../assets/ods/goal-6.png';
+import ods7 from '../assets/ods/goal-7.png';
+import ods8 from '../assets/ods/goal-8.png';
+import ods9 from '../assets/ods/goal-9.png';
+import ods10 from '../assets/ods/goal-10.png';
+import ods11 from '../assets/ods/goal-11.png';
+import ods12 from '../assets/ods/goal-12.png';
+import ods13 from '../assets/ods/goal-13.png';
+import ods14 from '../assets/ods/goal-14.png';
+import ods15 from '../assets/ods/goal-15.png';
+import ods16 from '../assets/ods/goal-16.png';
+import ods17 from '../assets/ods/goal-17.png';
 
 export function FormFilterCauses({
   name,
@@ -41,12 +41,7 @@ export function FormFilterCauses({
               <Col>
                 <Form.Group controlId="filterCommunity">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="community"
-                    value={name}
-                    onChange={changeName}
-                  />
+                  <Form.Control type="text" name="community" value={name} onChange={changeName} />
                 </Form.Group>
               </Col>
               <Col>
@@ -58,20 +53,14 @@ export function FormFilterCauses({
               </Col>
               <Col>
                 <Form.Label>Sort direction</Form.Label>
-                <Form.Select
-                  value={sortDirection}
-                  onChange={changeSortDirection}
-                >
+                <Form.Select value={sortDirection} onChange={changeSortDirection}>
                   <option value="asc">Ascending</option>
                   <option value="desc">Descending</option>
                 </Form.Select>
               </Col>
             </Row>
             <Row className="my-4">
-              <Form.Group
-                controlId="filterOds"
-                className="d-flex flex-wrap gap-3"
-              >
+              <Form.Group controlId="filterOds" className="d-flex flex-wrap gap-3">
                 <Form.Label>ODS</Form.Label>
                 <br />
                 <Form.Check
@@ -82,10 +71,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods1}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("1")}
+                  checked={ods.includes('1')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -96,10 +85,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods2}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("2")}
+                  checked={ods.includes('2')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -110,10 +99,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods3}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("3")}
+                  checked={ods.includes('3')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -124,10 +113,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods4}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("4")}
+                  checked={ods.includes('4')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -138,10 +127,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods5}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("5")}
+                  checked={ods.includes('5')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -152,10 +141,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods6}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("6")}
+                  checked={ods.includes('6')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -166,10 +155,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods7}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("7")}
+                  checked={ods.includes('7')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -180,10 +169,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods8}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("8")}
+                  checked={ods.includes('8')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -194,10 +183,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods9}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("9")}
+                  checked={ods.includes('9')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -208,10 +197,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods10}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("10")}
+                  checked={ods.includes('10')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -222,10 +211,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods11}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("11")}
+                  checked={ods.includes('11')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -236,10 +225,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods12}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("12")}
+                  checked={ods.includes('12')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -250,10 +239,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods13}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("13")}
+                  checked={ods.includes('13')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -264,10 +253,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods14}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("14")}
+                  checked={ods.includes('14')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -278,10 +267,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods15}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("15")}
+                  checked={ods.includes('15')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -292,10 +281,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods16}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("16")}
+                  checked={ods.includes('16')}
                   onChange={changeOds}
                 ></Form.Check>
                 <Form.Check
@@ -306,10 +295,10 @@ export function FormFilterCauses({
                     <Image
                       src={ods17}
                       className="img-fluid"
-                      style={{ width: "150px", borderRadius: "8px" }}
+                      style={{ width: '150px', borderRadius: '8px' }}
                     />
                   }
-                  checked={ods.includes("17")}
+                  checked={ods.includes('17')}
                   onChange={changeOds}
                 ></Form.Check>
               </Form.Group>

@@ -1,10 +1,20 @@
-import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Container, Row, Col, Card, Image, Modal, Button, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import girlImage from "../assets/chica-solidarianid.png";
-import altImage from "../assets/chico.png";
-import "../styles/links.css";
+import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Image,
+  Modal,
+  Button,
+  Tooltip,
+  OverlayTrigger,
+} from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import girlImage from '../assets/chica-solidarianid.png';
+import altImage from '../assets/chico.png';
+import '../styles/links.css';
 
 type HistoryEntry = {
   type: string;
@@ -35,25 +45,23 @@ export function UserHistory() {
   const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem('user');
     if (!storedUser) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
     const parsedUser = JSON.parse(storedUser);
 
     setUser(parsedUser);
 
-
-
     async function fetchHistory() {
       try {
         const response = await fetch(
           `http://localhost:3000/api/v1/users/${parsedUser.userId}/history`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${parsedUser.token}`,
             },
           }
@@ -73,10 +81,10 @@ export function UserHistory() {
           );
           setHistory(groupedData);
         } else {
-          console.error("Error fetching history");
+          console.error('Error fetching history');
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -85,17 +93,17 @@ export function UserHistory() {
     fetchHistory();
   }, [navigate]);
 
-  const followingCount = history["USER_FOLLOWED"] ? history["USER_FOLLOWED"].length : 0;
+  const followingCount = history['USER_FOLLOWED'] ? history['USER_FOLLOWED'].length : 0;
 
   const categories = [
-    { label: "Communities", keys: ["COMMUNITY_ADMIN", "JOINED_COMMUNITY"] },
-    { label: "Pending Request", keys: ["JOIN_COMMUNITY_REQUEST_SENT"] },
-    { label: "Causes Supported", keys: ["CAUSE_SUPPORT"] },
-    { label: "Action Contributed", keys: ["ACTION_CONTRIBUTED"] },
+    { label: 'Communities', keys: ['COMMUNITY_ADMIN', 'JOINED_COMMUNITY'] },
+    { label: 'Pending Request', keys: ['JOIN_COMMUNITY_REQUEST_SENT'] },
+    { label: 'Causes Supported', keys: ['CAUSE_SUPPORT'] },
+    { label: 'Action Contributed', keys: ['ACTION_CONTRIBUTED'] },
   ];
 
   const handleFollowingClick = () => {
-    setFollowingEntries(history["USER_FOLLOWED"] || []);
+    setFollowingEntries(history['USER_FOLLOWED'] || []);
     setShowModal(true);
   };
 
@@ -114,19 +122,19 @@ export function UserHistory() {
 
   const getRouteBase = (entryType: string) => {
     switch (entryType) {
-      case "COMMUNITY_ADMIN":
-      case "JOINED_COMMUNITY":
-        return "communities";
-      case "CAUSE_SUPPORT":
-        return "causes";
-      case "ACTION_CONTRIBUTED":
-        return "actions";
-      case "JOIN_COMMUNITY_REQUEST_SENT":
-        return "requests";
-      case "USER_FOLLOWED":
-        return "users";
+      case 'COMMUNITY_ADMIN':
+      case 'JOINED_COMMUNITY':
+        return 'communities';
+      case 'CAUSE_SUPPORT':
+        return 'causes';
+      case 'ACTION_CONTRIBUTED':
+        return 'actions';
+      case 'JOIN_COMMUNITY_REQUEST_SENT':
+        return 'requests';
+      case 'USER_FOLLOWED':
+        return 'users';
       default:
-        return "entity";
+        return 'entity';
     }
   };
 
@@ -139,20 +147,22 @@ export function UserHistory() {
             <Image
               src={profileImage}
               fluid
-              style={{ cursor: "pointer", borderRadius: "50%", border: "2px solid #ccc" }}
+              style={{ cursor: 'pointer', borderRadius: '50%', border: '2px solid #ccc' }}
               onClick={handleImageClick}
             />
           </Col>
           <Col>
-            <h4 className="mb-0">{user.firstName} {user.lastName}</h4>
+            <h4 className="mb-0">
+              {user.firstName} {user.lastName}
+            </h4>
           </Col>
           <Col xs="auto">
             <div
               onClick={handleFollowingClick}
               style={{
-                cursor: "pointer",
-                textAlign: "center",
-                transition: "color 0.3s",
+                cursor: 'pointer',
+                textAlign: 'center',
+                transition: 'color 0.3s',
               }}
               className="following-info"
             >
@@ -173,12 +183,12 @@ export function UserHistory() {
                     setActiveCategory(newActive);
                   }}
                   style={{
-                    cursor: "pointer",
-                    minHeight: "115px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    cursor: 'pointer',
+                    minHeight: '115px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}
                 >
                   <Card.Body className="text-center">
@@ -194,22 +204,25 @@ export function UserHistory() {
         {activeCategory && (
           <Row className="mt-3">
             <Col>
-              <Card style={{ border: "1px solid #ccc", borderBottom: "4px solid #007bff" }}>
+              <Card style={{ border: '1px solid #ccc', borderBottom: '4px solid #007bff' }}>
                 <Card.Body>
-                  <h5 style={{ marginBottom: "30px" }}>{activeCategory} Details</h5>
+                  <h5 style={{ marginBottom: '30px' }}>{activeCategory} Details</h5>
                   <ul className="list-unstyled">
                     {categories
                       .find((cat) => cat.label === activeCategory)
                       ?.keys.flatMap((key) => history[key] || [])
                       .map((entry) => (
                         <li key={entry.entityId} className="mb-3">
-
                           <OverlayTrigger
                             placement="top"
-                            overlay={<Tooltip id={`tooltip-${entry.entityId}`}>Show details</Tooltip>}
+                            overlay={
+                              <Tooltip id={`tooltip-${entry.entityId}`}>Show details</Tooltip>
+                            }
                           >
                             <Link
-                              to={`/${getRouteBase(entry.type)}/${entry.entityId}`} className="entity-link ps-3">
+                              to={`/${getRouteBase(entry.type)}/${entry.entityId}`}
+                              className="entity-link ps-3"
+                            >
                               {entry.entityName}
                             </Link>
                           </OverlayTrigger>
@@ -218,10 +231,9 @@ export function UserHistory() {
 
                     {categories
                       .find((cat) => cat.label === activeCategory)
-                      ?.keys.flatMap((key) => history[key] || [])
-                      .length === 0 && (
-                        <p className="mt-3 text-muted">No items available for this category.</p>
-                      )}
+                      ?.keys.flatMap((key) => history[key] || []).length === 0 && (
+                      <p className="mt-3 text-muted">No items available for this category.</p>
+                    )}
                   </ul>
                 </Card.Body>
               </Card>
@@ -239,7 +251,10 @@ export function UserHistory() {
             {followingEntries.length > 0 ? (
               followingEntries.map((entry) => (
                 <li key={entry.entityId} className="mb-3">
-                  <Link to={`/${getRouteBase(entry.type)}/${entry.entityId}`} className="entity-link">
+                  <Link
+                    to={`/${getRouteBase(entry.type)}/${entry.entityId}`}
+                    className="entity-link"
+                  >
                     {entry.entityName}
                   </Link>
                 </li>
@@ -267,11 +282,12 @@ export function UserHistory() {
                 src={girlImage}
                 onClick={() => handleImageSelect(girlImage)}
                 style={{
-                  width: "100px",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                  border: profileImage === girlImage ? "3px solid #007bff" : "2px solid transparent",
-                  transition: "border 0.3s",
+                  width: '100px',
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                  border:
+                    profileImage === girlImage ? '3px solid #007bff' : '2px solid transparent',
+                  transition: 'border 0.3s',
                 }}
               />
               <p className="mt-2">Woman</p>
@@ -281,11 +297,11 @@ export function UserHistory() {
                 src={altImage}
                 onClick={() => handleImageSelect(altImage)}
                 style={{
-                  width: "100px",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                  border: profileImage === altImage ? "3px solid #007bff" : "2px solid transparent",
-                  transition: "border 0.3s",
+                  width: '100px',
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                  border: profileImage === altImage ? '3px solid #007bff' : '2px solid transparent',
+                  transition: 'border 0.3s',
                 }}
               />
               <p className="mt-2">Man</p>

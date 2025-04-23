@@ -1,5 +1,5 @@
-import { Button, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Button, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 interface CommunityCardProps {
   id: string;
@@ -15,7 +15,7 @@ export function CommunityCard(props: CommunityCardProps) {
   };
 
   return (
-    <Card style={{ width: "18rem" }}>
+    <Card style={{ width: '18rem' }}>
       <Card.Body>
         <Card.Title>{props.name}</Card.Title>
         <Card.Text>{props.description}</Card.Text>

@@ -1,10 +1,10 @@
-import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import communityLogo from "../assets/community-logo.png";
-import "../styles/links.css";
-import { Paginate } from "../components/Pagination";
+import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import communityLogo from '../assets/community-logo.png';
+import '../styles/links.css';
+import { Paginate } from '../components/Pagination';
 
 type CommunityDetails = {
   id: string;
@@ -36,30 +36,32 @@ export function CommunityDetails() {
     async function fetchCommunityDetails(communityId: string) {
       try {
         const community = await fetch(`http://localhost:3000/api/v1/communities/${communityId}`, {
-          method: "GET",
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
         if (!community.ok) {
-          throw new Error("Error fetching community details");
+          throw new Error('Error fetching community details');
         }
 
         const data = await community.json();
         setCommunity(data.data);
 
         //Get causes of the community
-        const causes = await fetch(`http://localhost:3000/api/v1/communities/${communityId}/causes?page=${page}&limit=${limit}`
-          , {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const causes = await fetch(
+          `http://localhost:3000/api/v1/communities/${communityId}/causes?page=${page}&limit=${limit}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
         if (!causes.ok) {
-          throw new Error("Error fetching causes of community");
+          throw new Error('Error fetching causes of community');
         }
 
         const causesData = await causes.json();
@@ -69,16 +71,15 @@ export function CommunityDetails() {
         // Obtener detalles solo para los causes de esta página
         const detailRequests = causesData.data.map((id: string) =>
           fetch(`http://localhost:3000/api/v1/causes/${id}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
           }).then((res) => res.json())
         );
 
         const entityDetails = await Promise.all(detailRequests);
         setCauses(entityDetails);
-
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -106,11 +107,11 @@ export function CommunityDetails() {
                       alt="Community Logo"
                       fluid
                       style={{
-                        width: "120px",
-                        height: "120px",
-                        objectFit: "cover",
-                        border: "3px solid #007bff",
-                        padding: "5px",
+                        width: '120px',
+                        height: '120px',
+                        objectFit: 'cover',
+                        border: '3px solid #007bff',
+                        padding: '5px',
                       }}
                     />
                   </Col>
@@ -156,10 +157,8 @@ export function CommunityDetails() {
                           totalPages={totalPages}
                           onPageChange={(newPage) => setPage(newPage)}
                         />
-
                       </>
                     )}
-
                   </Col>
                 </Row>
               </div>

@@ -1,0 +1,57 @@
+### Variables globales
+@baseUrl = https://127.0.0.1:4000/push
+@contentType = application/json
+
+### Verificar que el servidor esté funcionando
+GET {{baseUrl}}
+Accept: text/plain
+
+### Obtener la clave pública VAPID
+GET {{baseUrl}}/vapidPublicKey
+Accept: text/plain
+
+### Listar todas las suscripciones
+GET {{baseUrl}}/subscriptions
+Accept: {{contentType}}
+
+### Registrar una nueva suscripción (ejemplo)
+POST {{baseUrl}}/register
+Content-Type: {{contentType}}
+
+{
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/example-endpoint",
+    "expirationTime": null,
+    "keys": {
+      "p256dh": "BPxUvEVFM9ctlDqoMNuO8dCyWBOITQr5oVBWAQD5FJ-T9yLTECjBpL-u0vKdeT9khHAxWCwVcPwZFXJIAsLOJb8",
+      "auth": "bZnJvGjW3Xg2i8RhvUJIqQ"
+    }
+  }
+}
+
+### Enviar una notificación a una suscripción específica
+POST {{baseUrl}}/sendNotification
+Content-Type: {{contentType}}
+
+{
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/example-endpoint",
+    "expirationTime": null,
+    "keys": {
+      "p256dh": "BPxUvEVFM9ctlDqoMNuO8dCyWBOITQr5oVBWAQD5FJ-T9yLTECjBpL-u0vKdeT9khHAxWCwVcPwZFXJIAsLOJb8",
+      "auth": "bZnJvGjW3Xg2i8RhvUJIqQ"
+    }
+  },
+  "payload": "{\"title\":\"Notificación de prueba\",\"body\":\"¡Esta es una notificación de prueba!\",\"icon\":\"/icon.png\"}",
+  "ttl": 86400,
+  "delay": 0
+}
+
+### Enviar una notificación a todas las suscripciones
+POST {{baseUrl}}/sendToAll
+Content-Type: {{contentType}}
+
+{
+  "payload": "{\"title\":\"Notificación masiva\",\"body\":\"¡Esta notificación se envía a todos los suscriptores!\",\"icon\":\"/icon.png\"}",
+  "ttl": 86400
+}

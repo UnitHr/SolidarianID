@@ -23,8 +23,4 @@ export abstract class FollowerRepository extends Repository<Domain.Follower> {
     page?: number,
     limit?: number,
   ): Promise<[Domain.Follower[], number]>;
-
-  abstract countFollowers(followedId: string): Promise<number>;
-
-  abstract countFollowing(followerId: string): Promise<number>;
 }

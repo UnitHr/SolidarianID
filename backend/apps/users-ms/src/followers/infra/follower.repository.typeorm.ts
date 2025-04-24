@@ -71,14 +71,6 @@ export class FollowerRepositoryTypeOrm extends FollowerRepository {
     return [following.map(FollowerMapper.toDomain), total];
   }
 
-  async countFollowers(followedId: string): Promise<number> {
-    return this.followerRepository.countBy({ followedId });
-  }
-
-  async countFollowing(followerId: string): Promise<number> {
-    return this.followerRepository.countBy({ followerId });
-  }
-
   async save(follower: Domain.Follower): Promise<Domain.Follower> {
     const persistenceFollower = FollowerMapper.toPersistence(follower);
     const savedFollower =

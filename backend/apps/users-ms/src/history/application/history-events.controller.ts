@@ -25,6 +25,13 @@ export class HistoryEventsController {
       message.communityName,
       message.date,
     );
+
+    await this.historyService.registerUserJoinedCommunity(
+      message.adminId,
+      message.communityId,
+      message.communityName,
+      message.date,
+    );
     this.logger.log(
       `Community created event handled: Community ${message.communityId} created`,
     );

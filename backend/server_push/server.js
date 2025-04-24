@@ -33,7 +33,7 @@ app.use('/push', serverPushRouter);
 // Configurar CORS para toda la aplicación
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:5173', // Cambia esto al origen del frontend
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -42,7 +42,7 @@ app.use(
 
 // Añadir headers CORS específicos
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', true);
@@ -54,7 +54,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const port = process.env.PORT || 4000; // Usar PORT de las variables de entorno o 4000 por defecto
+const port = process.env.PORT || 443; // Usar PORT de las variables de entorno o 4000 por defecto
 
 try {
   // Crear el servidor HTTPS con los certificados
@@ -68,9 +68,9 @@ try {
 
   server.listen(port, () => {
     console.log(
-      `Push notification server started and listening on https://127.0.0.1:${port}`,
+      `Push notification server started and listening on https://localhost:${port}`,
     );
-    console.log(`Test the server at: https://127.0.0.1:${port}/push`);
+    console.log(`Test the server at: https://localhost:${port}/push`);
   });
 } catch (error) {
   console.error('Error al iniciar el servidor:', error);

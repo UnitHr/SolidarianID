@@ -41,35 +41,55 @@ export function Notifications() {
     fetchUserRoleAndRequests();
   }, []);
 
-  // Handle notification permission and subscription
   const handleEnableNotifications = async () => {
     if ('Notification' in window && 'serviceWorker' in navigator) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
         navigator.serviceWorker.register('/javascripts/sw.js').then(async (registration) => {
-          const subscription = await registration.pushManager.getSubscription();
-          if (!subscription) {
-            const response = await fetch('https://127.0.0.1:4000/push/vapidPublicKey');
-            const vapidPublicKey = await response.text();
-            const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+          console.log('Service Worker registrado:', registration);
 
-            const newSubscription = await registration.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: convertedVapidKey,
-            });
+          // Obtén la suscripción existente o crea una nueva
+          // let subscription = await registration.pushManager.getSubscription();
+          //  if (!subscription) {
+          const response = await fetch('https://localhost:443/push/vapidPublicKey', {
+            credentials: 'include',
+          });
+          const vapidPublicKey = await response.text();
+          const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
-            await fetch('https://127.0.0.1:4000/push/register', {
+          const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: convertedVapidKey,
+          });
+
+          console.log('Nueva suscripción creada:', subscription);
+          // } else {
+          //  console.log('Suscripción existente encontrada:', subscription);
+          // }
+
+          // Registra la suscripción en el servidor
+          try {
+            const serverResponse = await fetch('https://localhost/push/register', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ subscription: newSubscription }),
+              credentials: 'include',
+              body: JSON.stringify({ subscription }),
             });
 
-            console.log('Usuario suscrito:', newSubscription);
-          } else {
-            console.log('Usuario ya está suscrito:', subscription);
+            if (serverResponse.ok) {
+              console.log('Suscripción registrada en el servidor');
+            } else {
+              console.error(
+                'Error al registrar la suscripción en el servidor:',
+                await serverResponse.text()
+              );
+            }
+          } catch (error) {
+            console.error('Error al enviar la suscripción al servidor:', error);
           }
+
           setNotificationsEnabled(true); // Actualiza el estado
         });
       } else {
@@ -79,7 +99,6 @@ export function Notifications() {
       console.log('Notificaciones o Service Workers no son compatibles con este navegador');
     }
   };
-
   // Calculate paginated data
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedRequests = pendingRequests.slice(startIndex, startIndex + pageSize);

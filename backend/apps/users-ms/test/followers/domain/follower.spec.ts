@@ -165,7 +165,7 @@ describe('Follower', () => {
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
       const followedAt = new Date();
-      const followedEmail = 'followed@example.com';
+      const followedFullName = 'Jane Smith';
 
       // Spy on the apply method
       const applySpy = jest.spyOn(Follower.prototype, 'apply');
@@ -178,9 +178,9 @@ describe('Follower', () => {
           followerFullName,
           followerEmail,
           followedAt,
+          followedFullName,
         },
         undefined,
-        followedEmail,
       );
 
       // Assert
@@ -189,7 +189,7 @@ describe('Follower', () => {
           type: 'UserFollowedEvent',
           userId: 'follower-id',
           followedUserId: 'followed-id',
-          followerUserEmail: followedEmail,
+          followedUserFullName: followedFullName,
           date: followedAt,
         }),
       );

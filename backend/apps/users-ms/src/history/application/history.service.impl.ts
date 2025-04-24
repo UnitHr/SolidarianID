@@ -77,7 +77,15 @@ export class HistoryServiceImpl implements HistoryService {
       timestamp,
     });
 
-    await this.saveEntryAndNotify(entry);
+    const joinedEntry = HistoryEntry.create({
+      userId: new UniqueEntityID(adminId),
+      type: ActivityType.JOINED_COMMUNITY,
+      entityId: new UniqueEntityID(communityId),
+      entityName: communityName,
+      timestamp,
+    });
+    await this.saveEntryAndNotify(joinedEntry);
+    await this.historyEntryRepository.save(entry);
   }
 
   async registerActionContribute(

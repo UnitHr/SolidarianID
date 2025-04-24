@@ -32,17 +32,14 @@ export class FollowerServiceImpl implements FollowerService {
     const followerUser = await this.userService.getUserProfile(followerUserId);
 
     const follower = this.eventPublisher.mergeObjectContext(
-      Follower.create(
-        {
-          followerId: new UniqueEntityID(followerUserId),
-          followedId: new UniqueEntityID(followedUserId),
-          followerFullName: followerUser.fullName,
-          followerEmail: followerUser.email,
-          followedAt: new Date(),
-        },
-        undefined,
-        followedUser.email,
-      ),
+      Follower.create({
+        followerId: new UniqueEntityID(followerUserId),
+        followerFullName: followerUser.fullName,
+        followerEmail: followerUser.email,
+        followedId: new UniqueEntityID(followedUserId),
+        followedFullName: followedUser.fullName,
+        followedAt: new Date(),
+      }),
     );
 
     await this.followerRepository.save(follower);

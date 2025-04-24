@@ -50,13 +50,13 @@ export class HistoryServiceImpl implements HistoryService {
     userId: string,
     followedUserId: string,
     timestamp: Date,
-    followerUserName?: string,
+    followedUserFullName?: string,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: ActivityType.USER_FOLLOWED,
       entityId: new UniqueEntityID(followedUserId),
-      entityName: followerUserName,
+      entityName: followedUserFullName,
       timestamp,
     });
 

@@ -51,7 +51,7 @@ export function Notifications() {
           // Obtén la suscripción existente o crea una nueva
           // let subscription = await registration.pushManager.getSubscription();
           //  if (!subscription) {
-          const response = await fetch('https://localhost:443/push/vapidPublicKey', {
+          const response = await fetch('http://localhost:4000/push/vapidPublicKey', {
             credentials: 'include',
           });
           const vapidPublicKey = await response.text();
@@ -69,7 +69,7 @@ export function Notifications() {
 
           // Registra la suscripción en el servidor
           try {
-            const serverResponse = await fetch('https://localhost/push/register', {
+            const serverResponse = await fetch('http://localhost:4000/push/register', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

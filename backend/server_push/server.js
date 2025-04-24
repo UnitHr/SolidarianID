@@ -1,8 +1,8 @@
-import fs from 'fs';
+//import fs from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-import https from 'https';
+import http from 'http';
 import serverPushRouter from './routes/server_push.js';
 
 import cors from 'cors';
@@ -54,23 +54,16 @@ app.use((req, res, next) => {
   next();
 });
 
-const port = process.env.PORT || 443; // Usar PORT de las variables de entorno o 4000 por defecto
+const port = process.env.PORT || 4000; // Usar PORT de las variables de entorno o 4000 por defecto
 
 try {
-  // Crear el servidor HTTPS con los certificados
-  const server = https.createServer(
-    {
-      cert: fs.readFileSync('certificado_autofirmado.pem'),
-      key: fs.readFileSync('clave_privada.pem'),
-    },
-    app,
-  );
+  const server = http.createServer(app);
 
   server.listen(port, () => {
     console.log(
-      `Push notification server started and listening on https://localhost:${port}`,
+      `Push notification server started and listening on http://localhost:${port}`,
     );
-    console.log(`Test the server at: https://localhost:${port}/push`);
+    console.log(`Test the server at: http://localhost:${port}/push`);
   });
 } catch (error) {
   console.error('Error al iniciar el servidor:', error);
@@ -82,7 +75,7 @@ try {
       `Push notification server started in HTTP mode on port ${port}`,
     );
     console.log(
-      `WARNING: Las notificaciones push requieren HTTPS en producción`,
+      `WARNING: Las notificaciones push requieren HTTP en producción`,
     );
   });
 }

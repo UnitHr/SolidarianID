@@ -38,6 +38,7 @@ export class FollowerServiceImpl implements FollowerService {
         followerEmail: followerUser.email,
         followedId: new UniqueEntityID(followedUserId),
         followedFullName: followedUser.fullName,
+        followedEmail: followedUser.email,
         followedAt: new Date(),
       }),
     );
@@ -59,6 +60,19 @@ export class FollowerServiceImpl implements FollowerService {
     return { followers, total };
   }
 
+  async getUserFollowing(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ following: Follower[]; total: number }> {
+    const [following, total] = await this.followerRepository.findFollowing(
+      userId,
+      page,
+      limit,
+    );
+    return { following, total };
+  }
+
   async isFollowing(
     followedUserId: string,
     followerUserId: string,
@@ -68,9 +82,5 @@ export class FollowerServiceImpl implements FollowerService {
       followedUserId,
     );
     return !!follower;
-  }
-
-  async countUserFollowers(userId: string): Promise<number> {
-    return this.followerRepository.countFollowers(userId);
   }
 }

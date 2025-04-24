@@ -21,13 +21,17 @@ describe('FollowerServiceImpl', () => {
   const FOLLOWED_ID = 'followed-id';
   const FOLLOWER_NAME = 'Follower Name';
   const FOLLOWER_EMAIL = 'follower@example.com';
+  const FOLLOWED_NAME = 'Followed Name';
+  const FOLLOWED_EMAIL = 'followed@email.com';
 
   beforeEach(() => {
     followerRepositoryMock = {
       find: jest.fn(),
       findById: jest.fn(),
       findFollowers: jest.fn(),
+      findFollowing: jest.fn(),
       countFollowers: jest.fn(),
+      countFollowing: jest.fn(),
       save: jest.fn(),
     } as unknown as jest.Mocked<FollowerRepository>;
 
@@ -58,9 +62,11 @@ describe('FollowerServiceImpl', () => {
     const follower = Follower.create(
       {
         followerId: new UniqueEntityID(followerId),
-        followedId: new UniqueEntityID(followedId),
         followerFullName: FOLLOWER_NAME,
         followerEmail: FOLLOWER_EMAIL,
+        followedId: new UniqueEntityID(followedId),
+        followedFullName: FOLLOWED_NAME,
+        followedEmail: FOLLOWED_EMAIL,
         followedAt: new Date(),
       },
       customId ? new UniqueEntityID(customId) : undefined,
@@ -233,6 +239,78 @@ describe('FollowerServiceImpl', () => {
     });
   });
 
+  describe('getUserFollowing', () => {
+    it('returns paginated list of users that a user is following with default pagination', async () => {
+      // Arrange
+      const following = [
+        createFollower('following-record-1', FOLLOWED_ID, 'followed-1'),
+        createFollower('following-record-2', FOLLOWED_ID, 'followed-2'),
+      ];
+      const total = 2;
+      followerRepositoryMock.findFollowing.mockResolvedValueOnce([
+        following,
+        total,
+      ]);
+
+      // Act
+      const result = await followerService.getUserFollowing(FOLLOWED_ID);
+
+      // Assert
+      expect(result).toEqual({ following, total });
+      expect(followerRepositoryMock.findFollowing).toHaveBeenCalledWith(
+        FOLLOWED_ID,
+        undefined,
+        undefined,
+      );
+    });
+
+    it('returns paginated list of following with specific page and limit', async () => {
+      // Arrange
+      const following = [
+        createFollower('following-record-3', FOLLOWED_ID, 'followed-3'),
+      ];
+      const total = 5;
+      const page = 2;
+      const limit = 1;
+      followerRepositoryMock.findFollowing.mockResolvedValueOnce([
+        following,
+        total,
+      ]);
+
+      // Act
+      const result = await followerService.getUserFollowing(
+        FOLLOWED_ID,
+        page,
+        limit,
+      );
+
+      // Assert
+      expect(result).toEqual({ following, total });
+      expect(followerRepositoryMock.findFollowing).toHaveBeenCalledWith(
+        FOLLOWED_ID,
+        page,
+        limit,
+      );
+    });
+
+    it('returns empty following list when user is not following anyone', async () => {
+      // Arrange
+      const total = 0;
+      followerRepositoryMock.findFollowing.mockResolvedValueOnce([[], total]);
+
+      // Act
+      const result = await followerService.getUserFollowing(FOLLOWED_ID);
+
+      // Assert
+      expect(result).toEqual({ following: [], total: 0 });
+      expect(followerRepositoryMock.findFollowing).toHaveBeenCalledWith(
+        FOLLOWED_ID,
+        undefined,
+        undefined,
+      );
+    });
+  });
+
   describe('isFollowing', () => {
     it('returns true when user is following another user', async () => {
       // Arrange
@@ -267,36 +345,6 @@ describe('FollowerServiceImpl', () => {
       expect(result).toBe(false);
       expect(followerRepositoryMock.find).toHaveBeenCalledWith(
         FOLLOWER_ID,
-        FOLLOWED_ID,
-      );
-    });
-  });
-
-  describe('countUserFollowers', () => {
-    it('returns the correct count of followers', async () => {
-      // Arrange
-      followerRepositoryMock.countFollowers.mockResolvedValueOnce(5);
-
-      // Act
-      const result = await followerService.countUserFollowers(FOLLOWED_ID);
-
-      // Assert
-      expect(result).toBe(5);
-      expect(followerRepositoryMock.countFollowers).toHaveBeenCalledWith(
-        FOLLOWED_ID,
-      );
-    });
-
-    it('returns zero when user has no followers', async () => {
-      // Arrange
-      followerRepositoryMock.countFollowers.mockResolvedValueOnce(0);
-
-      // Act
-      const result = await followerService.countUserFollowers(FOLLOWED_ID);
-
-      // Assert
-      expect(result).toBe(0);
-      expect(followerRepositoryMock.countFollowers).toHaveBeenCalledWith(
         FOLLOWED_ID,
       );
     });

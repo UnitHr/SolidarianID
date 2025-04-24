@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Param,
   UseFilters,
   Res,
@@ -13,34 +12,24 @@ import {
 import { Response, Request } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '@common-lib/common-lib/auth/decorator/public.decorator';
-import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { FollowerService } from './follower.service';
 import { FollowerMapper } from '../follower.mapper';
 import { FollowerDomainExceptionFilter } from '../infra/filters/follower-domain-exception.filter';
 
-@ApiTags('followers')
-@Controller('users/:userId/followers')
+@ApiTags('following')
+@Controller('users/:userId/following')
 @UseFilters(FollowerDomainExceptionFilter)
-export class FollowersController {
+export class FollowingController {
   constructor(private readonly followerService: FollowerService) {}
 
-  @ApiOperation({ summary: 'Follow a user' })
-  @Post()
-  async followUser(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @GetUserId() followerId: string,
-    @Res() res: Response,
-  ) {
-    await this.followerService.followUser(userId, followerId);
-    res.status(HttpStatus.NO_CONTENT).send();
-  }
-
-  @ApiOperation({ summary: "Get a user's followers with pagination" })
+  @ApiOperation({
+    summary: 'Get users that a user is following with pagination',
+  })
   @Public()
   @Get()
-  async getFollowers(
+  async getUserFollowing(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Query() query: QueryPaginationDto,
     @Req() req: Request,
@@ -48,7 +37,7 @@ export class FollowersController {
   ) {
     const { page, limit } = query;
 
-    const { followers, total } = await this.followerService.getUserFollowers(
+    const { following, total } = await this.followerService.getUserFollowing(
       userId,
       page,
       limit,
@@ -57,7 +46,7 @@ export class FollowersController {
     const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
 
     const response = new PaginatedResponseDto(
-      followers.map(FollowerMapper.toDto),
+      following.map(FollowerMapper.toFollowingDto),
       total,
       page,
       limit,

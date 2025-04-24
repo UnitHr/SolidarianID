@@ -9,6 +9,8 @@ describe('Follower', () => {
       const followedId = new UniqueEntityID('followed-id');
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
 
       // Act
@@ -17,6 +19,8 @@ describe('Follower', () => {
         followedId,
         followerFullName,
         followerEmail,
+        followedFullName,
+        followedEmail,
         followedAt,
       });
 
@@ -35,6 +39,8 @@ describe('Follower', () => {
       const followedId = new UniqueEntityID('followed-id');
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const beforeCreate = new Date();
 
       // Act
@@ -43,6 +49,8 @@ describe('Follower', () => {
         followedId,
         followerFullName,
         followerEmail,
+        followedFullName,
+        followedEmail,
       });
       const afterCreate = new Date();
 
@@ -63,6 +71,8 @@ describe('Follower', () => {
       const followedId = new UniqueEntityID('followed-id');
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
       const customId = new UniqueEntityID('custom-id');
 
@@ -74,6 +84,8 @@ describe('Follower', () => {
           followerFullName,
           followerEmail,
           followedAt,
+          followedFullName,
+          followedEmail,
         },
         customId,
       );
@@ -87,6 +99,8 @@ describe('Follower', () => {
       const followedId = new UniqueEntityID('followed-id');
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -97,6 +111,8 @@ describe('Follower', () => {
           followerFullName,
           followerEmail,
           followedAt,
+          followedFullName,
+          followedEmail,
         }),
       ).toThrow('Missing properties');
     });
@@ -106,6 +122,8 @@ describe('Follower', () => {
       const followerId = new UniqueEntityID('follower-id');
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -116,6 +134,8 @@ describe('Follower', () => {
           followerFullName,
           followerEmail,
           followedAt,
+          followedFullName,
+          followedEmail,
         }),
       ).toThrow('Missing properties');
     });
@@ -125,6 +145,8 @@ describe('Follower', () => {
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -135,6 +157,8 @@ describe('Follower', () => {
           followerFullName: undefined,
           followerEmail,
           followedAt,
+          followedFullName,
+          followedEmail,
         }),
       ).toThrow('Missing properties');
     });
@@ -144,6 +168,8 @@ describe('Follower', () => {
       const followerId = new UniqueEntityID('follower-id');
       const followedId = new UniqueEntityID('followed-id');
       const followerFullName = 'John Doe';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
 
       // Act & Assert
@@ -154,6 +180,8 @@ describe('Follower', () => {
           followerFullName,
           followerEmail: undefined,
           followedAt,
+          followedFullName,
+          followedEmail,
         }),
       ).toThrow('Missing properties');
     });
@@ -166,6 +194,7 @@ describe('Follower', () => {
       const followerEmail = 'john@example.com';
       const followedAt = new Date();
       const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
 
       // Spy on the apply method
       const applySpy = jest.spyOn(Follower.prototype, 'apply');
@@ -179,6 +208,7 @@ describe('Follower', () => {
           followerEmail,
           followedAt,
           followedFullName,
+          followedEmail,
         },
         undefined,
       );
@@ -202,6 +232,8 @@ describe('Follower', () => {
       const followedId = new UniqueEntityID('followed-id');
       const followerFullName = 'John Doe';
       const followerEmail = 'john@example.com';
+      const followedFullName = 'Jane Smith';
+      const followedEmail = 'followed@example.com';
       const followedAt = new Date();
       const customId = new UniqueEntityID('custom-id');
 
@@ -216,6 +248,8 @@ describe('Follower', () => {
           followerFullName,
           followerEmail,
           followedAt,
+          followedFullName,
+          followedEmail,
         },
         customId,
       );

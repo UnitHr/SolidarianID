@@ -56,8 +56,27 @@ export class FollowerRepositoryTypeOrm extends FollowerRepository {
     return [followers.map(FollowerMapper.toDomain), total];
   }
 
+  async findFollowing(
+    followerId: string,
+    page: number = PaginationDefaults.DEFAULT_PAGE,
+    limit: number = PaginationDefaults.DEFAULT_LIMIT,
+  ): Promise<[Domain.Follower[], number]> {
+    const [following, total] = await this.followerRepository.findAndCount({
+      where: { followerId },
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { followedAt: 'DESC' },
+    });
+
+    return [following.map(FollowerMapper.toDomain), total];
+  }
+
   async countFollowers(followedId: string): Promise<number> {
     return this.followerRepository.countBy({ followedId });
+  }
+
+  async countFollowing(followerId: string): Promise<number> {
+    return this.followerRepository.countBy({ followerId });
   }
 
   async save(follower: Domain.Follower): Promise<Domain.Follower> {

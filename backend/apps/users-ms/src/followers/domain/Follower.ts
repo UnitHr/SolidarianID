@@ -7,7 +7,8 @@ export interface FollowerProps {
   followerFullName: string;
   followerEmail: string;
   followedId: UniqueEntityID;
-  followedFullName?: string;
+  followedFullName: string;
+  followedEmail: string;
   followedAt?: Date;
 }
 
@@ -36,8 +37,12 @@ export class Follower extends EntityRoot<FollowerProps> {
     return this.props.followedId;
   }
 
-  get followedFullName(): string | undefined {
+  get followedFullName(): string {
     return this.props.followedFullName;
+  }
+
+  get followedEmail(): string {
+    return this.props.followedEmail;
   }
 
   public static create(props: FollowerProps, id?: UniqueEntityID): Follower {
@@ -47,9 +52,17 @@ export class Follower extends EntityRoot<FollowerProps> {
       followerEmail,
       followedId,
       followedFullName,
+      followedEmail,
       followedAt,
     } = props;
-    if (!followerId || !followedId || !followerFullName || !followerEmail) {
+    if (
+      !followerId ||
+      !followerFullName ||
+      !followerEmail ||
+      !followedId ||
+      !followedFullName ||
+      !followedEmail
+    ) {
       throw new Error('Missing properties');
     }
 

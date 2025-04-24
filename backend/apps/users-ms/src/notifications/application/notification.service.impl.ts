@@ -37,17 +37,11 @@ export class NotificationServiceImpl implements NotificationService {
   ): Promise<void> {
     const pageSize = 100;
     let page = 1;
-    let totalNotified = 0;
-    const totalFollowers =
-      await this.followerService.countUserFollowers(userId);
+    let hasMoreFollowers = true;
 
-    if (totalFollowers === 0) {
-      return;
-    }
-
-    do {
-      // 1. Fetch the current page
-      const { followers } = await this.followerService.getUserFollowers(
+    while (hasMoreFollowers) {
+      // Use pagination to process followers in batches
+      const { followers, total } = await this.followerService.getUserFollowers(
         userId,
         page,
         pageSize,
@@ -57,7 +51,7 @@ export class NotificationServiceImpl implements NotificationService {
         return;
       }
 
-      // 2. Create and persist the batch of notifications for these followers
+      // Create and persist the batch of notifications for these followers
       const batch = followers.map((f) => {
         return Notification.create({
           historyEntryId: new UniqueEntityID(historyEntryId),
@@ -69,9 +63,13 @@ export class NotificationServiceImpl implements NotificationService {
 
       await this.notificationRepository.createMany(batch);
 
-      totalNotified += followers.length;
-      page += 1;
-    } while (totalNotified < totalFollowers);
+      // Check if we've processed all followers
+      if (followers.length < pageSize || page * pageSize >= total) {
+        hasMoreFollowers = false;
+      } else {
+        page += 1;
+      }
+    }
   }
   /* eslint-enable no-await-in-loop */
 }

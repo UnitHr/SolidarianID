@@ -1,4 +1,4 @@
-import { Alert, Button, Col, Container, Form, ListGroup, Row } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { useEffect, useState } from "react";
 import "../index.css";

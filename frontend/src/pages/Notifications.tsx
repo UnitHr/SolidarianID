@@ -1,10 +1,19 @@
-import { Alert, Button, Col, Container, Form, ListGroup, Row } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useEffect, useState } from "react";
-import "../index.css";
-import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
+import { Alert, Button, Container, Form, ListGroup, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useEffect, useState } from 'react';
+import '../index.css';
+import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
+import {
+  registerServiceWorker,
+  registerSubscriptionOnServer,
+  subscribeUserToPushManager,
+} from '../services/push-notification.service';
+import {
+  fetchCreateCommunityRequests,
+  fetchManagedCommunities,
+} from '../services/notificacion.service';
 
-interface JoinComunityRequestValues{
+interface JoinComunityRequestValues {
   id: string;
   userId: string;
   communityId: string;
@@ -20,13 +29,13 @@ export function Notifications() {
   const [joinRequests, setJoinRequests] = useState<JoinComunityRequestValues[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState("success");
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('success');
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
-  const [currentCommunity, setCurrentCommunity] = useState("");
+  const [currentCommunity, setCurrentCommunity] = useState('');
   const pageSize = 5;
 
   function changeAlertMessage(value: string) {
@@ -37,30 +46,29 @@ export function Notifications() {
     setAlertVariant(value);
   }
 
+  async function fetchJoinRequests() {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/communities/${currentCommunity}/join-requests`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
 
-  async function fetchJoinRequests(){
-    const response = await fetch(`http://localhost:3000/api/v1/communities/${currentCommunity}/join-requests`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    })
-
-    if(response.ok){
+    if (response.ok) {
       const data = await response.json();
       setJoinRequests(data.data);
-    }
-    else{
-      setAlertMessage("Error fetching join requests for community " + currentCommunity);
-      setAlertVariant("danger");
+    } else {
+      setAlertMessage('Error fetching join requests for community ' + currentCommunity);
+      setAlertVariant('danger');
       setShowAlert(true);
-    } 
+    }
   }
 
   function handleCommunityChange(event) {
     setCurrentCommunity(event.target.value);
   }
-
-  
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -70,37 +78,16 @@ export function Notifications() {
         setIsAdmin(isAdminRole);
 
         if (isAdminRole) {
-          const requestsResponse = await fetch(
-            'http://localhost:3002/communities/creation-requests?status=pending',
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
-            }
-          );
-          if (!requestsResponse.ok) {
-            throw new Error('Failed to fetch pending requests');
-          }
-          const requestsData = await requestsResponse.json();
-          setPendingRequests(requestsData.data);
-        }
-        else{
-          // Check if user is community admin
-          const response = await fetch('http://localhost:3000/api/v1/communities/managed-communities', {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-
-          const data = await response.json();
-          if(data.data.length > 0) {
+          const requests = await fetchCreateCommunityRequests();
+          setPendingRequests(requests); // Actualiza las solicitudes pendientes
+        } else {
+          const managedCommunities = await fetchManagedCommunities();
+          if (managedCommunities.length > 0) {
             setIsCommunityAdmin(true);
-            setManagedCommunities(data.data);
-            setCurrentCommunity(data.data[0]);
+            setManagedCommunities(managedCommunities);
+            setCurrentCommunity(managedCommunities[0]);
           }
-
         }
-
       } catch (error) {
         console.error(error);
       }
@@ -109,67 +96,31 @@ export function Notifications() {
     fetchRequests();
   }, []);
 
-  const handleEnableNotifications = async () => {
+  async function handleEnableNotifications() {
     if ('Notification' in window && 'serviceWorker' in navigator) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        navigator.serviceWorker.register('/javascripts/sw.js').then(async (registration) => {
-          console.log('Service Worker registrado:', registration);
-
-          // Obtén la suscripción existente o crea una nueva
-          // let subscription = await registration.pushManager.getSubscription();
-          //  if (!subscription) {
-          const response = await fetch('http://localhost:4000/push/vapidPublicKey', {
-            credentials: 'include',
-          });
-          const vapidPublicKey = await response.text();
-          const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-
-          const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: convertedVapidKey,
-          });
+        try {
+          const registration = await registerServiceWorker();
+          const subscription = await subscribeUserToPushManager(registration);
 
           const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
           const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
 
-          console.log('Nueva suscripción creada:', subscription, userId, userRoles);
-          // } else {
-          //  console.log('Suscripción existente encontrada:', subscription);
-          // }
-
-          // Registra la suscripción en el servidor
-          try {
-            const serverResponse = await fetch('http://localhost:4000/push/register', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include',
-              body: JSON.stringify({ subscription, userId, userRoles }),
-            });
-
-            if (serverResponse.ok) {
-              console.log('Suscripción registrada en el servidor');
-            } else {
-              console.error(
-                'Error al registrar la suscripción en el servidor:',
-                await serverResponse.text()
-              );
-            }
-          } catch (error) {
-            console.error('Error al enviar la suscripción al servidor:', error);
-          }
+          await registerSubscriptionOnServer(subscription, userId, userRoles);
 
           setNotificationsEnabled(true); // Actualiza el estado
-        });
+        } catch (error) {
+          console.error('Error durante la activación de notificaciones:', error);
+        }
       } else {
         console.log('Permiso de notificaciones denegado');
       }
     } else {
       console.log('Notificaciones o Service Workers no son compatibles con este navegador');
     }
-  };
+  }
+
   // Calculate paginated data
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedRequests = pendingRequests.slice(startIndex, startIndex + pageSize);
@@ -192,11 +143,7 @@ export function Notifications() {
     <>
       <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
-        <Alert
-          variant={alertVariant}
-          onClose={(e) => setShowAlert(false)}
-          dismissible
-        >
+        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}
         </Alert>
       )}
@@ -310,7 +257,8 @@ export function Notifications() {
                       <Button
                         variant="primary"
                         onClick={() => {
-                          setShowModal(true);}}
+                          setShowModal(true);
+                        }}
                       >
                         Validate
                       </Button>
@@ -319,7 +267,7 @@ export function Notifications() {
                 ) : (
                   <p>No hay solicitudes pendientes.</p>
                 )}
-               </ListGroup>
+              </ListGroup>
             </Row>
           )}
         </Row>

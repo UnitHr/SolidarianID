@@ -1,0 +1,37 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Date custom scalar type"""
+scalar DateTime
+
+type FollowerModel {
+  email: String!
+  followedAt: DateTime!
+  followerId: ID!
+  fullName: String!
+}
+
+type FollowingModel {
+  email: String!
+  followedAt: DateTime!
+  followedUserId: ID!
+  fullName: String!
+}
+
+type Query {
+  user(id: ID!): UserModel!
+}
+
+type UserModel {
+  age: Int
+  bio: String
+  email: String
+  firstName: String!
+  followers(limit: Int! = 10, page: Int! = 1): [FollowerModel!]
+  followersCount: Int
+  following(limit: Int! = 10, page: Int! = 1): [FollowingModel!]
+  followingCount: Int
+  id: ID!
+  lastName: String!
+}

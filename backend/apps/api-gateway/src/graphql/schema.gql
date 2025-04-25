@@ -1,0 +1,30 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CommunityModel {
+  admin: UserModel
+  adminId: ID!
+  description: String!
+  id: ID!
+  name: String!
+}
+
+"""Date custom scalar type"""
+scalar DateTime
+
+type Query {
+  community(id: ID!): CommunityModel!
+  user(id: ID!): UserModel!
+}
+
+type UserModel {
+  age: Int
+  bio: String
+  email: String
+  firstName: String!
+  followersCount: Int
+  followingCount: Int
+  id: ID!
+  lastName: String!
+}

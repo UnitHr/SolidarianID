@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { CauseService } from '@communities-ms/causes/application/cause.service';
@@ -11,6 +11,7 @@ import { CommunityRepository } from '../repo/community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
 import { CommunityQueryBuilder } from '../infra/filters/community-query.builder';
 import { CommunityService } from './community.service';
+import { error } from 'console';
 
 @Injectable()
 export class CommunityServiceImpl implements CommunityService {
@@ -168,6 +169,32 @@ export class CommunityServiceImpl implements CommunityService {
         createdAt: new Date(),
       }),
     );
+
+    // Enviar notificación push al servidor de notificaciones
+    try {
+      const response = await fetch('http://localhost:4000/push/sendToAdmins', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          payload: `Nueva solicitud de comunidad: `,
+          ttl: 86400, // Tiempo de vida de la notificación en segundos
+        }),
+      });
+
+      if (!response.ok) {
+        console.log(response);
+        /* throw new Error(
+          `Error en la respuesta del servidor: ${response.statusText}`,
+        ); */
+      }
+
+      console.log('Notificación push enviada a los administradores.');
+    } catch (error) {
+      console.error(error);
+    }
 
     // Return the request object
     return right(Result.ok(newRequest));

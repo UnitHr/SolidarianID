@@ -24,6 +24,8 @@ export function Notifications() {
   const [alertVariant, setAlertVariant] = useState("success");
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
   const [currentCommunity, setCurrentCommunity] = useState("");
   const pageSize = 5;
 
@@ -58,16 +60,15 @@ export function Notifications() {
     setCurrentCommunity(event.target.value);
   }
 
-  // Fetch user role and pending requests
+  
+
   useEffect(() => {
-    const fetchUserRoleAndRequests = async () => {
+    const fetchRequests = async () => {
       try {
-        // Get user role from localStorage
         const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
         const isAdminRole = userRoles.includes('admin');
         setIsAdmin(isAdminRole);
 
-        // Fetch pending requests if user is admin
         if (isAdminRole) {
           const requestsResponse = await fetch(
             'http://localhost:3002/communities/creation-requests?status=pending',
@@ -81,7 +82,6 @@ export function Notifications() {
             throw new Error('Failed to fetch pending requests');
           }
           const requestsData = await requestsResponse.json();
-          console.log(requestsData);
           setPendingRequests(requestsData.data);
         }
         else{
@@ -106,9 +106,70 @@ export function Notifications() {
       }
     };
 
-    fetchUserRoleAndRequests();
+    fetchRequests();
   }, []);
 
+  const handleEnableNotifications = async () => {
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        navigator.serviceWorker.register('/javascripts/sw.js').then(async (registration) => {
+          console.log('Service Worker registrado:', registration);
+
+          // Obtén la suscripción existente o crea una nueva
+          // let subscription = await registration.pushManager.getSubscription();
+          //  if (!subscription) {
+          const response = await fetch('http://localhost:4000/push/vapidPublicKey', {
+            credentials: 'include',
+          });
+          const vapidPublicKey = await response.text();
+          const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+          const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: convertedVapidKey,
+          });
+
+          const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+          const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
+
+          console.log('Nueva suscripción creada:', subscription, userId, userRoles);
+          // } else {
+          //  console.log('Suscripción existente encontrada:', subscription);
+          // }
+
+          // Registra la suscripción en el servidor
+          try {
+            const serverResponse = await fetch('http://localhost:4000/push/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              body: JSON.stringify({ subscription, userId, userRoles }),
+            });
+
+            if (serverResponse.ok) {
+              console.log('Suscripción registrada en el servidor');
+            } else {
+              console.error(
+                'Error al registrar la suscripción en el servidor:',
+                await serverResponse.text()
+              );
+            }
+          } catch (error) {
+            console.error('Error al enviar la suscripción al servidor:', error);
+          }
+
+          setNotificationsEnabled(true); // Actualiza el estado
+        });
+      } else {
+        console.log('Permiso de notificaciones denegado');
+      }
+    } else {
+      console.log('Notificaciones o Service Workers no son compatibles con este navegador');
+    }
+  };
   // Calculate paginated data
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedRequests = pendingRequests.slice(startIndex, startIndex + pageSize);
@@ -153,9 +214,24 @@ export function Notifications() {
           handleHide={() => setShowModal(false)}
         ></ModalValidateJoinCommunity>
         <Row>
+          <Row className="my-3 justify-content-end">
+            <Button
+              variant="warning"
+              onClick={handleEnableNotifications}
+              disabled={notificationsEnabled}
+              style={{
+                fontSize: '0.8rem',
+                padding: '5px 10px',
+                width: 'auto',
+              }}
+            >
+              {notificationsEnabled ? 'Notificaciones activadas' : 'Activar notificaciones'}
+            </Button>
+          </Row>
           <Row className="my-5">
             <h1 className="text-center">Notifications</h1>
           </Row>
+
           {isAdmin && (
             <Row className="my-5">
               <h2>Solicitudes de creación de comunidad pendientes</h2>

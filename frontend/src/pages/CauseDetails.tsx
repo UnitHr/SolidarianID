@@ -294,8 +294,9 @@ export function CauseDetails() {
                 </Row>
                 <Row>
                   <Col>
-                    <h4 className="mt-3 mb-3 ">Cause Description</h4>
+                    <h4 className="mt-3 mb-3 ">Description</h4>
                     <p>{cause.description}</p>
+                    <hr className="my-4" />
                     <Row className="align-items-center justify-content-between mb-3">
                       <Col xs="auto">
                         <h4 className="mb-0">Related Actions</h4>

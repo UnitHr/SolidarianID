@@ -1,4 +1,4 @@
-import { Alert, Button, Container, Form, ListGroup, Row } from 'react-bootstrap';
+import { Alert, Button, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import '../index.css';
@@ -12,6 +12,8 @@ import {
   fetchCreateCommunityRequests,
   fetchManagedCommunities,
 } from '../services/notificacion.service';
+import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
+import { approveCommunityRequest, rejectCommunityRequest } from '../services/community.service';
 
 interface JoinComunityRequestValues {
   id: string;
@@ -37,6 +39,10 @@ export function Notifications() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
   const [currentCommunity, setCurrentCommunity] = useState('');
   const pageSize = 5;
+
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   function changeAlertMessage(value: string) {
     setAlertMessage(value);
@@ -139,6 +145,33 @@ export function Notifications() {
     }
   };
 
+  const handleOpenRejectModal = (requestId: string) => {
+    setCurrentRequestId(requestId);
+    setRejectionReason('');
+    setShowRejectModal(true);
+  };
+
+  const handleApproveRequest = async (requestId: string) => {
+    const success = await approveCommunityRequest(requestId);
+    if (success) {
+      alert('Request approved successfully!');
+    } else {
+      alert('Failed to approve the request.');
+    }
+  };
+
+  const handleConfirmReject = async () => {
+    if (currentRequestId) {
+      const success = await rejectCommunityRequest(currentRequestId, rejectionReason);
+      if (success) {
+        alert('Request rejected successfully!');
+      } else {
+        alert('Failed to reject the request.');
+      }
+      setShowRejectModal(false);
+    }
+  };
+
   return (
     <>
       <SolidarianNavbar></SolidarianNavbar>
@@ -186,29 +219,18 @@ export function Notifications() {
                 <>
                   <div className="panel">
                     {paginatedRequests.map((request) => (
-                      <div key={request.id} className="request-card">
-                        <strong>Nombre de la comunidad:</strong> {request.communityName} <br />
-                        <strong>Descripción de la comunidad:</strong> {request.communityDescription}{' '}
-                        <br />
-                        <strong>Usuario ID:</strong> {request.userId} <br />
-                        <strong>Causa:</strong>
-                        <ul>
-                          <li>
-                            <strong>Título:</strong> {request.causeTitle}
-                          </li>
-                          <li>
-                            <strong>Descripción:</strong> {request.causeDescription}
-                          </li>
-                          <li>
-                            <strong>Fecha Fin:</strong>{' '}
-                            {new Date(request.causeEndDate).toLocaleDateString()}
-                          </li>
-                          <li>
-                            <strong>ODS:</strong>{' '}
-                            {request.causeOds.map((ods: { title: any }) => ods.title).join(', ')}
-                          </li>
-                        </ul>
-                      </div>
+                      <CreateCommunityRequestCard
+                        key={request.id}
+                        communityName={request.communityName}
+                        communityDescription={request.communityDescription}
+                        userId={request.userId}
+                        causeTitle={request.causeTitle}
+                        causeDescription={request.causeDescription}
+                        causeEndDate={request.causeEndDate}
+                        causeOds={request.causeOds}
+                        onApprove={() => handleApproveRequest(request.id)} // Llama a la función de aprobación
+                        onReject={() => handleOpenRejectModal(request.id)}
+                      />
                     ))}
                   </div>
                   <div className="pagination-controls">
@@ -236,6 +258,36 @@ export function Notifications() {
               )}
             </Row>
           )}
+
+          <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Rechazar solicitud</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group controlId="rejectionReason">
+                <Form.Label>Motivo del rechazo</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={4}
+                  placeholder="Especifica el motivo del rechazo..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                />
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleConfirmReject}
+                disabled={!rejectionReason.trim()}
+              >
+                Confirmar rechazo
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
           {isCommunityAdmin && (
             <Row className="my-5">

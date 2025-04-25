@@ -16,11 +16,14 @@ import { ApiExcludeController } from '@nestjs/swagger';
 import { HistoryService } from './history.service';
 import { HistoryEntryMapper } from '../history-entry.mapper';
 import { FindHistoryDto } from '../dto/find-history.dto';
+import { FollowerService } from '@users-ms/followers/application/follower.service';
 
 @ApiExcludeController()
 @Controller('users/:userId/history')
 export class HistoryController {
-  constructor(private readonly historyService: HistoryService) {}
+  constructor(private readonly historyService: HistoryService,
+    private readonly followerService: FollowerService,
+  ) {}
 
   @Get()
   async getHistory(
@@ -35,7 +38,8 @@ export class HistoryController {
       !(await this.historyService.userHasJoinCommunityRequestWithAdmin(
         historyOwner,
         userId,
-      ))
+      )) &&
+      !(await this.followerService.isFollowing(historyOwner, userId))
     ) {
       throw new ForbiddenException(
         `You are not allowed to see the history of user: ${historyOwner}`,

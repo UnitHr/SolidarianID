@@ -6,7 +6,7 @@ import image from '../assets/filter-communities-image-2.png';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface CommunityValues {
+export interface CommunityValues {
   id: string;
   adminId: string;
   name: string;

@@ -1,6 +1,6 @@
 import { Button, Card } from 'react-bootstrap';
-import { CauseValues } from '../pages/SearchCauses';
 import { useNavigate } from 'react-router-dom';
+import { CauseValues } from '../pages/SearchCauses';
 
 export function CauseCard(props: CauseValues) {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export function CauseCard(props: CauseValues) {
 
     navigate(`/causes/${props.id}`);
   };
+
   return (
     <>
       <Card style={{ width: '18rem' }}>

@@ -1,23 +1,7 @@
 export const Footer = () => {
   return (
-    <footer
-      style={{
-        backgroundColor: '#607d8b',
-        color: 'white',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '48px',
-        marginTop: '40px',
-      }}
-    >
-      <p
-        style={{
-          margin: 0,
-        }}
-      >
-        &copy; 2025 Solidarian. All Rights Reserved.
-      </p>
+    <footer className="bg-secondary text-white d-flex justify-content-center align-items-center py-3 mt-5">
+      <p className="mb-0">&copy; 2025 SolidarianID. All Rights Reserved.</p>
     </footer>
   );
 };

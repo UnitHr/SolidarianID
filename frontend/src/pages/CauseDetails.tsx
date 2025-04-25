@@ -303,7 +303,7 @@ export function CauseDetails() {
                       <Col xs="auto">
                         <button
                           className="btn btn-primary w-100"
-                          onClick={() => navigate(`/causes/${causeId}/create-action`)}
+                          onClick={() => navigate(`/causes/${causeId}/actions/new`)}
                         >
                           Create Action
                         </button>

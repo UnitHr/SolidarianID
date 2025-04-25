@@ -35,7 +35,7 @@ export function SearchCommunities() {
   }
 
   function handleCreateCommunity() {
-    navigate('/create-community');
+    navigate('/communities/request');
   }
 
   async function handleSearch(e) {

@@ -225,7 +225,7 @@ export function CommunityDetails() {
                           You are a member of this community
                         </p>
                         <Button
-                          onClick={() => navigate(`/communities/${communityId}/create-cause`)}
+                          onClick={() => navigate(`/communities/${communityId}/causes/new`)}
                           className="btn btn-primary w-100"
                         >
                           Create Cause

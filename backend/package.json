@@ -12,7 +12,7 @@
     "build:statistics-ms": "nest build statistics-ms",
     "start:dev:api-gateway": "cross-env NODE_ENV=development nest start api-gateway --watch",
     "start:dev:users-ms": "cross-env NODE_ENV=development nest start users-ms --watch",
-    "start:dev:communities-ms": "cross-env NODE_ENV=development nest start communities-ms --watch",
+    "start:dev:communities-ms": "cross-env NODE_ENV=development NODE_TLS_REJECT_UNAUTHORIZED=0  nest start communities-ms --watch",
     "start:dev:statistics-ms": "cross-env NODE_ENV=development nest start statistics-ms --watch",
     "start:prod:api-gateway": "cross-env NODE_ENV=production node dist/apps/api-gateway/main",
     "start:prod:users-ms": "cross-env NODE_ENV=production node dist/apps/users-ms/main",

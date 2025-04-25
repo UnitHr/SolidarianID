@@ -35,7 +35,7 @@ export function SolidarianNavbar() {
                   <FaBell size={18} />
                 </Nav.Link>
                 <NavDropdown title={<FaUserCircle size={20} />} id="user-dropdown" align="end">
-                  <NavDropdown.Item href="/profile">Profile ({username})</NavDropdown.Item>
+                  <NavDropdown.Item href="/profile">Hi, {username}</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
                 </NavDropdown>

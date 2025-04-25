@@ -29,9 +29,24 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): UserModel!
 }
 
+type NotificationModel {
+  entityId: ID
+  entityName: String
+  id: ID!
+  read: Boolean!
+  recipientId: ID!
+  timestamp: DateTime!
+  type: String
+  userId: ID
+}
+
 type Query {
   community(id: ID!): CommunityModel!
   user(id: ID!): UserModel!
+}
+
+type Subscription {
+  notificationAdded(userId: ID!): NotificationModel!
 }
 
 type UserModel {

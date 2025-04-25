@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
 import { FollowerService } from '@users-ms/followers/application/follower.service';
+import { NotificationCreatedEvent } from '@common-lib/common-lib/events/domain/NotificationCreatedEvent';
+import { EventsService } from '@common-lib/common-lib/events/events.service';
 import { NotificationService } from './notification.service';
 import { NotificationRepository } from '../domain/notification.repository';
 import { Notification } from '../domain/Notification';
 
 @Injectable()
 export class NotificationServiceImpl implements NotificationService {
+  private readonly logger = new Logger(NotificationServiceImpl.name);
+
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly followerService: FollowerService,
+    private readonly eventsService: EventsService,
   ) {}
 
   async getUserNotifications(
@@ -61,7 +66,14 @@ export class NotificationServiceImpl implements NotificationService {
         });
       });
 
-      await this.notificationRepository.createMany(batch);
+      const notifications = await this.notificationRepository.createMany(batch);
+
+      // Publish notification created events
+      await Promise.all(
+        notifications.map((notification) =>
+          this.publishNotificationCreatedEvent(notification),
+        ),
+      );
 
       // Check if we've processed all followers
       if (followers.length < pageSize || page * pageSize >= total) {
@@ -72,4 +84,35 @@ export class NotificationServiceImpl implements NotificationService {
     }
   }
   /* eslint-enable no-await-in-loop */
+
+  // TODO: consider creating a separate service for event publishing
+  private async publishNotificationCreatedEvent(
+    notification: Notification,
+  ): Promise<void> {
+    try {
+      const notificationEvent = new NotificationCreatedEvent(
+        notification.id.toString(),
+        notification.read,
+        notification.timestamp,
+        notification.recipientId.toString(),
+        notification.historyEntry?.type,
+        notification.historyEntry?.entityId.toString(),
+        notification.historyEntry?.entityName,
+      );
+
+      await this.eventsService.publish(
+        NotificationCreatedEvent.EVENT_TYPE,
+        notificationEvent,
+      );
+
+      this.logger.log(
+        `Published notification event for recipient ${notification.recipientId}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to publish notification event: ${error.message}`,
+        error.stack,
+      );
+    }
+  }
 }

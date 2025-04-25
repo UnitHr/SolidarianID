@@ -11,6 +11,10 @@ interface EnvVars {
   NODE_ENV: string;
   API_GATEWAY_HOST: string;
   API_GATEWAY_PORT: number;
+  KAFKA_BROKERS: string;
+  KAFKA_CLIENT_ID: string;
+  KAFKA_GROUP_ID: string;
+  KAFKA_TOPIC_USERS: string;
   USERS_MS_URL: string;
   COMMUNITIES_MS_URL: string;
   ACTIONS_URL: string;
@@ -28,6 +32,10 @@ const envsSchema = joi
       .required(),
     API_GATEWAY_HOST: joi.string().required(),
     API_GATEWAY_PORT: joi.number().required(),
+    KAFKA_BROKERS: joi.string().required(),
+    KAFKA_CLIENT_ID: joi.string().required(),
+    KAFKA_GROUP_ID: joi.string().required(),
+    KAFKA_TOPIC_USERS: joi.string().required(),
     USERS_MS_URL: joi.string().required(),
     COMMUNITIES_MS_URL: joi.string().required(),
     CAUSES_URL: joi.string().required(),
@@ -49,6 +57,10 @@ export const envs = {
   nodeEnv: envVars.NODE_ENV,
   apiGatewayHost: envVars.API_GATEWAY_HOST,
   apiGatewayPort: envVars.API_GATEWAY_PORT,
+  kafkaBrokers: envVars.KAFKA_BROKERS.split(','),
+  kafkaClientId: envVars.KAFKA_CLIENT_ID,
+  kafkaGroupId: envVars.KAFKA_GROUP_ID,
+  kafkaTopicUsers: envVars.KAFKA_TOPIC_USERS,
   usersMsUrl: envVars.USERS_MS_URL,
   communitiesMsUrl: envVars.COMMUNITIES_MS_URL,
   causesUrl: envVars.CAUSES_URL,

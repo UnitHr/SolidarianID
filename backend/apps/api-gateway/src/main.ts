@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { envs } from './config';
 
@@ -9,6 +10,23 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'], // Enable all log levels
   });
+
+  // Connect a microservice with KAFKA transport
+  app.connectMicroservice({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: envs.kafkaClientId,
+        brokers: envs.kafkaBrokers,
+      },
+      consumer: {
+        groupId: envs.kafkaGroupId,
+      },
+    },
+  });
+
+  // Start the microservice
+  await app.startAllMicroservices();
 
   // Enable CORS
   app.enableCors({

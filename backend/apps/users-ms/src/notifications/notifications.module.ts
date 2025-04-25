@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventsModule } from '@common-lib/common-lib/events/events.module';
 import { FollowersModule } from '@users-ms/followers/followers.module';
 import { Notification } from './infra/persistence/Notification';
 import { NotificationRepository } from './domain/notification.repository';
@@ -10,7 +11,11 @@ import { HistoryRegisteredHandler } from './domain/events/history-registered.han
 import { NotificationController } from './application/notification.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Notification]), FollowersModule],
+  imports: [
+    TypeOrmModule.forFeature([Notification]),
+    FollowersModule,
+    EventsModule,
+  ],
   providers: [
     {
       provide: NotificationRepository,

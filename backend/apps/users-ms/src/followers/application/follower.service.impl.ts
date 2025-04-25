@@ -32,17 +32,15 @@ export class FollowerServiceImpl implements FollowerService {
     const followerUser = await this.userService.getUserProfile(followerUserId);
 
     const follower = this.eventPublisher.mergeObjectContext(
-      Follower.create(
-        {
-          followerId: new UniqueEntityID(followerUserId),
-          followedId: new UniqueEntityID(followedUserId),
-          followerFullName: followerUser.fullName,
-          followerEmail: followerUser.email,
-          followedAt: new Date(),
-        },
-        undefined,
-        followedUser.email,
-      ),
+      Follower.create({
+        followerId: new UniqueEntityID(followerUserId),
+        followerFullName: followerUser.fullName,
+        followerEmail: followerUser.email,
+        followedId: new UniqueEntityID(followedUserId),
+        followedFullName: followedUser.fullName,
+        followedEmail: followedUser.email,
+        followedAt: new Date(),
+      }),
     );
 
     await this.followerRepository.save(follower);
@@ -62,6 +60,19 @@ export class FollowerServiceImpl implements FollowerService {
     return { followers, total };
   }
 
+  async getUserFollowing(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ following: Follower[]; total: number }> {
+    const [following, total] = await this.followerRepository.findFollowing(
+      userId,
+      page,
+      limit,
+    );
+    return { following, total };
+  }
+
   async isFollowing(
     followedUserId: string,
     followerUserId: string,
@@ -75,5 +86,9 @@ export class FollowerServiceImpl implements FollowerService {
 
   async countUserFollowers(userId: string): Promise<number> {
     return this.followerRepository.countFollowers(userId);
+  }
+
+  async countUserFollowing(userId: string): Promise<number> {
+    return this.followerRepository.countFollowing(userId);
   }
 }

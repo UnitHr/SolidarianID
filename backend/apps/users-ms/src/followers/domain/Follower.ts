@@ -4,9 +4,11 @@ import { UserFollowedEvent } from './events/UserFollowedEvent';
 
 export interface FollowerProps {
   followerId: UniqueEntityID;
-  followedId: UniqueEntityID;
   followerFullName: string;
   followerEmail: string;
+  followedId: UniqueEntityID;
+  followedFullName: string;
+  followedEmail: string;
   followedAt?: Date;
 }
 
@@ -17,10 +19,6 @@ export class Follower extends EntityRoot<FollowerProps> {
 
   get followerId(): UniqueEntityID {
     return this.props.followerId;
-  }
-
-  get followedId(): UniqueEntityID {
-    return this.props.followedId;
   }
 
   get followerFullName(): string {
@@ -35,19 +33,36 @@ export class Follower extends EntityRoot<FollowerProps> {
     return this.props.followedAt;
   }
 
-  public static create(
-    props: FollowerProps,
-    id?: UniqueEntityID,
-    followedEmail?: string,
-  ): Follower {
+  get followedId(): UniqueEntityID {
+    return this.props.followedId;
+  }
+
+  get followedFullName(): string {
+    return this.props.followedFullName;
+  }
+
+  get followedEmail(): string {
+    return this.props.followedEmail;
+  }
+
+  public static create(props: FollowerProps, id?: UniqueEntityID): Follower {
     const {
       followerId,
-      followedId,
       followerFullName,
       followerEmail,
+      followedId,
+      followedFullName,
+      followedEmail,
       followedAt,
     } = props;
-    if (!followerId || !followedId || !followerFullName || !followerEmail) {
+    if (
+      !followerId ||
+      !followerFullName ||
+      !followerEmail ||
+      !followedId ||
+      !followedFullName ||
+      !followedEmail
+    ) {
       throw new Error('Missing properties');
     }
 
@@ -61,7 +76,7 @@ export class Follower extends EntityRoot<FollowerProps> {
         new UserFollowedEvent(
           followerId.toString(),
           followedId.toString(),
-          followedEmail,
+          followedFullName,
           follower.followedAt,
         ),
       );

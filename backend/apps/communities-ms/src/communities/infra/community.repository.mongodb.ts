@@ -29,6 +29,12 @@ export class CommunityRepositoryMongoDb extends CommunityRepository {
     return null;
   }
 
+  async findByAdminId(adminId: string): Promise<Domain.Community[]> {
+    const communities = await this.communityModel.find({ adminId }).exec();
+
+    return communities.map(CommunityMapper.toDomain);
+  }
+
   async isCommunityAdmin(
     userId: string,
     communityId: string,

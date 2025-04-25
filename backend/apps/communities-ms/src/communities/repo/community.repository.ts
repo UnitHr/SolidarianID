@@ -18,5 +18,7 @@ export abstract class CommunityRepository extends Repository<Domain.Community> {
     pagination: PaginationParams,
   ): Promise<Domain.Community[]>;
 
+  abstract findByAdminId(adminId: string): Promise<Domain.Community[]>;
+
   abstract countDocuments(filter: CommunityFilter): Promise<number>;
 }

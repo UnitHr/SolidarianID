@@ -296,9 +296,21 @@ export function CauseDetails() {
                   <Col>
                     <h4 className="mt-3 mb-3 ">Cause Description</h4>
                     <p>{cause.description}</p>
+                    <Row className="align-items-center justify-content-between mb-3">
+                      <Col xs="auto">
+                        <h4 className="mb-0">Related Actions</h4>
+                      </Col>
+                      <Col xs="auto">
+                        <button
+                          className="btn btn-primary w-100"
+                          onClick={() => navigate(`/causes/${causeId}/create-action`)}
+                        >
+                          Create Action
+                        </button>
+                      </Col>
+                    </Row>
                     {actions.length > 0 && (
                       <>
-                        <h4 className="mb-3">Related Actions</h4>
                         {actions.map((action) => (
                           <div key={action.id} className="mb-4">
                             <h5>

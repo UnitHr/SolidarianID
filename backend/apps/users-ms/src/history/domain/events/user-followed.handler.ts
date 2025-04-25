@@ -14,7 +14,7 @@ export class UserFollowedHandler implements IEventHandler<UserFollowedEvent> {
       event.userId,
       event.followedUserId,
       event.date,
-      event.followerUserEmail,
+      event.followedUserFullName,
     );
 
     this.logger.log(

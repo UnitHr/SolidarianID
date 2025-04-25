@@ -1,20 +1,25 @@
 # Base URL
 @baseUrl = http://localhost:3000/api/v1/users
 @jwtToken = {replace-with-token}
-@followUserId = {replace-with-followUserId}
+@followedId = {replace-with-user-id}
+@followerId = {replace-with-user-id}
 
 ### Success case: follow user
-POST {{baseUrl}}/{{followUserId}}/followers
+POST {{baseUrl}}/{{followedId}}/followers
 Authorization: Bearer {{jwtToken}}
 
 ### Success case: get user followers with default pagination
-GET {{baseUrl}}/{{followUserId}}/followers
+GET {{baseUrl}}/{{followedId}}/followers
 Authorization: Bearer {{jwtToken}}
 
 ### Success case: get user followers with custom pagination
-GET {{baseUrl}}/{{followUserId}}/followers?page=2&limit=5
+GET {{baseUrl}}/{{followedId}}/followers?page=1&limit=5
 Authorization: Bearer {{jwtToken}}
 
-### Success case: get user followers count
-GET {{baseUrl}}/{{followUserId}}/followers/count
+### Success case: get user following with default pagination
+GET {{baseUrl}}/{{followerId}}/following
+Authorization: Bearer {{jwtToken}}
+
+### Success case: get user following with custom pagination
+GET {{baseUrl}}/{{followerId}}/following?page=1&limit=5
 Authorization: Bearer {{jwtToken}}

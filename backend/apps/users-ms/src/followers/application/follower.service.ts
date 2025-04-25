@@ -12,10 +12,18 @@ export abstract class FollowerService {
     limit?: number,
   ): Promise<{ followers: Follower[]; total: number }>;
 
+  abstract getUserFollowing(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ following: Follower[]; total: number }>;
+
   abstract isFollowing(
     followedUserId: string,
     followerUserId: string,
   ): Promise<boolean>;
 
   abstract countUserFollowers(userId: string): Promise<number>;
+
+  abstract countUserFollowing(userId: string): Promise<number>;
 }

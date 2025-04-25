@@ -11,8 +11,11 @@ import { UsersDocsProxyMiddleware } from './middlewares/users-docs-proxy.middlew
 import { CommunitiesDocsProxyMiddleware } from './middlewares/communities-docs-proxy.middleware';
 import { CausesProxyMiddleware } from './middlewares/causes-proxy.middleware';
 import { ActionsProxyMiddleware } from './middlewares/actions-proxy.middleware';
+import { GraphQLAppModule } from './graphql/graphql.module';
 
-@Module({})
+@Module({
+  imports: [GraphQLAppModule],
+})
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer

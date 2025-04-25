@@ -7,8 +7,8 @@ export class FollowerDto {
   @ApiProperty({ description: 'Full name of the follower' })
   fullName: string;
 
-  @ApiProperty({ description: 'Email of the follower', required: false })
-  email?: string;
+  @ApiProperty({ description: 'Email of the follower' })
+  email: string;
 
   @ApiProperty({ description: 'Date when the user started following' })
   followedAt: Date;

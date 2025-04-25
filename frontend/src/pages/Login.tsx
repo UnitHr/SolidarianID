@@ -24,7 +24,6 @@ export function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login response:', data);
         const playload = jwtDecode<{
           email: string;
           sub: { value: string };

@@ -1,10 +1,10 @@
-import { Alert, Button, Col, Container, Form, ListGroup, Row } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useEffect, useState } from "react";
-import "../index.css";
-import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
+import { Alert, Button, Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useEffect, useState } from 'react';
+import '../index.css';
+import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
 
-interface JoinComunityRequestValues{
+interface JoinComunityRequestValues {
   id: string;
   userId: string;
   communityId: string;
@@ -20,13 +20,13 @@ export function Notifications() {
   const [joinRequests, setJoinRequests] = useState<JoinComunityRequestValues[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState("success");
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('success');
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
-  const [currentCommunity, setCurrentCommunity] = useState("");
+  const [currentCommunity, setCurrentCommunity] = useState('');
   const pageSize = 5;
 
   function changeAlertMessage(value: string) {
@@ -37,30 +37,29 @@ export function Notifications() {
     setAlertVariant(value);
   }
 
+  async function fetchJoinRequests() {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/communities/${currentCommunity}/join-requests`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
 
-  async function fetchJoinRequests(){
-    const response = await fetch(`http://localhost:3000/api/v1/communities/${currentCommunity}/join-requests`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    })
-
-    if(response.ok){
+    if (response.ok) {
       const data = await response.json();
       setJoinRequests(data.data);
-    }
-    else{
-      setAlertMessage("Error fetching join requests for community " + currentCommunity);
-      setAlertVariant("danger");
+    } else {
+      setAlertMessage('Error fetching join requests for community ' + currentCommunity);
+      setAlertVariant('danger');
       setShowAlert(true);
-    } 
+    }
   }
 
   function handleCommunityChange(event) {
     setCurrentCommunity(event.target.value);
   }
-
-  
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -83,24 +82,24 @@ export function Notifications() {
           }
           const requestsData = await requestsResponse.json();
           setPendingRequests(requestsData.data);
-        }
-        else{
+        } else {
           // Check if user is community admin
-          const response = await fetch('http://localhost:3000/api/v1/communities/managed-communities', {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
+          const response = await fetch(
+            'http://localhost:3000/api/v1/communities/managed-communities',
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
 
           const data = await response.json();
-          if(data.data.length > 0) {
+          if (data.data.length > 0) {
             setIsCommunityAdmin(true);
             setManagedCommunities(data.data);
             setCurrentCommunity(data.data[0]);
           }
-
         }
-
       } catch (error) {
         console.error(error);
       }
@@ -192,11 +191,7 @@ export function Notifications() {
     <>
       <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
-        <Alert
-          variant={alertVariant}
-          onClose={(e) => setShowAlert(false)}
-          dismissible
-        >
+        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}
         </Alert>
       )}
@@ -310,7 +305,8 @@ export function Notifications() {
                       <Button
                         variant="primary"
                         onClick={() => {
-                          setShowModal(true);}}
+                          setShowModal(true);
+                        }}
                       >
                         Validate
                       </Button>
@@ -319,7 +315,7 @@ export function Notifications() {
                 ) : (
                   <p>No hay solicitudes pendientes.</p>
                 )}
-               </ListGroup>
+              </ListGroup>
             </Row>
           )}
         </Row>

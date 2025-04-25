@@ -47,7 +47,7 @@ export function SolidarianNavbar() {
         </Nav>
         <Nav className="mx-4">
           <Nav.Link href="/notifications" className="d-flex align-items-center">
-            <FaBell size={20} /> {/* Ícono de campanita */}
+            <FaBell size={20} />
           </Nav.Link>
           {!isAuthenticated ? (
             <>

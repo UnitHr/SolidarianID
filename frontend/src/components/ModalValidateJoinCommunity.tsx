@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { useState } from 'react';
+import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 
 interface ComponentProps {
   userName: string;
@@ -18,7 +18,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
   const urlBase = `https://localhost:3000/api/v1/communities/${props.communityId}/join-requests/${props.joinRequestId}`;
   const [showCommentEntry, setShowCommentEntry] = useState(false);
   const [countReject, setCountReject] = useState(0);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
 
   function changeComment(event: React.ChangeEvent<HTMLInputElement>) {
     setComment(event.target.value);
@@ -26,24 +26,24 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
 
   async function handleAccept() {
     const response = await fetch(urlBase, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        status: "approved",
+        status: 'approved',
       }),
     });
 
     if (response.status === 201) {
-      props.changeAlertMessage("Join request accepted");
-      props.changeAlertVariant("success");
+      props.changeAlertMessage('Join request accepted');
+      props.changeAlertVariant('success');
       props.handleAlertShow();
       props.handleHide();
     } else {
       const data = await response.json();
-      props.changeAlertMessage("Error: " + data.errors.message);
-      props.changeAlertVariant("danger");
+      props.changeAlertMessage('Error: ' + data.errors.message);
+      props.changeAlertVariant('danger');
       props.handleAlertShow();
       props.handleHide();
     }
@@ -55,34 +55,32 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
       setCountReject(countReject + 1);
     }
     if (countReject > 0) {
-      if (comment === "") {
-        props.changeAlertMessage(
-          "You must enter a comment to reject the join request."
-        );
-        props.changeAlertVariant("danger");
+      if (comment === '') {
+        props.changeAlertMessage('You must enter a comment to reject the join request.');
+        props.changeAlertVariant('danger');
         props.handleAlertShow();
       } else {
         const response = await fetch(urlBase, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            status: "approved",
-            comment: "commentario",
+            status: 'approved',
+            comment: 'commentario',
           }),
         });
 
         if (response.status === 201) {
-          props.changeAlertMessage("Join request accepted");
-          props.changeAlertVariant("success");
+          props.changeAlertMessage('Join request accepted');
+          props.changeAlertVariant('success');
           props.handleAlertShow();
 
           props.handleHide();
         } else {
           const data = await response.json();
-          props.changeAlertMessage("Error: " + data.errors.message);
-          props.changeAlertVariant("danger");
+          props.changeAlertMessage('Error: ' + data.errors.message);
+          props.changeAlertVariant('danger');
           props.handleAlertShow();
 
           props.handleHide();
@@ -137,12 +135,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
   }
   return (
     <>
-      <Modal
-        show={props.show}
-        onHide={props.handleHide}
-        backdrop="static"
-        keyboard={false}
-      >
+      <Modal show={props.show} onHide={props.handleHide} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>
             Join request to the community <b>{props.communityName}</b>
@@ -152,8 +145,8 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
           <Container>
             <Row>
               <h5>
-                The user <b>{props.userName}</b> has requested to join the
-                community <b>{props.communityName}</b>.
+                The user <b>{props.userName}</b> has requested to join the community{' '}
+                <b>{props.communityName}</b>.
               </h5>
             </Row>
             <Row className="mt-3">
@@ -166,7 +159,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
 
             {showCommentEntry && (
               <>
-                {" "}
+                {' '}
                 <Form.Label>Comment</Form.Label>
                 <Form.Control
                   id="inputComment"

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Col, Container, Form, Row, Card } from 'react-bootstrap';
 import { useAuth } from '../lib/context/AuthContext';
-import { loginUser } from '../services/login.service';
+import { loginUser } from '../services/user.service';
 
 export function Login() {
   const [email, setEmail] = useState('');

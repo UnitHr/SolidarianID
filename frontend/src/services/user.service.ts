@@ -9,6 +9,18 @@ export interface LoginResponse {
   exp: number;
 }
 
+export interface RegisterPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  birthDate: string | Date;
+  bio: string;
+  showAge: boolean;
+  showEmail: boolean;
+  githubId?: string | null;
+}
+
 export async function loginUser(email: string, password: string): Promise<LoginResponse> {
   const response = await fetch('http://localhost:3000/api/v1/users/auth/login', {
     method: 'POST',
@@ -49,4 +61,22 @@ export async function loginUser(email: string, password: string): Promise<LoginR
     token: data.access_token,
     exp: payload.exp,
   };
+}
+
+export async function registerUser(payload: RegisterPayload): Promise<void> {
+  const body = {
+    ...payload,
+    birthDate: new Date(payload.birthDate),
+  };
+
+  const response = await fetch('http://localhost:3000/api/v1/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Error during registration');
+  }
 }

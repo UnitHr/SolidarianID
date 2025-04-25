@@ -10,8 +10,24 @@ type CommunityModel {
   name: String!
 }
 
+input CreateUserInput {
+  bio: String
+  birthDate: DateTime!
+  email: String!
+  firstName: String!
+  githubId: String
+  lastName: String!
+  password: String!
+  showAge: Boolean
+  showEmail: Boolean
+}
+
 """Date custom scalar type"""
 scalar DateTime
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): UserModel!
+}
 
 type Query {
   community(id: ID!): CommunityModel!

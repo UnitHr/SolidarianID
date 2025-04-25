@@ -1,4 +1,13 @@
-import { Col, Container, Row, Image, OverlayTrigger, Tooltip, Button, Modal } from 'react-bootstrap';
+import {
+  Col,
+  Container,
+  Row,
+  Image,
+  OverlayTrigger,
+  Tooltip,
+  Button,
+  Modal,
+} from 'react-bootstrap';
 import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -22,7 +31,7 @@ type CauseDetails = {
 type User = {
   userId: string;
   token: string;
-}
+};
 
 export function CommunityDetails() {
   const { communityId } = useParams();
@@ -38,7 +47,6 @@ export function CommunityDetails() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
       navigate('/login');
@@ -154,15 +162,18 @@ export function CommunityDetails() {
 
   const handleJoin = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/communities/${communityId}/join-requests`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' ,
-          Authorization: `Bearer ${user?.token}`
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/communities/${communityId}/join-requests`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user?.token}` },
+        }
+      );
       console.log('Response:', response);
       if (response.status === 409) {
-        alert('You have already sent a request to join this community or your request has been denied');
+        alert(
+          'You have already sent a request to join this community or your request has been denied'
+        );
         setShowModal(false);
         return;
       }
@@ -199,18 +210,27 @@ export function CommunityDetails() {
                   <Col xs={12} md={6}>
                     <h2 className="mb-1">{community.name}</h2>
                   </Col>
-                  <Col xs={12} md={3} className="d-flex align-items-start justify-content-center mt-3 mt-md-5">
+                  <Col
+                    xs={12}
+                    md={3}
+                    className="d-flex flex-column align-items-center justify-content-center mt-3 mt-md-5 gap-2"
+                  >
                     {!isMember ? (
-                      <Button
-                        onClick={() => setShowModal(true)}
-                        className="btn btn-primary w-100"
-                      >
+                      <Button onClick={() => setShowModal(true)} className="btn btn-primary w-100">
                         Join Community
                       </Button>
                     ) : (
-                      <p className="text-success fw-bold text-center">
-                        You are a member of this community
-                      </p>
+                      <>
+                        <p className="text-success fw-bold text-center">
+                          You are a member of this community
+                        </p>
+                        <Button
+                          onClick={() => navigate(`/communities/${communityId}/create-cause`)}
+                          className="btn btn-primary w-100"
+                        >
+                          Create Cause
+                        </Button>
+                      </>
                     )}
                   </Col>
                 </Row>

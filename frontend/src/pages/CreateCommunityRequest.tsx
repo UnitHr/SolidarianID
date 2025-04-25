@@ -2,8 +2,10 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useState } from 'react';
 import { odsData, ODSEnum } from '../utils/ods';
+import { useNavigate } from 'react-router-dom';
 
 export function CreateCommunityRequest() {
+  const navigate = useNavigate();
   const [selectedOds, setSelectedOds] = useState<Set<ODSEnum>>(new Set());
 
   const handleCheckboxChange = (id: ODSEnum) => {
@@ -65,6 +67,8 @@ export function CreateCommunityRequest() {
       console.log('Community Request created successfully:', data);
 
       alert('Community Request created successfully!');
+
+      navigate('/communities');
     } catch (error) {
       console.error(error);
       alert('Failed to create community request. Please try again.');
@@ -77,7 +81,7 @@ export function CreateCommunityRequest() {
       <Container>
         <Row>
           <Row className="my-5">
-            <h1 className="text-center">Request a new community creation</h1>
+            <h1 className="text-center">Create Community Request</h1>
           </Row>
 
           <Row className="my-4">
@@ -85,7 +89,7 @@ export function CreateCommunityRequest() {
               <form>
                 <div className="mb-3">
                   <label htmlFor="communityName" className="form-label">
-                    Community Name
+                    Name
                   </label>
                   <input
                     type="text"
@@ -108,12 +112,10 @@ export function CreateCommunityRequest() {
 
                 <Row className="my-4">
                   <div className="mb-3">
-                    <label htmlFor="causeForm" className="form-label">
-                      Cause
-                    </label>
+                    <h2 className="text-center">Cause</h2>
                     <div className="mb-3">
                       <label htmlFor="causeTitle" className="form-label">
-                        Cause Title
+                        Title
                       </label>
                       <input
                         type="text"

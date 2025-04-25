@@ -31,6 +31,12 @@ export abstract class CommunityService {
     limit?: number,
   ): Promise<{ data: Domain.Community[]; total: number }>;
 
+  abstract getManagedCommunities(
+    userId: string,
+  ): Promise<
+    Either<Exceptions.UserDoNotManageCommunities, Result<Domain.Community[]>>
+  >;
+
   abstract createCommunityRequest(createCommunityRequest: {
     userId: string;
     communityName: string;

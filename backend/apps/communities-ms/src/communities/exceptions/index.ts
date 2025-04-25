@@ -9,6 +9,7 @@ import { JoinCommunityRequestNotFound } from './JoinCommunityRequestNotFound';
 import { MissingPropertiesError } from './MissingPropertiesError';
 import { UserIsNotCommunityAdmin } from './UserIsNotCommunityAdmin';
 import { InvalidDateProvided } from './InvalidDateProvided';
+import { UserDoNotManageCommunities } from './UserDoNotManageCommunities';
 
 export {
   CommunityNameIsTaken,
@@ -22,4 +23,5 @@ export {
   MissingPropertiesError,
   UserIsNotCommunityAdmin,
   InvalidDateProvided,
+  UserDoNotManageCommunities,
 };

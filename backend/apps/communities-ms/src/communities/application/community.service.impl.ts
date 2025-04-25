@@ -80,6 +80,20 @@ export class CommunityServiceImpl implements CommunityService {
     return right({ data, total });
   }
 
+  async getManagedCommunities(
+    userId: string,
+  ): Promise<
+    Either<Exceptions.UserDoNotManageCommunities, Result<Domain.Community[]>>
+  > {
+    const communities = await this.communityRepository.findByAdminId(userId);
+
+    if (!communities) {
+      return left(Exceptions.UserDoNotManageCommunities.create());
+    }
+
+    return right(Result.ok(communities));
+  }
+
   async getCommunities(
     name?: string,
     page: number = PaginationDefaults.DEFAULT_PAGE,

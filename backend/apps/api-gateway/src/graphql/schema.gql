@@ -13,24 +13,8 @@ type CommunityModel {
 """Date custom scalar type"""
 scalar DateTime
 
-type FollowerModel {
-  email: String!
-  followedAt: DateTime!
-  followerId: ID!
-  fullName: String!
-}
-
-type FollowingModel {
-  email: String!
-  followedAt: DateTime!
-  followedUserId: ID!
-  fullName: String!
-}
-
 type Query {
   community(id: ID!): CommunityModel!
-  followers(limit: Int! = 10, page: Int! = 1, userId: ID!): [FollowerModel!]
-  following(limit: Int! = 10, page: Int! = 1, userId: ID!): [FollowingModel!]
   user(id: ID!): UserModel!
 }
 

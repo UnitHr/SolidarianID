@@ -4,7 +4,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HttpModule } from '@nestjs/axios';
 import { join } from 'path';
 import { UserResolver } from './resolvers/user.resolver';
-import { FollowerResolver } from './resolvers/follower.resolver';
 import { CommunityResolver } from './resolvers/community.resolver';
 import { UserService } from './services/user.service';
 import { CommunityService } from './services/community.service';
@@ -26,7 +25,6 @@ import { DateScalar } from './scalars/date.scalar';
   ],
   providers: [
     UserResolver,
-    FollowerResolver,
     CommunityResolver,
     UserService,
     CommunityService,

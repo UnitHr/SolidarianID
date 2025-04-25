@@ -113,7 +113,7 @@ export function ActionDetails() {
         </Row>
         <Row>
           <Col>
-            <h4 className="mt-4 mb-3">Cause Description</h4>
+            <h4 className="mt-4 mb-3">Description</h4>
             <p>{action?.description}</p>
           </Col>
         </Row>

@@ -234,14 +234,18 @@ export function CommunityDetails() {
                     )}
                   </Col>
                 </Row>
+
                 <hr className="my-4" />
 
                 <Row>
                   <Col>
-                    <h4 className="mb-3">Community Description</h4>
+                    <h4 className="mb-3">Description</h4>
                     <p>{community.description}</p>
                   </Col>
                 </Row>
+
+                <hr className="my-4" />
+
                 <Row>
                   <Col>
                     {causes.length > 0 && (

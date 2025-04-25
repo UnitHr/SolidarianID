@@ -195,7 +195,10 @@ export class CommunityController {
 
     res.status(HttpStatus.OK);
     res.json({
-      data: communities.map((community) => community.id.toString()),
+      data: communities.map((community) => ({
+        id: community.id,
+        name: community.name,
+      })),
     });
     res.end();
   }

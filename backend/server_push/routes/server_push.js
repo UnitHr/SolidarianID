@@ -169,6 +169,65 @@ router.post('/sendToAll', function sendToAllHandler(req, res) {
     });
 });
 
+// Ruta para enviar notificación solo a los administradores
+router.post('/sendToAdmins', function sendToAdminsHandler(req, res) {
+  const { payload, ttl = 86400 } = req.body;
+
+  if (!payload) {
+    return res.status(400).json({ error: 'Se requiere payload' });
+  }
+
+  // Filtrar suscripciones donde el rol del usuario incluye 'admin'
+  const adminSubscriptions = subscriptions.filter((sub) =>
+    sub.userRoles.includes('admin'),
+  );
+
+  if (adminSubscriptions.length === 0) {
+    return res.status(404).json({ error: 'No hay administradores suscritos' });
+  }
+
+  const sendPromises = adminSubscriptions.map((subscription) => {
+    return webPush
+      .sendNotification(subscription.subscription, payload, { TTL: ttl })
+      .catch((error) => {
+        console.error(
+          'Error al enviar a:',
+          subscription.subscription.endpoint,
+          error,
+        );
+        // Si el error es que la suscripción ha expirado, la eliminamos
+        if (error.statusCode === 410) {
+          const index = subscriptions.findIndex(
+            (sub) =>
+              sub.subscription.endpoint === subscription.subscription.endpoint,
+          );
+          if (index !== -1) {
+            subscriptions.splice(index, 1);
+            console.log(
+              'Suscripción eliminada por expiración:',
+              subscription.subscription.endpoint,
+            );
+          }
+        }
+        return { error: true, endpoint: subscription.subscription.endpoint };
+      });
+  });
+
+  Promise.all(sendPromises)
+    .then((results) => {
+      const successful = results.filter(
+        (result) => !result || !result.error,
+      ).length;
+      res.json({
+        message: `Notificaciones enviadas a administradores: ${successful} de ${adminSubscriptions.length}`,
+      });
+    })
+    .catch((error) => {
+      console.error('Error al enviar notificaciones:', error);
+      res.status(500).json({ error: 'Error al enviar notificaciones' });
+    });
+});
+
 // Ruta para listar todas las suscripciones (útil para debugging)
 router.get('/subscriptions', function listSubscriptionsHandler(req, res) {
   res.json({
@@ -180,5 +239,22 @@ router.get('/subscriptions', function listSubscriptionsHandler(req, res) {
     })),
   });
 });
+
+// Ruta para verificar si un usuario está suscrito
+router.get(
+  '/subscription/:userId',
+  function checkSubscriptionHandler(req, res) {
+    const { userId } = req.params;
+
+    // Buscar si existe una suscripción para el userId proporcionado
+    const subscription = subscriptions.find((sub) => sub.userId === userId);
+
+    if (subscription) {
+      res.json({ isSubscribed: true, subscription: subscription.subscription });
+    } else {
+      res.json({ isSubscribed: false });
+    }
+  },
+);
 
 export default router;

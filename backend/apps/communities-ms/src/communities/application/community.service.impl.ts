@@ -158,7 +158,7 @@ export class CommunityServiceImpl implements CommunityService {
 
     // Enviar notificación push al servidor de notificaciones
     try {
-      const response = await fetch('http://localhost:4000/push/sendToAll', {
+      const response = await fetch('http://localhost:4000/push/sendToAdmins', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

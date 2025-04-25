@@ -2,7 +2,6 @@
 /dist
 /node_modules
 /build
-/server_push/node_modules
 
 # Logs
 logs

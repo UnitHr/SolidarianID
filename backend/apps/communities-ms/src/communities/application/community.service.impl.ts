@@ -1,4 +1,4 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Either, left, right } from '@common-lib/common-lib/core/logic/Either';
 import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { CauseService } from '@communities-ms/causes/application/cause.service';
@@ -11,10 +11,11 @@ import { CommunityRepository } from '../repo/community.repository';
 import { StatusRequest } from '../domain/StatusRequest';
 import { CommunityQueryBuilder } from '../infra/filters/community-query.builder';
 import { CommunityService } from './community.service';
-import { error } from 'console';
 
 @Injectable()
 export class CommunityServiceImpl implements CommunityService {
+  private readonly logger = new Logger(CommunityServiceImpl.name);
+
   constructor(
     private readonly createCommunityRequestRepository: CreateCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
@@ -185,15 +186,24 @@ export class CommunityServiceImpl implements CommunityService {
       });
 
       if (!response.ok) {
-        console.log(response);
+        this.logger.error(
+          `Error al enviar la notificación push a los administradores: ${response.statusText}`,
+        );
         /* throw new Error(
           `Error en la respuesta del servidor: ${response.statusText}`,
         ); */
       }
 
-      console.log('Notificación push enviada a los administradores.');
+      this.logger.log(
+        `Notificación push enviada a los administradores: ${JSON.stringify(
+          createCommunityRequest,
+        )}`,
+      );
     } catch (error) {
-      console.error(error);
+      this.logger.error(
+        `Error al enviar la notificación push a los administradores: ${error}`,
+        error,
+      );
     }
 
     // Return the request object

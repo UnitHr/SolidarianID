@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { UserResolver } from './resolvers/user.resolver';
+import { FollowerResolver } from './resolvers/follower.resolver';
 import { UserService } from './services/user.service';
 import { DateScalar } from './scalars/date.scalar';
 
@@ -16,6 +17,6 @@ import { DateScalar } from './scalars/date.scalar';
       introspection: true,
     }),
   ],
-  providers: [UserResolver, UserService, DateScalar],
+  providers: [UserResolver, FollowerResolver, UserService, DateScalar],
 })
 export class GraphQLAppModule {}

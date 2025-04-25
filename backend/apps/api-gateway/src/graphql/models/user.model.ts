@@ -1,6 +1,4 @@
 import { Field, ID, ObjectType, Int } from '@nestjs/graphql';
-import { FollowerModel } from './follower.model';
-import { FollowingModel } from './following.model';
 
 @ObjectType()
 export class UserModel {
@@ -21,12 +19,6 @@ export class UserModel {
 
   @Field({ nullable: true })
   bio?: string;
-
-  @Field(() => [FollowerModel], { nullable: true })
-  followers?: FollowerModel[];
-
-  @Field(() => [FollowingModel], { nullable: true })
-  following?: FollowingModel[];
 
   @Field(() => Int, { nullable: true })
   followersCount?: number;

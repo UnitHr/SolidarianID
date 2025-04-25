@@ -20,6 +20,8 @@ type FollowingModel {
 }
 
 type Query {
+  followers(limit: Int! = 10, page: Int! = 1, userId: ID!): [FollowerModel!]
+  following(limit: Int! = 10, page: Int! = 1, userId: ID!): [FollowingModel!]
   user(id: ID!): UserModel!
 }
 
@@ -28,9 +30,7 @@ type UserModel {
   bio: String
   email: String
   firstName: String!
-  followers(limit: Int! = 10, page: Int! = 1): [FollowerModel!]
   followersCount: Int
-  following(limit: Int! = 10, page: Int! = 1): [FollowingModel!]
   followingCount: Int
   id: ID!
   lastName: String!

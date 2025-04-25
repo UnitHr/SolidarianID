@@ -1,21 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Image,
-  Modal,
-  Button,
-} from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Modal, Button } from 'react-bootstrap';
 import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { Paginate } from '../components/Pagination';
 
 import girlImage from '../assets/chica-solidarianid.png';
 import altImage from '../assets/chico.png';
 import '../styles/profile.css';
-
 
 type HistoryEntry = {
   type: string;
@@ -56,7 +47,7 @@ export function UserHistory() {
   const [showSupports, setShowSupports] = useState(false);
   const [showRequests, setShowRequests] = useState(false);
   const [fullName, setFullName] = useState('');
-  const limit = 2;
+  const limit = 6;
   const [page, setPage] = useState({
     followingPage: 1,
     communitiesPage: 1,
@@ -81,12 +72,28 @@ export function UserHistory() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
+
     if (!storedUser) {
-      navigate('/login');
+      navigate('/');
       return;
     }
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
+
+    const exp = parsedUser.exp;
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (exp && exp < currentTime) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/');
+    }
+
+    const storedImageType = localStorage.getItem('profileImageType');
+    if (storedImageType === 'boy') {
+      setProfileImage(altImage);
+    } else {
+      setProfileImage(girlImage);
+    }
 
     if (userId) {
       parsedUser.userId = userId;
@@ -94,15 +101,12 @@ export function UserHistory() {
 
     async function fetchUser() {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/v1/users/${parsedUser.userId}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await fetch(`http://localhost:3000/api/v1/users/${parsedUser.userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         if (response.ok) {
           const data = await response.json();
           setFullName(data.firstName + ' ' + data.lastName);
@@ -112,7 +116,7 @@ export function UserHistory() {
       } catch (error) {
         console.error('Error:', error);
       }
-    } 
+    }
 
     async function fetchHistory() {
       try {
@@ -131,7 +135,6 @@ export function UserHistory() {
         if (followingResponse.ok) {
           const followingsData = await followingResponse.json();
           setFollowing(followingsData.data);
-          console.log(followingsData.data);
           setTotalPages((prev) => ({
             ...prev,
             followingTotalPage: followingsData.meta.totalPages,
@@ -184,7 +187,6 @@ export function UserHistory() {
         if (causesResponse.ok) {
           const causesData = await causesResponse.json();
           setCauses(causesData.data);
-          console.log(causesData.data);
           setTotalPages((prev) => ({
             ...prev,
             causesTotalPage: causesData.meta.totalPages,
@@ -219,8 +221,7 @@ export function UserHistory() {
             ...prev,
             supportsTotalCount: supportsData.meta.total,
           }));
-        }
-        else {
+        } else {
           console.error('Error fetching supports history');
         }
 
@@ -249,7 +250,6 @@ export function UserHistory() {
         } else {
           console.error('Error fetching request history');
         }
-
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -274,6 +274,8 @@ export function UserHistory() {
 
   const handleImageSelect = (image: string) => {
     setProfileImage(image);
+    const imageType = image === girlImage ? 'girl' : 'boy';
+    localStorage.setItem('profileImageType', imageType);
     setShowImageModal(false);
   };
 
@@ -291,15 +293,10 @@ export function UserHistory() {
             />
           </Col>
           <Col>
-            <h4 className="mb-0">
-              {fullName}
-            </h4>
+            <h4 className="mb-0">{fullName}</h4>
           </Col>
           <Col xs="auto">
-            <div
-              onClick={handleFollowingClick}
-              className="following-info"
-            >
+            <div onClick={handleFollowingClick} className="following-info">
               <div className="fw-bold fs-4 following-number">{totalCount.followingTotalCount}</div>
               <div className="text-muted following-label">Following</div>
             </div>
@@ -315,7 +312,6 @@ export function UserHistory() {
                 setShowSupports(false);
                 setShowRequests(false);
               }}
-
               className="profile-card"
             >
               <Card.Body className="text-center">
@@ -384,7 +380,10 @@ export function UserHistory() {
                 <ul className="mb-0 list-unstyled">
                   {communities.map((community) => (
                     <li key={community.entityId} className="mb-2">
-                      <Link to={`/communities/${community.entityId}`} className="text-decoration-none entity-link">
+                      <Link
+                        to={`/communities/${community.entityId}`}
+                        className="text-decoration-none entity-link"
+                      >
                         {community.entityName}
                       </Link>
                     </li>
@@ -394,12 +393,14 @@ export function UserHistory() {
                 <p>No communities joined yet.</p>
               )}
               <Paginate
-                currentPage={page.communitiesPage}  
-                totalPages={totalPages.communitiesTotalPage} 
-                onPageChange={(newPage: number) => setPage(prev => ({
-                  ...prev,
-                  communitiesPage: newPage 
-                }))}
+                currentPage={page.communitiesPage}
+                totalPages={totalPages.communitiesTotalPage}
+                onPageChange={(newPage: number) =>
+                  setPage((prev) => ({
+                    ...prev,
+                    communitiesPage: newPage,
+                  }))
+                }
               />
             </Card.Body>
           </Card>
@@ -412,7 +413,10 @@ export function UserHistory() {
                 <ul className="mb-0 list-unstyled">
                   {causes.map((cause) => (
                     <li key={cause.entityId} className="mb-2">
-                      <Link to={`/causes/${cause.entityId}`} className="text-decoration-none entity-link">
+                      <Link
+                        to={`/causes/${cause.entityId}`}
+                        className="text-decoration-none entity-link"
+                      >
                         {cause.entityName}
                       </Link>
                     </li>
@@ -422,12 +426,14 @@ export function UserHistory() {
                 <p>No causes supported yet.</p>
               )}
               <Paginate
-                currentPage={page.causesPage}  
-                totalPages={totalPages.causesTotalPage} 
-                onPageChange={(newPage: number) => setPage(prev => ({
-                  ...prev,
-                  causesPage: newPage 
-                }))}
+                currentPage={page.causesPage}
+                totalPages={totalPages.causesTotalPage}
+                onPageChange={(newPage: number) =>
+                  setPage((prev) => ({
+                    ...prev,
+                    causesPage: newPage,
+                  }))
+                }
               />
             </Card.Body>
           </Card>
@@ -441,7 +447,10 @@ export function UserHistory() {
                 <ul className="mb-0 list-unstyled">
                   {supports.map((support) => (
                     <li key={support.entityId} className="mb-2">
-                      <Link to={`/actions/${support.entityId}`} className="text-decoration-none entity-link">
+                      <Link
+                        to={`/actions/${support.entityId}`}
+                        className="text-decoration-none entity-link"
+                      >
                         {support.entityName}
                       </Link>
                     </li>
@@ -451,12 +460,14 @@ export function UserHistory() {
                 <p>No actions contributed yet.</p>
               )}
               <Paginate
-                currentPage={page.supportsPage}  
-                totalPages={totalPages.supportsTotalPage} 
-                onPageChange={(newPage: number) => setPage(prev => ({
-                  ...prev,
-                  supportsPage: newPage 
-                }))}
+                currentPage={page.supportsPage}
+                totalPages={totalPages.supportsTotalPage}
+                onPageChange={(newPage: number) =>
+                  setPage((prev) => ({
+                    ...prev,
+                    supportsPage: newPage,
+                  }))
+                }
               />
             </Card.Body>
           </Card>
@@ -470,7 +481,10 @@ export function UserHistory() {
                 <ul className="mb-0 list-unstyled">
                   {request.map((req) => (
                     <li key={req.entityId} className="mb-2">
-                      <Link to={`/communities/${req.entityId}`} className="text-decoration-none entity-link">
+                      <Link
+                        to={`/communities/${req.entityId}`}
+                        className="text-decoration-none entity-link"
+                      >
                         {req.entityName}
                       </Link>
                     </li>
@@ -480,12 +494,14 @@ export function UserHistory() {
                 <p>No pending requests.</p>
               )}
               <Paginate
-                currentPage={page.requestPage}  
-                totalPages={totalPages.requestTotalPage} 
-                onPageChange={(newPage: number) => setPage(prev => ({
-                  ...prev,
-                  requestPage: newPage 
-                }))}
+                currentPage={page.requestPage}
+                totalPages={totalPages.requestTotalPage}
+                onPageChange={(newPage: number) =>
+                  setPage((prev) => ({
+                    ...prev,
+                    requestPage: newPage,
+                  }))
+                }
               />
             </Card.Body>
           </Card>
@@ -500,12 +516,13 @@ export function UserHistory() {
             <ul className="list-unstyled mb-0">
               {following.map((f) => (
                 <li key={f.followedUserId} className="mb-2">
-                <Link
-                to={`/profile/${f.followedUserId}`}
-                onClick={() => window.location.href = `/profile/${f.followedUserId}`}
-              >
-                {f.fullName}
-              </Link>
+                  <Link
+                    to={`/profile/${f.followedUserId}`}
+                    onClick={() => (window.location.href = `/profile/${f.followedUserId}`)}
+                    className="text-decoration-none entity-link"
+                  >
+                    {f.fullName}
+                  </Link>
                 </li>
               ))}
             </ul>

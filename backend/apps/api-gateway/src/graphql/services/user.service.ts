@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { envs } from '@api-gateway/config';
 import { CreateUserInput } from '../inputs/create-user.input';
@@ -7,43 +7,33 @@ import { CreateUserInput } from '../inputs/create-user.input';
 export class UserService {
   private readonly usersMsUrl = envs.usersMsUrl;
 
+  private readonly logger = new Logger(UserService.name);
+
   async getUserProfile(id: string) {
-    try {
-      const response = await axios.get(`${this.usersMsUrl}/${id}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(`Failed to fetch user profile: ${error.message}`);
-    }
+    this.logger.debug(`Fetching user profile for ID: ${id}`);
+    const response = await axios.get(`${this.usersMsUrl}/${id}`);
+    return response.data;
   }
 
   async countUserFollowing(id: string): Promise<number> {
-    try {
-      const response = await axios.get(
-        `${this.usersMsUrl}/${id}/following/count`,
-      );
-      return response.data.count;
-    } catch (error) {
-      throw new Error(`Failed to count user following: ${error.message}`);
-    }
+    this.logger.debug(`Counting users that ${id} is following`);
+    const response = await axios.get(
+      `${this.usersMsUrl}/${id}/following/count`,
+    );
+    return response.data.count;
   }
 
   async countUserFollowers(id: string): Promise<number> {
-    try {
-      const response = await axios.get(
-        `${this.usersMsUrl}/${id}/followers/count`,
-      );
-      return response.data.count;
-    } catch (error) {
-      throw new Error(`Failed to count user followers: ${error.message}`);
-    }
+    this.logger.debug(`Counting followers for user ${id}`);
+    const response = await axios.get(
+      `${this.usersMsUrl}/${id}/followers/count`,
+    );
+    return response.data.count;
   }
 
   async createUser(createUserInput: CreateUserInput): Promise<string> {
-    try {
-      const response = await axios.post(`${this.usersMsUrl}`, createUserInput);
-      return response.data.id;
-    } catch (error) {
-      throw new Error(`Failed to create user: ${error.message}`);
-    }
+    this.logger.debug('Creating new user');
+    const response = await axios.post(`${this.usersMsUrl}`, createUserInput);
+    return response.data.id;
   }
 }

@@ -83,4 +83,12 @@ export class FollowerServiceImpl implements FollowerService {
     );
     return !!follower;
   }
+
+  async countUserFollowers(userId: string): Promise<number> {
+    return this.followerRepository.countFollowers(userId);
+  }
+
+  async countUserFollowing(userId: string): Promise<number> {
+    return this.followerRepository.countFollowing(userId);
+  }
 }

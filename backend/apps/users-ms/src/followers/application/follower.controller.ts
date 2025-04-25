@@ -66,4 +66,15 @@ export class FollowersController {
 
     res.status(HttpStatus.OK).json(response);
   }
+
+  @ApiOperation({ summary: "Get a user's followers count" })
+  @Public()
+  @Get('count')
+  async getFollowersCount(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Res() res: Response,
+  ) {
+    const count = await this.followerService.countUserFollowers(userId);
+    res.status(HttpStatus.OK).json({ count });
+  }
 }

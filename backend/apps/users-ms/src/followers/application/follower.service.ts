@@ -22,4 +22,8 @@ export abstract class FollowerService {
     followedUserId: string,
     followerUserId: string,
   ): Promise<boolean>;
+
+  abstract countUserFollowers(userId: string): Promise<number>;
+
+  abstract countUserFollowing(userId: string): Promise<number>;
 }

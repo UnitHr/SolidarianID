@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HttpModule } from '@nestjs/axios';
@@ -10,14 +10,6 @@ import { UserService } from './services/user.service';
 import { CommunityService } from './services/community.service';
 import { DateScalar } from './scalars/date.scalar';
 import { GraphQLGeneralExceptionFilter } from './filters/general-exception.filter';
-
-// Exception filters providers
-const exceptionFilters: Provider[] = [
-  {
-    provide: APP_FILTER,
-    useClass: GraphQLGeneralExceptionFilter,
-  },
-];
 
 @Module({
   imports: [
@@ -38,12 +30,8 @@ const exceptionFilters: Provider[] = [
           extensions: {
             code: error.extensions?.code,
             // Include selected additional data
-            ...(error.extensions?.errorDetails && {
-              errorDetails: error.extensions.errorDetails,
-            }),
-            ...(error.extensions?.originalStatus && {
-              originalStatus: error.extensions.originalStatus,
-            }),
+            errorDetails: error.extensions?.errorDetails,
+            originalStatus: error.extensions?.originalStatus,
           },
         };
 
@@ -58,7 +46,7 @@ const exceptionFilters: Provider[] = [
     UserService,
     CommunityService,
     DateScalar,
-    ...exceptionFilters,
+    { provide: APP_FILTER, useClass: GraphQLGeneralExceptionFilter },
   ],
 })
 export class GraphQLAppModule {}

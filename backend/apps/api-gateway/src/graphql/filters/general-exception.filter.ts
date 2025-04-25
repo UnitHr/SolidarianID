@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  ArgumentsHost,
-  Catch,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpStatus, Logger } from '@nestjs/common';
 import { GqlArgumentsHost, GqlExceptionFilter } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-express';
 import axios, { AxiosError } from 'axios';
@@ -44,22 +38,7 @@ export class GraphQLGeneralExceptionFilter implements GqlExceptionFilter {
         ...(response && typeof response === 'object' ? response : {}),
       };
 
-      return this.mapHttpExceptionToGraphQL(status, message, extensions);
-    }
-
-    // Nest HTTP exceptions
-    if (exception instanceof HttpException) {
-      const status = exception.getStatus();
-      const response = exception.getResponse() as any;
-
-      let message = this.extractMessage(response) || exception.message;
-      message = this.sanitizeMessage(message);
-      const errorCode = this.extractErrorCode(response) || HttpStatus[status];
-      const extensions = {
-        originalStatus: status,
-        code: errorCode,
-        ...(typeof response === 'object' ? response : {}),
-      };
+      this.logger.debug(`Axios ${status} error: ${message}`);
 
       return this.mapHttpExceptionToGraphQL(status, message, extensions);
     }

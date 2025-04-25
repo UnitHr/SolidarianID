@@ -32,9 +32,6 @@ export class NotificationEventListenerController {
       };
 
       await this.notificationService.publishNewNotification(notification);
-      this.logger.log(
-        `Successfully published notification for user ${notification.recipientId}`,
-      );
       this.logger.debug(
         `Notification details: ${JSON.stringify(notification)}`,
       );

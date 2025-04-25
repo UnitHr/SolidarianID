@@ -4,9 +4,11 @@ import { FollowerService } from '@users-ms/followers/application/follower.servic
 import { NotificationCreatedEvent } from '@common-lib/common-lib/events/domain/NotificationCreatedEvent';
 import { EventsService } from '@common-lib/common-lib/events/events.service';
 import { Follower } from '@users-ms/followers/domain';
+import { UserService } from '@users-ms/users/application/user.service';
+import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { NotificationService } from './notification.service';
-import { NotificationRepository } from '../domain/notification.repository';
 import { Notification } from '../domain/Notification';
+import { NotificationRepository } from '../notification.repository';
 
 @Injectable()
 export class NotificationServiceImpl implements NotificationService {
@@ -15,6 +17,7 @@ export class NotificationServiceImpl implements NotificationService {
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly followerService: FollowerService,
+    private readonly usersService: UserService,
     private readonly eventsService: EventsService,
   ) {}
 
@@ -33,6 +36,30 @@ export class NotificationServiceImpl implements NotificationService {
 
   async markAsRead(userId: string, notificationId: string): Promise<void> {
     await this.notificationRepository.markAsRead(userId, notificationId);
+  }
+
+  async createNotificationsForCommunityAdmins(
+    historyEntryId: string,
+    timestamp?: Date,
+  ): Promise<void> {
+    const admins = await this.usersService.findUsersByRole(Role.ADMIN);
+    const notifications = admins.map((admin) => {
+      return Notification.create({
+        historyEntryId: new UniqueEntityID(historyEntryId),
+        recipientId: admin.id,
+        read: false,
+        timestamp,
+      });
+    });
+
+    const createdNotifications =
+      await this.notificationRepository.createMany(notifications);
+
+    await Promise.all(
+      createdNotifications.map((notification) =>
+        this.publishNotificationCreatedEvent(notification),
+      ),
+    );
   }
 
   /* eslint-disable no-await-in-loop */ // TODO: review if this could be improved, batch processing
@@ -102,6 +129,9 @@ export class NotificationServiceImpl implements NotificationService {
         notification.historyEntry?.type,
         notification.historyEntry?.entityId.toString(),
         notification.historyEntry?.entityName,
+      );
+      this.logger.debug(
+        `Publishing notification event for recipient ${notification.recipientId}`,
       );
 
       await this.eventsService.publish(

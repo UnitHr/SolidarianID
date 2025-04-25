@@ -1,8 +1,7 @@
-import {
-  Entity,
-  UniqueEntityID,
-} from '@common-lib/common-lib/core/domain/Entity';
+import { UniqueEntityID } from '@common-lib/common-lib/core/domain/Entity';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
+import { EntityRoot } from '@common-lib/common-lib/core/domain/EntityRoot';
+import { CreateCommunityRequestEvent } from '@common-lib/common-lib/events/domain/CreateCommunityRequestEvent';
 import { StatusRequest } from './StatusRequest';
 import { MissingPropertiesError } from '../exceptions';
 
@@ -19,7 +18,7 @@ interface CreateCommunityRequestProps {
   comment?: string;
 }
 
-export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> {
+export class CreateCommunityRequest extends EntityRoot<CreateCommunityRequestProps> {
   private constructor(props: CreateCommunityRequestProps, id?: UniqueEntityID) {
     super(props, id);
   }
@@ -97,6 +96,7 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
       causeEndDate,
       causeOds,
       status,
+      createdAt,
     } = props;
     if (
       !userId ||
@@ -106,11 +106,26 @@ export class CreateCommunityRequest extends Entity<CreateCommunityRequestProps> 
       !causeDescription ||
       !causeEndDate ||
       !causeOds ||
-      !status
+      !status ||
+      !createdAt
     ) {
       MissingPropertiesError.create();
     }
 
-    return new CreateCommunityRequest(props, id);
+    const createCommunityRequest = new CreateCommunityRequest(props, id);
+
+    if (!id) {
+      // Publish an event when a new community creation request is created
+      createCommunityRequest.apply(
+        new CreateCommunityRequestEvent(
+          userId,
+          createCommunityRequest.id.toString(),
+          communityName,
+          createdAt,
+        ),
+      );
+    }
+
+    return createCommunityRequest;
   }
 }

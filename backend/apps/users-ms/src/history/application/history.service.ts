@@ -25,6 +25,13 @@ export abstract class HistoryService {
     timestamp: Date,
   ): Promise<void>;
 
+  abstract registerCommunityCreationRequest(
+    userId: string,
+    requestId: string,
+    communityName: string,
+    timestamp: Date,
+  ): Promise<void>;
+
   abstract registerActionContribute(
     userId: string,
     actionId: string,

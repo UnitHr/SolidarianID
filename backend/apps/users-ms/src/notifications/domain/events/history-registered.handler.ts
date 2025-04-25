@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { ActivityType } from '@users-ms/history/domain';
 import { HistoryRegisteredEvent } from '@users-ms/history/domain/events/HistoryRegisteredEvent';
 import { NotificationService } from '@users-ms/notifications/application/notification.service';
 
@@ -11,8 +12,15 @@ export class HistoryRegisteredHandler
 
   private readonly logger = new Logger(HistoryRegisteredHandler.name);
 
-  handle(event: HistoryRegisteredEvent) {
-    this.notificationService.createNotificationsForFollowers(
+  async handle(event: HistoryRegisteredEvent) {
+    if (event.type === ActivityType.COMMUNITY_CREATION_REQUEST_SENT) {
+      await this.notificationService.createNotificationsForCommunityAdmins(
+        event.historyEntryId,
+        event.date,
+      );
+      return;
+    }
+    await this.notificationService.createNotificationsForFollowers(
       event.historyEntryId,
       event.userId,
       event.date,

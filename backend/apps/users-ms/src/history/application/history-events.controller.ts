@@ -9,6 +9,7 @@ import { CommunityCreatedEvent } from '@common-lib/common-lib/events/domain/Comm
 import { UserJoinedCommunity } from '@common-lib/common-lib/events/domain/UserJoinedCommunity';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { HistoryService } from './history.service';
+import { CreateCommunityRequestEvent } from '../../../../../libs/common-lib/src/events/domain/CreateCommunityRequestEvent';
 
 @ApiExcludeController()
 @Controller()
@@ -40,6 +41,21 @@ export class HistoryEventsController {
     );
     this.logger.log(
       `Action contributed event handled: User ${message.userId} contributed to action ${message.actionId}`,
+    );
+  }
+
+  @EventPattern(CreateCommunityRequestEvent.EVENT_TYPE)
+  async handleCreateCommunityRequestCreated(
+    @Payload() message: CreateCommunityRequestEvent,
+  ) {
+    await this.historyService.registerCommunityCreationRequest(
+      message.userId,
+      message.requestId,
+      message.communityName,
+      message.date,
+    );
+    this.logger.log(
+      `Community creation request event handled: User ${message.userId} requested to create community ${message.communityName}`,
     );
   }
 

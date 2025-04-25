@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Test, TestingModule } from '@nestjs/testing';
 import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityID';
+import { EventPublisher } from '@nestjs/cqrs';
 import { CommunityServiceImpl } from '../../../src/communities/application/community.service.impl';
 import { CreateCommunityRequestRepository } from '../../../src/communities/repo/create-community.repository';
 import { StatusRequest } from '../../../src/communities/domain/StatusRequest';
@@ -90,6 +91,15 @@ describe('CommunityService', () => {
         {
           provide: CauseService,
           useValue: mockCauseService,
+        },
+        {
+          provide: EventPublisher,
+          useValue: {
+            mergeObjectContext: jest.fn().mockReturnValue({
+              commit: jest.fn(),
+              rollback: jest.fn(),
+            }),
+          },
         },
       ],
     }).compile();

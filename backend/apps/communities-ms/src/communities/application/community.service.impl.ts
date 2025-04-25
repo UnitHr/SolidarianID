@@ -4,6 +4,7 @@ import { Result } from '@common-lib/common-lib/core/logic/Result';
 import { CauseService } from '@communities-ms/causes/application/cause.service';
 import { ODSEnum } from '@common-lib/common-lib/common/ods';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
+import { EventPublisher } from '@nestjs/cqrs';
 import * as Domain from '../domain';
 import * as Exceptions from '../exceptions';
 import { CreateCommunityRequestRepository } from '../repo/create-community.repository';
@@ -20,6 +21,7 @@ export class CommunityServiceImpl implements CommunityService {
     private readonly createCommunityRequestRepository: CreateCommunityRequestRepository,
     private readonly communityRepository: CommunityRepository,
     private readonly causeService: CauseService,
+    private readonly eventPublisher: EventPublisher,
   ) {}
 
   async getCommunity(
@@ -127,7 +129,7 @@ export class CommunityServiceImpl implements CommunityService {
     causeOds: ODSEnum[];
   }): Promise<
     Either<
-      Exceptions.CommunityNameIsTaken,
+      Exceptions.CommunityNameIsTaken | Exceptions.InvalidDateProvided,
       Result<Domain.CreateCommunityRequest>
     >
   > {
@@ -157,7 +159,7 @@ export class CommunityServiceImpl implements CommunityService {
     }
 
     // Create the new request
-    const newRequest = await this.createCommunityRequestRepository.save(
+    const requestEntity = this.eventPublisher.mergeObjectContext(
       Domain.CreateCommunityRequest.create({
         userId: createCommunityRequest.userId,
         communityName: createCommunityRequest.communityName,
@@ -170,6 +172,13 @@ export class CommunityServiceImpl implements CommunityService {
         createdAt: new Date(),
       }),
     );
+
+    // Save the request
+    const newRequest =
+      await this.createCommunityRequestRepository.save(requestEntity);
+
+    // Commit the event
+    requestEntity.commit();
 
     // Enviar notificación push al servidor de notificaciones
     try {

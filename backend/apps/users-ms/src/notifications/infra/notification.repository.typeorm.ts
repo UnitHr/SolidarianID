@@ -4,9 +4,9 @@ import { Repository as TypeOrmRepository } from 'typeorm';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { Notification as DomainNotification } from '../domain/Notification';
-import { NotificationRepository } from '../domain/notification.repository';
 import { Notification } from './persistence/Notification';
 import { NotificationMapper } from '../notification.mapper';
+import { NotificationRepository } from '../notification.repository';
 
 @Injectable()
 export class NotificationRepositoryTypeorm extends NotificationRepository {

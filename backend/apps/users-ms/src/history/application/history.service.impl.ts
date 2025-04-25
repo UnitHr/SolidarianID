@@ -88,6 +88,24 @@ export class HistoryServiceImpl implements HistoryService {
     await this.historyEntryRepository.save(entry);
   }
 
+  async registerCommunityCreationRequest(
+    userId: string,
+    requestId: string,
+    communityName: string,
+    timestamp: Date,
+  ): Promise<void> {
+    const entry = HistoryEntry.create({
+      userId: new UniqueEntityID(userId),
+      type: ActivityType.COMMUNITY_CREATION_REQUEST_SENT,
+      entityId: new UniqueEntityID(requestId),
+      entityName: communityName,
+      status: EntryStatus.PENDING,
+      timestamp,
+    });
+
+    await this.saveEntryAndNotify(entry);
+  }
+
   async registerActionContribute(
     userId: string,
     actionId: string,

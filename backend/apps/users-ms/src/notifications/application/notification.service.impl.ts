@@ -99,22 +99,14 @@ export class NotificationServiceImpl implements NotificationService {
                     credentials: 'include',
                     body: JSON.stringify({
                       subscription,
-                      payload: `Nueva notificación de usuario: ${userId}`,
-                      ttl: 86400, // Tiempo de vida de la notificación en segundos
+                      payload: `New notification from user: ${userId}`,
+                      ttl: 86400,
                     }),
                   },
                 );
-
-                /* if (!response.ok) {
-                  console.log(response);
-                } else {
-                  console.log(
-                    `Notificación push enviada al seguidor con ID: ${follower.followerId}.`,
-                  );
-                } */
               } catch (error) {
                 console.error(
-                  `Error al enviar la notificación push al seguidor con ID: ${follower.followerId}.`,
+                  `Error sending push notification to follower with ID: ${follower.followerId}.`,
                   error,
                 );
               }
@@ -122,7 +114,7 @@ export class NotificationServiceImpl implements NotificationService {
           }
         } catch (error) {
           console.error(
-            `Error al comprobar la suscripción del seguidor con ID: ${follower.followerId}.`,
+            `Error getting the subscription from user: ${follower.followerId}.`,
             error,
           );
         }

@@ -2,6 +2,7 @@ import { Button, Container, Row } from 'react-bootstrap';
 import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import '../index.css';
+import { urlBase64ToUint8Array } from '../utils/base64Utils';
 
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -10,9 +11,8 @@ export function Notifications() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
   const pageSize = 5;
 
-  // Fetch user role and pending requests
   useEffect(() => {
-    const fetchUserRoleAndRequests = async () => {
+    const fetchRequests = async () => {
       try {
         const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
         const isAdminRole = userRoles.includes('admin');
@@ -38,7 +38,7 @@ export function Notifications() {
       }
     };
 
-    fetchUserRoleAndRequests();
+    fetchRequests();
   }, []);
 
   const handleEnableNotifications = async () => {
@@ -125,18 +125,24 @@ export function Notifications() {
       <SolidarianNavbar></SolidarianNavbar>
       <Container>
         <Row>
-          <Row className="my-5">
-            <h1 className="text-center">Notifications</h1>
-          </Row>
-          <Row className="my-3">
+          <Row className="my-3 justify-content-end">
             <Button
-              variant="primary"
+              variant="warning"
               onClick={handleEnableNotifications}
               disabled={notificationsEnabled}
+              style={{
+                fontSize: '0.8rem',
+                padding: '5px 10px',
+                width: 'auto',
+              }}
             >
               {notificationsEnabled ? 'Notificaciones activadas' : 'Activar notificaciones'}
             </Button>
           </Row>
+          <Row className="my-5">
+            <h1 className="text-center">Notifications</h1>
+          </Row>
+
           {isAdmin && (
             <Row className="my-5">
               <h2>Solicitudes de creación de comunidad pendientes</h2>
@@ -198,26 +204,4 @@ export function Notifications() {
       </Container>
     </>
   );
-}
-
-function urlBase64ToUint8Array(base64String: string) {
-  if (!base64String) {
-    throw new Error('El valor de base64String está vacío o es inválido.');
-  }
-
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-
-  try {
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-  } catch (error) {
-    console.error('Error al decodificar Base64:', error);
-    throw new Error('El valor de base64String no es válido.');
-  }
 }

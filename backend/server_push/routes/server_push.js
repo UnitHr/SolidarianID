@@ -1,7 +1,3 @@
-// Use the web-push library to hide the implementation details of the communication
-// between the application server and the push service.
-// For details, see https://tools.ietf.org/html/draft-ietf-webpush-protocol and
-// https://tools.ietf.org/html/draft-ietf-webpush-encryption.
 import webPush from 'web-push';
 import express from 'express';
 import cors from 'cors';
@@ -11,10 +7,10 @@ dotenv.config();
 
 const router = express.Router();
 
-// Actualiza la configuración de CORS
+// Update CORS configuration
 router.use(
   cors({
-    origin: 'http://localhost:5173', // Cambia esto al origen del frontend
+    origin: 'http://localhost:5173', // Change this to the frontend origin
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -23,14 +19,14 @@ router.use(
   }),
 );
 
-// Añade un middleware para los headers de CORS
+// Add middleware for CORS headers
 router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Cambia esto al origen del frontend);
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Change this to the frontend origin
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', true);
 
-  // Para peticiones OPTIONS (preflight)
+  // For OPTIONS (preflight) requests
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
   }
@@ -38,20 +34,16 @@ router.use((req, res, next) => {
   next();
 });
 
-// Almacenamiento en memoria para las suscripciones
+// In-memory storage for subscriptions
 const subscriptions = [];
 
 if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
-  console.error(
-    'You must set the VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables. You can use the following ones:',
-    webPush.generateVAPIDKeys(),
-  );
   throw new Error('Missing VAPID keys');
 }
 
 // Set the keys used for encrypting the push messages.
 webPush.setVapidDetails(
-  'mailto:tu_email@ejemplo.com', // Cambia esto a tu email real
+  'mailto:your_email@example.com', // Change this to your real email
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY,
 );
@@ -67,77 +59,75 @@ router.get('/vapidPublicKey', function vapidPublicKeyHandler(req, res) {
 router.post('/register', function registerHandler(req, res) {
   const { subscription, userId, userRoles } = req.body;
 
-  // Verificar que la suscripción sea válida
+  // Verify that the subscription is valid
   if (!subscription || !subscription.endpoint) {
-    return res.status(400).json({ error: 'Suscripción inválida' });
+    return res.status(400).json({ error: 'Invalid subscription' });
   }
 
-  // Verificar que se envíen el ID y el rol del usuario
+  // Verify that user ID and roles are provided
   if (!userId || !userRoles) {
-    return res.status(400).json({ error: 'Se requiere id y rol del usuario' });
+    return res.status(400).json({ error: 'User ID and roles are required' });
   }
 
-  // Comprobar si ya existe la suscripción
+  // Check if the subscription already exists
   const existingSubscriptionIndex = subscriptions.findIndex(
     (sub) => sub.subscription.endpoint === subscription.endpoint,
   );
 
-  // Si ya existe, actualizarla; si no, agregarla
+  // If it exists, update it; otherwise, add it
   if (existingSubscriptionIndex !== -1) {
     subscriptions[existingSubscriptionIndex] = {
       subscription,
       userId,
       userRoles,
     };
-    console.log('Suscripción actualizada:', subscription.endpoint);
   } else {
     subscriptions.push({ subscription, userId, userRoles });
-    console.log('Nueva suscripción registrada:', subscription.endpoint);
   }
 
-  res.status(201).json({ message: 'Suscripción registrada exitosamente' });
+  res.status(201).json({ message: 'Subscription successfully registered' });
 });
 
-// Ruta para enviar notificación a una suscripción específica
+// Route to send a notification to a specific subscription
 router.post('/sendNotification', function sendNotificationHandler(req, res) {
   const { subscription, payload, ttl = 86400, delay = 0 } = req.body;
 
-  // Verificar que la suscripción sea válida
+  // Verify that the subscription is valid
   if (!subscription || !subscription.endpoint) {
-    return res.status(400).json({ error: 'Suscripción inválida' });
+    return res.status(400).json({ error: 'Invalid subscription' });
   }
 
   setTimeout(function sendNotification() {
     webPush
       .sendNotification(subscription, payload, { TTL: ttl })
       .then(function onSuccess() {
-        res.status(201).json({ message: 'Notificación enviada' });
+        res.status(201).json({ message: 'Notification sent' });
       })
       .catch(function onError(error) {
-        console.error('Error al enviar notificación:', error);
-        res.status(500).json({ error: 'Error al enviar notificación' });
+        console.error('Error sending notification:', error);
+        res.status(500).json({ error: 'Error sending notification' });
       });
   }, delay * 1000);
 });
 
-// Nueva ruta para enviar notificación a todas las suscripciones
+// New route to send notifications to all subscriptions
 router.post('/sendToAll', function sendToAllHandler(req, res) {
   const { payload, ttl = 86400 } = req.body;
 
   if (!payload) {
-    return res.status(400).json({ error: 'Se requiere payload' });
+    return res.status(400).json({ error: 'Payload is required' });
   }
 
   if (subscriptions.length === 0) {
-    return res.status(404).json({ error: 'No hay suscripciones registradas' });
+    return res.status(404).json({ error: 'No subscriptions registered' });
   }
 
   const sendPromises = subscriptions.map((subscription) => {
     return webPush
       .sendNotification(subscription, payload, { TTL: ttl })
       .catch((error) => {
-        console.error('Error al enviar a:', subscription.endpoint, error);
-        // Si el error es que la suscripción ha expirado, la eliminamos
+        console.error('Error sending to:', subscription.endpoint, error);
+        // If the error is that the subscription has expired, remove it
         if (error.statusCode === 410) {
           const index = subscriptions.findIndex(
             (sub) => sub.endpoint === subscription.endpoint,
@@ -145,7 +135,7 @@ router.post('/sendToAll', function sendToAllHandler(req, res) {
           if (index !== -1) {
             subscriptions.splice(index, 1);
             console.log(
-              'Suscripción eliminada por expiración:',
+              'Subscription removed due to expiration:',
               subscription.endpoint,
             );
           }
@@ -160,30 +150,30 @@ router.post('/sendToAll', function sendToAllHandler(req, res) {
         (result) => !result || !result.error,
       ).length;
       res.json({
-        message: `Notificaciones enviadas: ${successful} de ${subscriptions.length}`,
+        message: `Notifications sent: ${successful} of ${subscriptions.length}`,
       });
     })
     .catch((error) => {
-      console.error('Error al enviar notificaciones:', error);
-      res.status(500).json({ error: 'Error al enviar notificaciones' });
+      console.error('Error sending notifications:', error);
+      res.status(500).json({ error: 'Error sending notifications' });
     });
 });
 
-// Ruta para enviar notificación solo a los administradores
+// Route to send notifications only to administrators
 router.post('/sendToAdmins', function sendToAdminsHandler(req, res) {
   const { payload, ttl = 86400 } = req.body;
 
   if (!payload) {
-    return res.status(400).json({ error: 'Se requiere payload' });
+    return res.status(400).json({ error: 'Payload is required' });
   }
 
-  // Filtrar suscripciones donde el rol del usuario incluye 'admin'
+  // Filter subscriptions where the user role includes 'admin'
   const adminSubscriptions = subscriptions.filter((sub) =>
     sub.userRoles.includes('admin'),
   );
 
   if (adminSubscriptions.length === 0) {
-    return res.status(404).json({ error: 'No hay administradores suscritos' });
+    return res.status(404).json({ error: 'No administrators subscribed' });
   }
 
   const sendPromises = adminSubscriptions.map((subscription) => {
@@ -191,11 +181,11 @@ router.post('/sendToAdmins', function sendToAdminsHandler(req, res) {
       .sendNotification(subscription.subscription, payload, { TTL: ttl })
       .catch((error) => {
         console.error(
-          'Error al enviar a:',
+          'Error sending to:',
           subscription.subscription.endpoint,
           error,
         );
-        // Si el error es que la suscripción ha expirado, la eliminamos
+        // If the error is that the subscription has expired, remove it
         if (error.statusCode === 410) {
           const index = subscriptions.findIndex(
             (sub) =>
@@ -204,7 +194,7 @@ router.post('/sendToAdmins', function sendToAdminsHandler(req, res) {
           if (index !== -1) {
             subscriptions.splice(index, 1);
             console.log(
-              'Suscripción eliminada por expiración:',
+              'Subscription removed due to expiration:',
               subscription.subscription.endpoint,
             );
           }
@@ -219,34 +209,34 @@ router.post('/sendToAdmins', function sendToAdminsHandler(req, res) {
         (result) => !result || !result.error,
       ).length;
       res.json({
-        message: `Notificaciones enviadas a administradores: ${successful} de ${adminSubscriptions.length}`,
+        message: `Notifications sent to administrators: ${successful} of ${adminSubscriptions.length}`,
       });
     })
     .catch((error) => {
-      console.error('Error al enviar notificaciones:', error);
-      res.status(500).json({ error: 'Error al enviar notificaciones' });
+      console.error('Error sending notifications:', error);
+      res.status(500).json({ error: 'Error sending notifications' });
     });
 });
 
-// Ruta para listar todas las suscripciones (útil para debugging)
+// Route to list all subscriptions (useful for debugging)
 router.get('/subscriptions', function listSubscriptionsHandler(req, res) {
   res.json({
     count: subscriptions.length,
     subscriptions: subscriptions.map((sub) => ({
-      subscription: sub.subscription, // Devuelve la suscripción completa
-      userId: sub.userId, // Incluye el ID del usuario
-      userRoles: sub.userRoles, // Incluye el rol del usuario
+      subscription: sub.subscription, // Return the full subscription
+      userId: sub.userId, // Include the user ID
+      userRoles: sub.userRoles, // Include the user role
     })),
   });
 });
 
-// Ruta para verificar si un usuario está suscrito
+// Route to check if a user is subscribed
 router.get(
   '/subscription/:userId',
   function checkSubscriptionHandler(req, res) {
     const { userId } = req.params;
 
-    // Buscar si existe una suscripción para el userId proporcionado
+    // Check if a subscription exists for the provided userId
     const subscription = subscriptions.find((sub) => sub.userId === userId);
 
     if (subscription) {

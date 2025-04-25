@@ -1,46 +1,44 @@
-//import fs from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import http from 'http';
-import serverPushRouter from './routes/server_push.js';
-
 import cors from 'cors';
+import serverPushRouter from './routes/server_push.js';
 
 dotenv.config();
 
 const app = express();
 
-// Aumentar el límite de tamaño para los JSON
+// Increase the size limit for JSON
 app.use(bodyParser.json({ limit: '1mb' }));
 
-// Middleware para manejo de errores de parsing JSON
+// Middleware for handling JSON parsing errors
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-    return res.status(400).json({ error: 'JSON inválido' });
+    return res.status(400).json({ error: 'Invalid JSON' });
   }
   next();
 });
 
-// Ruta principal
+// Main route
 app.get('/', (req, res) => {
   res.send('Push notification server is running!');
 });
 
-// Registrar las rutas de server_push.js
+// Register routes from server_push.js
 app.use('/push', serverPushRouter);
 
-// Configurar CORS para toda la aplicación
+// Configure CORS for the entire application
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Cambia esto al origen del frontend
+    origin: 'http://localhost:5173', // Change this to the frontend origin
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   }),
 );
 
-// Añadir headers CORS específicos
+// Add specific CORS headers
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -54,7 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const port = process.env.PORT || 4000; // Usar PORT de las variables de entorno o 4000 por defecto
+const port = process.env.PORT || 4000; // Use PORT from environment variables or default to 4000
 
 try {
   const server = http.createServer(app);
@@ -66,16 +64,14 @@ try {
     console.log(`Test the server at: http://localhost:${port}/push`);
   });
 } catch (error) {
-  console.error('Error al iniciar el servidor:', error);
+  console.error('Error starting the server:', error);
 
-  // Fallback al servidor HTTP si hay problema con los certificados
-  console.log('Intentando iniciar servidor HTTP en modo de emergencia...');
+  // Fallback to HTTP server if there is an issue with certificates
+  console.log('Attempting to start HTTP server in fallback mode...');
   app.listen(port, () => {
     console.log(
       `Push notification server started in HTTP mode on port ${port}`,
     );
-    console.log(
-      `WARNING: Las notificaciones push requieren HTTP en producción`,
-    );
+    console.log(`WARNING: Push notifications require HTTPS in production`);
   });
 }

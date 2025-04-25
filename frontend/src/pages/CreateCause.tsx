@@ -85,7 +85,7 @@ export function CreateCause() {
       <SolidarianNavbar />
       <Container>
         <Row className="my-5">
-          <h1 className="text-center">Create a New Cause</h1>
+          <h1 className="text-center">Create Cause</h1>
         </Row>
 
         <Row className="my-4">
@@ -93,7 +93,7 @@ export function CreateCause() {
             <form>
               <div className="mb-3">
                 <label htmlFor="causeTitle" className="form-label">
-                  Cause Title
+                  Title
                 </label>
                 <input
                   type="text"

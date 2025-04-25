@@ -13,6 +13,7 @@ import { CommunityDetails } from './pages/CommunityDetails';
 import { CauseDetails } from './pages/CauseDetails';
 import { ActionDetails } from './pages/ActionDetails';
 import { CreateCause } from './pages/CreateCause';
+import { CreateAction } from './pages/CreateAction';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/actions/:actionId" element={<ActionDetails />} />
           <Route path="/causes/:causeId" element={<CauseDetails />} />
           <Route path="/communities/:communityId/create-cause" element={<CreateCause />} />
+          <Route path="/causes/:causeId/create-action" element={<CreateAction />} />
         </Routes>
       </div>
       <Footer />

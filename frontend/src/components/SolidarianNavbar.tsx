@@ -16,6 +16,12 @@ export function SolidarianNavbar() {
     if (user) {
       const userData = JSON.parse(user);
       const fullName = `${userData.firstName} ${userData.lastName}`;
+      const exp = userData.exp;
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (exp && exp < currentTime) {
+        handleLogout();
+        return;
+      }
       setUsername(fullName);
     }
   }, []);

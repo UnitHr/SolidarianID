@@ -126,4 +126,8 @@ export class UserServiceImpl implements UserService, OnModuleInit {
   async findByGithubId(githubId: string): Promise<User> {
     return this.userRepository.findByGithubId(githubId);
   }
+
+  async findUsersByRole(role: Role): Promise<User[]> {
+    return this.userRepository.findByRole(role);
+  }
 }

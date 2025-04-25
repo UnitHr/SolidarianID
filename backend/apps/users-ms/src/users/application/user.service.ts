@@ -22,4 +22,6 @@ export abstract class UserService {
   abstract getUserByEmail(email: string): Promise<User>;
 
   abstract findByGithubId(githubId: string): Promise<User>;
+
+  abstract findUsersByRole(role: Role): Promise<User[]>;
 }

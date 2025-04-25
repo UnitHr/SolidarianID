@@ -1,5 +1,5 @@
-import { AppRoutes } from './routes/routes';
-import { Footer } from './components/Footer';
+import { AppRoutes } from '../routes/routes';
+import { Footer } from '../components/Footer';
 
 function App() {
   return (

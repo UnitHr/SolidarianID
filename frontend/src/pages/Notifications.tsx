@@ -1,8 +1,8 @@
-import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useEffect, useState } from "react";
-import "../index.css";
-import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
+import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useEffect, useState } from 'react';
+import '../styles/index.css';
+import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
 import {
   registerServiceWorker,
   registerSubscriptionOnServer,
@@ -15,8 +15,7 @@ import {
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
 import { approveCommunityRequest, rejectCommunityRequest } from '../services/community.service';
 
-
-interface JoinComunityRequestValues{
+interface JoinComunityRequestValues {
   id: string;
   userId: string;
   communityId: string;

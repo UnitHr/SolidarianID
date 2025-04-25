@@ -69,6 +69,65 @@ export class NotificationServiceImpl implements NotificationService {
 
       await this.notificationRepository.createMany(batch);
 
+      // 3. Check push subscription and send push notifications
+      // eslint-disable-next-line no-restricted-syntax
+      for (const follower of followers) {
+        try {
+          const subscriptionResponse = await fetch(
+            `http://localhost:4000/push/subscription/${follower.followerId}`,
+          );
+
+          if (subscriptionResponse.ok) {
+            console.log(
+              `Comprobando la suscripción del seguidor con ID: ${follower.followerId}.`,
+            );
+            const { isSubscribed, subscription } =
+              await subscriptionResponse.json();
+
+            if (isSubscribed) {
+              console.log('user is subscribed');
+
+              // Send push notification
+              try {
+                const response = await fetch(
+                  'http://localhost:4000/push/sendNotification',
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                      subscription,
+                      payload: `Nueva notificación de usuario: ${userId}`,
+                      ttl: 86400, // Tiempo de vida de la notificación en segundos
+                    }),
+                  },
+                );
+
+                /* if (!response.ok) {
+                  console.log(response);
+                } else {
+                  console.log(
+                    `Notificación push enviada al seguidor con ID: ${follower.followerId}.`,
+                  );
+                } */
+              } catch (error) {
+                console.error(
+                  `Error al enviar la notificación push al seguidor con ID: ${follower.followerId}.`,
+                  error,
+                );
+              }
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Error al comprobar la suscripción del seguidor con ID: ${follower.followerId}.`,
+            error,
+          );
+        }
+      }
+
       totalNotified += followers.length;
       page += 1;
     } while (totalNotified < totalFollowers);

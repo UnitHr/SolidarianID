@@ -1,20 +1,20 @@
-### Variables globales
+### Global variables
 @baseUrl = http://localhost:4000/push
 @contentType = application/json
 
-### Verificar que el servidor esté funcionando
+### Check if the server is running
 GET {{baseUrl}}
 Accept: text/plain
 
-### Obtener la clave pública VAPID
+### Get the VAPID public key
 GET {{baseUrl}}/vapidPublicKey
 Accept: text/plain
 
-### Listar todas las suscripciones
+### List all subscriptions
 GET {{baseUrl}}/subscriptions
 Accept: {{contentType}}
 
-### Registrar una nueva suscripción (ejemplo)
+### Register a new subscription (example)
 POST {{baseUrl}}/register
 Content-Type: {{contentType}}
 
@@ -29,7 +29,7 @@ Content-Type: {{contentType}}
   }
 }
 
-### Enviar una notificación a una suscripción específica
+### Send a notification to a specific subscription
 POST {{baseUrl}}/sendNotification
 Content-Type: {{contentType}}
 
@@ -42,16 +42,29 @@ Content-Type: {{contentType}}
       "auth": "bZnJvGjW3Xg2i8RhvUJIqQ"
     }
   },
-  "payload": "{\"title\":\"Notificación de prueba\",\"body\":\"¡Esta es una notificación de prueba!\",\"icon\":\"/icon.png\"}",
+  "payload": "{\"title\":\"Test Notification\",\"body\":\"This is a test notification!\",\"icon\":\"/icon.png\"}",
   "ttl": 86400,
   "delay": 0
 }
 
-### Enviar una notificación a todas las suscripciones
+### Send a notification to all subscriptions
 POST {{baseUrl}}/sendToAll
 Content-Type: {{contentType}}
 
 {
-  "payload": "{\"title\":\"Notificación masiva\",\"body\":\"¡Esta notificación se envía a todos los suscriptores!\",\"icon\":\"/icon.png\"}",
+  "payload": "{\"title\":\"Mass Notification\",\"body\":\"This notification is sent to all subscribers!\",\"icon\":\"/icon.png\"}",
   "ttl": 86400
 }
+
+### Send a notification to all admins
+POST {{baseUrl}}/sendToAdmins
+Content-Type: {{contentType}}
+
+{
+  "payload": "{\"title\":\"Admin Notification\",\"body\":\"This notification is sent to all admins!\",\"icon\":\"/icon.png\"}",
+  "ttl": 86400
+}
+
+### Check if a user is subscribed
+GET {{baseUrl}}/subscription/{userId}
+Accept: {{contentType}}

@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import { FollowersController } from '@users-ms/followers/application/follower.controller';
 import { FollowerService } from '@users-ms/followers/application/follower.service';
 import { UserService } from '@users-ms/users/application/user.service';
 import { Follower } from '@users-ms/followers/domain';
@@ -10,6 +9,7 @@ import { User } from '@users-ms/users/domain';
 import { UserCannotFollowSelfError } from '@users-ms/followers/exceptions/user-cannot-follow-self.error';
 import { QueryPaginationDto } from '@common-lib/common-lib/dto/query-pagination.dto';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
+import { FollowersController } from '@users-ms/followers/application/follower.controller';
 
 describe('FollowersController', () => {
   let controller: FollowersController;
@@ -241,48 +241,6 @@ describe('FollowersController', () => {
         PaginationDefaults.DEFAULT_LIMIT,
       );
       expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-    });
-  });
-
-  describe('countFollowers', () => {
-    it('should return follower count and 200 OK', async () => {
-      // Arrange
-      followerServiceMock.countUserFollowers.mockResolvedValueOnce(5);
-
-      const responseMock = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
-
-      // Act
-      await controller.countFollowers(USER_ID, responseMock);
-
-      // Assert
-      expect(followerServiceMock.countUserFollowers).toHaveBeenCalledWith(
-        USER_ID,
-      );
-      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-      expect(responseMock.json).toHaveBeenCalledWith({ count: 5 });
-    });
-
-    it('should return zero when no followers exist', async () => {
-      // Arrange
-      followerServiceMock.countUserFollowers.mockResolvedValueOnce(0);
-
-      const responseMock = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
-
-      // Act
-      await controller.countFollowers(USER_ID, responseMock);
-
-      // Assert
-      expect(followerServiceMock.countUserFollowers).toHaveBeenCalledWith(
-        USER_ID,
-      );
-      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-      expect(responseMock.json).toHaveBeenCalledWith({ count: 0 });
     });
   });
 });

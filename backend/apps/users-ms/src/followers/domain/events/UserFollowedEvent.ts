@@ -4,7 +4,7 @@ export class UserFollowedEvent extends DomainEvent {
   constructor(
     public readonly userId: string,
     public readonly followedUserId: string,
-    public readonly followerUserEmail: string,
+    public readonly followedUserFullName: string,
     public readonly date: Date,
   ) {
     super(UserFollowedEvent.name, date);

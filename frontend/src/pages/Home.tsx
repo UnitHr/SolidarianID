@@ -1,10 +1,8 @@
-import { Col, Container, Row, Image, Button, Modal } from "react-bootstrap";
-import girlImage from "../assets/chica-solidarianid.png";
-import logo from "../assets/logo-solidarianid.png";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
+import { Col, Container, Row, Image, Button } from 'react-bootstrap';
+import girlImage from '../assets/chica-solidarianid.png';
+import logo from '../assets/logo-solidarianid.png';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   const navigate = useNavigate();
@@ -31,9 +29,8 @@ export function Home() {
             </Row>
             <Row className="">
               <h3 className="px-4 py-4 text-justify">
-                Discover and contribute to various communities and charitable
-                causes Whether you're looking to support or to take action, get
-                involved today!
+                Discover and contribute to various communities and charitable causes Whether you're
+                looking to support or to take action, get involved today!
               </h3>
             </Row>
           </Col>
@@ -46,31 +43,27 @@ export function Home() {
         <Row>
           <Row className="py-4 px-4">
             <h2 className="text-center font-weight-bold">
-              Explore our platform to find communities, causes and actions to
-              support.
+              Explore our platform to find communities, causes and actions to support.
             </h2>
           </Row>
           <Row>
             <Col className="mx-4 my-4">
               <Row>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate("/communities")}
-                >
+                <Button variant="primary" onClick={() => navigate('/communities')}>
                   Find Communities
                 </Button>
               </Row>
             </Col>
             <Col className="mx-4 my-4">
               <Row>
-                <Button variant="primary" onClick={() => navigate("/causes")}>
+                <Button variant="primary" onClick={() => navigate('/causes')}>
                   Find Causes
                 </Button>
               </Row>
             </Col>
             <Col className="mx-4 my-4">
               <Row>
-                <Button variant="primary" onClick={() => navigate("/actions")}>
+                <Button variant="primary" onClick={() => navigate('/actions')}>
                   Find Actions
                 </Button>
               </Row>

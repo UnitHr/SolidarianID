@@ -1,10 +1,6 @@
 @baseUrl = http://localhost:3000/api/v1/users
-@jwtToken = {replace-with-jwtToken}
 @userId = {replace-with-userId}
 
-### Get user profile, requires authentication
+### Get user profile
 GET {{baseUrl}}/{{userId}}
-Authorization: Bearer {{jwtToken}}
 
-### Get user profile without authentication returns 401
-GET {{baseUrl}}/{{userId}}

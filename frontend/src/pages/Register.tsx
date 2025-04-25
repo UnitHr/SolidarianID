@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export function Register() {
   const location = useLocation();
@@ -10,12 +10,12 @@ export function Register() {
   const githubId = location.state?.githubId;
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    birthDate: "",
-    bio: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    birthDate: '',
+    bio: '',
     showAge: false,
     showEmail: false,
     githubId: githubId || null,
@@ -23,19 +23,19 @@ export function Register() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/v1/users', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...formData,
@@ -44,14 +44,14 @@ export function Register() {
       });
 
       if (response.ok) {
-        navigate("/login");
+        navigate('/login');
       } else {
         const error = await response.json();
-        alert(error.message || "Error during registration");
+        alert(error.message || 'Error during registration');
       }
     } catch (error) {
-      console.error("Registration error:", error);
-      alert("Error during registration");
+      console.error('Registration error:', error);
+      alert('Error during registration');
     }
   };
 
@@ -64,7 +64,7 @@ export function Register() {
             <Card className="p-4 shadow-sm" bg="light" border="primary">
               <Card.Body>
                 <Card.Title className="text-center mb-4">
-                  <h2>{isGithubRegistration ? "Complete GitHub Registration" : "Register"}</h2>
+                  <h2>{isGithubRegistration ? 'Complete GitHub Registration' : 'Register'}</h2>
                 </Card.Title>
                 <Form onSubmit={handleSubmit}>
                   <Form.Group className="mb-3">

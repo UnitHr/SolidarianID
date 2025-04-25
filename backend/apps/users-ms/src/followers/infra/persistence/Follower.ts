@@ -10,13 +10,19 @@ export class Follower {
   followerId: string;
 
   @Column()
-  followedId: string;
-
-  @Column()
   followerFullName: string;
 
   @Column()
   followerEmail: string;
+
+  @Column()
+  followedId: string;
+
+  @Column()
+  followedFullName: string;
+
+  @Column()
+  followedEmail: string;
 
   @Column({ type: 'timestamp' })
   followedAt: Date;

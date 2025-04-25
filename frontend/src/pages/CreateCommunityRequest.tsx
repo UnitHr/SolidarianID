@@ -1,7 +1,7 @@
-import { Col, Container, Row } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useState } from "react";
-import { odsData, ODSEnum } from "../utils/ods";
+import { Col, Container, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useState } from 'react';
+import { odsData, ODSEnum } from '../utils/ods';
 
 export function CreateCommunityRequest() {
   const [selectedOds, setSelectedOds] = useState<Set<ODSEnum>>(new Set());
@@ -22,21 +22,14 @@ export function CreateCommunityRequest() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const communityName = (
-      document.getElementById("communityName") as HTMLInputElement
-    ).value;
+    const communityName = (document.getElementById('communityName') as HTMLInputElement).value;
     const communityDescription = (
-      document.getElementById("communityDescription") as HTMLTextAreaElement
+      document.getElementById('communityDescription') as HTMLTextAreaElement
     ).value;
-    const causeTitle = (
-      document.getElementById("causeTitle") as HTMLInputElement
-    ).value;
-    const causeDescription = (
-      document.getElementById("causeDescription") as HTMLTextAreaElement
-    ).value;
-    const causeEndDate = (
-      document.getElementById("causeEndDate") as HTMLInputElement
-    ).value;
+    const causeTitle = (document.getElementById('causeTitle') as HTMLInputElement).value;
+    const causeDescription = (document.getElementById('causeDescription') as HTMLTextAreaElement)
+      .value;
+    const causeEndDate = (document.getElementById('causeEndDate') as HTMLInputElement).value;
     const selectedIds = Array.from(selectedOds); // Convertir el Set a Array
 
     // Construir el cuerpo de la solicitud
@@ -51,15 +44,15 @@ export function CreateCommunityRequest() {
       },
     };
 
-    console.log("Request Body:", requestBody); // Para depuración
+    console.log('Request Body:', requestBody); // Para depuración
 
     try {
       // Enviar la solicitud al servidor
-      const response = await fetch("http://localhost:3002/communities", {
-        method: "POST",
+      const response = await fetch('http://localhost:3002/communities', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Reemplaza con tu método para obtener el token
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Reemplaza con tu método para obtener el token
         },
         body: JSON.stringify(requestBody),
       });
@@ -69,12 +62,12 @@ export function CreateCommunityRequest() {
       }
       const text = await response.text();
       const data = text ? JSON.parse(text) : null;
-      console.log("Community Request created successfully:", data);
+      console.log('Community Request created successfully:', data);
 
-      alert("Community Request created successfully!");
+      alert('Community Request created successfully!');
     } catch (error) {
       console.error(error);
-      alert("Failed to create community request. Please try again.");
+      alert('Failed to create community request. Please try again.');
     }
   };
 
@@ -148,7 +141,7 @@ export function CreateCommunityRequest() {
                         type="date"
                         className="form-control"
                         id="causeEndDate"
-                        min={new Date().toISOString().split("T")[0]} // Set minimum date to today
+                        min={new Date().toISOString().split('T')[0]} // Set minimum date to today
                       />
                     </div>
                     <div className="mb-3">
@@ -165,10 +158,7 @@ export function CreateCommunityRequest() {
                             value={ods.id}
                             onChange={() => handleCheckboxChange(ods.id)}
                           />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`ods${ods.id}`}
-                          >
+                          <label className="form-check-label" htmlFor={`ods${ods.id}`}>
                             {ods.title}
                           </label>
                         </div>
@@ -176,11 +166,7 @@ export function CreateCommunityRequest() {
                     </div>
                   </div>
                 </Row>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  onClick={handleSubmit}
-                >
+                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
                   Submit
                 </button>
               </form>

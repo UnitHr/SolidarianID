@@ -15,7 +15,7 @@ export abstract class HistoryService {
     userId: string,
     followedUserId: string,
     timestamp: Date,
-    followerUserName?: string,
+    followedUserFullName?: string,
   ): Promise<void>;
 
   abstract registerCommunityCreation(

@@ -1,17 +1,8 @@
-import {
-  Col,
-  Row,
-  Image,
-  Container,
-  Alert,
-  ListGroup,
-  Pagination,
-} from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { FormFilterCauses } from "../components/FormFilterCauses";
-import image from "../assets/filter-causes-image.png";
-import { useEffect, useState } from "react";
-import { CauseCard } from "../components/CauseCard";
+import { Col, Row, Image, Container, Alert, ListGroup, Pagination } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { FormFilterCauses } from '../components/FormFilterCauses';
+import { useEffect, useState } from 'react';
+import { CauseCard } from '../components/CauseCard';
 
 export interface CauseValues {
   id: string;
@@ -32,14 +23,14 @@ export interface OdsValues {
 }
 
 export function SearchCauses() {
-  const urlBase = "http://localhost:3000/api/v1/causes";
+  const urlBase = 'http://localhost:3000/api/v1/causes';
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState("success");
-  const [name, setName] = useState("");
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('success');
+  const [name, setName] = useState('');
   const [ods, setOds] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState("title");
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortBy, setSortBy] = useState('title');
+  const [sortDirection, setSortDirection] = useState('asc');
   const [search, setSearch] = useState(false);
   const limit = 4;
   const [page, setPage] = useState(1);
@@ -56,11 +47,9 @@ export function SearchCauses() {
 
   function changeOds(event: React.ChangeEvent<HTMLInputElement>) {
     const { id, checked } = event.target;
-    const odsNumber = id.replace("ods", "");
+    const odsNumber = id.replace('ods', '');
 
-    setOds((prev) =>
-      checked ? [...prev, odsNumber] : prev.filter((n) => n !== odsNumber)
-    );
+    setOds((prev) => (checked ? [...prev, odsNumber] : prev.filter((n) => n !== odsNumber)));
   }
 
   function changeSortBy(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -82,16 +71,16 @@ export function SearchCauses() {
       limit: limit.toString(),
     });
 
-    if (name !== "") {
-      params.append("name", name);
+    if (name !== '') {
+      params.append('name', name);
     }
 
     if (ods.length > 0) {
-      params.append("ods", ods.join(","));
+      params.append('ods', ods.join(','));
     }
 
-    params.append("sortBy", sortBy);
-    params.append("sortDirection", sortDirection);
+    params.append('sortBy', sortBy);
+    params.append('sortDirection', sortDirection);
 
     const url = `${urlBase}?${params.toString()}`;
 
@@ -102,12 +91,12 @@ export function SearchCauses() {
       setCauses(data.data);
       setSearch(true);
 
-      setAlertMessage("Causes filtered successfully!");
-      setAlertVariant("success");
+      setAlertMessage('Causes filtered successfully!');
+      setAlertVariant('success');
       setShowAlert(true);
     } else {
-      setAlertMessage("Backend error. Try again later.");
-      setAlertVariant("danger");
+      setAlertMessage('Backend error. Try again later.');
+      setAlertVariant('danger');
       setShowAlert(true);
     }
   }
@@ -116,11 +105,7 @@ export function SearchCauses() {
     <>
       <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
-        <Alert
-          variant={alertVariant}
-          onClose={(e) => setShowAlert(false)}
-          dismissible
-        >
+        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}
         </Alert>
       )}
@@ -130,9 +115,8 @@ export function SearchCauses() {
         </Row>
         <Row className="my-4">
           <h3 className="px-4 py-4 text-justify">
-            Discover and contribute to various communities and charitable causes
-            Whether you're looking to support or to take action, get involved
-            today!
+            Discover and contribute to various communities and charitable causes Whether you're
+            looking to support or to take action, get involved today!
           </h3>
         </Row>
         <Row>

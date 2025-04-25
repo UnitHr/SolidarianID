@@ -1,4 +1,4 @@
-import { Card, Form, Row, Button } from "react-bootstrap";
+import { Card, Form, Row, Button } from 'react-bootstrap';
 
 export function FormFilterCommunities({ name, changeName, handleSearch }) {
   return (
@@ -12,12 +12,7 @@ export function FormFilterCommunities({ name, changeName, handleSearch }) {
             <Row className="g-3">
               <Form.Group controlId="filterCommunity">
                 <Form.Label>Community name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="community"
-                  value={name}
-                  onChange={changeName}
-                />
+                <Form.Control type="text" name="community" value={name} onChange={changeName} />
               </Form.Group>
             </Row>
             <Row className="my-4 mx-2">

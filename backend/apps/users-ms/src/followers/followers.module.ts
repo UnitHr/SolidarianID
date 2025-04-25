@@ -9,11 +9,12 @@ import { FollowerRepositoryTypeOrm } from './infra/follower.repository.typeorm';
 import { FollowerService } from './application/follower.service';
 import { FollowerServiceImpl } from './application/follower.service.impl';
 import { FollowersController } from './application/follower.controller';
+import { FollowingController } from './application/following.controller';
 import { FollowerDomainExceptionFilter } from './infra/filters/follower-domain-exception.filter';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Follower]), CqrsModule, UserModule],
-  controllers: [FollowersController],
+  controllers: [FollowersController, FollowingController],
   providers: [
     {
       provide: FollowerRepository,

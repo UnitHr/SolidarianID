@@ -1,18 +1,10 @@
-import {
-  Col,
-  Container,
-  Row,
-  Image,
-  ListGroup,
-  Pagination,
-  Alert,
-} from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { FormFilterCommunities } from "../components/FormFilterCommunities";
-import { CommunityCard } from "../components/CommunityCard";
-import image from "../assets/filter-communities-image-2.png";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Col, Container, Row, Image, ListGroup, Pagination, Alert } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { FormFilterCommunities } from '../components/FormFilterCommunities';
+import { CommunityCard } from '../components/CommunityCard';
+import image from '../assets/filter-communities-image-2.png';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface CommunityValues {
   id: string;
@@ -22,12 +14,12 @@ interface CommunityValues {
 }
 
 export function SearchCommunities() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const navigate = useNavigate();
-  const urlBase = "http://localhost:3000/api/v1/communities";
+  const urlBase = 'http://localhost:3000/api/v1/communities';
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState("success");
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('success');
   const [search, setSearch] = useState(false);
   const limit = 4;
   const [page, setPage] = useState(1);
@@ -43,7 +35,7 @@ export function SearchCommunities() {
   }
 
   function handleCreateCommunity() {
-    navigate("/create-community");
+    navigate('/create-community');
   }
 
   async function handleSearch(e) {
@@ -57,8 +49,8 @@ export function SearchCommunities() {
       limit: limit.toString(),
     });
 
-    if (name !== "") {
-      params.append("name", name);
+    if (name !== '') {
+      params.append('name', name);
     }
 
     const url = `${urlBase}?${params.toString()}`;
@@ -70,12 +62,12 @@ export function SearchCommunities() {
       setCommunities(data.data);
       setSearch(true);
 
-      setAlertMessage("Communities filtered successfully!");
-      setAlertVariant("success");
+      setAlertMessage('Communities filtered successfully!');
+      setAlertVariant('success');
       setShowAlert(true);
     } else {
-      setAlertMessage("Backend error. Try again later.");
-      setAlertVariant("danger");
+      setAlertMessage('Backend error. Try again later.');
+      setAlertVariant('danger');
       setShowAlert(true);
     }
   }
@@ -84,11 +76,7 @@ export function SearchCommunities() {
     <>
       <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
-        <Alert
-          variant={alertVariant}
-          onClose={(e) => setShowAlert(false)}
-          dismissible
-        >
+        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}
         </Alert>
       )}
@@ -99,20 +87,16 @@ export function SearchCommunities() {
           </Row>
           <Row className="mb-5 text-center">
             <p>
-              or create a new one:{" "}
-              <button
-                className="btn btn-primary mx-2"
-                onClick={handleCreateCommunity}
-              >
+              or create a new one:{' '}
+              <button className="btn btn-primary mx-2" onClick={handleCreateCommunity}>
                 Create Community
               </button>
             </p>
           </Row>
           <Row className="my-4">
             <h3 className="px-4 py-4 text-justify">
-              Discover and contribute to various communities and charitable
-              causes Whether you're looking to support or to take action, get
-              involved today!
+              Discover and contribute to various communities and charitable causes Whether you're
+              looking to support or to take action, get involved today!
             </h3>
           </Row>
         </Row>

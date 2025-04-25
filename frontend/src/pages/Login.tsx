@@ -1,31 +1,31 @@
-import { useState } from "react";
-import { Button, Col, Container, Form, Row, Card } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useState } from 'react';
+import { Button, Col, Container, Form, Row, Card } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 export function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    console.log('Email:', email);
+    console.log('Password:', password);
     try {
-      const response = await fetch("http://localhost:3000/api/v1/users/auth/login", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/v1/users/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Login response:", data);
-        const playload = jwtDecode<{ 
+        console.log('Login response:', data);
+        const playload = jwtDecode<{
           email: string;
           sub: { value: string };
           roles: string;
@@ -34,19 +34,18 @@ export function Login() {
 
         const userId = playload.sub?.value;
         if (!userId) {
-          alert("Invalid user");
+          alert('Invalid user');
           return;
         }
         const userResponse = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
-          method: "GET",
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${data.access_token}`,
           },
         });
 
         if (userResponse.ok) {
-          
           const userResponseData = await userResponse.json();
 
           const userData = {
@@ -58,23 +57,22 @@ export function Login() {
             exp: playload.exp,
           };
 
-          localStorage.setItem("user", JSON.stringify(userData));
-
+          localStorage.setItem('user', JSON.stringify(userData));
         }
-  
-        localStorage.setItem("token", data.access_token);
-        navigate("/");
+
+        localStorage.setItem('token', data.access_token);
+        navigate('/');
       } else {
-        alert("Invalid credentials");
+        alert('Invalid credentials');
       }
     } catch (error) {
-      console.error("Login error:", error);
-      alert("Error during login");
+      console.error('Login error:', error);
+      alert('Error during login');
     }
   };
 
   const handleRegister = () => {
-    window.location.href = "/register";
+    window.location.href = '/register';
   };
 
   return (
@@ -111,12 +109,7 @@ export function Login() {
                     <Button variant="primary" type="submit">
                       Login
                     </Button>
-                    <Button 
-                      variant="dark" 
-                      type="button" 
-                      onClick={handleRegister}
-                      className="mt-3"
-                    >
+                    <Button variant="dark" type="button" onClick={handleRegister} className="mt-3">
                       Create an account
                     </Button>
                   </div>

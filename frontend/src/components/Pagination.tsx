@@ -1,4 +1,4 @@
-import { Pagination } from "react-bootstrap";
+import { Pagination } from 'react-bootstrap';
 
 type PaginateProps = {
   currentPage: number;
@@ -12,10 +12,19 @@ export function Paginate({ currentPage, totalPages, onPageChange }: PaginateProp
   return (
     <Pagination className="mt-3 justify-content-center">
       <Pagination.First onClick={() => onPageChange(1)} disabled={currentPage === 1} />
-      <Pagination.Prev onClick={() => onPageChange(currentPage > 1 ? currentPage - 1 : currentPage)} disabled={currentPage === 1} />
+      <Pagination.Prev
+        onClick={() => onPageChange(currentPage > 1 ? currentPage - 1 : currentPage)}
+        disabled={currentPage === 1}
+      />
       <Pagination.Item active>{currentPage}</Pagination.Item>
-      <Pagination.Next onClick={() => onPageChange(currentPage < totalPages ? currentPage + 1 : currentPage)} disabled={currentPage === totalPages} />
-      <Pagination.Last onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages} />
+      <Pagination.Next
+        onClick={() => onPageChange(currentPage < totalPages ? currentPage + 1 : currentPage)}
+        disabled={currentPage === totalPages}
+      />
+      <Pagination.Last
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage === totalPages}
+      />
     </Pagination>
   );
 }

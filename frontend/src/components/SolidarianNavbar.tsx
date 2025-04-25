@@ -1,31 +1,37 @@
-import { Navbar, Nav } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaBell } from "react-icons/fa";
+import { Navbar, Nav } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaBell } from 'react-icons/fa';
 
 export function SolidarianNavbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
-    const user = localStorage.getItem("user");
+    const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
       const fullName = `${userData.firstName} ${userData.lastName}`;
+      const exp = userData.exp;
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (exp && exp < currentTime) {
+        handleLogout();
+        return;
+      }
       setUsername(fullName);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsAuthenticated(false);
-    setUsername("");
-    navigate("/");
+    setUsername('');
+    navigate('/');
   };
 
   return (

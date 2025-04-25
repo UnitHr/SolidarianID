@@ -12,14 +12,13 @@ export class HistoryRegisteredHandler
   private readonly logger = new Logger(HistoryRegisteredHandler.name);
 
   handle(event: HistoryRegisteredEvent) {
-    this.logger.log(`Internal event captured: ${event.constructor.name}`);
     this.notificationService.createNotificationsForFollowers(
       event.historyEntryId,
       event.userId,
       event.date,
     );
     this.logger.log(
-      `Created notifications for followers of user ${event.userId} for history activity entry ${event.historyEntryId}`,
+      `Created notifications for followers of user ${event.userId} for history activity <${event.type}> with id ${event.historyEntryId}`,
     );
   }
 }

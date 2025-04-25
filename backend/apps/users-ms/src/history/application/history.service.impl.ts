@@ -50,13 +50,13 @@ export class HistoryServiceImpl implements HistoryService {
     userId: string,
     followedUserId: string,
     timestamp: Date,
-    followerUserName?: string,
+    followedUserFullName?: string,
   ): Promise<void> {
     const entry = HistoryEntry.create({
       userId: new UniqueEntityID(userId),
       type: ActivityType.USER_FOLLOWED,
       entityId: new UniqueEntityID(followedUserId),
-      entityName: followerUserName,
+      entityName: followedUserFullName,
       timestamp,
     });
 
@@ -77,7 +77,15 @@ export class HistoryServiceImpl implements HistoryService {
       timestamp,
     });
 
-    await this.saveEntryAndNotify(entry);
+    const joinedEntry = HistoryEntry.create({
+      userId: new UniqueEntityID(adminId),
+      type: ActivityType.JOINED_COMMUNITY,
+      entityId: new UniqueEntityID(communityId),
+      entityName: communityName,
+      timestamp,
+    });
+    await this.saveEntryAndNotify(joinedEntry);
+    await this.historyEntryRepository.save(entry);
   }
 
   async registerActionContribute(

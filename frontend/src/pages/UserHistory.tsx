@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -39,6 +39,7 @@ type User = {
 };
 
 export function UserHistory() {
+  const { userId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
@@ -54,6 +55,7 @@ export function UserHistory() {
   const [showCauses, setShowCauses] = useState(false);
   const [showSupports, setShowSupports] = useState(false);
   const [showRequests, setShowRequests] = useState(false);
+  const [fullName, setFullName] = useState('');
   const limit = 2;
   const [page, setPage] = useState({
     followingPage: 1,
@@ -85,6 +87,32 @@ export function UserHistory() {
     }
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
+
+    if (userId) {
+      parsedUser.userId = userId;
+    }
+
+    async function fetchUser() {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/users/${parsedUser.userId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setFullName(data.firstName + ' ' + data.lastName);
+        } else {
+          console.error('Error fetching user data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } 
 
     async function fetchHistory() {
       try {
@@ -228,7 +256,7 @@ export function UserHistory() {
         setLoading(false);
       }
     }
-
+    fetchUser();
     fetchHistory();
   }, [navigate, page]);
 
@@ -264,7 +292,7 @@ export function UserHistory() {
           </Col>
           <Col>
             <h4 className="mb-0">
-              {user.firstName} {user.lastName}
+              {fullName}
             </h4>
           </Col>
           <Col xs="auto">
@@ -462,8 +490,6 @@ export function UserHistory() {
             </Card.Body>
           </Card>
         )}
-
-
       </Container>
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
@@ -474,12 +500,12 @@ export function UserHistory() {
             <ul className="list-unstyled mb-0">
               {following.map((f) => (
                 <li key={f.followedUserId} className="mb-2">
-                  <Link
-                    to={`/profile/${f.followedUserId}`}
-                    className="text-decoration-none entity-link"
-                  >
-                    {f.fullName}
-                  </Link>
+                <Link
+                to={`/profile/${f.followedUserId}`}
+                onClick={() => window.location.href = `/profile/${f.followedUserId}`}
+              >
+                {f.fullName}
+              </Link>
                 </li>
               ))}
             </ul>

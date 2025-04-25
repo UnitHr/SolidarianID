@@ -9,9 +9,12 @@ import { HistoryServiceImpl } from './application/history.service.impl';
 import { UserFollowedHandler } from './domain/events/user-followed.handler';
 import { HistoryEventsController } from './application/history-events.controller';
 import { HistoryController } from './application/history.controller';
+import { FollowerServiceImpl } from '@users-ms/followers/application/follower.service.impl';
+import { FollowerService } from '@users-ms/followers/application/follower.service';
+import { FollowersModule } from '@users-ms/followers/followers.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([HistoryEntry]), CqrsModule],
+  imports: [TypeOrmModule.forFeature([HistoryEntry]), CqrsModule, FollowersModule],
   providers: [
     {
       provide: HistoryEntryRepository,

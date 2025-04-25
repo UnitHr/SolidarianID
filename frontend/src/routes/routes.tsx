@@ -34,6 +34,7 @@ export function AppRoutes() {
 
       {/* User */}
       <Route path="/profile" element={<UserHistory />} />
+      <Route path="/profile/:userId" element={<UserHistory />} />
       <Route path="/notifications" element={<Notifications />} />
 
       {/* Community */}

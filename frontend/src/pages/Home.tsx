@@ -1,8 +1,10 @@
-import { Col, Container, Row, Image, Button } from "react-bootstrap";
+import { Col, Container, Row, Image, Button, Modal } from "react-bootstrap";
 import girlImage from "../assets/chica-solidarianid.png";
 import logo from "../assets/logo-solidarianid.png";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
 
 export function Home() {
   const navigate = useNavigate();

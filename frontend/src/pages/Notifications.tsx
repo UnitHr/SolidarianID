@@ -1,13 +1,27 @@
-import { Button, Container, Row } from "react-bootstrap";
+import { Alert, Button, Container, Row } from "react-bootstrap";
 import { SolidarianNavbar } from "../components/SolidarianNavbar";
 import { useEffect, useState } from "react";
 import "../index.css";
+import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
 
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCommunityAdmin, setIsCommunityAdmin] = useState(false);
+  const [showModal, setShowModal] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("success");
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+
+  function changeAlertMessage(value: string) {
+    setAlertMessage(value);
+  }
+
+  function changeAlertVariant(value: string) {
+    setAlertVariant(value);
+  }
 
   // Fetch user role and pending requests
   useEffect(() => {
@@ -68,7 +82,28 @@ export function Notifications() {
   return (
     <>
       <SolidarianNavbar></SolidarianNavbar>
+      {showAlert && (
+        <Alert
+          variant={alertVariant}
+          onClose={(e) => setShowAlert(false)}
+          dismissible
+        >
+          {alertMessage}
+        </Alert>
+      )}
       <Container>
+        <ModalValidateJoinCommunity
+          show={showModal}
+          communityName="Amigos por África"
+          userName="pepe martinez"
+          userId="1234"
+          communityId="1234"
+          changeAlertMessage={changeAlertMessage}
+          changeAlertVariant={changeAlertVariant}
+          handleAlertShow={() => setShowAlert(true)}
+          joinRequestId="1234"
+          handleHide={() => setShowModal(false)}
+        ></ModalValidateJoinCommunity>
         <Row>
           <Row className="my-5">
             <h1 className="text-center">Notifications</h1>

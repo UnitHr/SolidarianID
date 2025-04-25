@@ -72,7 +72,7 @@ export class CommunityController {
     const location = `/causes/${causeId.getValue().toString()}`;
     res.status(HttpStatus.CREATED);
     res.location(location);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -104,7 +104,7 @@ export class CommunityController {
     const location = `/communities/creation-requests/${request.getValue().id.toString()}`;
     res.status(HttpStatus.CREATED);
     res.location(location);
-    res.send();
+    res.end();
   }
 
   @ApiOperation({ summary: 'Get all communities, sort and filter' })
@@ -175,7 +175,29 @@ export class CommunityController {
     // Send the response
     res.status(HttpStatus.OK);
     res.json(response);
-    res.send();
+    res.end();
+  }
+
+  @Get('managed-communities')
+  async getManagedCommunities(
+    @GetUserId() userId: string,
+    @Res() res: Response,
+  ) {
+    const result = await this.communityService.getManagedCommunities(userId);
+
+    if (result.isLeft()) {
+      const error = result.value;
+      this.handleError(error, res);
+      return;
+    }
+
+    const communities = result.value.getValue();
+
+    res.status(HttpStatus.OK);
+    res.json({
+      data: communities.map((community) => community.id.toString()),
+    });
+    res.end();
   }
 
   @ApiOperation({ summary: 'Get details of a specific community by id' })
@@ -200,7 +222,7 @@ export class CommunityController {
     res.json({
       data: CommunityMapper.toDto(community),
     });
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -241,7 +263,7 @@ export class CommunityController {
     // Send the response
     res.status(HttpStatus.OK);
     res.json(response);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -282,7 +304,7 @@ export class CommunityController {
     // Send the response
     res.status(HttpStatus.OK);
     res.json(response);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -307,7 +329,7 @@ export class CommunityController {
     const location = `/communities/${communityId}/join-requests/${request.id.toString()}`;
     res.status(HttpStatus.CREATED);
     res.location(location);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -332,7 +354,7 @@ export class CommunityController {
           message: `The user with ID ${userId} is not an admin of the community with ID ${communityId}.`,
         },
       });
-      res.send();
+      res.end();
       return;
     }
 
@@ -360,7 +382,7 @@ export class CommunityController {
     // Send the response
     res.status(HttpStatus.OK);
     res.json(response);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -384,7 +406,7 @@ export class CommunityController {
           message: `The user with ID ${userId} is not an admin of the community with ID ${communityId}.`,
         },
       });
-      res.send();
+      res.end();
       return;
     }
 
@@ -404,7 +426,7 @@ export class CommunityController {
     res.json({
       data: JoinCommunityRequestMapper.toDto(request),
     });
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -428,7 +450,7 @@ export class CommunityController {
           message: `The user with ID ${userId} is not an admin of the community with ID ${communityId}.`,
         },
       });
-      res.send();
+      res.end();
       return;
     }
 
@@ -446,7 +468,7 @@ export class CommunityController {
     }
     // Return the success
     res.status(HttpStatus.CREATED);
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -472,7 +494,7 @@ export class CommunityController {
     res.json({
       data: CreateCommunityRequestMapper.toDto(request),
     });
-    res.send();
+    res.end();
   }
 
   @ApiExcludeEndpoint()
@@ -501,14 +523,14 @@ export class CommunityController {
 
     if (!newCommunity) {
       res.status(HttpStatus.OK);
-      res.send();
+      res.end();
       return;
     }
 
     const location = `/communities/${newCommunity.id.toString()}`;
     res.status(HttpStatus.CREATED);
     res.location(location);
-    res.send();
+    res.end();
   }
 
   private handleError(error: Result<DomainError>, res: Response) {
@@ -530,11 +552,14 @@ export class CommunityController {
       case Exceptions.JoinCommunityRequestNotFound:
         res.status(HttpStatus.NOT_FOUND);
         break;
+      case Exceptions.UserDoNotManageCommunities:
+        res.status(HttpStatus.NOT_FOUND);
+        break;
       default:
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     res.json({ errors: { message: error.errorValue().message } });
-    res.send();
+    res.end();
   }
 }

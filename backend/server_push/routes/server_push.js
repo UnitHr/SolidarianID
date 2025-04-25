@@ -98,32 +98,6 @@ router.post('/register', function registerHandler(req, res) {
   res.status(201).json({ message: 'Suscripción registrada exitosamente' });
 });
 
-/*
-router.post('/register', function registerHandler(req, res) {
-  const { subscription } = req.body;
-
-  // Verificar que la suscripción sea válida
-  if (!subscription || !subscription.endpoint) {
-    return res.status(400).json({ error: 'Suscripción inválida' });
-  }
-
-  // Comprobar si ya existe la suscripción
-  const existingSubscriptionIndex = subscriptions.findIndex(
-    (sub) => sub.endpoint === subscription.endpoint,
-  );
-
-  // Si ya existe, actualizarla; si no, agregarla
-  if (existingSubscriptionIndex !== -1) {
-    subscriptions[existingSubscriptionIndex] = subscription;
-    console.log('Suscripción actualizada:', subscription.endpoint);
-  } else {
-    subscriptions.push(subscription);
-    console.log('Nueva suscripción registrada:', subscription.endpoint);
-  }
-
-  res.status(201).json({ message: 'Suscripción registrada exitosamente' });
-}); */
-
 // Ruta para enviar notificación a una suscripción específica
 router.post('/sendNotification', function sendNotificationHandler(req, res) {
   const { subscription, payload, ttl = 86400, delay = 0 } = req.body;

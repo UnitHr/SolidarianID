@@ -12,5 +12,5 @@ export abstract class NotificationRepository extends Repository<Notification> {
 
   abstract markAsRead(userId: string, notificationId: string): Promise<void>;
 
-  abstract createMany(notifications: Notification[]): Promise<void>;
+  abstract createMany(notifications: Notification[]): Promise<Notification[]>;
 }

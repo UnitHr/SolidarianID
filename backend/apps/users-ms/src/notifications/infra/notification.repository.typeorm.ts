@@ -72,10 +72,15 @@ export class NotificationRepositoryTypeorm extends NotificationRepository {
     await this.notificationRepository.save(notification);
   }
 
-  async createMany(notifications: DomainNotification[]): Promise<void> {
+  async createMany(
+    notifications: DomainNotification[],
+  ): Promise<DomainNotification[]> {
     const persistenceNotifications = notifications.map(
       NotificationMapper.toPersistence,
     );
-    await this.notificationRepository.save(persistenceNotifications);
+    const savedNotifications = await this.notificationRepository.save(
+      persistenceNotifications,
+    );
+    return savedNotifications.map(NotificationMapper.toDomain);
   }
 }

@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
-import { useAuth } from '../lib/hooks/useAuth';
+import { useAuth } from '../lib/context/AuthContext';
 
 export function SolidarianNavbar() {
-  const { isAuthenticated, username, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -35,7 +35,7 @@ export function SolidarianNavbar() {
                   <FaBell size={18} />
                 </Nav.Link>
                 <NavDropdown title={<FaUserCircle size={20} />} id="user-dropdown" align="end">
-                  <NavDropdown.Item href="/profile">Hi, {username}</NavDropdown.Item>
+                  <NavDropdown.Item href="/profile">Hi, {user?.firstName}</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
                 </NavDropdown>

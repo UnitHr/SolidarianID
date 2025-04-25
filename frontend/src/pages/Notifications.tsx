@@ -62,7 +62,10 @@ export function Notifications() {
             applicationServerKey: convertedVapidKey,
           });
 
-          console.log('Nueva suscripción creada:', subscription);
+          const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+          const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
+
+          console.log('Nueva suscripción creada:', subscription, userId, userRoles);
           // } else {
           //  console.log('Suscripción existente encontrada:', subscription);
           // }
@@ -75,7 +78,7 @@ export function Notifications() {
                 'Content-Type': 'application/json',
               },
               credentials: 'include',
-              body: JSON.stringify({ subscription }),
+              body: JSON.stringify({ subscription, userId, userRoles }),
             });
 
             if (serverResponse.ok) {

@@ -65,6 +65,41 @@ router.get('/vapidPublicKey', function vapidPublicKeyHandler(req, res) {
 });
 
 router.post('/register', function registerHandler(req, res) {
+  const { subscription, userId, userRoles } = req.body;
+
+  // Verificar que la suscripción sea válida
+  if (!subscription || !subscription.endpoint) {
+    return res.status(400).json({ error: 'Suscripción inválida' });
+  }
+
+  // Verificar que se envíen el ID y el rol del usuario
+  if (!userId || !userRoles) {
+    return res.status(400).json({ error: 'Se requiere id y rol del usuario' });
+  }
+
+  // Comprobar si ya existe la suscripción
+  const existingSubscriptionIndex = subscriptions.findIndex(
+    (sub) => sub.subscription.endpoint === subscription.endpoint,
+  );
+
+  // Si ya existe, actualizarla; si no, agregarla
+  if (existingSubscriptionIndex !== -1) {
+    subscriptions[existingSubscriptionIndex] = {
+      subscription,
+      userId,
+      userRoles,
+    };
+    console.log('Suscripción actualizada:', subscription.endpoint);
+  } else {
+    subscriptions.push({ subscription, userId, userRoles });
+    console.log('Nueva suscripción registrada:', subscription.endpoint);
+  }
+
+  res.status(201).json({ message: 'Suscripción registrada exitosamente' });
+});
+
+/*
+router.post('/register', function registerHandler(req, res) {
   const { subscription } = req.body;
 
   // Verificar que la suscripción sea válida
@@ -87,7 +122,7 @@ router.post('/register', function registerHandler(req, res) {
   }
 
   res.status(201).json({ message: 'Suscripción registrada exitosamente' });
-});
+}); */
 
 // Ruta para enviar notificación a una suscripción específica
 router.post('/sendNotification', function sendNotificationHandler(req, res) {
@@ -165,8 +200,9 @@ router.get('/subscriptions', function listSubscriptionsHandler(req, res) {
   res.json({
     count: subscriptions.length,
     subscriptions: subscriptions.map((sub) => ({
-      endpoint: sub.endpoint,
-      keys: sub.keys ? { auth: '***', p256dh: '***' } : undefined,
+      subscription: sub.subscription, // Devuelve la suscripción completa
+      userId: sub.userId, // Incluye el ID del usuario
+      userRoles: sub.userRoles, // Incluye el rol del usuario
     })),
   });
 });

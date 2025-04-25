@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export function Register() {
@@ -57,7 +56,6 @@ export function Register() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container>
         <Row className="justify-content-md-center my-4">
           <Col md={6}>

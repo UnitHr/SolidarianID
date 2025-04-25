@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button, Col, Container, Form, Row, Card } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
@@ -76,7 +75,6 @@ export function Login() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container>
         <Row className="justify-content-md-center my-4">
           <Col md={6}>

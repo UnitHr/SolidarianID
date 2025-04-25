@@ -8,7 +8,6 @@ import {
   Button,
   Modal,
 } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import communityLogo from '../assets/community-logo.png';
@@ -186,7 +185,6 @@ export function CommunityDetails() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container className="mt-4">
         <Row>
           <Col md={12}>

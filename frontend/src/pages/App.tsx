@@ -1,10 +1,12 @@
 import { AppRoutes } from '../routes/routes';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { Footer } from '../components/Footer';
 
 function App() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <div style={{ flex: 1 }}>
+    <div className="d-flex flex-column min-vh-100">
+      <SolidarianNavbar />
+      <div className="flex-grow-1">
         <AppRoutes />
       </div>
       <Footer />

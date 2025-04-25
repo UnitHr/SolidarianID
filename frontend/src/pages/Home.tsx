@@ -1,7 +1,6 @@
 import { Col, Container, Row, Image, Button } from 'react-bootstrap';
 import girlImage from '../assets/chica-solidarianid.png';
 import logo from '../assets/logo-solidarianid.png';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
@@ -9,7 +8,6 @@ export function Home() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       <Container>
         <Row className="my-4">
           <Col>

@@ -1,5 +1,4 @@
 import { Col, Container, Row, Image, ListGroup, Pagination, Alert } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { FormFilterCommunities } from '../components/FormFilterCommunities';
 import { CommunityCard } from '../components/CommunityCard';
 import image from '../assets/filter-communities-image-2.png';
@@ -74,7 +73,6 @@ export function SearchCommunities() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
         <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}

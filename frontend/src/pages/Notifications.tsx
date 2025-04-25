@@ -1,5 +1,4 @@
 import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import '../styles/index.css';
 import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
@@ -174,7 +173,6 @@ export function Notifications() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
         <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}

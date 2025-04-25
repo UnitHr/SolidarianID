@@ -1,5 +1,4 @@
 import { Col, Container, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useState } from 'react';
 import { odsData, ODSEnum } from '../utils/ods';
 import { useNavigate } from 'react-router-dom';
@@ -77,7 +76,6 @@ export function CreateCommunityRequest() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       <Container>
         <Row>
           <Row className="my-5">

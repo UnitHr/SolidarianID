@@ -21,7 +21,7 @@ export function SearchCommunities() {
 
   const loadCommunities = async () => {
     try {
-      const data = await fetchCommunities(page, 10, name);
+      const data = await fetchCommunities(page, 9, name);
       setCommunities(data.data);
       setTotalPages(data.meta.totalPages);
       setError('');
@@ -48,12 +48,7 @@ export function SearchCommunities() {
       <Row className="align-items-center mb-5">
         {/* Image */}
         <Col md={6} className="mb-4 mb-md-0 text-center">
-          <Image
-            src={searchImage}
-            fluid
-            className="rounded-3 shadow-sm"
-            style={{ maxHeight: '350px', objectFit: 'cover' }}
-          />
+          <Image src={searchImage} style={{ maxHeight: '350px', objectFit: 'cover' }} />
         </Col>
 
         {/* Title and form */}
@@ -75,7 +70,7 @@ export function SearchCommunities() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-              <Button type="submit" variant="secondary">
+              <Button type="submit" variant="primary">
                 Search
               </Button>
             </Form.Group>
@@ -92,6 +87,8 @@ export function SearchCommunities() {
           </Col>
         </Row>
       )}
+
+      <hr className="my-4" />
 
       {/* Comunities */}
       <Row className="g-4">

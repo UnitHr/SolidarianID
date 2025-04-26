@@ -1,4 +1,5 @@
-import { CreateCausePayload } from '../lib/types/cause.types';
+import { CreateCausePayload, FetchCausesResponse } from '../lib/types/cause.types';
+import { ODSEnum } from '../utils/ods';
 import { getToken } from './user.service';
 
 const API_URL = 'http://localhost:3000/api/v1';
@@ -22,4 +23,33 @@ export async function createCause(communityId: string, payload: CreateCausePaylo
     const error = await response.text();
     throw new Error(error || 'Failed to create cause');
   }
+}
+
+/**
+ * Fetch paginated causes with optional filters.
+ */
+export async function fetchCauses(
+  page = 1,
+  limit = 10,
+  name = '',
+  ods: ODSEnum[] = [],
+  sortBy = 'title',
+  sortDirection = 'asc'
+): Promise<FetchCausesResponse> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    sortBy,
+    sortDirection,
+  });
+
+  if (name.trim()) params.append('name', name);
+  if (ods.length > 0) params.append('ods', ods.join(','));
+
+  const response = await fetch(`${API_URL}/causes?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch causes');
+  }
+
+  return await response.json();
 }

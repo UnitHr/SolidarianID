@@ -73,7 +73,7 @@ export function ActionDetails() {
     action.status === ActionStatusEnum.COMPLETED
       ? 'success'
       : action.status === ActionStatusEnum.IN_PROGRESS
-        ? 'primary'
+        ? 'info'
         : 'warning';
 
   return (
@@ -105,7 +105,7 @@ export function ActionDetails() {
         {/* Status and Type */}
         <Row className="justify-content-center mb-4">
           <Col md={6} className="d-flex gap-2 justify-content-center">
-            <Button variant={progressVariant} disabled className="flex-grow-1 text-white">
+            <Button variant={progressVariant} disabled className="flex-grow-1">
               {ActionStatusLabels[action.status]}
             </Button>
 

@@ -1,8 +1,8 @@
-import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
-import { SolidarianNavbar } from "../components/SolidarianNavbar";
-import { useEffect, useState } from "react";
-import "../index.css";
-import { ModalValidateJoinCommunity } from "../components/ModalValidateJoinCommunity";
+import { Alert, Button, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { useEffect, useState } from 'react';
+import '../index.css';
+import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
 import {
   registerServiceWorker,
   registerSubscriptionOnServer,
@@ -11,12 +11,12 @@ import {
 import {
   fetchCreateCommunityRequests,
   fetchManagedCommunities,
+  fetchUserNotifications,
 } from '../services/notificacion.service';
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
 import { approveCommunityRequest, rejectCommunityRequest } from '../services/community.service';
 
-
-interface JoinComunityRequestValues{
+interface JoinComunityRequestValues {
   id: string;
   userId: string;
   communityId: string;
@@ -35,6 +35,7 @@ export function Notifications() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [followedNotifications, setfollowedNotifications] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
@@ -100,7 +101,18 @@ export function Notifications() {
       }
     };
 
+    const fetchFollowedNotifications = async () => {
+      const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+      try {
+        const notifications = await fetchUserNotifications(userId);
+        setfollowedNotifications(notifications);
+      } catch (error) {
+        console.error('Error fetching followed notifications:', error);
+      }
+    };
+
     fetchRequests();
+    fetchFollowedNotifications();
   }, []);
 
   async function handleEnableNotifications() {
@@ -323,6 +335,24 @@ export function Notifications() {
               </ListGroup>
             </Row>
           )}
+
+          <Row className="my-5">
+            <h2>Notificaciones de usuarios seguidos</h2>
+            {followedNotifications.length > 0 ? (
+              <ListGroup>
+                {followedNotifications.map((notification) => (
+                  <ListGroup.Item key={notification.id}>
+                    <strong>Notification from user: </strong> {notification.userName} <br />
+                    <strong>Message: </strong> {notification.notificationMessage} <br />
+                    <strong>Date :</strong> {notification.date} <br />
+                    <strong>Entity name:</strong> {notification.entityName} <br />
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            ) : (
+              <p>No hay notificaciones nuevas.</p>
+            )}
+          </Row>
         </Row>
       </Container>
     </>

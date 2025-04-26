@@ -1,24 +1,12 @@
-import { Col, Container, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { Button, Col, Container, Row, Form, Card } from 'react-bootstrap';
 import { useState } from 'react';
-import { odsData, ODSEnum } from '../utils/ods';
+import { ODSEnum } from '../utils/ods';
 import { useNavigate } from 'react-router-dom';
+import { OdsDropdown } from '../components/OdsDropdown';
 
 export function CreateCommunityRequest() {
   const navigate = useNavigate();
-  const [selectedOds, setSelectedOds] = useState<Set<ODSEnum>>(new Set());
-
-  const handleCheckboxChange = (id: ODSEnum) => {
-    setSelectedOds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id); // Deseleccionar
-      } else {
-        newSet.add(id); // Seleccionar
-      }
-      return newSet;
-    });
-  };
+  const [selectedOds, setSelectedOds] = useState<ODSEnum[]>([]);
 
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,106 +64,83 @@ export function CreateCommunityRequest() {
   };
 
   return (
-    <>
-      <SolidarianNavbar></SolidarianNavbar>
-      <Container>
-        <Row>
-          <Row className="my-5">
-            <h1 className="text-center">Create Community Request</h1>
-          </Row>
+    <Container className="py-5">
+      <Row className="justify-content-center mb-4">
+        <Col md={10}>
+          <h1 className="text-center fw-bold">Create Community Request</h1>
+        </Col>
+      </Row>
 
-          <Row className="my-4">
-            <Col md={{ span: 6, offset: 3 }}>
-              <form>
-                <div className="mb-3">
-                  <label htmlFor="communityName" className="form-label">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="communityName"
-                    placeholder="Enter community name"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="communityDescription" className="form-label">
-                    Description
-                  </label>
-                  <textarea
-                    className="form-control"
-                    id="communityDescription"
+      <Form onSubmit={handleSubmit}>
+        <Row className="g-4 justify-content-center">
+          {/* Community Info */}
+          <Col md={6}>
+            <Card className="h-100 shadow-sm p-3">
+              <Card.Body>
+                <h5 className="fw-semibold mb-3">Community Info</h5>
+
+                <Form.Group className="mb-3" controlId="communityName">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter community name" required />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="communityDescription">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
                     placeholder="Enter community description"
-                    rows={3}
-                  ></textarea>
-                </div>
+                    required
+                  />
+                </Form.Group>
+              </Card.Body>
+            </Card>
+          </Col>
 
-                <Row className="my-4">
-                  <div className="mb-3">
-                    <h2 className="text-center">Cause</h2>
-                    <div className="mb-3">
-                      <label htmlFor="causeTitle" className="form-label">
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="causeTitle"
-                        placeholder="Enter cause title"
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="causeDescription" className="form-label">
-                        Cause Description
-                      </label>
-                      <textarea
-                        className="form-control"
-                        id="causeDescription"
-                        placeholder="Enter cause description"
-                        rows={3}
-                      ></textarea>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="causeEndDate" className="form-label">
-                        End Date
-                      </label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="causeEndDate"
-                        min={new Date().toISOString().split('T')[0]} // Set minimum date to today
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="causeOds" className="form-label">
-                        ODS (Select at least one)
-                      </label>
-                      <div id="causeOds"></div>
-                      {Object.values(odsData).map((ods) => (
-                        <div className="form-check" key={ods.id}>
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`ods${ods.id}`}
-                            value={ods.id}
-                            onChange={() => handleCheckboxChange(ods.id)}
-                          />
-                          <label className="form-check-label" htmlFor={`ods${ods.id}`}>
-                            {ods.title}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Row>
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
-                  Submit
-                </button>
-              </form>
-            </Col>
-          </Row>
+          {/* Cause Info */}
+          <Col md={6}>
+            <Card className="h-100 shadow-sm p-3">
+              <Card.Body>
+                <h5 className="fw-semibold mb-3">Initial Cause</h5>
+
+                <Form.Group className="mb-3" controlId="causeTitle">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" placeholder="Enter cause title" required />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="causeDescription">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
+                    placeholder="Enter cause description"
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="causeEndDate">
+                  <Form.Label>End Date</Form.Label>
+                  <Form.Control type="date" min={new Date().toISOString().split('T')[0]} required />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>ODS (Select at least one)</Form.Label>
+                  <OdsDropdown selected={selectedOds} onChange={setSelectedOds} />
+                </Form.Group>
+              </Card.Body>
+            </Card>
+          </Col>
         </Row>
-      </Container>
-    </>
+
+        {/* Submit Button */}
+        <Row className="mt-4">
+          <Col className="d-flex justify-content-center">
+            <Button variant="primary" type="submit" className="px-5">
+              Submit Request
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </Container>
   );
 }

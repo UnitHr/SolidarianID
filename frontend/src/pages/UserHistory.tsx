@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, Image, Modal, Button } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { Paginate } from '../components/Pagination';
 
 import girlImage from '../assets/chica-solidarianid.png';
@@ -281,7 +280,6 @@ export function UserHistory() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container className="mt-4">
         <Row className="align-items-center mb-4">
           <Col xs={2}>

@@ -1,5 +1,4 @@
 import { Col, Container, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { odsData, ODSEnum } from '../utils/ods';
@@ -82,7 +81,6 @@ export function CreateCause() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container>
         <Row className="my-5">
           <h1 className="text-center">Create Cause</h1>

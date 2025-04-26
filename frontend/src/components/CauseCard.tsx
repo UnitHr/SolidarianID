@@ -2,29 +2,28 @@ import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { CauseValues } from '../pages/SearchCauses';
 
-export function CauseCard(props: CauseValues) {
+export function CauseCard({ id, title, description }: CauseValues) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (!props.id) {
-      console.error('No ID found for cause', props);
+    if (!id) {
+      console.error('No ID found for cause:', { id, title, description });
       return;
     }
-
-    navigate(`/causes/${props.id}`);
+    navigate(`/causes/${id}`);
   };
 
   return (
-    <>
-      <Card style={{ width: '18rem' }}>
-        <Card.Body>
-          <Card.Title>{props.title}</Card.Title>
-          <Card.Text>{props.description}</Card.Text>
-          <Button variant="primary" onClick={handleClick}>
+    <Card className="h-100 shadow-sm" style={{ transition: 'transform 0.2s' }}>
+      <Card.Body className="d-flex flex-column p-3">
+        <Card.Title className="fs-5 mb-2">{title}</Card.Title>
+        <Card.Text className="text-muted small flex-grow-1">{description}</Card.Text>
+        <div className="d-grid mt-2">
+          <Button variant="secondary" size="sm" onClick={handleClick}>
             See details
           </Button>
-        </Card.Body>
-      </Card>
-    </>
+        </div>
+      </Card.Body>
+    </Card>
   );
 }

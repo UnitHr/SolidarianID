@@ -1,5 +1,4 @@
 import { Col, Container, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -73,7 +72,6 @@ export function CreateAction() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container>
         <Row className="my-5">
           <h1 className="text-center">Create Action</h1>

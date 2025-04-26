@@ -1,5 +1,4 @@
 import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import odsImages from '../utils/odsImages';
@@ -208,7 +207,6 @@ export function CauseDetails() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container className="mt-4">
         <Row>
           <Col md={12}>

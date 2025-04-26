@@ -1,67 +1,49 @@
-import { Navbar, Nav } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaBell } from 'react-icons/fa';
+import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
+import { FaBell, FaUserCircle } from 'react-icons/fa';
+import { useAuth } from '../lib/context/AuthContext';
 
 export function SolidarianNavbar() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
+  const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-
-    const user = localStorage.getItem('user');
-    if (user) {
-      const userData = JSON.parse(user);
-      const fullName = `${userData.firstName} ${userData.lastName}`;
-      const exp = userData.exp;
-      const currentTime = Math.floor(Date.now() / 1000);
-      if (exp && exp < currentTime) {
-        handleLogout();
-        return;
-      }
-      setUsername(fullName);
-    }
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsAuthenticated(false);
-    setUsername('');
+    logout();
     navigate('/');
   };
 
   return (
-    <>
-      <Navbar bg="primary" data-bs-theme="dark">
-        <Navbar.Brand href="/" className="px-3">
-          SolidarianId
-        </Navbar.Brand>
-        <Nav className="me-auto">
-          <Nav.Link href="/communities">Communities</Nav.Link>
-          <Nav.Link href="/causes">Causes</Nav.Link>
-          <Nav.Link href="/actions">Actions</Nav.Link>
-        </Nav>
-        <Nav className="mx-4">
-          <Nav.Link href="/notifications" className="d-flex align-items-center">
-            <FaBell size={20} />
-          </Nav.Link>
-          {!isAuthenticated ? (
-            <>
-              <Nav.Link href="/login">Login</Nav.Link>
-              <Nav.Link href="/register">Register</Nav.Link>
-            </>
-          ) : (
-            <>
-              <Nav.Link href="/profile">{username}</Nav.Link>
-              <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-            </>
-          )}
-        </Nav>
-      </Navbar>
-    </>
+    <Navbar bg="primary" variant="dark" expand="lg" className="shadow-sm">
+      <Container>
+        <Navbar.Brand href="/">SolidarianID</Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbar" />
+        <Navbar.Collapse id="navbar">
+          <Nav className="me-auto">
+            <Nav.Link href="/communities">Communities</Nav.Link>
+            <Nav.Link href="/causes">Causes</Nav.Link>
+            <Nav.Link href="/actions">Actions</Nav.Link>
+          </Nav>
+          <Nav className="align-items-center">
+            {!isAuthenticated ? (
+              <>
+                <Nav.Link href="/login">Login</Nav.Link>
+                <Nav.Link href="/register">Register</Nav.Link>
+              </>
+            ) : (
+              <>
+                <Nav.Link href="/notifications">
+                  <FaBell size={18} />
+                </Nav.Link>
+                <NavDropdown title={<FaUserCircle size={20} />} id="user-dropdown" align="end">
+                  <NavDropdown.Item href="/profile">Hi, {user?.firstName}</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+                </NavDropdown>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }

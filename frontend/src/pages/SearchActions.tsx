@@ -1,5 +1,4 @@
 import { Col, Container, Row, Image, ListGroup, Pagination, Alert } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import image from '../assets/filter-actions-image.png';
 import { FormFilterActions } from '../components/FormFilterActions';
 import { useEffect, useState } from 'react';
@@ -96,7 +95,6 @@ export function SearchActions() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
         <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}

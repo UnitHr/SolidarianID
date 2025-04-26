@@ -1,7 +1,7 @@
-import { Alert, Button, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
-import '../index.css';
+import '../styles/index.css';
 import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
 import {
   registerServiceWorker,
@@ -28,9 +28,16 @@ interface JoinComunityRequestValues {
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCommunityAdmin, setIsCommunityAdmin] = useState(false);
-  const [managedCommunities, setManagedCommunities] = useState<string[]>([]);
+
+  const [managedCommunities, setManagedCommunities] = useState<{ id: string; name: string }[]>([]);
   const [joinRequests, setJoinRequests] = useState<JoinComunityRequestValues[]>([]);
-  const [showModal, setShowModal] = useState(false);
+
+  const [showModal, setShowModal] = useState(true);
+  const [modalCommunityName, setModalCommunityName] = useState('');
+  const [modalUserId, setModalUserId] = useState('');
+  const [modalCommunityId, setModalCommunityId] = useState('');
+  const [modalJoinRequestId, setModalJoinRequestId] = useState('');
+
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
@@ -86,11 +93,32 @@ export function Notifications() {
         setIsAdmin(isAdminRole);
 
         if (isAdminRole) {
-          const requests = await fetchCreateCommunityRequests();
-          setPendingRequests(requests); // Actualiza las solicitudes pendientes
+          const requestsResponse = await fetch(
+            'http://localhost:3002/communities/creation-requests?status=pending',
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+          if (!requestsResponse.ok) {
+            throw new Error('Failed to fetch pending requests');
+          }
+          const requestsData = await requestsResponse.json();
+          setPendingRequests(requestsData.data);
         } else {
-          const managedCommunities = await fetchManagedCommunities();
-          if (managedCommunities.length > 0) {
+          // Check if user is community admin
+          const response = await fetch(
+            'http://localhost:3000/api/v1/communities/managed-communities',
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+
+          const data = await response.json();
+          if (data.data.length > 0) {
             setIsCommunityAdmin(true);
             setManagedCommunities(managedCommunities);
             setCurrentCommunity(managedCommunities[0]);
@@ -187,7 +215,6 @@ export function Notifications() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
         <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}
@@ -196,14 +223,13 @@ export function Notifications() {
       <Container>
         <ModalValidateJoinCommunity
           show={showModal}
-          communityName="Amigos por África"
-          userName="pepe martinez"
-          userId="1234"
-          communityId="1234"
+          communityName={modalCommunityName}
+          userId={modalUserId}
+          communityId={modalCommunityId}
           changeAlertMessage={changeAlertMessage}
           changeAlertVariant={changeAlertVariant}
           handleAlertShow={() => setShowAlert(true)}
-          joinRequestId="1234"
+          joinRequestId={modalJoinRequestId}
           handleHide={() => setShowModal(false)}
         ></ModalValidateJoinCommunity>
         <Row>
@@ -308,8 +334,8 @@ export function Notifications() {
               <Form.Select value={currentCommunity} onChange={handleCommunityChange}>
                 <option value="">Select a community</option>
                 {managedCommunities.map((community) => (
-                  <option key={community} value={community}>
-                    {community}
+                  <option key={community.id} value={community.id}>
+                    {community.name}
                   </option>
                 ))}
               </Form.Select>
@@ -323,6 +349,10 @@ export function Notifications() {
                         variant="primary"
                         onClick={() => {
                           setShowModal(true);
+                          setModalCommunityName(request.communityName);
+                          setModalCommunityId(request.communityId);
+                          setModalUserId(request.userId);
+                          setModalJoinRequestId(request.id);
                         }}
                       >
                         Validate

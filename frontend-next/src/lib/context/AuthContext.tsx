@@ -45,9 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('token', userData.token);
     
     Cookies.set('user', JSON.stringify(userData), { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
-    Cookies.set('token', userData.token, { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
-    Cookies.set(isAuthenticated.toString(), 'true', { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
-    
+      Cookies.set('token', userData.token, { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
+
     setUser(userData);
     setIsAuthenticated(true);
   };

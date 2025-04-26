@@ -47,3 +47,14 @@ export interface FetchActionsResponse {
     totalItems: number;
   };
 }
+
+export interface CreateActionPayload {
+  type: ActionTypeEnum;
+  title: string;
+  description: string;
+  target: number;
+  unit: string;
+  goodType?: string;
+  location?: string;
+  date?: string; // ISO string
+}

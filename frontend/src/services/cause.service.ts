@@ -1,3 +1,4 @@
+import { CreateActionPayload } from '../lib/types/action.types';
 import { CauseDetails, CreateCausePayload, FetchCausesResponse } from '../lib/types/cause.types';
 import { ODSEnum } from '../utils/ods';
 import { getToken } from './user.service';
@@ -62,4 +63,25 @@ export async function fetchCauseById(causeId: string): Promise<CauseDetails> {
   if (!response.ok) throw new Error('Error fetching cause details');
   const data = await response.json();
   return data;
+}
+
+/**
+ * Create a new action under a cause.
+ */
+export async function createAction(causeId: string, payload: CreateActionPayload): Promise<void> {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/causes/${causeId}/actions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Failed to create action');
+  }
 }

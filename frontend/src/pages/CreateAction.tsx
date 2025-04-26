@@ -1,12 +1,15 @@
-import { Col, Container, Row } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { ActionTypeEnum, ActionTypeLabels, CreateActionPayload } from '../lib/types/action.types';
+import { getStoredUser } from '../services/user.service';
+import { createAction } from '../services/cause.service';
 
 export function CreateAction() {
-  const { causeId } = useParams();
   const navigate = useNavigate();
-  const [type, setType] = useState('');
 
+  const { causeId } = useParams();
+  const [type, setType] = useState<ActionTypeEnum | ''>('');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -27,15 +30,18 @@ export function CreateAction() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const storedUser = localStorage.getItem('user');
-    if (!storedUser) {
+    // Check if user is logged in
+    if (!getStoredUser()) {
       navigate('/login');
       return;
     }
 
-    const { token } = JSON.parse(storedUser);
+    if (!causeId || !type) {
+      alert('Cause ID and action type are required.');
+      return;
+    }
 
-    const body: any = {
+    const payload: CreateActionPayload = {
       type,
       title: formData.title,
       description: formData.description,
@@ -43,25 +49,17 @@ export function CreateAction() {
       unit: formData.unit,
     };
 
-    // Agregar campos opcionales según el tipo
-    if (type === 'goods_collection') {
-      body.goodType = formData.goodType;
-    } else if (type === 'volunteer') {
-      body.location = formData.location;
-      body.date = formData.date;
+    // Condicionalmente agregar los campos opcionales
+    if (type === ActionTypeEnum.GOODS_COLLECTION) {
+      payload.goodType = formData.goodType;
+    } else if (type === ActionTypeEnum.VOLUNTEER) {
+      payload.location = formData.location;
+      payload.date = formData.date;
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/actions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) throw new Error('Failed to create action');
+      // Call service
+      await createAction(causeId, payload);
       alert('Action created successfully!');
       navigate(`/causes/${causeId}`);
     } catch (error) {
@@ -71,149 +69,146 @@ export function CreateAction() {
   };
 
   return (
-    <>
-      <Container>
-        <Row className="my-5">
-          <h1 className="text-center">Create Action</h1>
-        </Row>
+    <Container className="py-5">
+      {/* Título arriba */}
+      <Row className="justify-content-center mb-4">
+        <Col md={8} lg={6}>
+          <h1 className="text-center fw-bold mb-4">Create Action</h1>
+        </Col>
+      </Row>
 
-        <Row className="my-4">
-          <Col md={{ span: 6, offset: 3 }}>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Type</label>
-                <select
-                  className="form-select"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  required
-                >
-                  <option value="">Select type</option>
-                  <option value="economic">Economic</option>
-                  <option value="goods_collection">Goods Collection</option>
-                  <option value="volunteer">Volunteer</option>
-                </select>
-              </div>
+      {/* Formulario dentro del Card */}
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
+          <Card className="shadow-sm p-4">
+            <Card.Body>
+              <h5 className="fw-semibold mb-4">Action Information</h5>
 
-              <div className="mb-3">
-                <label htmlFor="title" className="form-label">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
+              <Form onSubmit={handleSubmit}>
+                {/* Type */}
+                <Form.Group className="mb-3" controlId="type">
+                  <Form.Label>Type</Form.Label>
+                  <Form.Select
+                    value={type}
+                    onChange={(e) => setType(e.target.value as ActionTypeEnum)}
+                    required
+                  >
+                    <option value="">Select type</option>
+                    {Object.values(ActionTypeEnum).map((actionType) => (
+                      <option key={actionType} value={actionType}>
+                        {ActionTypeLabels[actionType]}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
 
-              <div className="mb-3">
-                <label htmlFor="description" className="form-label">
-                  Description
-                </label>
-                <textarea
-                  className="form-control"
-                  id="description"
-                  name="description"
-                  rows={3}
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  required
-                ></textarea>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="target" className="form-label">
-                  Target
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="target"
-                  name="target"
-                  value={formData.target}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="unit" className="form-label">
-                  Unit
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="unit"
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              {/* Campos adicionales según tipo de acción */}
-              {type === 'goods_collection' && (
-                <div className="mb-3">
-                  <label htmlFor="goodType" className="form-label">
-                    Good Type
-                  </label>
-                  <input
+                {/* Title */}
+                <Form.Group className="mb-3" controlId="title">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control
                     type="text"
-                    className="form-control"
-                    id="goodType"
-                    name="goodType"
-                    value={formData.goodType}
+                    name="title"
+                    value={formData.title}
                     onChange={handleInputChange}
+                    placeholder="Enter action title"
                     required
                   />
-                </div>
-              )}
+                </Form.Group>
 
-              {type === 'volunteer' && (
-                <>
-                  <div className="mb-3">
-                    <label htmlFor="location" className="form-label">
-                      Location
-                    </label>
-                    <input
+                {/* Description */}
+                <Form.Group className="mb-3" controlId="description">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Enter action description"
+                    required
+                  />
+                </Form.Group>
+
+                {/* Target */}
+                <Form.Group className="mb-3" controlId="target">
+                  <Form.Label>Target</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="target"
+                    value={formData.target}
+                    onChange={handleInputChange}
+                    placeholder="Enter target value"
+                    required
+                  />
+                </Form.Group>
+
+                {/* Unit */}
+                <Form.Group className="mb-3" controlId="unit">
+                  <Form.Label>Unit</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="unit"
+                    value={formData.unit}
+                    onChange={handleInputChange}
+                    placeholder="Enter unit"
+                    required
+                  />
+                </Form.Group>
+
+                {/* Conditional fields */}
+                {type === ActionTypeEnum.GOODS_COLLECTION && (
+                  <Form.Group className="mb-3" controlId="goodType">
+                    <Form.Label>Good Type</Form.Label>
+                    <Form.Control
                       type="text"
-                      className="form-control"
-                      id="location"
-                      name="location"
-                      value={formData.location}
+                      name="goodType"
+                      value={formData.goodType}
                       onChange={handleInputChange}
+                      placeholder="Enter type of goods"
                       required
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="date" className="form-label">
-                      Date
-                    </label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      required
-                      min={new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
-                </>
-              )}
+                  </Form.Group>
+                )}
 
-              <button type="submit" className="btn btn-primary">
-                Create Action
-              </button>
-            </form>
-          </Col>
-        </Row>
-      </Container>
-    </>
+                {type === ActionTypeEnum.VOLUNTEER && (
+                  <>
+                    <Form.Group className="mb-3" controlId="location">
+                      <Form.Label>Location</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="Enter location"
+                        required
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="date">
+                      <Form.Label>Date</Form.Label>
+                      <Form.Control
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleInputChange}
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                      />
+                    </Form.Group>
+                  </>
+                )}
+
+                {/* Submit Button */}
+                <div className="d-flex justify-content-center mt-4">
+                  <Button variant="secondary" type="submit" className="px-5">
+                    Submit Action
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 }

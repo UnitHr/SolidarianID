@@ -1,176 +1,114 @@
-import { Col, Container, Row, Image, ListGroup, Pagination, Alert } from 'react-bootstrap';
-import { FormFilterCommunities } from '../components/FormFilterCommunities';
-import { CommunityCard } from '../components/CommunityCard';
-import image from '../assets/filter-communities-image-2.png';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-export interface CommunityValues {
-  id: string;
-  adminId: string;
-  name: string;
-  description: string;
-}
+import { Container, Row, Col, Form, Button, Alert, Image } from 'react-bootstrap';
+import { CommunityCard } from '../components/CommunityCard';
+import { Paginate } from '../components/Pagination';
+import { fetchCommunities, Community } from '../services/community.service';
+import searchImage from '../assets/filter-communities-image-2.png';
 
 export function SearchCommunities() {
   const [name, setName] = useState('');
-  const navigate = useNavigate();
-  const urlBase = 'http://localhost:3000/api/v1/communities';
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState('success');
-  const [search, setSearch] = useState(false);
-  const limit = 4;
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [communities, setCommunities] = useState<CommunityValues[]>([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchCommunities();
-  }, [page, name]);
+    loadCommunities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
-  function changeName(e: React.ChangeEvent<HTMLInputElement>) {
-    setName(e.target.value);
-  }
-
-  function handleCreateCommunity() {
-    navigate('/communities/request');
-  }
-
-  async function handleSearch(e) {
-    e.preventDefault();
-    fetchCommunities();
-  }
-
-  async function fetchCommunities() {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
-
-    if (name !== '') {
-      params.append('name', name);
-    }
-
-    const url = `${urlBase}?${params.toString()}`;
-
-    const response = await fetch(url);
-    if (response.ok) {
-      const data = await response.json();
-      setTotalPages(data.meta.totalPages);
+  const loadCommunities = async () => {
+    try {
+      const data = await fetchCommunities(page, 10, name);
       setCommunities(data.data);
-      setSearch(true);
-
-      setAlertMessage('Communities filtered successfully!');
-      setAlertVariant('success');
-      setShowAlert(true);
-    } else {
-      setAlertMessage('Backend error. Try again later.');
-      setAlertVariant('danger');
-      setShowAlert(true);
+      setTotalPages(data.meta.totalPages);
+      setError('');
+    } catch (err) {
+      console.error('Error loading communities:', err);
+      setError('Could not load communities. Please try again later.');
     }
-  }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Reset to the first page when searching
+    setPage(1);
+    await loadCommunities();
+  };
 
   return (
-    <>
-      {showAlert && (
-        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
-          {alertMessage}
-        </Alert>
-      )}
-      <Container>
-        <Row>
-          <Row className="mt-5 mb-2">
-            <h1 className="text-center">Search Communities</h1>
-          </Row>
-          <Row className="mb-5 text-center">
-            <p>
-              or create a new one:{' '}
-              <button className="btn btn-primary mx-2" onClick={handleCreateCommunity}>
-                Create Community
-              </button>
-            </p>
-          </Row>
-          <Row className="my-4">
-            <h3 className="px-4 py-4 text-justify">
-              Discover and contribute to various communities and charitable causes Whether you're
-              looking to support or to take action, get involved today!
-            </h3>
-          </Row>
-        </Row>
-        <Row className="align-items-center">
+    <Container className="py-5">
+      <Row className="align-items-center mb-5">
+        {/* Image */}
+        <Col md={6} className="mb-4 mb-md-0 text-center">
+          <Image
+            src={searchImage}
+            fluid
+            className="rounded-3 shadow-sm"
+            style={{ maxHeight: '350px', objectFit: 'cover' }}
+          />
+        </Col>
+
+        {/* Title and form */}
+        <Col md={6}>
+          <h1 className="fw-bold mb-3">Explore Communities</h1>
+          <p className="text-muted mb-4">Discover and support initiatives that matter to you.</p>
+          <Form onSubmit={handleSearch}>
+            <Form.Group controlId="searchCommunity" className="d-flex gap-2">
+              <Form.Control
+                type="text"
+                placeholder="Search by name..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Button type="submit" variant="secondary">
+                Search
+              </Button>
+            </Form.Group>
+          </Form>
+        </Col>
+      </Row>
+
+      {error && (
+        <Row className="mb-3">
           <Col>
-            <Image src={image} className="rounded-pill" fluid />
-          </Col>
-          <Col className="d-flex justify-content-center align-items-center">
-            <FormFilterCommunities
-              name={name}
-              changeName={changeName}
-              handleSearch={handleSearch}
-            ></FormFilterCommunities>
+            <Alert variant="danger" dismissible onClose={() => setError('')}>
+              {error}
+            </Alert>
           </Col>
         </Row>
-        <Row className="my-4">
-          <Container>
-            <Row>
-              {search && (
-                <>
-                  <h3>Results: </h3>
-                </>
-              )}
-            </Row>
-            {search && (
-              <>
-                <Row>
-                  <ListGroup className="my-2">
-                    {communities.length > 0 ? (
-                      <>
-                        <ListGroup.Item variant="secondary">
-                          <Row className="d-flex flex-wrap gap-4 justify-content-center">
-                            {communities.map((community) => (
-                              <CommunityCard
-                                key={community.id}
-                                id={community.id}
-                                name={community.name}
-                                description={community.description}
-                              />
-                            ))}
-                          </Row>
-                        </ListGroup.Item>
-                        <Pagination className="mt-3">
-                          <Pagination.First
-                            onClick={() => {
-                              setPage(1);
-                            }}
-                          />
-                          <Pagination.Prev
-                            onClick={() => {
-                              setPage(page > 1 ? page - 1 : page);
-                            }}
-                          />
-                          <Pagination.Item>{page}</Pagination.Item>
-                          <Pagination.Next
-                            onClick={() => {
-                              setPage(page < totalPages ? page + 1 : page);
-                            }}
-                          />
-                          <Pagination.Last
-                            onClick={() => {
-                              setPage(totalPages);
-                            }}
-                          />
-                        </Pagination>
-                      </>
-                    ) : (
-                      <ListGroup.Item>No results found</ListGroup.Item>
-                    )}
-                  </ListGroup>
-                </Row>
-              </>
-            )}
-          </Container>
-        </Row>
-      </Container>
-    </>
+      )}
+
+      {/* Comunities */}
+      <Row className="g-4">
+        {communities.length > 0 ? (
+          communities.map((community) => (
+            <Col key={community.id} xs={12} md={6} lg={4}>
+              <CommunityCard
+                id={community.id}
+                name={community.name}
+                description={community.description}
+              />
+            </Col>
+          ))
+        ) : (
+          <Col className="text-center text-muted py-5">
+            <p>No communities found.</p>
+          </Col>
+        )}
+      </Row>
+
+      {/* Paginate */}
+      <Row className="mt-4">
+        <Col className="d-flex justify-content-center">
+          <Paginate
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={(newPage) => setPage(newPage)}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 }

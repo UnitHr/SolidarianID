@@ -1,3 +1,39 @@
+export interface Community {
+  id: string;
+  adminId: string;
+  name: string;
+  description: string;
+}
+
+export interface FetchCommunitiesResponse {
+  data: Community[];
+  meta: { totalPages: number };
+}
+
+export async function fetchCommunities(
+  page: number = 1,
+  limit: number = 10,
+  name: string = ''
+): Promise<FetchCommunitiesResponse> {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+
+  if (name?.trim()) {
+    params.append('name', name);
+  }
+
+  const url = `http://localhost:3000/api/v1/communities?${params.toString()}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('Error fetching communities');
+  }
+
+  return await response.json();
+}
+
 const baseUrl = 'http://localhost:3000/api/v1/communities';
 const jwtToken = localStorage.getItem('token') || '';
 

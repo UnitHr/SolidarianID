@@ -21,8 +21,9 @@ export class HistoryRegisteredHandler
       return;
     }
     if (event.type === ActivityType.JOIN_COMMUNITY_REQUEST_SENT) {
-      await this.notificationService.createNotificationForCommunityAdmin(
+      await this.notificationService.createNotificationForRelatedEntity(
         event.historyEntryId,
+        event.relatedEntityId,
         event.date,
       );
       return;

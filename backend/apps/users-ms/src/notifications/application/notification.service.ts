@@ -15,8 +15,9 @@ export abstract class NotificationService {
     timestamp?: Date,
   ): Promise<void>;
 
-  abstract createNotificationForCommunityAdmin(
+  abstract createNotificationForRelatedEntity(
     historyEntryId: string,
+    relatedEntityId: string,
     timestamp?: Date,
   ): Promise<void>;
 

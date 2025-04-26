@@ -72,31 +72,27 @@ export class NotificationServiceImpl implements NotificationService {
     );
   }
 
-  async createNotificationForCommunityAdmin(
+  async createNotificationForRelatedEntity(
     historyEntryId: string,
+    relatedEntityId: string,
     timestamp?: Date,
   ): Promise<void> {
     const notification = Notification.create({
       historyEntryId: new UniqueEntityID(historyEntryId),
-      recipientId: new UniqueEntityID('communityAdminId'), // TODO: get the community admin ID
+      recipientId: new UniqueEntityID(relatedEntityId),
       read: false,
       timestamp,
     });
 
-    this.logger.log('Notification FOR ADMIN ID:', notification);
+    const createdNotification = await this.notificationRepository.createMany([
+      notification,
+    ]);
 
-    // eslint-disable-next-line prefer-destructuring
-    const adminId = notification.historyEntry.adminId; // TODO: get the community admin ID
-    this.logger.log('Community Admin ID:', adminId);
+    this.publishNotificationCreatedEvent(createdNotification[0]);
 
-    notification.recipientId = new UniqueEntityID(adminId);
-
-    const createdNotification =
-      await this.notificationRepository.save(notification);
-
-    this.publishNotificationCreatedEvent(createdNotification);
-
-    this.pushNotificationService.sendPushNotification(adminId.toString());
+    this.pushNotificationService.sendPushNotification(
+      relatedEntityId.toString(),
+    );
   }
 
   /* eslint-disable no-await-in-loop */ // TODO: review if this could be improved, batch processing

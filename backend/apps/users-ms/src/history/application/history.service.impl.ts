@@ -7,7 +7,6 @@ import { HistoryEntryRepository } from '../history-entry.repository';
 import { HistoryService } from './history.service';
 import { EntryStatus } from '../domain/HistoryEntryStatus';
 
-// Review how to manage notifications that are admin specific
 @Injectable()
 export class HistoryServiceImpl implements HistoryService {
   constructor(
@@ -140,7 +139,7 @@ export class HistoryServiceImpl implements HistoryService {
       timestamp,
     });
 
-    await this.historyEntryRepository.save(entry);
+    await this.saveEntryAndNotify(entry);
   }
 
   private async archiveJoinCommunityPendingRequest(

@@ -6,6 +6,7 @@ export class HistoryRegisteredEvent extends DomainEvent {
     public readonly historyEntryId: string,
     public readonly userId: string,
     public readonly type: ActivityType,
+    public readonly relatedEntityId: string,
     public readonly date: Date,
   ) {
     super(HistoryRegisteredEvent.name, date);

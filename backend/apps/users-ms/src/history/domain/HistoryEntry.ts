@@ -69,6 +69,7 @@ export class HistoryEntry extends EntityRoot<HistoryEntryProps> {
         historyEntry.id.toString(),
         historyEntry.userId.toString(),
         historyEntry.type,
+        historyEntry.adminId,
         historyEntry.timestamp,
       ),
     );

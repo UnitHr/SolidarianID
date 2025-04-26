@@ -14,7 +14,7 @@ export class NotificationResolver {
     resolve: (value: NotificationModel) => value,
   })
   notificationAdded(@Args('userId', { type: () => ID }) userId: string) {
-    this.logger.log(`User ${userId} subscribed to notifications`);
+    this.logger.debug(`User ${userId} subscribed to notifications`);
     return this.pubSub.asyncIterator('notificationAdded');
   }
 }

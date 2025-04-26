@@ -10,13 +10,11 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   async getUserProfile(id: string) {
-    this.logger.debug(`Fetching user profile for ID: ${id}`);
     const response = await axios.get(`${this.usersMsUrl}/${id}`);
     return response.data;
   }
 
   async countUserFollowing(id: string): Promise<number> {
-    this.logger.debug(`Counting users that ${id} is following`);
     const response = await axios.get(
       `${this.usersMsUrl}/${id}/following/count`,
     );
@@ -24,7 +22,6 @@ export class UserService {
   }
 
   async countUserFollowers(id: string): Promise<number> {
-    this.logger.debug(`Counting followers for user ${id}`);
     const response = await axios.get(
       `${this.usersMsUrl}/${id}/followers/count`,
     );
@@ -32,7 +29,6 @@ export class UserService {
   }
 
   async createUser(createUserInput: CreateUserInput): Promise<string> {
-    this.logger.debug('Creating new user');
     const response = await axios.post(`${this.usersMsUrl}`, createUserInput);
     return response.data.id;
   }

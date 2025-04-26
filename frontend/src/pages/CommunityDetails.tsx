@@ -96,6 +96,14 @@ export function CommunityDetails() {
     );
   }
 
+  if (!community) {
+    return (
+      <Container className="py-5 text-center">
+        <h4>Community not found</h4>
+      </Container>
+    );
+  }
+
   return (
     <>
       <Container className="py-4">

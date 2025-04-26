@@ -104,3 +104,12 @@ export function getStoredUser(): User | null {
     return null;
   }
 }
+
+/**
+ * Fetch user by ID.
+ */
+export async function fetchUserById(userId: string): Promise<User> {
+  const res = await fetch(`${API_URL}/users/${userId}`);
+  if (!res.ok) throw new Error('Failed to fetch creator');
+  return res.json();
+}

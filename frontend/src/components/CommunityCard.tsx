@@ -1,8 +1,8 @@
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { Community } from '../services/community.service';
+import { CommunityDetails } from '../lib/types/community.types';
 
-export function CommunityCard({ id, name, description }: Community) {
+export function CommunityCard({ id, name, description }: CommunityDetails) {
   const navigate = useNavigate();
 
   const handleClick = () => {

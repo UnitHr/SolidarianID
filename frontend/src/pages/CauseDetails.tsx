@@ -1,203 +1,102 @@
-import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import odsImages from '../utils/odsImages';
-import '../styles/links.css';
+import { Col, Container, Row, Image, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import { ArrowLeft, ThumbsUp } from 'lucide-react';
+import { CauseDetails as CauseType } from '../lib/types/cause.types';
+import { ActionDetails } from '../lib/types/action.types';
+import { CommunityDetails } from '../lib/types/community.types';
+import { User } from '../lib/types/user.types';
+import {
+  fetchActionsByCauseId,
+  fetchCauseById,
+  fetchCauseSupporters,
+  supportCause,
+} from '../services/cause.service';
+import { fetchUserById, getStoredUser } from '../services/user.service';
+import { getCommunityById } from '../services/community.service';
 import { Paginate } from '../components/Pagination';
-import { ThumbsUp } from 'lucide-react';
-
-type CommunityDetails = {
-  id: string;
-  name: string;
-};
-
-type OdsItem = {
-  id: number;
-  title: string;
-  description: string;
-};
-
-type CauseDetails = {
-  id: string;
-  title: string;
-  description: string;
-  communityId: string;
-  createdAt: string;
-  createdBy: string;
-  endDate: string;
-  ods: OdsItem[];
-};
-
-type ActionDetails = {
-  id: string;
-  title: string;
-  description: string;
-  causeId: string;
-  status: string;
-};
-
-type User = {
-  userId: string;
-  firstName: string;
-  lastName: string;
-  roles: string[];
-  token: string;
-  exp: number;
-};
+import { ActionCard } from '../components/ActionCard';
+import odsImages from '../utils/odsImages';
 
 export function CauseDetails() {
   const navigate = useNavigate();
+
   const { causeId } = useParams();
-  const [cause, setCause] = useState<CauseDetails | null>(null);
+  const [cause, setCause] = useState<CauseType | null>(null);
   const [community, setCommunity] = useState<CommunityDetails | null>(null);
   const [actions, setActions] = useState<ActionDetails[]>([]);
-  const [loading, setLoading] = useState(true);
   const [fullName, setFullName] = useState<string | null>(null);
-  const limit = 6;
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [hasSupported, setHasSupported] = useState(false);
   const [supportCount, setSupportCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString();
-    const formattedTime = date.toLocaleTimeString();
-
-    return `${formattedDate} at ${formattedTime}`;
+    return date.toLocaleDateString();
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (!storedUser) {
+    // Check if user is logged in
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+
+    // Load cause data
+    if (causeId) {
+      loadData(causeId, storedUser);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [causeId, page]);
+
+  const loadData = async (causeId: string, user: User | null) => {
+    try {
+      const [causeData, supporterIds, actionsData] = await Promise.all([
+        fetchCauseById(causeId),
+        fetchCauseSupporters(causeId),
+        fetchActionsByCauseId(causeId, page, 9),
+      ]);
+
+      setCause(causeData);
+      setActions(actionsData.actions);
+      setTotalPages(actionsData.totalPages);
+      setSupportCount(supporterIds.length);
+
+      const [creatorData, communityData] = await Promise.all([
+        fetchUserById(causeData.createdBy),
+        getCommunityById(causeData.communityId),
+      ]);
+
+      setFullName(`${creatorData.firstName} ${creatorData.lastName}`);
+      setCommunity(communityData);
+
+      // Check if user is a supporter
+      if (user) {
+        setHasSupported(supporterIds.includes(user.userId));
+      }
+    } catch (error) {
+      console.error('Error loading cause details:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSupport = async () => {
+    if (!causeId) return;
+
+    // Redirect to login if user is not logged in
+    if (!user) {
       navigate('/login');
       return;
     }
-    const parsedUser = JSON.parse(storedUser);
-    setUser(parsedUser);
 
-    if (!causeId) {
-      return;
-    }
-
-    async function fetchCauseDetails(causeId: string) {
-      try {
-        const cause = await fetch(`http://localhost:3000/api/v1/causes/${causeId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!cause.ok) {
-          throw new Error('Error fetching community details');
-        }
-
-        const data = await cause.json();
-        setCause(data);
-
-        //Get supporters of the cause
-        const supportersResponse = await fetch(
-          `http://localhost:3000/api/v1/causes/${causeId}/supporters`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!supportersResponse.ok) {
-          throw new Error('Error fetching supporters of cause');
-        }
-        const supportersData = await supportersResponse.json();
-        setHasSupported(supportersData.data.includes(parsedUser.userId));
-        setSupportCount(supportersData.data.length);
-
-        //Get creator of the cause
-        const creator = await fetch(`http://localhost:3000/api/v1/users/${data.createdBy}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (!creator.ok) {
-          throw new Error('Error fetching creator details');
-        }
-        const creatorData = await creator.json();
-        setFullName(`${creatorData.firstName} ${creatorData.lastName}`);
-
-        //Get community of the cause
-        const community = await fetch(
-          `http://localhost:3000/api/v1/communities/${data.communityId}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!community.ok) {
-          throw new Error('Error fetching community details');
-        }
-        const communityData = await community.json();
-        setCommunity(communityData.data);
-
-        //Get actions of the cause
-        const actions = await fetch(
-          `http://localhost:3000/api/v1/causes/${causeId}/actions?page=${page}&limit=${limit}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!actions.ok) {
-          throw new Error('Error fetching actions of cause');
-        }
-
-        const actionsData = await actions.json();
-
-        setTotalPages(actionsData.meta.totalPages);
-
-        const detailRequests = actionsData.data.map((id: string) =>
-          fetch(`http://localhost:3000/api/v1/actions/${id}`).then((res) => res.json())
-        );
-
-        const entityDetails = await Promise.all(detailRequests);
-        setActions(entityDetails);
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCauseDetails(causeId);
-  }, [causeId, page]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  const handleSupport = async () => {
-    if (!causeId || hasSupported || !user?.userId) return;
+    if (hasSupported) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error('Error supporting the cause');
-
+      await supportCause(causeId);
       setHasSupported(true);
       setSupportCount((prev) => prev + 1);
     } catch (err) {
@@ -205,145 +104,164 @@ export function CauseDetails() {
     }
   };
 
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <div>Loading...</div>
+      </Container>
+    );
+  }
+
+  if (!cause) {
+    return (
+      <Container className="py-5 text-center">
+        <h4>Cause not found</h4>
+      </Container>
+    );
+  }
+
   return (
-    <>
-      <Container className="mt-4">
-        <Row>
-          <Col md={12}>
-            {cause ? (
-              <div>
-                {cause.ods && cause.ods.length > 0 && (
-                  <Row className="justify-content-center mb-5">
-                    {cause.ods.map((odsItem) => (
-                      <Col
-                        key={odsItem.id}
-                        xs={6}
-                        sm={4}
-                        md={3}
-                        lg={2}
-                        className="d-flex flex-column align-items-center"
-                      >
-                        <OverlayTrigger
-                          placement="top"
-                          overlay={
-                            <Tooltip id={`tooltip-ods-${odsItem.id}`}>
-                              {odsItem.title}: {odsItem.description}
-                            </Tooltip>
-                          }
-                        >
-                          <Image
-                            src={odsImages[odsItem.id]}
-                            alt={odsItem.title}
-                            className="img-fluid"
-                            style={{
-                              width: '100px',
-                              borderRadius: '8px',
-                              border: '2px solid #ddd',
-                            }}
-                          />
-                        </OverlayTrigger>
-                      </Col>
-                    ))}
-                  </Row>
-                )}
-                <Row className="justify-content-center mb-3">
-                  <Col xs={12} md={9}>
-                    <h2 className="mb-1 text-center">{cause.title}</h2>
-                    <p className="text-center text-muted mt-3">
-                      <OverlayTrigger
-                        placement="top"
-                        overlay={<Tooltip id={`tooltip-ods-${community?.id}`}>Community</Tooltip>}
-                      >
-                        <Link
-                          to={`/communities/${community?.id}`}
-                          className="fw-bold text-decoration-none entity-link"
-                        >
-                          {community?.name}
-                        </Link>
-                      </OverlayTrigger>
-                    </p>
-                  </Col>
-                </Row>
+    <Container className="py-5">
+      {/* Header */}
+      <Row className="justify-content-center text-center mb-4">
+        <Col md={8}>
+          <h5 className="text-muted mb-2">Cause Details</h5>
+          <h2 className="fw-bold mb-3">{cause.title}</h2>
+          {community && (
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id="tooltip-community">See Community Details</Tooltip>}
+            >
+              <Link
+                to={`/communities/${community.id}`}
+                className="d-inline-flex align-items-center gap-2 text-primary fw-semibold text-decoration-none"
+              >
+                <ArrowLeft size={18} />
+                {community.name}
+              </Link>
+            </OverlayTrigger>
+          )}
+        </Col>
+      </Row>
 
-                <div className="text-end mb-4">
-                  <ThumbsUp
-                    size={28}
-                    style={{ cursor: hasSupported ? 'default' : 'pointer' }}
-                    color={hasSupported ? '#facc15' : '#a3a3a3'}
-                    fill={hasSupported ? '#facc15' : 'none'}
-                    onClick={!hasSupported ? handleSupport : undefined}
-                  />
-                  <p className="mt-2 text-muted text-end">{supportCount} Supports</p>
-                </div>
-                <hr className="my-4" />
+      {/* Support Section */}
+      <div className="d-flex justify-content-end align-items-center gap-2 mb-5">
+        <ThumbsUp
+          size={28}
+          style={{ cursor: hasSupported ? 'default' : 'pointer' }}
+          color={hasSupported ? '#facc15' : '#a3a3a3'}
+          fill={hasSupported ? '#facc15' : 'none'}
+          onClick={handleSupport}
+        />
+        <span className="text-muted">{supportCount} Supports</span>
+      </div>
 
-                <Row>
-                  <Col>
-                    <p>
-                      <strong>Created by:</strong> {fullName}
-                    </p>
-                    <p>
-                      <strong>Created on:</strong> {formatDate(cause.createdAt)}
-                    </p>
-                    <p>
-                      <strong>End date:</strong> {formatDate(cause.endDate)}
-                    </p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <h4 className="mt-3 mb-3 ">Description</h4>
-                    <p>{cause.description}</p>
-                    <hr className="my-4" />
-                    <Row className="align-items-center justify-content-between mb-3">
-                      <Col xs="auto">
-                        <h4 className="mb-0">Related Actions</h4>
-                      </Col>
-                      <Col xs="auto">
-                        <button
-                          className="btn btn-primary w-100"
-                          onClick={() => navigate(`/causes/${causeId}/actions/new`)}
-                        >
-                          + Create Action
-                        </button>
-                      </Col>
-                    </Row>
-                    {actions.length > 0 && (
-                      <>
-                        {actions.map((action) => (
-                          <div key={action.id} className="mb-4">
-                            <h5>
-                              <OverlayTrigger
-                                placement="top"
-                                overlay={
-                                  <Tooltip id={`tooltip-${action.id}`}>Show details</Tooltip>
-                                }
-                              >
-                                <Link to={`/actions/${action.id}`} className="entity-link">
-                                  {action.title}
-                                </Link>
-                              </OverlayTrigger>
-                            </h5>
-                            <p>{action.description}</p>
-                            <p>Status: {action.status}</p>
-                          </div>
-                        ))}
-                        <Paginate
-                          currentPage={page}
-                          totalPages={totalPages}
-                          onPageChange={(newPage) => setPage(newPage)}
-                        />
-                      </>
-                    )}
-                  </Col>
-                </Row>
-              </div>
-            ) : (
-              <p>Data not found.</p>
-            )}
+      <hr className="my-4" />
+
+      {/* Cause Info */}
+      <Row className="justify-content-center text-center mb-5">
+        <Col md={8}>
+          <h5 className="fw-semibold mb-4">Cause Information</h5>
+
+          <div className="d-flex flex-wrap justify-content-center gap-3 mb-4">
+            <Button
+              variant="outline-primary"
+              disabled
+              className="d-flex align-items-center gap-2 px-3"
+            >
+              👤 {fullName || 'Unknown'}
+            </Button>
+            <Button
+              variant="outline-secondary"
+              disabled
+              className="d-flex align-items-center gap-2 px-3"
+            >
+              🗓️ {formatDate(cause.createdAt)}
+            </Button>
+            <Button
+              variant="outline-secondary"
+              disabled
+              className="d-flex align-items-center gap-2 px-3"
+            >
+              ⏳ {formatDate(cause.endDate)}
+            </Button>
+          </div>
+
+          {/* ODS Images */}
+          {cause.ods.length > 0 && (
+            <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
+              {cause.ods.map((ods) => (
+                <OverlayTrigger
+                  key={ods.id}
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-ods-${ods.id}`}>{ods.title}</Tooltip>}
+                >
+                  <div
+                    className="d-flex align-items-center justify-content-center"
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      overflow: 'hidden',
+                      borderRadius: '8px',
+                      border: '1px solid #eee',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Image src={odsImages[ods.id]} alt={ods.title} className="img-fluid" />
+                  </div>
+                </OverlayTrigger>
+              ))}
+            </div>
+          )}
+
+          {/* Descripción */}
+          <p className="text-muted mt-4">{cause.description}</p>
+        </Col>
+      </Row>
+
+      <hr className="my-4" />
+
+      {/* Related Actions */}
+      <Row className="align-items-center justify-content-between mb-4">
+        <Col xs="auto">
+          <h4 className="fw-semibold mb-0">Related Actions</h4>
+        </Col>
+        {user && ( // Show button only if user is logged in
+          <Col xs="auto">
+            <Button onClick={() => navigate(`/causes/${causeId}/actions/new`)}>
+              + Create Action
+            </Button>
+          </Col>
+        )}
+      </Row>
+
+      {/* Actions List */}
+      <Row className="g-4">
+        {actions.length > 0 ? (
+          actions.map((action) => (
+            <Col key={action.id} xs={12} md={6} lg={4}>
+              <ActionCard {...action} />
+            </Col>
+          ))
+        ) : (
+          <Col className="text-center text-muted py-5">
+            <p>No actions found for this cause.</p>
+          </Col>
+        )}
+      </Row>
+
+      {/* Pagination */}
+      {actions.length > 0 && (
+        <Row className="mt-4">
+          <Col className="d-flex justify-content-center">
+            <Paginate
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(newPage) => setPage(newPage)}
+            />
           </Col>
         </Row>
-      </Container>
-    </>
+      )}
+    </Container>
   );
 }

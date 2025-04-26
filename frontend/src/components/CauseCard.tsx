@@ -1,8 +1,8 @@
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { CauseValues } from '../pages/SearchCauses';
+import { CauseDetails } from '../lib/types/cause.types';
 
-export function CauseCard({ id, title, description }: CauseValues) {
+export function CauseCard({ id, title, description }: CauseDetails) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -10,7 +10,7 @@ export function CauseCard({ id, title, description }: CauseValues) {
       console.error('No ID found for cause:', { id, title, description });
       return;
     }
-    window.location.href = `http://localhost:3006/causes/${id}`;
+    navigate(`/causes/${id}`);
   };
 
   return (

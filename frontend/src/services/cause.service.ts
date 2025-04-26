@@ -1,4 +1,4 @@
-import { CreateCausePayload, FetchCausesResponse } from '../lib/types/cause.types';
+import { CauseDetails, CreateCausePayload, FetchCausesResponse } from '../lib/types/cause.types';
 import { ODSEnum } from '../utils/ods';
 import { getToken } from './user.service';
 
@@ -52,4 +52,14 @@ export async function fetchCauses(
   }
 
   return await response.json();
+}
+
+/**
+ * Fetch a cause by its ID.
+ */
+export async function fetchCauseById(causeId: string): Promise<CauseDetails> {
+  const response = await fetch(`${API_URL}/causes/${causeId}`);
+  if (!response.ok) throw new Error('Error fetching cause details');
+  const data = await response.json();
+  return data;
 }

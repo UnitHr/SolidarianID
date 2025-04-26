@@ -1,118 +1,152 @@
-import { Col, Container, Row, OverlayTrigger, Tooltip, ProgressBar } from 'react-bootstrap';
+import { Container, Row, Col, OverlayTrigger, Tooltip, ProgressBar, Button } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
-type ActionDetails = {
-  id: string;
-  title: string;
-  description: string;
-  causeId: string;
-  status: string;
-  type: string;
-  target: string;
-  unit: string;
-  achieved: string;
-};
-
-type CauseDetails = {
-  id: string;
-  title: string;
-};
+import {
+  ActionStatusEnum,
+  ActionStatusLabels,
+  ActionTypeLabels,
+  type ActionDetails,
+} from '../lib/types/action.types';
+import { CauseDetails } from '../lib/types/cause.types';
+import { fetchActionById } from '../services/action.service';
+import { fetchCauseById } from '../services/cause.service';
+import { ArrowLeft } from 'lucide-react';
 
 export function ActionDetails() {
   const { actionId } = useParams();
+
   const [action, setAction] = useState<ActionDetails | null>(null);
-  const [loading, setLoading] = useState(true);
   const [cause, setCause] = useState<CauseDetails | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (!actionId) return;
-
-    const fetchActionDetails = async () => {
-      try {
-        const action = await fetch(`http://localhost:3000/api/v1/actions/${actionId}`);
-        if (!action.ok) {
-          throw new Error('Error fetching action details');
-        }
-        const data = await action.json();
-        setAction(data);
-
-        const cause = await fetch(`http://localhost:3000/api/v1/causes/${data.causeId}`);
-        if (!cause.ok) {
-          throw new Error('Error fetching cause details');
-        }
-        const causeData = await cause.json();
-        setCause(causeData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActionDetails();
+    if (actionId) {
+      loadActionData(actionId);
+    }
   }, [actionId]);
 
+  const loadActionData = async (id: string) => {
+    try {
+      setLoading(true);
+
+      // Call services
+      const [actionRes, causeRes] = await Promise.all([
+        fetchActionById(id),
+        (async () => {
+          const fetchedAction = await fetchActionById(id);
+          return fetchCauseById(fetchedAction.causeId);
+        })(),
+      ]);
+
+      setAction(actionRes);
+      setCause(causeRes);
+    } catch (err) {
+      console.error('Error loading action details:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Container className="py-5 text-center">
+        <div>Loading...</div>
+      </Container>
+    );
   }
 
-  // Cálculo del progreso
-  const achieved = parseFloat(action?.achieved ?? '0');
-  const target = parseFloat(action?.target ?? '1');
-  const percentage = Math.min(Math.round((achieved / target) * 100), 100);
+  if (!action) {
+    return (
+      <Container className="py-5 text-center">
+        <h4>Action not found</h4>
+      </Container>
+    );
+  }
+
+  // Calculate progress
+  const achieved = action.achieved ?? 0;
+  const target = action.target ?? 1;
+  const progress = Math.min(Math.round((achieved / target) * 100), 100);
+
+  const progressVariant =
+    action.status === ActionStatusEnum.COMPLETED
+      ? 'success'
+      : action.status === ActionStatusEnum.IN_PROGRESS
+        ? 'primary'
+        : 'warning';
 
   return (
     <>
-      <Container className="mt-4">
-        <Row className="justify-content-center mb-3">
-          <Col xs={12} md={9}>
-            <h2 className="mb-1 text-center">{action?.title}</h2>
-            <p className="text-center text-muted mt-3">
+      <Container className="py-5">
+        {/* Header */}
+        <Row className="justify-content-center text-center mb-4">
+          <Col md={8}>
+            <h5 className="text-muted mb-2">Action Details</h5>
+            <h2 className="fw-bold mb-3">{action.title}</h2>
+
+            {cause && (
               <OverlayTrigger
                 placement="top"
-                overlay={
-                  <Tooltip id={`tooltip-cause-${action?.causeId}`}>See cause details</Tooltip>
-                }
+                overlay={<Tooltip id="tooltip-cause">See Cause Details</Tooltip>}
               >
                 <Link
-                  to={`/causes/${action?.causeId}`}
-                  className="fw-bold text-decoration-none entity-link"
+                  to={`/causes/${cause.id}`}
+                  className="d-inline-flex align-items-center gap-2 text-primary fw-semibold text-decoration-none"
                 >
-                  {cause?.title}
+                  <ArrowLeft size={18} />
+                  {cause.title}
                 </Link>
               </OverlayTrigger>
-            </p>
+            )}
           </Col>
         </Row>
-        <hr className="my-4" />
-        <Row>
-          <Col>
-            <p>
-              <strong>Status:</strong> <span className="text-capitalize">{action?.status}</span>
+
+        {/* Status and Type */}
+        <Row className="justify-content-center mb-4">
+          <Col md={6} className="d-flex gap-2 justify-content-center">
+            <Button variant={progressVariant} disabled className="flex-grow-1 text-white">
+              {ActionStatusLabels[action.status]}
+            </Button>
+
+            <Button variant="outline-secondary" disabled className="flex-grow-1">
+              {ActionTypeLabels[action.type]}
+            </Button>
+          </Col>
+        </Row>
+
+        {/* Achieved - Progress - Target */}
+        <Row className="align-items-center text-center mb-5">
+          <Col xs={4}>
+            <h6 className="mb-1">Achieved</h6>
+            <p className="text-muted">
+              {action.achieved} {action.unit}
             </p>
-            <p>
-              <strong>Type:</strong> <span className="text-capitalize">{action?.type}</span>
-            </p>
-            <p>
-              <strong>Target:</strong> {action?.target} {action?.unit}
-            </p>
-            <p>
-              <strong>Achieved:</strong> {action?.achieved} {action?.unit}
-            </p>
+          </Col>
+
+          <Col xs={4}>
             <ProgressBar
-              now={percentage}
-              label={`${percentage}%`}
+              now={progress}
+              label={`${progress}%`}
               striped
-              variant={percentage === 100 ? 'success' : 'info'}
-              className="mt-2"
+              variant={progressVariant}
+              style={{ height: '1.5rem' }}
             />
           </Col>
+
+          <Col xs={4}>
+            <h6 className="mb-1">Target</h6>
+            <p className="text-muted">
+              {action.target} {action.unit}
+            </p>
+          </Col>
         </Row>
-        <Row>
-          <Col>
-            <h4 className="mt-4 mb-3">Description</h4>
-            <p>{action?.description}</p>
+
+        {/* Description */}
+        <Row className="justify-content-center">
+          <Col md={8}>
+            <h4 className="fw-semibold mb-3">Description</h4>
+            <p className="text-muted">{action.description}</p>
           </Col>
         </Row>
       </Container>

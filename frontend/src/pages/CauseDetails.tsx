@@ -304,7 +304,7 @@ export function CauseDetails() {
                           className="btn btn-primary w-100"
                           onClick={() => navigate(`/causes/${causeId}/actions/new`)}
                         >
-                          Create Action
+                          + Create Action
                         </button>
                       </Col>
                     </Row>

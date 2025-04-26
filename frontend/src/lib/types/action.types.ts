@@ -1,9 +1,33 @@
+export enum ActionStatusEnum {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+}
+
+export enum ActionTypeEnum {
+  VOLUNTEER = 'volunteer',
+  ECONOMIC = 'economic',
+  GOODS_COLLECTION = 'goods_collection',
+}
+
+export const ActionStatusLabels: Record<ActionStatusEnum, string> = {
+  [ActionStatusEnum.PENDING]: 'Pending',
+  [ActionStatusEnum.IN_PROGRESS]: 'In Progress',
+  [ActionStatusEnum.COMPLETED]: 'Completed',
+};
+
+export const ActionTypeLabels: Record<ActionTypeEnum, string> = {
+  [ActionTypeEnum.VOLUNTEER]: 'Volunteer',
+  [ActionTypeEnum.ECONOMIC]: 'Economic',
+  [ActionTypeEnum.GOODS_COLLECTION]: 'Goods Collection',
+};
+
 export type ActionDetails = {
   id: string;
   title: string;
   description: string;
-  type: string;
-  status: string;
+  type: ActionTypeEnum;
+  status: ActionStatusEnum;
   causeId: string;
   target: number;
   unit: string;
@@ -23,27 +47,3 @@ export interface FetchActionsResponse {
     totalItems: number;
   };
 }
-
-export enum ActionStatusEnum {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-}
-
-export const ActionStatusLabels: Record<ActionStatusEnum, string> = {
-  [ActionStatusEnum.PENDING]: 'Pending',
-  [ActionStatusEnum.IN_PROGRESS]: 'In Progress',
-  [ActionStatusEnum.COMPLETED]: 'Completed',
-};
-
-export enum ActionTypeEnum {
-  VOLUNTEER = 'volunteer',
-  ECONOMIC = 'economic',
-  GOODS_COLLECTION = 'goods_collection',
-}
-
-export const ActionTypeLabels: Record<ActionTypeEnum, string> = {
-  [ActionTypeEnum.VOLUNTEER]: 'Volunteer',
-  [ActionTypeEnum.ECONOMIC]: 'Economic',
-  [ActionTypeEnum.GOODS_COLLECTION]: 'Goods Collection',
-};

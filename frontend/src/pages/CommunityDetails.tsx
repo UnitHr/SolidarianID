@@ -89,7 +89,11 @@ export function CommunityDetails() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Container className="py-5 text-center">
+        <div>Loading...</div>
+      </Container>
+    );
   }
 
   return (

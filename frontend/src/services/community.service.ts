@@ -1,5 +1,9 @@
+import {
+  FetchCommunitiesResponse,
+  CommunityDetails,
+  CreateCommunityRequestPayload,
+} from '../lib/types/community.types';
 import { CauseDetails } from '../lib/types/cause.types';
-import { FetchCommunitiesResponse, CommunityDetails } from '../lib/types/community.types';
 import { getToken } from './user.service';
 
 const API_URL = 'http://localhost:3000/api/v1';
@@ -157,4 +161,27 @@ export async function sendJoinRequest(communityId: string): Promise<Response> {
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+/**
+ * Send a new community creation request.
+ */
+export async function createCommunityRequest(
+  payload: CreateCommunityRequestPayload
+): Promise<void> {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/communities`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || 'Failed to create community request');
+  }
 }

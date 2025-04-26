@@ -1,14 +1,12 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { NotificationCreatedEvent } from '@common-lib/common-lib/events/domain/NotificationCreatedEvent';
-import { NotificationService } from '@api-gateway/graphql/services/notification.service';
-import { NotificationModel } from '../notification.model';
+import { NotificationModel } from '../models/notification.model';
+import { NotificationService } from './notification.service';
 
 @Controller()
-export class NotificationEventListenerController {
-  private readonly logger = new Logger(
-    NotificationEventListenerController.name,
-  );
+export class NotificationEventsController {
+  private readonly logger = new Logger(NotificationEventsController.name);
 
   constructor(private readonly notificationService: NotificationService) {}
 

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Args, ID, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSubService } from '../services/pubsub.service';
 import { NotificationModel } from '../models/notification.model';
+import { PubSubService } from '../application/pubsub.service';
 
 @Resolver(() => NotificationModel)
 export class NotificationResolver {

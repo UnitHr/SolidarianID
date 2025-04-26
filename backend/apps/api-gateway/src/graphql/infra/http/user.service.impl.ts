@@ -1,13 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { envs } from '@api-gateway/config';
-import { CreateUserInput } from '../models/inputs/create-user.input';
+import { UserService } from '@api-gateway/graphql/application/user.service';
+import { CreateUserInput } from '@api-gateway/graphql/models/inputs/create-user.input';
 
 @Injectable()
-export class UserService {
+export class UserServiceImpl implements UserService {
   private readonly usersMsUrl = envs.usersMsUrl;
 
-  private readonly logger = new Logger(UserService.name);
+  private readonly logger = new Logger(UserServiceImpl.name);
 
   async getUserProfile(id: string) {
     const response = await axios.get(`${this.usersMsUrl}/${id}`);

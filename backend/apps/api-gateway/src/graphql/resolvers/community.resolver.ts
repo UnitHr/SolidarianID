@@ -8,9 +8,9 @@ import {
 } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
 import { CommunityModel } from '../models/community.model';
-import { CommunityService } from '../services/community.service';
-import { UserService } from '../services/user.service';
 import { UserModel } from '../models/user.model';
+import { UserService } from '../application/user.service';
+import { CommunityService } from '../application/community.service';
 
 @Resolver(() => CommunityModel)
 export class CommunityResolver {
@@ -25,8 +25,7 @@ export class CommunityResolver {
   async getCommunity(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<CommunityModel> {
-    const response = await this.communityService.getCommunity(id);
-    return { ...response.data };
+    return this.communityService.getCommunity(id);
   }
 
   @ResolveField('admin', () => UserModel, { nullable: true })

@@ -9,8 +9,8 @@ import {
   Mutation,
 } from '@nestjs/graphql';
 import { UserModel } from '../models/user.model';
-import { UserService } from '../services/user.service';
 import { CreateUserInput } from '../models/inputs/create-user.input';
+import { UserService } from '../application/user.service';
 
 @Resolver(() => UserModel)
 export class UserResolver {

@@ -7,13 +7,17 @@ import { APP_FILTER } from '@nestjs/core';
 import { UserResolver } from './resolvers/user.resolver';
 import { CommunityResolver } from './resolvers/community.resolver';
 import { NotificationResolver } from './resolvers/notification.resolver';
-import { UserService } from './services/user.service';
-import { CommunityService } from './services/community.service';
-import { NotificationService } from './services/notification.service';
-import { PubSubService } from './services/pubsub.service';
+import { PubSubServiceImpl } from './infra/pubsub.service.impl';
 import { DateScalar } from './models/scalars/date.scalar';
-import { GraphQLGeneralExceptionFilter } from './errors/general-exception.filter';
-import { NotificationEventListenerController } from './models/events/notification-event-listener.controller';
+import { GraphQLGeneralExceptionFilter } from './infra/general-exception.filter';
+import { NotificationEventsController } from './application/notification-events.controller';
+import { UserService } from './application/user.service';
+import { CommunityService } from './application/community.service';
+import { NotificationService } from './application/notification.service';
+import { UserServiceImpl } from './infra/http/user.service.impl';
+import { CommunityServiceImpl } from './infra/http/community.service.impl';
+import { NotificationServiceImpl } from './infra/http/notification.service.impl';
+import { PubSubService } from './application/pubsub.service';
 
 @Module({
   imports: [
@@ -49,13 +53,25 @@ import { NotificationEventListenerController } from './models/events/notificatio
     UserResolver,
     CommunityResolver,
     NotificationResolver,
-    UserService,
-    CommunityService,
-    NotificationService,
-    PubSubService,
+    {
+      provide: UserService,
+      useClass: UserServiceImpl,
+    },
+    {
+      provide: CommunityService,
+      useClass: CommunityServiceImpl,
+    },
+    {
+      provide: NotificationService,
+      useClass: NotificationServiceImpl,
+    },
+    {
+      provide: PubSubService,
+      useClass: PubSubServiceImpl,
+    },
     DateScalar,
     { provide: APP_FILTER, useClass: GraphQLGeneralExceptionFilter },
   ],
-  controllers: [NotificationEventListenerController],
+  controllers: [NotificationEventsController],
 })
 export class GraphQLAppModule {}

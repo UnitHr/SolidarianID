@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
-import { NotificationModel } from '../models/notification.model';
 
 @Injectable()
-export class PubSubService {
+export class PubSubServiceImpl {
   private pubSub: PubSub;
 
   constructor() {
     this.pubSub = new PubSub();
   }
 
-  async publish(trigger: string, payload: NotificationModel): Promise<void> {
+  async publish(trigger: string, payload: unknown): Promise<void> {
     return this.pubSub.publish(trigger, payload);
   }
 

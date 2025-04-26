@@ -10,7 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
-import { CreateUserInput } from '../inputs/create-user.input';
+import { CreateUserInput } from '../models/inputs/create-user.input';
 
 @Resolver(() => UserModel)
 export class UserResolver {

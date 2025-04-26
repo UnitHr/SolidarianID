@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { envs } from '@api-gateway/config';
-import { CreateUserInput } from '../inputs/create-user.input';
+import { CreateUserInput } from '../models/inputs/create-user.input';
 
 @Injectable()
 export class UserService {

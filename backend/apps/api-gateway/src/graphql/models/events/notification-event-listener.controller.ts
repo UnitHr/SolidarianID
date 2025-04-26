@@ -1,8 +1,8 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { NotificationCreatedEvent } from '@common-lib/common-lib/events/domain/NotificationCreatedEvent';
-import { NotificationModel } from '../models/notification.model';
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '@api-gateway/graphql/services/notification.service';
+import { NotificationModel } from '../notification.model';
 
 @Controller()
 export class NotificationEventListenerController {
@@ -19,13 +19,7 @@ export class NotificationEventListenerController {
     try {
       const notification: NotificationModel = {
         id: message.notificationId,
-        read: message.read,
-        timestamp: message.timestamp,
-        recipientId: message.recipientId,
-        userId: message.userId,
-        type: message.type,
-        entityId: message.entityId,
-        entityName: message.entityName,
+        ...message,
       };
 
       await this.notificationService.publishNewNotification(notification);

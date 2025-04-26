@@ -11,9 +11,9 @@ import { UserService } from './services/user.service';
 import { CommunityService } from './services/community.service';
 import { NotificationService } from './services/notification.service';
 import { PubSubService } from './services/pubsub.service';
-import { DateScalar } from './scalars/date.scalar';
-import { GraphQLGeneralExceptionFilter } from './filters/general-exception.filter';
-import { NotificationEventListenerController } from './events/notification-event-listener.controller';
+import { DateScalar } from './models/scalars/date.scalar';
+import { GraphQLGeneralExceptionFilter } from './errors/general-exception.filter';
+import { NotificationEventListenerController } from './models/events/notification-event-listener.controller';
 
 @Module({
   imports: [

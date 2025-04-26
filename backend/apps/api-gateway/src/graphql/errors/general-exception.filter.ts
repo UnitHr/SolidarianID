@@ -10,7 +10,7 @@ import {
   ResourceNotFoundError,
   UnauthorizedError,
   ConflictError,
-} from '../errors/graphql-errors';
+} from './graphql-errors';
 
 @Catch()
 export class GraphQLGeneralExceptionFilter implements GqlExceptionFilter {

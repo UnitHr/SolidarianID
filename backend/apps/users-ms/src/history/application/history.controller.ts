@@ -13,15 +13,16 @@ import { Request, Response } from 'express';
 import { PaginatedResponseDto } from '@common-lib/common-lib/dto/paginated-response.dto';
 import { GetUserId } from '@common-lib/common-lib/auth/decorator/getUserId.decorator';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { FollowerService } from '@users-ms/followers/application/follower.service';
 import { HistoryService } from './history.service';
 import { HistoryEntryMapper } from '../history-entry.mapper';
 import { FindHistoryDto } from '../dto/find-history.dto';
-import { FollowerService } from '@users-ms/followers/application/follower.service';
 
 @ApiExcludeController()
 @Controller('users/:userId/history')
 export class HistoryController {
-  constructor(private readonly historyService: HistoryService,
+  constructor(
+    private readonly historyService: HistoryService,
     private readonly followerService: FollowerService,
   ) {}
 

@@ -35,6 +35,7 @@ export class VolunteerAction extends Action {
       action.apply(
         new ActionCreatedEvent(
           action.id.toString(),
+          props.createdBy,
           props.causeId,
           props.communityId,
           props.target,

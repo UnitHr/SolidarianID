@@ -105,6 +105,23 @@ export class HistoryServiceImpl implements HistoryService {
     await this.saveEntryAndNotify(entry);
   }
 
+  async registerActionCreation(
+    userId: string,
+    causeId: string,
+    causeName: string,
+    timestamp: Date,
+  ): Promise<void> {
+    const entry = HistoryEntry.create({
+      userId: new UniqueEntityID(userId),
+      type: ActivityType.ACTION_CREATED,
+      entityId: new UniqueEntityID(causeId),
+      entityName: causeName,
+      timestamp,
+    });
+
+    await this.saveEntryAndNotify(entry);
+  }
+
   async registerActionContribute(
     userId: string,
     actionId: string,

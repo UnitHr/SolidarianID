@@ -30,6 +30,7 @@ export class GoodsCollectionAction extends Action {
       action.apply(
         new ActionCreatedEvent(
           action.id.toString(),
+          props.createdBy,
           props.causeId,
           props.communityId,
           props.target,

@@ -6,6 +6,7 @@ export class ActionCreatedEvent extends DomainEvent {
 
   constructor(
     public readonly id: string,
+    public readonly userId: string,
     public readonly causeId: string,
     public readonly communityId: string,
     public readonly target: number,

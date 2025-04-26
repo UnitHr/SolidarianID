@@ -32,6 +32,13 @@ export abstract class HistoryService {
     timestamp: Date,
   ): Promise<void>;
 
+  abstract registerActionCreation(
+    userId: string,
+    causeId: string,
+    causeName: string,
+    timestamp: Date,
+  ): Promise<void>;
+
   abstract registerActionContribute(
     userId: string,
     actionId: string,

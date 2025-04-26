@@ -180,41 +180,6 @@ export class CommunityServiceImpl implements CommunityService {
     // Commit the event
     requestEntity.commit();
 
-    // Enviar notificación push al servidor de notificaciones
-    try {
-      const response = await fetch('http://localhost:4000/push/sendToAdmins', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          payload: `Nueva solicitud de comunidad: `,
-          ttl: 86400, // Tiempo de vida de la notificación en segundos
-        }),
-      });
-
-      if (!response.ok) {
-        this.logger.error(
-          `Error al enviar la notificación push a los administradores: ${response.statusText}`,
-        );
-        /* throw new Error(
-          `Error en la respuesta del servidor: ${response.statusText}`,
-        ); */
-      }
-
-      this.logger.log(
-        `Notificación push enviada a los administradores: ${JSON.stringify(
-          createCommunityRequest,
-        )}`,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Error al enviar la notificación push a los administradores: ${error}`,
-        error,
-      );
-    }
-
     // Return the request object
     return right(Result.ok(newRequest));
   }

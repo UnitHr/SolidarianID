@@ -10,6 +10,7 @@ import { NotificationServiceImpl } from './application/notification.service.impl
 import { HistoryRegisteredHandler } from './domain/events/history-registered.handler';
 import { NotificationController } from './application/notification.controller';
 import { NotificationRepository } from './notification.repository';
+import { PushNotificationService } from './infra/push-notification.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { NotificationRepository } from './notification.repository';
       useClass: NotificationServiceImpl,
     },
     HistoryRegisteredHandler,
+    PushNotificationService,
   ],
   exports: [NotificationService],
   controllers: [NotificationController],

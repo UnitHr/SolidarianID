@@ -3,12 +3,12 @@ import { UniqueEntityID } from '@common-lib/common-lib/core/domain/UniqueEntityI
 import { FollowerService } from '@users-ms/followers/application/follower.service';
 import { NotificationCreatedEvent } from '@common-lib/common-lib/events/domain/NotificationCreatedEvent';
 import { EventsService } from '@common-lib/common-lib/events/events.service';
-import { Follower } from '@users-ms/followers/domain';
 import { UserService } from '@users-ms/users/application/user.service';
 import { Role } from '@common-lib/common-lib/auth/role/role.enum';
 import { NotificationService } from './notification.service';
 import { Notification } from '../domain/Notification';
 import { NotificationRepository } from '../notification.repository';
+import { PushNotificationService } from '../infra/push-notification.service';
 
 @Injectable()
 export class NotificationServiceImpl implements NotificationService {
@@ -19,6 +19,7 @@ export class NotificationServiceImpl implements NotificationService {
     private readonly followerService: FollowerService,
     private readonly usersService: UserService,
     private readonly eventsService: EventsService,
+    private readonly pushNotificationService: PushNotificationService,
   ) {}
 
   async getUserNotifications(
@@ -38,7 +39,7 @@ export class NotificationServiceImpl implements NotificationService {
     await this.notificationRepository.markAsRead(userId, notificationId);
   }
 
-  async createNotificationsForCommunityAdmins(
+  async createNotificationsForPlatformAdmins(
     historyEntryId: string,
     timestamp?: Date,
   ): Promise<void> {
@@ -60,6 +61,42 @@ export class NotificationServiceImpl implements NotificationService {
         this.publishNotificationCreatedEvent(notification),
       ),
     );
+
+    // send notifications to platform admins
+    await Promise.all(
+      createdNotifications.map(async (notification) => {
+        await this.pushNotificationService.sendPushNotification(
+          notification.recipientId.toString(),
+        );
+      }),
+    );
+  }
+
+  async createNotificationForCommunityAdmin(
+    historyEntryId: string,
+    timestamp?: Date,
+  ): Promise<void> {
+    const notification = Notification.create({
+      historyEntryId: new UniqueEntityID(historyEntryId),
+      recipientId: new UniqueEntityID('communityAdminId'), // TODO: get the community admin ID
+      read: false,
+      timestamp,
+    });
+
+    this.logger.log('Notification FOR ADMIN ID:', notification);
+
+    // eslint-disable-next-line prefer-destructuring
+    const adminId = notification.historyEntry.adminId; // TODO: get the community admin ID
+    this.logger.log('Community Admin ID:', adminId);
+
+    notification.recipientId = new UniqueEntityID(adminId);
+
+    const createdNotification =
+      await this.notificationRepository.save(notification);
+
+    this.publishNotificationCreatedEvent(createdNotification);
+
+    this.pushNotificationService.sendPushNotification(adminId.toString());
   }
 
   /* eslint-disable no-await-in-loop */ // TODO: review if this could be improved, batch processing
@@ -103,8 +140,13 @@ export class NotificationServiceImpl implements NotificationService {
         ),
       );
 
+      const followersIds = followers.map((f) => f.followerId.toString());
       // Check push subscription and send push notifications
-      await this.sendPushNotificationsToFollowers(followers, userId);
+      await Promise.all(
+        followersIds.map((followerId) =>
+          this.pushNotificationService.sendPushNotification(followerId),
+        ),
+      );
 
       // Check if we've processed all followers
       if (followers.length < pageSize || page * pageSize >= total) {
@@ -145,58 +187,5 @@ export class NotificationServiceImpl implements NotificationService {
         error.stack,
       );
     }
-  }
-
-  private async sendPushNotificationsToFollowers(
-    followers: Follower[],
-    userId: string,
-  ): Promise<void> {
-    followers.map(async (follower) => {
-      try {
-        const subscriptionResponse = await fetch(
-          `http://localhost:4000/push/subscription/${follower.followerId}`,
-        );
-
-        if (subscriptionResponse.ok) {
-          this.logger.log(
-            `Comprobando la suscripción del seguidor con ID: ${follower.followerId}.`,
-          );
-          const { isSubscribed, subscription } =
-            await subscriptionResponse.json();
-
-          if (isSubscribed) {
-            this.logger.log(
-              `El seguidor con ID: ${follower.followerId} está suscrito.`,
-            );
-
-            // Send push notification
-            try {
-              await fetch('http://localhost:4000/push/sendNotification', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                  subscription,
-                  payload: `New notification from user: ${userId}`,
-                  ttl: 86400,
-                }),
-              });
-            } catch (error) {
-              this.logger.error(
-                `Error sending push notification to follower with ID: ${follower.followerId}.`,
-                error,
-              );
-            }
-          }
-        }
-      } catch (error) {
-        this.logger.error(
-          `Error getting the subscription from user: ${follower.followerId}.`,
-          error,
-        );
-      }
-    });
   }
 }

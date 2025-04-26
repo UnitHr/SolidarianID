@@ -14,7 +14,14 @@ export class HistoryRegisteredHandler
 
   async handle(event: HistoryRegisteredEvent) {
     if (event.type === ActivityType.COMMUNITY_CREATION_REQUEST_SENT) {
-      await this.notificationService.createNotificationsForCommunityAdmins(
+      await this.notificationService.createNotificationsForPlatformAdmins(
+        event.historyEntryId,
+        event.date,
+      );
+      return;
+    }
+    if (event.type === ActivityType.JOIN_COMMUNITY_REQUEST_SENT) {
+      await this.notificationService.createNotificationForCommunityAdmin(
         event.historyEntryId,
         event.date,
       );

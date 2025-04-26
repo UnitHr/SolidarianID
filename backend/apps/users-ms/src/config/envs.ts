@@ -25,6 +25,7 @@ interface EnvVars {
   KAFKA_GROUP_ID: string;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;
+  PUSH_SERVER_URL: string;
 }
 
 const envsSchema = joi
@@ -49,6 +50,7 @@ const envsSchema = joi
     KAFKA_GROUP_ID: joi.string().required(),
     ADMIN_EMAIL: joi.string().required(),
     ADMIN_PASSWORD: joi.string().required(),
+    PUSH_SERVER_URL: joi.string().required(),
   })
   .unknown(true);
 
@@ -77,4 +79,5 @@ export const envs = {
   kafkaGroupId: process.env.KAFKA_GROUP_ID,
   adminEmail: envVars.ADMIN_EMAIL,
   adminPassword: envVars.ADMIN_PASSWORD,
+  pushServerUrl: envVars.PUSH_SERVER_URL,
 };

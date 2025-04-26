@@ -20,6 +20,10 @@ export class Notification extends Entity<NotificationProps> {
     return this.props.recipientId;
   }
 
+  set recipientId(recipientId: UniqueEntityID) {
+    this.props.recipientId = recipientId;
+  }
+
   get historyEntryId(): UniqueEntityID {
     return this.props.historyEntryId;
   }

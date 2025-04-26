@@ -62,7 +62,7 @@ export function SearchCommunities() {
           <p className="text-muted mb-3">Discover and support initiatives that matter to you.</p>
 
           <div className="mb-3">
-            <Button variant="primary" size="sm" onClick={handleCreateCommunity}>
+            <Button variant="primary" onClick={handleCreateCommunity}>
               + Create Community
             </Button>
           </div>

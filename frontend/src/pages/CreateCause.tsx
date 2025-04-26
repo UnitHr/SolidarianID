@@ -1,75 +1,42 @@
-import { Col, Container, Row } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { odsData, ODSEnum } from '../utils/ods';
+import { Button, Col, Container, Row, Form, Card } from 'react-bootstrap';
+import { ODSEnum } from '../utils/ods';
+import { OdsDropdown } from '../components/OdsDropdown';
+import { createCause } from '../services/cause.service';
+import { getStoredUser } from '../services/user.service';
 
 export function CreateCause() {
-  const { communityId } = useParams();
   const navigate = useNavigate();
-  const [selectedOds, setSelectedOds] = useState<Set<ODSEnum>>(new Set());
+  const { communityId } = useParams();
+  const [selectedOds, setSelectedOds] = useState<ODSEnum[]>([]);
 
-  const handleCheckboxChange = (id: ODSEnum) => {
-    setSelectedOds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id); // Deseleccionar
-      } else {
-        newSet.add(id); // Seleccionar
-      }
-      return newSet;
-    });
-  };
-
-  // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const causeTitle = (document.getElementById('causeTitle') as HTMLInputElement).value;
-    const causeDescription = (document.getElementById('causeDescription') as HTMLTextAreaElement)
-      .value;
-    const causeEndDate = (document.getElementById('causeEndDate') as HTMLInputElement).value;
-    const selectedIds = Array.from(selectedOds);
-
-    if (!causeTitle || !causeDescription || !causeEndDate || selectedIds.length === 0) {
-      alert('Please complete all fields and select at least one ODS.');
-      return;
-    }
-
-    const storedUser = localStorage.getItem('user');
-    if (!storedUser) {
+    // Check if user is logged in
+    if (!getStoredUser()) {
       navigate('/login');
       return;
     }
 
-    const { token } = JSON.parse(storedUser);
+    const title = (document.getElementById('causeTitle') as HTMLInputElement).value;
+    const description = (document.getElementById('causeDescription') as HTMLTextAreaElement).value;
+    const endDate = (document.getElementById('causeEndDate') as HTMLInputElement).value;
 
-    const requestBody = {
-      title: causeTitle,
-      description: causeDescription,
-      end: new Date(causeEndDate).toISOString(),
-      ods: selectedIds,
-    };
+    if (!title || !description || !endDate || selectedOds.length === 0) {
+      alert('Please complete all fields and select at least one ODS.');
+      return;
+    }
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/communities/${communityId}/causes`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : null;
-      console.log('Cause created successfully:', data);
+      // Service call to create cause
+      await createCause(communityId!, {
+        title,
+        description,
+        end: new Date(endDate).toISOString(),
+        ods: selectedOds,
+      });
 
       alert('Cause created successfully!');
       navigate(`/communities/${communityId}`);
@@ -80,80 +47,59 @@ export function CreateCause() {
   };
 
   return (
-    <>
-      <Container>
-        <Row className="my-5">
-          <h1 className="text-center">Create Cause</h1>
-        </Row>
+    <Container className="py-5">
+      <Row className="justify-content-center mb-4">
+        <Col md={8} lg={6}>
+          <h1 className="text-center fw-bold">Create Cause</h1>
+        </Col>
+      </Row>
 
-        <Row className="my-4">
-          <Col md={{ span: 6, offset: 3 }}>
-            <form>
-              <div className="mb-3">
-                <label htmlFor="causeTitle" className="form-label">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="causeTitle"
-                  placeholder="Enter cause title"
-                />
-              </div>
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
+          <Card className="p-4 shadow-sm">
+            <Card.Body>
+              {/* Form */}
+              <Form onSubmit={handleSubmit}>
+                <h5 className="fw-semibold mb-3">Cause Information</h5>
 
-              <div className="mb-3">
-                <label htmlFor="causeDescription" className="form-label">
-                  Description
-                </label>
-                <textarea
-                  className="form-control"
-                  id="causeDescription"
-                  placeholder="Enter cause description"
-                  rows={3}
-                ></textarea>
-              </div>
+                <Form.Group className="mb-3" controlId="causeTitle">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" placeholder="Enter cause title" required />
+                </Form.Group>
 
-              <div className="mb-3">
-                <label htmlFor="causeEndDate" className="form-label">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="causeEndDate"
-                  min={new Date().toISOString().split('T')[0]}
-                />
-              </div>
+                <Form.Group className="mb-3" controlId="causeDescription">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Enter cause description"
+                    required
+                  />
+                </Form.Group>
 
-              <div className="mb-3">
-                <label htmlFor="causeOds" className="form-label">
-                  ODS (Select at least one)
-                </label>
-                <div id="causeOds">
-                  {Object.values(odsData).map((ods) => (
-                    <div className="form-check" key={ods.id}>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={`ods${ods.id}`}
-                        value={ods.id}
-                        onChange={() => handleCheckboxChange(ods.id)}
-                      />
-                      <label className="form-check-label" htmlFor={`ods${ods.id}`}>
-                        {ods.title}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                <Form.Group className="mb-3" controlId="causeEndDate">
+                  <Form.Label>End Date</Form.Label>
+                  <Form.Control type="date" min={new Date().toISOString().split('T')[0]} required />
+                </Form.Group>
 
-              <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
-                Submit
-              </button>
-            </form>
-          </Col>
-        </Row>
-      </Container>
-    </>
+                <Form.Group className="mb-3">
+                  <Form.Label>ODS (Select at least one)</Form.Label>
+                  <OdsDropdown selected={selectedOds} onChange={setSelectedOds} />
+                </Form.Group>
+
+                {/* Submit Button */}
+                <Row className="mt-4">
+                  <Col className="d-flex justify-content-center">
+                    <Button variant="secondary" type="submit" className="px-5">
+                      Submit Cause
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 }

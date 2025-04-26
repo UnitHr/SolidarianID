@@ -1,16 +1,23 @@
-import { Button, Col, Container, Row, Form, Card } from 'react-bootstrap';
 import { useState } from 'react';
-import { ODSEnum } from '../utils/ods';
 import { useNavigate } from 'react-router-dom';
+import { Button, Col, Container, Row, Form, Card } from 'react-bootstrap';
+import { createCommunityRequest } from '../services/community.service';
+import { getStoredUser } from '../services/user.service';
 import { OdsDropdown } from '../components/OdsDropdown';
+import { ODSEnum } from '../utils/ods';
 
 export function CreateCommunityRequest() {
   const navigate = useNavigate();
   const [selectedOds, setSelectedOds] = useState<ODSEnum[]>([]);
 
-  // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if user is logged in
+    if (!getStoredUser()) {
+      navigate('/login');
+      return;
+    }
 
     const communityName = (document.getElementById('communityName') as HTMLInputElement).value;
     const communityDescription = (
@@ -20,42 +27,32 @@ export function CreateCommunityRequest() {
     const causeDescription = (document.getElementById('causeDescription') as HTMLTextAreaElement)
       .value;
     const causeEndDate = (document.getElementById('causeEndDate') as HTMLInputElement).value;
-    const selectedIds = Array.from(selectedOds); // Convertir el Set a Array
 
-    // Construir el cuerpo de la solicitud
-    const requestBody = {
-      name: communityName,
-      description: communityDescription,
-      cause: {
-        title: causeTitle,
-        description: causeDescription,
-        end: causeEndDate,
-        ods: selectedIds,
-      },
-    };
-
-    console.log('Request Body:', requestBody); // Para depuración
+    if (
+      !communityName ||
+      !communityDescription ||
+      !causeTitle ||
+      !causeDescription ||
+      !causeEndDate ||
+      selectedOds.length === 0
+    ) {
+      alert('Please complete all fields and select at least one ODS.');
+      return;
+    }
 
     try {
-      // Enviar la solicitud al servidor
-      const response = await fetch('http://localhost:3002/communities', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Reemplaza con tu método para obtener el token
+      // Service call to create community request
+      await createCommunityRequest({
+        name: communityName,
+        description: communityDescription,
+        cause: {
+          title: causeTitle,
+          description: causeDescription,
+          end: new Date(causeEndDate).toISOString(),
+          ods: selectedOds,
         },
-        body: JSON.stringify(requestBody),
       });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : null;
-      console.log('Community Request created successfully:', data);
-
       alert('Community Request created successfully!');
-
       navigate('/communities');
     } catch (error) {
       console.error(error);
@@ -135,7 +132,7 @@ export function CreateCommunityRequest() {
         {/* Submit Button */}
         <Row className="mt-4">
           <Col className="d-flex justify-content-center">
-            <Button variant="primary" type="submit" className="px-5">
+            <Button variant="secondary" type="submit" className="px-5">
               Submit Request
             </Button>
           </Col>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Alert, Image } from 'react-bootstrap';
 import { CommunityCard } from '../components/CommunityCard';
 import { Paginate } from '../components/Pagination';
@@ -6,6 +7,7 @@ import { fetchCommunities, Community } from '../services/community.service';
 import searchImage from '../assets/filter-communities-image-2.png';
 
 export function SearchCommunities() {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -37,6 +39,10 @@ export function SearchCommunities() {
     await loadCommunities();
   };
 
+  const handleCreateCommunity = () => {
+    navigate('/communities/request');
+  };
+
   return (
     <Container className="py-5">
       <Row className="align-items-center mb-5">
@@ -52,8 +58,15 @@ export function SearchCommunities() {
 
         {/* Title and form */}
         <Col md={6}>
-          <h1 className="fw-bold mb-3">Explore Communities</h1>
-          <p className="text-muted mb-4">Discover and support initiatives that matter to you.</p>
+          <h1 className="fw-bold mb-2">Explore Communities</h1>
+          <p className="text-muted mb-3">Discover and support initiatives that matter to you.</p>
+
+          <div className="mb-3">
+            <Button variant="primary" size="sm" onClick={handleCreateCommunity}>
+              + Create Community
+            </Button>
+          </div>
+
           <Form onSubmit={handleSearch}>
             <Form.Group controlId="searchCommunity" className="d-flex gap-2">
               <Form.Control
@@ -99,7 +112,7 @@ export function SearchCommunities() {
         )}
       </Row>
 
-      {/* Paginate */}
+      {/* Pagination */}
       <Row className="mt-4">
         <Col className="d-flex justify-content-center">
           <Paginate

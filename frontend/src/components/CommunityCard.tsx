@@ -14,7 +14,7 @@ export function CommunityCard({ id, name, description }: Community) {
   };
 
   return (
-    <Card className="h-100 shadow-sm border-0" style={{ transition: 'transform 0.2s' }}>
+    <Card className="h-100 shadow-sm" style={{ transition: 'transform 0.2s' }}>
       <Card.Body className="d-flex flex-column p-3">
         <Card.Title className="fs-5 mb-2">{name}</Card.Title>
         <Card.Text className="text-muted small flex-grow-1">{description}</Card.Text>

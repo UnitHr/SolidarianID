@@ -1,18 +1,9 @@
-import {
-  Col,
-  Container,
-  Row,
-  Image,
-  OverlayTrigger,
-  Tooltip,
-  Button,
-  Modal,
-} from 'react-bootstrap';
+import { Col, Container, Row, Image, Button, Modal } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import communityLogo from '../assets/community-logo.png';
-import '../styles/links.css';
 import { Paginate } from '../components/Pagination';
+import { CauseCard } from '../components/CauseCard';
 
 type CommunityDetails = {
   id: string;
@@ -185,101 +176,88 @@ export function CommunityDetails() {
 
   return (
     <>
-      <Container className="mt-4">
-        <Row>
-          <Col md={12}>
-            {community ? (
-              <div>
-                <Row className="align-items-center mb-3">
-                  <Col xs={12} md={3} className="text-center mb-3 mb-md-0">
-                    <Image
-                      src={communityLogo}
-                      alt="Community Logo"
-                      fluid
-                      style={{
-                        width: '120px',
-                        height: '120px',
-                        objectFit: 'cover',
-                        border: '3px solid #007bff',
-                        padding: '5px',
-                      }}
-                    />
-                  </Col>
-                  <Col xs={12} md={6}>
-                    <h2 className="mb-1">{community.name}</h2>
-                  </Col>
-                  <Col
-                    xs={12}
-                    md={3}
-                    className="d-flex flex-column align-items-center justify-content-center mt-3 mt-md-5 gap-2"
-                  >
-                    {!isMember ? (
-                      <Button onClick={() => setShowModal(true)} className="btn btn-primary w-100">
-                        Join Community
-                      </Button>
-                    ) : (
-                      <>
-                        <p className="text-success fw-bold text-center">
-                          You are a member of this community
-                        </p>
-                        <Button
-                          onClick={() => navigate(`/communities/${communityId}/causes/new`)}
-                          className="btn btn-primary w-100"
-                        >
-                          Create Cause
-                        </Button>
-                      </>
-                    )}
-                  </Col>
-                </Row>
-
-                <hr className="my-4" />
-
-                <Row>
-                  <Col>
-                    <h4 className="mb-3">Description</h4>
-                    <p>{community.description}</p>
-                  </Col>
-                </Row>
-
-                <hr className="my-4" />
-
-                <Row>
-                  <Col>
-                    {causes.length > 0 && (
-                      <>
-                        <h4 className="mb-3">Related Causes</h4>
-                        {causes.map((cause) => (
-                          <div key={cause.id} className="mb-4">
-                            <h5>
-                              <OverlayTrigger
-                                placement="top"
-                                overlay={<Tooltip id={`tooltip-${cause.id}`}>Show details</Tooltip>}
-                              >
-                                <Link to={`/causes/${cause.id}`} className="entity-link">
-                                  {cause.title}
-                                </Link>
-                              </OverlayTrigger>
-                            </h5>
-                            <p>{cause.description}</p>
-                          </div>
-                        ))}
-                        <Paginate
-                          currentPage={page}
-                          totalPages={totalPages}
-                          onPageChange={(newPage) => setPage(newPage)}
-                        />
-                      </>
-                    )}
-                  </Col>
-                </Row>
-              </div>
+      <Container className="py-4">
+        {/* Header */}
+        <Row className="align-items-center justify-content-between mb-4">
+          <Col xs={12} md="auto" className="text-center text-md-start mb-3 mb-md-0">
+            <Image
+              src={communityLogo}
+              alt="Community Logo"
+              roundedCircle
+              style={{
+                width: '100px',
+                height: '100px',
+                objectFit: 'cover',
+                border: '3px solid #0d6efd',
+                boxShadow: '0 0 8px rgba(0,0,0,0.1)',
+              }}
+            />
+          </Col>
+          <Col xs={12} md className="text-center text-md-start">
+            <h2 className="fw-bold mb-1">{community?.name}</h2>
+            {isMember ? (
+              <p className="text-success fw-semibold small mb-0">✅ You are already a member</p>
             ) : (
-              <p>No data found.</p>
+              <Button onClick={() => setShowModal(true)} variant="success" className="mt-2">
+                Join Community
+              </Button>
             )}
           </Col>
         </Row>
+
+        <hr className="my-4" />
+
+        {/* Description */}
+        <Row className="mb-4">
+          <Col>
+            <h5 className="fw-semibold mb-2">Description</h5>
+            <p className="text-muted">{community.description}</p>
+          </Col>
+        </Row>
+
+        <hr className="my-4" />
+
+        {/* Related Causes */}
+        <Row className="align-items-center mb-3">
+          <Col>
+            <h5 className="fw-semibold mb-0">Related Causes</h5>
+          </Col>
+          <Col xs="auto">
+            {isMember && (
+              <Button
+                onClick={() => navigate(`/communities/${communityId}/causes/new`)}
+                variant="primary"
+              >
+                + Create Cause
+              </Button>
+            )}
+          </Col>
+        </Row>
+
+        {/* Causes */}
+        <Row className="g-3">
+          {causes.map((cause) => (
+            <Col key={cause.id} xs={12} md={6} lg={4}>
+              <CauseCard id={cause.id} title={cause.title} description={cause.description} />
+            </Col>
+          ))}
+        </Row>
+
+        {/* Pagination */}
+        {causes.length > 0 && (
+          <Row className="mt-4">
+            <Col className="d-flex justify-content-center">
+              <Paginate
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={(newPage) => setPage(newPage)}
+              />
+            </Col>
+          </Row>
+        )}
       </Container>
+
+      {/* Join Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Join Community</Modal.Title>
@@ -288,10 +266,10 @@ export function CommunityDetails() {
           Are you sure you want to join <strong>{community?.name}</strong>?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="dark" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleJoin}>
+          <Button variant="secondary" onClick={handleJoin}>
             Yes, Join
           </Button>
         </Modal.Footer>

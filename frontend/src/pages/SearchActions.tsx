@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Image } from 'react-bootstrap';
-import { ActionDetails } from '../lib/types/action.types';
+import { ActionDetails, ActionStatusEnum, ActionStatusLabels } from '../lib/types/action.types';
 import { fetchActions } from '../services/action.service';
 import { Paginate } from '../components/Pagination';
 import { ActionCard } from '../components/ActionCard';
@@ -84,9 +84,11 @@ export function SearchActions() {
                     <Form.Label>Status</Form.Label>
                     <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}>
                       <option value="">All</option>
-                      <option value="PENDING">Pending</option>
-                      <option value="IN_PROGRESS">In Progress</option>
-                      <option value="COMPLETED">Completed</option>
+                      {Object.values(ActionStatusEnum).map((statusValue) => (
+                        <option key={statusValue} value={statusValue}>
+                          {ActionStatusLabels[statusValue]}
+                        </option>
+                      ))}
                     </Form.Select>
                   </Form.Group>
                 </Col>

@@ -1,4 +1,5 @@
 import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
+import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import '../styles/index.css';
 import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
@@ -10,6 +11,7 @@ import {
 import {
   fetchCreateCommunityRequests,
   fetchManagedCommunities,
+  fetchUserNotifications,
 } from '../services/notificacion.service';
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
 import { approveCommunityRequest, rejectCommunityRequest } from '../services/community.service';
@@ -26,13 +28,21 @@ interface JoinComunityRequestValues {
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCommunityAdmin, setIsCommunityAdmin] = useState(false);
-  const [managedCommunities, setManagedCommunities] = useState<string[]>([]);
+
+  const [managedCommunities, setManagedCommunities] = useState<{ id: string; name: string }[]>([]);
   const [joinRequests, setJoinRequests] = useState<JoinComunityRequestValues[]>([]);
-  const [showModal, setShowModal] = useState(false);
+
+  const [showModal, setShowModal] = useState(true);
+  const [modalCommunityName, setModalCommunityName] = useState('');
+  const [modalUserId, setModalUserId] = useState('');
+  const [modalCommunityId, setModalCommunityId] = useState('');
+  const [modalJoinRequestId, setModalJoinRequestId] = useState('');
+
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [followedNotifications, setfollowedNotifications] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
@@ -83,11 +93,32 @@ export function Notifications() {
         setIsAdmin(isAdminRole);
 
         if (isAdminRole) {
-          const requests = await fetchCreateCommunityRequests();
-          setPendingRequests(requests); // Actualiza las solicitudes pendientes
+          const requestsResponse = await fetch(
+            'http://localhost:3002/communities/creation-requests?status=pending',
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+          if (!requestsResponse.ok) {
+            throw new Error('Failed to fetch pending requests');
+          }
+          const requestsData = await requestsResponse.json();
+          setPendingRequests(requestsData.data);
         } else {
-          const managedCommunities = await fetchManagedCommunities();
-          if (managedCommunities.length > 0) {
+          // Check if user is community admin
+          const response = await fetch(
+            'http://localhost:3000/api/v1/communities/managed-communities',
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+
+          const data = await response.json();
+          if (data.data.length > 0) {
             setIsCommunityAdmin(true);
             setManagedCommunities(managedCommunities);
             setCurrentCommunity(managedCommunities[0]);
@@ -98,7 +129,18 @@ export function Notifications() {
       }
     };
 
+    const fetchFollowedNotifications = async () => {
+      const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+      try {
+        const notifications = await fetchUserNotifications(userId);
+        setfollowedNotifications(notifications);
+      } catch (error) {
+        console.error('Error fetching followed notifications:', error);
+      }
+    };
+
     fetchRequests();
+    fetchFollowedNotifications();
   }, []);
 
   async function handleEnableNotifications() {
@@ -181,14 +223,13 @@ export function Notifications() {
       <Container>
         <ModalValidateJoinCommunity
           show={showModal}
-          communityName="Amigos por África"
-          userName="pepe martinez"
-          userId="1234"
-          communityId="1234"
+          communityName={modalCommunityName}
+          userId={modalUserId}
+          communityId={modalCommunityId}
           changeAlertMessage={changeAlertMessage}
           changeAlertVariant={changeAlertVariant}
           handleAlertShow={() => setShowAlert(true)}
-          joinRequestId="1234"
+          joinRequestId={modalJoinRequestId}
           handleHide={() => setShowModal(false)}
         ></ModalValidateJoinCommunity>
         <Row>
@@ -293,8 +334,8 @@ export function Notifications() {
               <Form.Select value={currentCommunity} onChange={handleCommunityChange}>
                 <option value="">Select a community</option>
                 {managedCommunities.map((community) => (
-                  <option key={community} value={community}>
-                    {community}
+                  <option key={community.id} value={community.id}>
+                    {community.name}
                   </option>
                 ))}
               </Form.Select>
@@ -308,6 +349,10 @@ export function Notifications() {
                         variant="primary"
                         onClick={() => {
                           setShowModal(true);
+                          setModalCommunityName(request.communityName);
+                          setModalCommunityId(request.communityId);
+                          setModalUserId(request.userId);
+                          setModalJoinRequestId(request.id);
                         }}
                       >
                         Validate
@@ -320,6 +365,24 @@ export function Notifications() {
               </ListGroup>
             </Row>
           )}
+
+          <Row className="my-5">
+            <h2>Notificaciones de usuarios seguidos</h2>
+            {followedNotifications.length > 0 ? (
+              <ListGroup>
+                {followedNotifications.map((notification) => (
+                  <ListGroup.Item key={notification.id}>
+                    <strong>Notification from user: </strong> {notification.userName} <br />
+                    <strong>Message: </strong> {notification.notificationMessage} <br />
+                    <strong>Date :</strong> {notification.date} <br />
+                    <strong>Entity name:</strong> {notification.entityName} <br />
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            ) : (
+              <p>No hay notificaciones nuevas.</p>
+            )}
+          </Row>
         </Row>
       </Container>
     </>

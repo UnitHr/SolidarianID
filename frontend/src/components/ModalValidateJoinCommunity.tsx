@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import { approveJoinRequest, rejectJoinRequest } from '../services/community.service';
 
 interface ComponentProps {
   userId: string;
@@ -14,61 +15,42 @@ interface ComponentProps {
 }
 
 export function ModalValidateJoinCommunity(props: ComponentProps) {
-  const urlBase = `https://localhost:3000/api/v1/communities/${props.communityId}/join-requests/${props.joinRequestId}`;
   const [showCommentEntry, setShowCommentEntry] = useState(false);
-  const [countReject, setCountReject] = useState(0);
   const [comment, setComment] = useState('');
+  const [countReject, setCountReject] = useState(0);
 
-  function changeComment(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setComment(event.target.value);
-  }
 
-  async function sendJoinRequestUpdate(status: string, comment?: string) {
-    const body: any = { status };
-    if (comment) {
-      body.comment = comment;
-    }
-
-    const response = await fetch(urlBase, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    return response;
-  }
-
-  async function handleAccept() {
+  // Función para manejar la aceptación de la solicitud
+  const handleAccept = async () => {
     try {
-      const response = await sendJoinRequestUpdate('approved');
-
-      if (response.status === 201) {
+      const response = await approveJoinRequest(props.communityId, props.joinRequestId);
+      if (response) {
         props.changeAlertMessage('Join request accepted');
         props.changeAlertVariant('success');
       } else {
-        const data = await response.json();
-        props.changeAlertMessage('Error: ' + (data.errors?.message || 'Unknown error'));
+        props.changeAlertMessage('Error accepting the join request');
         props.changeAlertVariant('danger');
       }
     } catch (error) {
-      props.changeAlertMessage('Error: ' + (error as Error).message);
+      props.changeAlertMessage(`Error: ${error}`);
       props.changeAlertVariant('danger');
     } finally {
       props.handleAlertShow();
       props.handleHide();
     }
-  }
+  };
 
-  async function handleReject() {
+  // Función para manejar el rechazo de la solicitud
+  const handleReject = async () => {
     if (countReject === 0) {
       setShowCommentEntry(true);
       setCountReject(1);
       return;
     }
 
-    if (comment.trim() === '') {
+    if (!comment.trim()) {
       props.changeAlertMessage('You must enter a comment to reject the join request.');
       props.changeAlertVariant('danger');
       props.handleAlertShow();
@@ -76,18 +58,16 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
     }
 
     try {
-      const response = await sendJoinRequestUpdate('rejected', comment);
-
-      if (response.status === 201) {
+      const response = await rejectJoinRequest(props.communityId, props.joinRequestId, comment);
+      if (response) {
         props.changeAlertMessage('Join request rejected');
         props.changeAlertVariant('success');
       } else {
-        const data = await response.json();
-        props.changeAlertMessage('Error: ' + (data.errors?.message || 'Unknown error'));
+        props.changeAlertMessage('Error rejecting the join request');
         props.changeAlertVariant('danger');
       }
     } catch (error) {
-      props.changeAlertMessage('Error: ' + (error as Error).message);
+      props.changeAlertMessage(`Error: ${error}`);
       props.changeAlertVariant('danger');
     } finally {
       setShowCommentEntry(false);
@@ -95,7 +75,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
       props.handleAlertShow();
       props.handleHide();
     }
-  }
+  };
 
   return (
     <Modal show={props.show} onHide={props.handleHide} backdrop="static" keyboard={false}>
@@ -127,7 +107,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
                 id="inputComment"
                 aria-describedby="commentHelpBlock"
                 value={comment}
-                onChange={changeComment}
+                onChange={handleCommentChange}
               />
               <Form.Text id="commentHelpBlock" muted>
                 You must enter a comment to reject the join request.

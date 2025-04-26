@@ -185,3 +185,109 @@ export async function createCommunityRequest(
     throw new Error(errorText || 'Failed to create community request');
   }
 }
+
+/**
+ * Fetch all pending community creation requests.
+ */
+export async function fetchCreateCommunityRequests() {
+  const token = getToken();
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/creation-requests?status=pending`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch pending requests');
+    }
+
+    const data = await response.json();
+    console.log('Pending requests:', data.data); // Log the pending requests
+    return data.data;
+  } catch (error) {
+    console.error('Error fetching create community requests:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch a join request by its ID.
+ */
+export async function fetchJoinRequestById(userId: string, communityId: string) {
+  const token = getToken();
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${communityId}/join-requests`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch join request');
+    }
+    const requests = await response.json();
+
+    const requestId = requests.data.find((request: any) => request.userId === userId)?.id;
+    if (!requestId) {
+      throw new Error('Join request not found');
+    }
+    const requestResponse = await fetch(
+      `${COMMUNITY_URL}/${communityId}/join-requests/${requestId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!requestResponse.ok) {
+      throw new Error('Failed to fetch join request details');
+    }
+    const data = await requestResponse.json();
+    return data.data;
+  } catch (error) {
+    console.error('Error fetching join request:', error);
+    throw error;
+  }
+}
+
+/**
+ * Approve a join request by its ID.
+ */
+export async function approveJoinRequest(communityId: string, requestId: string) {
+  const token = getToken();
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${communityId}/join-requests/${requestId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status: 'approved' }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error approving join request:', error);
+    return false;
+  }
+}
+
+/**
+ * Reject a join request by its ID with a comment.
+ */
+export async function rejectJoinRequest(communityId: string, requestId: string, comment: string) {
+  const token = getToken();
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${communityId}/join-requests/${requestId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status: 'denied', comment }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error rejecting join request:', error);
+    return false;
+  }
+}

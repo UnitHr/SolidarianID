@@ -1,48 +1,29 @@
 import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useEffect, useState } from 'react';
 import '../styles/index.css';
-import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
 import {
   registerServiceWorker,
   registerSubscriptionOnServer,
   subscribeUserToPushManager,
 } from '../services/push-notification.service';
-import {
-  fetchCreateCommunityRequests,
-  fetchManagedCommunities,
-  fetchUserNotifications,
-} from '../services/notificacion.service';
+import { fetchUserNotifications } from '../services/notificacion.service';
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
-import { approveCommunityRequest, rejectCommunityRequest } from '../services/community.service';
-
-interface JoinComunityRequestValues {
-  id: string;
-  userId: string;
-  communityId: string;
-  communityName: string;
-  status: string;
-  comment: string;
-}
+import {
+  approveCommunityRequest,
+  fetchCreateCommunityRequests,
+  rejectCommunityRequest,
+} from '../services/community.service';
+import { NotificationCard } from '../components/NotificationCard';
 
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isCommunityAdmin, setIsCommunityAdmin] = useState(false);
-
-  const [managedCommunities, setManagedCommunities] = useState<{ id: string; name: string }[]>([]);
-  const [joinRequests, setJoinRequests] = useState<JoinComunityRequestValues[]>([]);
-
-  const [showModal, setShowModal] = useState(true);
-  const [modalCommunityName, setModalCommunityName] = useState('');
-  const [modalUserId, setModalUserId] = useState('');
-  const [modalCommunityId, setModalCommunityId] = useState('');
-  const [modalJoinRequestId, setModalJoinRequestId] = useState('');
+  const [joinRequests, setJoinRequests] = useState<any[]>([]);
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
-  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
-  const [followedNotifications, setfollowedNotifications] = useState<any[]>([]);
+  const [creationRequests, setCreationRequests] = useState<any[]>([]);
+  const [followedNotifications, setFollowedNotifications] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
@@ -53,94 +34,32 @@ export function Notifications() {
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
 
-  function changeAlertMessage(value: string) {
-    setAlertMessage(value);
-  }
-
-  function changeAlertVariant(value: string) {
-    setAlertVariant(value);
-  }
-
-  async function fetchJoinRequests() {
-    const response = await fetch(
-      `http://localhost:3000/api/v1/communities/${currentCommunity}/join-requests`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
-
-    if (response.ok) {
-      const data = await response.json();
-      setJoinRequests(data.data);
-    } else {
-      setAlertMessage('Error fetching join requests for community ' + currentCommunity);
-      setAlertVariant('danger');
-      setShowAlert(true);
-    }
-  }
-
   function handleCommunityChange(event) {
     setCurrentCommunity(event.target.value);
   }
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
-        const isAdminRole = userRoles.includes('admin');
-        setIsAdmin(isAdminRole);
-
-        if (isAdminRole) {
-          const requestsResponse = await fetch(
-            'http://localhost:3002/communities/creation-requests?status=pending',
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
-            }
-          );
-          if (!requestsResponse.ok) {
-            throw new Error('Failed to fetch pending requests');
-          }
-          const requestsData = await requestsResponse.json();
-          setPendingRequests(requestsData.data);
-        } else {
-          // Check if user is community admin
-          const response = await fetch(
-            'http://localhost:3000/api/v1/communities/managed-communities',
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
-            }
-          );
-
-          const data = await response.json();
-          if (data.data.length > 0) {
-            setIsCommunityAdmin(true);
-            setManagedCommunities(managedCommunities);
-            setCurrentCommunity(managedCommunities[0]);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const fetchFollowedNotifications = async () => {
+    const fetchNotifications = async () => {
+      const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
+      const isAdminRole = userRoles.includes('admin');
+      setIsAdmin(isAdminRole);
       const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
       try {
-        const notifications = await fetchUserNotifications(userId);
-        setfollowedNotifications(notifications);
+        const { userNotifications, joinRequests } = await fetchUserNotifications(userId);
+        setFollowedNotifications(userNotifications || []);
+
+        if (isAdminRole) {
+          const creationRequests = await fetchCreateCommunityRequests();
+          setCreationRequests(creationRequests || []);
+        }
+        console.log('Creation Requests:', creationRequests);
+        setJoinRequests(joinRequests || []);
       } catch (error) {
         console.error('Error fetching followed notifications:', error);
       }
     };
 
-    fetchRequests();
-    fetchFollowedNotifications();
+    fetchNotifications();
   }, []);
 
   async function handleEnableNotifications() {
@@ -170,10 +89,10 @@ export function Notifications() {
 
   // Calculate paginated data
   const startIndex = (currentPage - 1) * pageSize;
-  const paginatedRequests = pendingRequests.slice(startIndex, startIndex + pageSize);
+  const paginatedRequests = creationRequests.slice(startIndex, startIndex + pageSize);
 
   // Handle pagination
-  const totalPages = Math.ceil(pendingRequests.length / pageSize);
+  const totalPages = Math.ceil(creationRequests.length / pageSize);
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -216,45 +135,84 @@ export function Notifications() {
   return (
     <>
       {showAlert && (
-        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
+        <Alert variant={alertVariant} onClose={() => setShowAlert(false)} dismissible>
           {alertMessage}
         </Alert>
       )}
       <Container>
-        <ModalValidateJoinCommunity
-          show={showModal}
-          communityName={modalCommunityName}
-          userId={modalUserId}
-          communityId={modalCommunityId}
-          changeAlertMessage={changeAlertMessage}
-          changeAlertVariant={changeAlertVariant}
-          handleAlertShow={() => setShowAlert(true)}
-          joinRequestId={modalJoinRequestId}
-          handleHide={() => setShowModal(false)}
-        ></ModalValidateJoinCommunity>
-        <Row>
-          <Row className="my-3 justify-content-end">
-            <Button
-              variant="warning"
-              onClick={handleEnableNotifications}
-              disabled={notificationsEnabled}
-              style={{
-                fontSize: '0.8rem',
-                padding: '5px 10px',
-                width: 'auto',
-              }}
-            >
-              {notificationsEnabled ? 'Notificaciones activadas' : 'Activar notificaciones'}
-            </Button>
-          </Row>
-          <Row className="my-5">
-            <h1 className="text-center">Notifications</h1>
-          </Row>
+        <Row className="my-3 justify-content-end">
+          <Button
+            variant="warning"
+            onClick={handleEnableNotifications}
+            disabled={notificationsEnabled}
+            style={{
+              fontSize: '0.8rem',
+              padding: '5px 10px',
+              width: 'auto',
+            }}
+          >
+            {notificationsEnabled ? 'Notifications enabled' : 'Enable notifications'}
+          </Button>
+        </Row>
 
+        <Row className="my-5">
+          <h1 className="text-center">Notifications</h1>
+        </Row>
+
+        <Row>
+          {/* Columna izquierda: Followed Notifications */}
+          <Col md={isAdmin ? 4 : 6}>
+            <h4>Your Notifications</h4>
+            {followedNotifications.length > 0 ? (
+              <>
+                {followedNotifications.map((notification) => (
+                  <NotificationCard
+                    key={notification.id}
+                    notificationId={notification.id}
+                    read={notification.read}
+                    date={notification.date}
+                    userId={notification.userId}
+                    userName={notification.userName}
+                    message={notification.notificationMessage}
+                    entityId={notification.entityId}
+                    type="user"
+                  />
+                ))}
+              </>
+            ) : (
+              <p>No new notifications.</p>
+            )}
+          </Col>
+
+          {/* Columna central: Join Requests */}
+          <Col md={isAdmin ? 4 : 6}>
+            <h4>Join Community Requests</h4>
+            {joinRequests.length > 0 ? (
+              <>
+                {joinRequests.map((notification) => (
+                  <NotificationCard
+                    key={notification.id}
+                    notificationId={notification.id}
+                    read={notification.read}
+                    date={notification.date}
+                    userId={notification.userId}
+                    userName={notification.userName}
+                    message={notification.notificationMessage}
+                    entityId={notification.entityId}
+                    type="joinRequest"
+                  />
+                ))}
+              </>
+            ) : (
+              <p>No join community requests.</p>
+            )}
+          </Col>
+
+          {/* Columna derecha: Creation Requests (solo si es admin) */}
           {isAdmin && (
-            <Row className="my-5">
-              <h2>Solicitudes de creación de comunidad pendientes</h2>
-              {pendingRequests.length > 0 ? (
+            <Col md={4}>
+              <h4>Community Creation Requests</h4>
+              {paginatedRequests.length > 0 ? (
                 <>
                   <div className="panel">
                     {paginatedRequests.map((request) => (
@@ -267,7 +225,7 @@ export function Notifications() {
                         causeDescription={request.causeDescription}
                         causeEndDate={request.causeEndDate}
                         causeOds={request.causeOds}
-                        onApprove={() => handleApproveRequest(request.id)} // Llama a la función de aprobación
+                        onApprove={() => handleApproveRequest(request.id)}
                         onReject={() => handleOpenRejectModal(request.id)}
                       />
                     ))}
@@ -278,112 +236,57 @@ export function Notifications() {
                       onClick={handlePreviousPage}
                       disabled={currentPage === 1}
                     >
-                      Anterior
+                      Previous
                     </Button>
                     <span className="mx-3">
-                      Página {currentPage} de {totalPages}
+                      Page {currentPage} of {totalPages}
                     </span>
                     <Button
                       variant="primary"
                       onClick={handleNextPage}
                       disabled={currentPage === totalPages}
                     >
-                      Siguiente
+                      Next
                     </Button>
                   </div>
                 </>
               ) : (
-                <p>No hay solicitudes pendientes.</p>
+                <p>No pending creation requests.</p>
               )}
-            </Row>
+            </Col>
           )}
-
-          <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>Rechazar solicitud</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form.Group controlId="rejectionReason">
-                <Form.Label>Motivo del rechazo</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={4}
-                  placeholder="Especifica el motivo del rechazo..."
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
-                Cancelar
-              </Button>
-              <Button
-                variant="danger"
-                onClick={handleConfirmReject}
-                disabled={!rejectionReason.trim()}
-              >
-                Confirmar rechazo
-              </Button>
-            </Modal.Footer>
-          </Modal>
-
-          {isCommunityAdmin && (
-            <Row className="my-5">
-              <h2>Solicitudes de unión a comunidades pendientes</h2>
-              <Form.Select value={currentCommunity} onChange={handleCommunityChange}>
-                <option value="">Select a community</option>
-                {managedCommunities.map((community) => (
-                  <option key={community.id} value={community.id}>
-                    {community.name}
-                  </option>
-                ))}
-              </Form.Select>
-              <ListGroup>
-                {joinRequests.length > 0 ? (
-                  joinRequests.map((request) => (
-                    <ListGroup.Item key={request.id}>
-                      <strong>Community name:</strong> {request.communityName} <br />
-                      <strong>User ID:</strong> {request.userId} <br />
-                      <Button
-                        variant="primary"
-                        onClick={() => {
-                          setShowModal(true);
-                          setModalCommunityName(request.communityName);
-                          setModalCommunityId(request.communityId);
-                          setModalUserId(request.userId);
-                          setModalJoinRequestId(request.id);
-                        }}
-                      >
-                        Validate
-                      </Button>
-                    </ListGroup.Item>
-                  ))
-                ) : (
-                  <p>No hay solicitudes pendientes.</p>
-                )}
-              </ListGroup>
-            </Row>
-          )}
-
-          <Row className="my-5">
-            <h2>Notificaciones de usuarios seguidos</h2>
-            {followedNotifications.length > 0 ? (
-              <ListGroup>
-                {followedNotifications.map((notification) => (
-                  <ListGroup.Item key={notification.id}>
-                    <strong>Notification from user: </strong> {notification.userName} <br />
-                    <strong>Message: </strong> {notification.notificationMessage} <br />
-                    <strong>Date :</strong> {notification.date} <br />
-                    <strong>Entity name:</strong> {notification.entityName} <br />
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            ) : (
-              <p>No hay notificaciones nuevas.</p>
-            )}
-          </Row>
         </Row>
+
+        {/* Modales de rechazo y validación */}
+        <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Reject Request</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group controlId="rejectionReason">
+              <Form.Label>Reason for rejection</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                placeholder="Specify the reason for rejection..."
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleConfirmReject}
+              disabled={!rejectionReason.trim()}
+            >
+              Confirm rejection
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </>
   );

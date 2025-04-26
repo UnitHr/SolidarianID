@@ -113,3 +113,25 @@ export async function fetchUserById(userId: string): Promise<User> {
   if (!res.ok) throw new Error('Failed to fetch creator');
   return res.json();
 }
+
+/**
+ * Get a user name by id.
+ * */
+export const getUserNameById = async (userId: string) => {
+  const token = getToken();
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+    const data = await response.json();
+    return data.firstName + ' ' + data.lastName;
+  } catch (error) {
+    console.error('Error getting user name:', error);
+    throw error;
+  }
+};

@@ -9,6 +9,7 @@ export class NotificationCreatedEvent extends DomainEvent {
     public readonly read: boolean,
     public readonly timestamp: Date,
     public readonly recipientId: string,
+    public readonly userId: string,
     public readonly type: ActivityType,
     public readonly entityId: string,
     public readonly entityName: string,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository as TypeOrmRepository } from 'typeorm';
+import { In, Repository as TypeOrmRepository } from 'typeorm';
 import { EntityNotFoundError } from '@common-lib/common-lib/core/exceptions/entity-not-found.error';
 import { PaginationDefaults } from '@common-lib/common-lib/common/enum';
 import { Notification as DomainNotification } from '../domain/Notification';
@@ -78,9 +78,14 @@ export class NotificationRepositoryTypeorm extends NotificationRepository {
     const persistenceNotifications = notifications.map(
       NotificationMapper.toPersistence,
     );
-    const savedNotifications = await this.notificationRepository.save(
-      persistenceNotifications,
-    );
-    return savedNotifications.map(NotificationMapper.toDomain);
+    await this.notificationRepository.insert(persistenceNotifications);
+
+    const ids = persistenceNotifications.map((n) => n.id);
+    const reloaded = await this.notificationRepository.find({
+      where: { id: In(ids) },
+      relations: ['historyEntry'],
+    });
+
+    return reloaded.map(NotificationMapper.toDomain);
   }
 }

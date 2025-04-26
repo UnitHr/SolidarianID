@@ -7,7 +7,7 @@ export class CreateCommunityRequestEvent extends DomainEvent {
     public readonly userId: string,
     public readonly requestId: string,
     public readonly communityName: string,
-    public readonly date: Date = new Date(),
+    public readonly date: Date,
   ) {
     super(CreateCommunityRequestEvent.name, date);
   }

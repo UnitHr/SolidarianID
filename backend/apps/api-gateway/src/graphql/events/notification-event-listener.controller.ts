@@ -22,6 +22,7 @@ export class NotificationEventListenerController {
         read: message.read,
         timestamp: message.timestamp,
         recipientId: message.recipientId,
+        userId: message.userId,
         type: message.type,
         entityId: message.entityId,
         entityName: message.entityName,

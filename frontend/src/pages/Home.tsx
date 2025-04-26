@@ -1,76 +1,67 @@
-import { Col, Container, Row, Image, Button } from 'react-bootstrap';
-import girlImage from '../assets/chica-solidarianid.png';
-import logo from '../assets/logo-solidarianid.png';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { Col, Container, Row, Image, Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import girlImage from '../assets/chica-solidarianid.png';
 
 export function Home() {
   const navigate = useNavigate();
 
   return (
-    <>
-      <SolidarianNavbar></SolidarianNavbar>
-      <Container>
-        <Row className="my-4">
-          <Col>
-            <Row className="my-4">
-              <Image src={logo} fluid />
-            </Row>
-            <Row className="my-4">
-              <Row>
-                <h1>Support</h1>
-              </Row>
-              <Row>
-                <h1>Communities, Causes</h1>
-              </Row>
-              <Row>
-                <h1>and Actions</h1>
-              </Row>
-            </Row>
-            <Row className="">
-              <h3 className="px-4 py-4 text-justify">
-                Discover and contribute to various communities and charitable causes Whether you're
-                looking to support or to take action, get involved today!
-              </h3>
-            </Row>
-          </Col>
-          <Col>
-            <Container>
-              <Image src={girlImage} fluid />
-            </Container>
-          </Col>
-        </Row>
-        <Row>
-          <Row className="py-4 px-4">
-            <h2 className="text-center font-weight-bold">
-              Explore our platform to find communities, causes and actions to support.
-            </h2>
-          </Row>
-          <Row>
-            <Col className="mx-4 my-4">
-              <Row>
-                <Button variant="primary" onClick={() => navigate('/communities')}>
-                  Find Communities
-                </Button>
-              </Row>
-            </Col>
-            <Col className="mx-4 my-4">
-              <Row>
-                <Button variant="primary" onClick={() => navigate('/causes')}>
-                  Find Causes
-                </Button>
-              </Row>
-            </Col>
-            <Col className="mx-4 my-4">
-              <Row>
-                <Button variant="primary" onClick={() => navigate('/actions')}>
-                  Find Actions
-                </Button>
-              </Row>
-            </Col>
-          </Row>
-        </Row>
-      </Container>
-    </>
+    <Container className="py-5">
+      {/* Top section */}
+      <Row className="align-items-center mb-5">
+        <Col md={6} className="text-center text-md-start mb-4 mb-md-0">
+          <h2 className="fw-bold">Empower Communities</h2>
+          <p className="text-muted mt-3">
+            Discover, support, and engage with causes and actions that matter.
+          </p>
+        </Col>
+        <Col md={6} className="text-center">
+          <Image src={girlImage} fluid style={{ maxHeight: '400px', objectFit: 'cover' }} />
+        </Col>
+      </Row>
+
+      {/* Cards */}
+      <Row className="g-4">
+        <Col md={4}>
+          <Card className="h-100 text-center">
+            <Card.Body>
+              <Card.Title>Communities</Card.Title>
+              <Card.Text>
+                Join communities that align with your passions and make an impact.
+              </Card.Text>
+              <Button variant="secondary" onClick={() => navigate('/communities')}>
+                Explore Communities
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={4}>
+          <Card className="h-100 text-center">
+            <Card.Body>
+              <Card.Title>Causes</Card.Title>
+              <Card.Text>
+                Discover meaningful causes and contribute where it matters the most.
+              </Card.Text>
+              <Button variant="secondary" onClick={() => navigate('/causes')}>
+                Explore Causes
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={4}>
+          <Card className="h-100 text-center">
+            <Card.Body>
+              <Card.Title>Actions</Card.Title>
+              <Card.Text>Take action and be part of initiatives that drive real change.</Card.Text>
+              <Button variant="secondary" onClick={() => navigate('/actions')}>
+                Explore Actions
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 }

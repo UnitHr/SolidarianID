@@ -1,5 +1,4 @@
-import { Col, Row, Image, Container, Alert, ListGroup, Pagination } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { Col, Row, Container, Alert, ListGroup, Pagination } from 'react-bootstrap';
 import { FormFilterCauses } from '../components/FormFilterCauses';
 import { useEffect, useState } from 'react';
 import { CauseCard } from '../components/CauseCard';
@@ -103,9 +102,8 @@ export function SearchCauses() {
 
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
-        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
+        <Alert variant={alertVariant} onClose={() => setShowAlert(false)} dismissible>
           {alertMessage}
         </Alert>
       )}

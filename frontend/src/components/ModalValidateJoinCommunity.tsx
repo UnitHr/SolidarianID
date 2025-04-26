@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 
 interface ComponentProps {
   userId: string;
@@ -18,6 +20,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
   const [showCommentEntry, setShowCommentEntry] = useState(false);
   const [countReject, setCountReject] = useState(0);
   const [comment, setComment] = useState('');
+  const [comment, setComment] = useState('');
 
   function changeComment(event: React.ChangeEvent<HTMLInputElement>) {
     setComment(event.target.value);
@@ -26,10 +29,13 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
   async function handleAccept() {
     const response = await fetch(urlBase, {
       method: 'POST',
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        status: 'approved',
         status: 'approved',
       }),
     });
@@ -37,10 +43,14 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
     if (response.status === 201) {
       props.changeAlertMessage('Join request accepted');
       props.changeAlertVariant('success');
+      props.changeAlertMessage('Join request accepted');
+      props.changeAlertVariant('success');
       props.handleAlertShow();
       props.handleHide();
     } else {
       const data = await response.json();
+      props.changeAlertMessage('Error: ' + data.errors.message);
+      props.changeAlertVariant('danger');
       props.changeAlertMessage('Error: ' + data.errors.message);
       props.changeAlertVariant('danger');
       props.handleAlertShow();
@@ -57,14 +67,21 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
       if (comment === '') {
         props.changeAlertMessage('You must enter a comment to reject the join request.');
         props.changeAlertVariant('danger');
+      if (comment === '') {
+        props.changeAlertMessage('You must enter a comment to reject the join request.');
+        props.changeAlertVariant('danger');
         props.handleAlertShow();
       } else {
         const response = await fetch(urlBase, {
           method: 'POST',
+          method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            status: 'approved',
+            comment: 'commentario',
             status: 'approved',
             comment: 'commentario',
           }),
@@ -73,11 +90,15 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
         if (response.status === 201) {
           props.changeAlertMessage('Join request accepted');
           props.changeAlertVariant('success');
+          props.changeAlertMessage('Join request accepted');
+          props.changeAlertVariant('success');
           props.handleAlertShow();
 
           props.handleHide();
         } else {
           const data = await response.json();
+          props.changeAlertMessage('Error: ' + data.errors.message);
+          props.changeAlertVariant('danger');
           props.changeAlertMessage('Error: ' + data.errors.message);
           props.changeAlertVariant('danger');
           props.handleAlertShow();
@@ -158,6 +179,7 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
 
             {showCommentEntry && (
               <>
+                {' '}
                 {' '}
                 <Form.Label>Comment</Form.Label>
                 <Form.Control

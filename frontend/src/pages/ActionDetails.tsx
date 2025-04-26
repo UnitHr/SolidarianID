@@ -1,5 +1,4 @@
 import { Col, Container, Row, OverlayTrigger, Tooltip, ProgressBar } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -65,7 +64,6 @@ export function ActionDetails() {
 
   return (
     <>
-      <SolidarianNavbar />
       <Container className="mt-4">
         <Row className="justify-content-center mb-3">
           <Col xs={12} md={9}>

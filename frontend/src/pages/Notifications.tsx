@@ -1,8 +1,18 @@
-import { Alert, Button, Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
-import { SolidarianNavbar } from '../components/SolidarianNavbar';
+import { Alert, Button, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import '../index.css';
+import '../styles/index.css';
 import { ModalValidateJoinCommunity } from '../components/ModalValidateJoinCommunity';
+import {
+  registerServiceWorker,
+  registerSubscriptionOnServer,
+  subscribeUserToPushManager,
+} from '../services/push-notification.service';
+import {
+  fetchCreateCommunityRequests,
+  fetchManagedCommunities,
+} from '../services/notificacion.service';
+import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
+import { approveCommunityRequest, rejectCommunityRequest } from '../services/community.service';
 
 interface JoinComunityRequestValues {
   id: string;
@@ -35,6 +45,10 @@ export function Notifications() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
   const [currentCommunity, setCurrentCommunity] = useState('');
   const pageSize = 5;
+
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   function changeAlertMessage(value: string) {
     setAlertMessage(value);
@@ -103,8 +117,8 @@ export function Notifications() {
           const data = await response.json();
           if (data.data.length > 0) {
             setIsCommunityAdmin(true);
-            setManagedCommunities(data.data);
-            setCurrentCommunity(data.data[0]);
+            setManagedCommunities(managedCommunities);
+            setCurrentCommunity(managedCommunities[0]);
           }
         }
       } catch (error) {
@@ -115,67 +129,31 @@ export function Notifications() {
     fetchRequests();
   }, []);
 
-  const handleEnableNotifications = async () => {
+  async function handleEnableNotifications() {
     if ('Notification' in window && 'serviceWorker' in navigator) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        navigator.serviceWorker.register('/javascripts/sw.js').then(async (registration) => {
-          console.log('Service Worker registrado:', registration);
-
-          // Obtén la suscripción existente o crea una nueva
-          // let subscription = await registration.pushManager.getSubscription();
-          //  if (!subscription) {
-          const response = await fetch('http://localhost:4000/push/vapidPublicKey', {
-            credentials: 'include',
-          });
-          const vapidPublicKey = await response.text();
-          const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-
-          const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: convertedVapidKey,
-          });
+        try {
+          const registration = await registerServiceWorker();
+          const subscription = await subscribeUserToPushManager(registration);
 
           const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
           const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
 
-          console.log('Nueva suscripción creada:', subscription, userId, userRoles);
-          // } else {
-          //  console.log('Suscripción existente encontrada:', subscription);
-          // }
-
-          // Registra la suscripción en el servidor
-          try {
-            const serverResponse = await fetch('http://localhost:4000/push/register', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include',
-              body: JSON.stringify({ subscription, userId, userRoles }),
-            });
-
-            if (serverResponse.ok) {
-              console.log('Suscripción registrada en el servidor');
-            } else {
-              console.error(
-                'Error al registrar la suscripción en el servidor:',
-                await serverResponse.text()
-              );
-            }
-          } catch (error) {
-            console.error('Error al enviar la suscripción al servidor:', error);
-          }
+          await registerSubscriptionOnServer(subscription, userId, userRoles);
 
           setNotificationsEnabled(true); // Actualiza el estado
-        });
+        } catch (error) {
+          console.error('Error durante la activación de notificaciones:', error);
+        }
       } else {
         console.log('Permiso de notificaciones denegado');
       }
     } else {
       console.log('Notificaciones o Service Workers no son compatibles con este navegador');
     }
-  };
+  }
+
   // Calculate paginated data
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedRequests = pendingRequests.slice(startIndex, startIndex + pageSize);
@@ -194,9 +172,35 @@ export function Notifications() {
     }
   };
 
+  const handleOpenRejectModal = (requestId: string) => {
+    setCurrentRequestId(requestId);
+    setRejectionReason('');
+    setShowRejectModal(true);
+  };
+
+  const handleApproveRequest = async (requestId: string) => {
+    const success = await approveCommunityRequest(requestId);
+    if (success) {
+      alert('Request approved successfully!');
+    } else {
+      alert('Failed to approve the request.');
+    }
+  };
+
+  const handleConfirmReject = async () => {
+    if (currentRequestId) {
+      const success = await rejectCommunityRequest(currentRequestId, rejectionReason);
+      if (success) {
+        alert('Request rejected successfully!');
+      } else {
+        alert('Failed to reject the request.');
+      }
+      setShowRejectModal(false);
+    }
+  };
+
   return (
     <>
-      <SolidarianNavbar></SolidarianNavbar>
       {showAlert && (
         <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
           {alertMessage}
@@ -240,29 +244,18 @@ export function Notifications() {
                 <>
                   <div className="panel">
                     {paginatedRequests.map((request) => (
-                      <div key={request.id} className="request-card">
-                        <strong>Nombre de la comunidad:</strong> {request.communityName} <br />
-                        <strong>Descripción de la comunidad:</strong> {request.communityDescription}{' '}
-                        <br />
-                        <strong>Usuario ID:</strong> {request.userId} <br />
-                        <strong>Causa:</strong>
-                        <ul>
-                          <li>
-                            <strong>Título:</strong> {request.causeTitle}
-                          </li>
-                          <li>
-                            <strong>Descripción:</strong> {request.causeDescription}
-                          </li>
-                          <li>
-                            <strong>Fecha Fin:</strong>{' '}
-                            {new Date(request.causeEndDate).toLocaleDateString()}
-                          </li>
-                          <li>
-                            <strong>ODS:</strong>{' '}
-                            {request.causeOds.map((ods: { title: any }) => ods.title).join(', ')}
-                          </li>
-                        </ul>
-                      </div>
+                      <CreateCommunityRequestCard
+                        key={request.id}
+                        communityName={request.communityName}
+                        communityDescription={request.communityDescription}
+                        userId={request.userId}
+                        causeTitle={request.causeTitle}
+                        causeDescription={request.causeDescription}
+                        causeEndDate={request.causeEndDate}
+                        causeOds={request.causeOds}
+                        onApprove={() => handleApproveRequest(request.id)} // Llama a la función de aprobación
+                        onReject={() => handleOpenRejectModal(request.id)}
+                      />
                     ))}
                   </div>
                   <div className="pagination-controls">
@@ -290,6 +283,36 @@ export function Notifications() {
               )}
             </Row>
           )}
+
+          <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Rechazar solicitud</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group controlId="rejectionReason">
+                <Form.Label>Motivo del rechazo</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={4}
+                  placeholder="Especifica el motivo del rechazo..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                />
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleConfirmReject}
+                disabled={!rejectionReason.trim()}
+              >
+                Confirmar rechazo
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
           {isCommunityAdmin && (
             <Row className="my-5">

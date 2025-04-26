@@ -25,8 +25,5 @@ export class HistoryRegisteredHandler
       event.userId,
       event.date,
     );
-    this.logger.log(
-      `Created notifications for followers of user ${event.userId} for history activity <${event.type}> with id ${event.historyEntryId}`,
-    );
   }
 }

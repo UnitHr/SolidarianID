@@ -115,7 +115,6 @@ export class CreateCommunityRequest extends EntityRoot<CreateCommunityRequestPro
     const createCommunityRequest = new CreateCommunityRequest(props, id);
 
     if (!id) {
-      // Publish an event when a new community creation request is created
       createCommunityRequest.apply(
         new CreateCommunityRequestEvent(
           userId,

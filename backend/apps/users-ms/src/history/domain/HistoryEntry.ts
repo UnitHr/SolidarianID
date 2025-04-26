@@ -12,7 +12,7 @@ interface HistoryEntryProps {
   entityName?: string;
   adminId?: string;
   timestamp?: Date;
-  status?: EntryStatus; // TODO: review if this is necessary, the activity type should be enough
+  status?: EntryStatus;
 }
 
 export class HistoryEntry extends EntityRoot<HistoryEntryProps> {

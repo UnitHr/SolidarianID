@@ -10,12 +10,11 @@ export class NotificationResolver {
   constructor(private readonly pubSub: PubSubService) {}
 
   @Subscription(() => NotificationModel, {
-    filter: (payload, variables) => {
-      return payload.notificationAdded.recipientId === variables.userId;
-    },
+    filter: (payload, variables) => payload.recipientId === variables.userId,
+    resolve: (value: NotificationModel) => value,
   })
   notificationAdded(@Args('userId', { type: () => ID }) userId: string) {
-    this.logger.log(`User ${userId} subscribed to notifications`);
+    this.logger.debug(`User ${userId} subscribed to notifications`);
     return this.pubSub.asyncIterator('notificationAdded');
   }
 }

@@ -17,24 +17,18 @@ export class NotificationEventListenerController {
     @Payload() message: NotificationCreatedEvent,
   ) {
     try {
-      this.logger.log(
-        `Received notification event: ${JSON.stringify(message)}`,
-      );
-
       const notification: NotificationModel = {
         id: message.notificationId,
         read: message.read,
         timestamp: message.timestamp,
         recipientId: message.recipientId,
+        userId: message.userId,
         type: message.type,
         entityId: message.entityId,
         entityName: message.entityName,
       };
 
       await this.notificationService.publishNewNotification(notification);
-      this.logger.debug(
-        `Notification details: ${JSON.stringify(notification)}`,
-      );
     } catch (error) {
       this.logger.error(
         `Error handling notification event: ${error.message}`,

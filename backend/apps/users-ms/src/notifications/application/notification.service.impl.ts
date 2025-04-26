@@ -126,6 +126,7 @@ export class NotificationServiceImpl implements NotificationService {
         notification.read,
         notification.timestamp,
         notification.recipientId.toString(),
+        notification.historyEntry?.userId.toString(),
         notification.historyEntry?.type,
         notification.historyEntry?.entityId.toString(),
         notification.historyEntry?.entityName,
@@ -137,10 +138,6 @@ export class NotificationServiceImpl implements NotificationService {
       await this.eventsService.publish(
         NotificationCreatedEvent.EVENT_TYPE,
         notificationEvent,
-      );
-
-      this.logger.log(
-        `Published notification event for recipient ${notification.recipientId}`,
       );
     } catch (error) {
       this.logger.error(

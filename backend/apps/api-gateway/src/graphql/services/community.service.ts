@@ -9,7 +9,6 @@ export class CommunityService {
   private readonly logger = new Logger(CommunityService.name);
 
   async getCommunity(id: string) {
-    this.logger.debug(`Fetching community with ID: ${id}`);
     const response = await axios.get(`${this.communityMsUrl}/${id}`);
     return response.data;
   }

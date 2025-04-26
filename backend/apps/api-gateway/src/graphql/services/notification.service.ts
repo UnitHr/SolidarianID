@@ -9,10 +9,6 @@ export class NotificationService {
   constructor(private readonly pubSub: PubSubService) {}
 
   async publishNewNotification(notification: NotificationModel): Promise<void> {
-    this.logger.log(
-      `Publishing notification for user ${notification.recipientId}`,
-    );
-
     await this.pubSub.publish('notificationAdded', notification);
   }
 }

@@ -1,207 +1,172 @@
-import { Col, Container, Row, Image, ListGroup, Pagination, Alert } from 'react-bootstrap';
-import image from '../assets/filter-actions-image.png';
-import { FormFilterActions } from '../components/FormFilterActions';
 import { useEffect, useState } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert, Image } from 'react-bootstrap';
+import { ActionDetails } from '../lib/types/action.types';
+import { fetchActions } from '../services/action.service';
+import { Paginate } from '../components/Pagination';
 import { ActionCard } from '../components/ActionCard';
-
-export interface ActionValues {
-  id: string;
-  status: string;
-  type: string;
-  title: string;
-  description: string;
-  causeId: string;
-  target: number;
-  unit: string;
-  achieved: number;
-  goodType?: string;
-  location?: string;
-  date?: Date;
-}
+import searchActionsImage from '../assets/filter-actions-image.png';
 
 export function SearchActions() {
-  const urlBase = 'http://localhost:3000/api/v1/actions';
-  const [name, setName] = useState('');
-  const [sortBy, setSortBy] = useState('title');
-  const [sortDirection, setSortDirection] = useState('asc');
-  const [status, setStatus] = useState('COMPLETED');
-  const [search, setSearch] = useState(false);
-  const limit = 4;
+  const [actions, setActions] = useState<ActionDetails[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [actions, setActions] = useState<ActionValues[]>([]);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState('success');
+
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState('');
+  const [sortBy, setSortBy] = useState('title');
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchActions();
+    loadActions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  function changeName(e: React.ChangeEvent<HTMLInputElement>) {
-    setName(e.target.value);
-  }
-
-  function changeStatus(event: React.ChangeEvent<HTMLInputElement>) {
-    setStatus(event.target.value);
-  }
-
-  function changeSortBy(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSortBy(event.target.value);
-  }
-
-  function changeSortDirection(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSortDirection(event.target.value);
-  }
-
-  async function handleSearch(e) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchActions();
-  }
+    setPage(1);
+    loadActions();
+  };
 
-  async function fetchActions() {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
-
-    if (name !== '') {
-      params.append('name', name);
+  const loadActions = async () => {
+    try {
+      // Call Service
+      const response = await fetchActions(page, 9, name, status, sortBy, sortDirection);
+      setActions(response.data);
+      setTotalPages(response.meta.totalPages);
+      setError('');
+    } catch (err) {
+      console.error('Error loading actions:', err);
+      setActions([]);
+      setTotalPages(0);
+      setError('Failed to load actions. Please try again later.');
     }
-
-    params.append('sortBy', sortBy);
-    params.append('sortDirection', sortDirection);
-    params.append('status', status);
-
-    const url = `${urlBase}?${params.toString()}`;
-    alert(url);
-
-    const response = await fetch(url);
-    if (response.ok) {
-      const data = await response.json();
-      setTotalPages(data.meta.totalPages);
-      setActions(data.data);
-      setSearch(true);
-
-      setAlertMessage('Causes filtered successfully!');
-      setAlertVariant('success');
-      setShowAlert(true);
-    } else {
-      setAlertMessage('Backend error. Try again later.');
-      setAlertVariant('danger');
-      setShowAlert(true);
-    }
-  }
+  };
 
   return (
-    <>
-      {showAlert && (
-        <Alert variant={alertVariant} onClose={(e) => setShowAlert(false)} dismissible>
-          {alertMessage}
+    <Container className="py-5">
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="danger" onClose={() => setError('')} dismissible>
+          {error}
         </Alert>
       )}
-      <Container>
-        <Row className="my-5">
-          <h1 className="text-center">Search Actions</h1>
-        </Row>
-        <Row className="my-4">
-          <h3 className="px-4 py-4 text-justify">
-            Find meaningful actions you can contribute to. Use the search tool to explore
-            initiatives aligned with your interests and help communities reach their goals.
-          </h3>
 
-          <h4 className="px-4 py-4 text-justify">
-            Whether it's volunteering, donating, or spreading awareness — every action counts toward
-            creating positive change.
-          </h4>
-        </Row>
-        <Row>
-          <Col sm={6} md={6} lg={6}>
-            <Image src={image} fluid />
+      {/* Header */}
+      <Row className="align-items-center mb-5">
+        {/* Left Column: Text + Filter */}
+        <Col md={6}>
+          <h1 className="fw-bold mb-2">Explore Actions</h1>
+          <p className="text-muted">
+            Find meaningful actions you can contribute to. Whether it's volunteering, donating, or
+            spreading awareness — every action counts.
+          </p>
+
+          {/* Filter Card */}
+          <Card className="shadow-sm p-4 mt-4">
+            <Form onSubmit={handleSubmit}>
+              <Row className="g-3">
+                <Col md={6}>
+                  <Form.Group controlId="searchName">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter action name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group controlId="status">
+                    <Form.Label>Status</Form.Label>
+                    <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                      <option value="">All</option>
+                      <option value="PENDING">Pending</option>
+                      <option value="IN_PROGRESS">In Progress</option>
+                      <option value="COMPLETED">Completed</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <hr className="my-4" />
+
+              <Row className="g-3">
+                <Col md={6}>
+                  <Form.Group controlId="sortBy">
+                    <Form.Label>Sort By</Form.Label>
+                    <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                      <option value="title">By Title</option>
+                      <option value="createdAt">By Creation Date</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group controlId="sortDirection">
+                    <Form.Label>Sort Direction</Form.Label>
+                    <Form.Select
+                      value={sortDirection}
+                      onChange={(e) => setSortDirection(e.target.value)}
+                    >
+                      <option value="asc">Ascending</option>
+                      <option value="desc">Descending</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <div className="d-flex justify-content-center mt-4">
+                <Button type="submit" variant="primary">
+                  Search
+                </Button>
+              </div>
+            </Form>
+          </Card>
+        </Col>
+
+        {/* Right Column: Image */}
+        <Col md={6} className="text-center">
+          <Image
+            src={searchActionsImage}
+            alt="Explore Actions"
+            style={{ maxHeight: '400px', objectFit: 'cover' }}
+          />
+        </Col>
+      </Row>
+
+      <hr className="my-4" />
+
+      {/* Actions */}
+      <Row className="g-4">
+        {actions.length > 0 ? (
+          actions.map((action) => (
+            <Col key={action.id} xs={12} md={6} lg={4}>
+              <ActionCard {...action} />
+            </Col>
+          ))
+        ) : (
+          <Col className="text-center text-muted py-5">
+            <p>No actions found.</p>
           </Col>
-          <Col>
-            <FormFilterActions
-              name={name}
-              sortBy={sortBy}
-              sortDireciton={sortDirection}
-              status={status}
-              changeName={changeName}
-              changeSortBy={changeSortBy}
-              changeSortDirection={changeSortDirection}
-              changeStatus={changeStatus}
-              handleSearch={handleSearch}
-            ></FormFilterActions>
+        )}
+      </Row>
+
+      {/* Pagination */}
+      {actions.length > 0 && (
+        <Row className="mt-4">
+          <Col className="d-flex justify-content-center">
+            <Paginate
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(newPage) => setPage(newPage)}
+            />
           </Col>
         </Row>
-        <Row className="my-4">
-          <Container>
-            <Row>
-              {search && (
-                <>
-                  <h3>Results: </h3>
-                </>
-              )}
-            </Row>
-            {search && (
-              <>
-                <Row>
-                  <ListGroup className="my-2">
-                    {actions.length > 0 ? (
-                      <>
-                        <ListGroup.Item variant="secondary">
-                          <Row className="d-flex flex-wrap gap-4 justify-content-center">
-                            {actions.map((action) => (
-                              <ActionCard
-                                key={action.id}
-                                id={action.id}
-                                status={action.status}
-                                type={action.type}
-                                title={action.title}
-                                description={action.description}
-                                causeId={action.causeId}
-                                target={action.target}
-                                unit={action.unit}
-                                achieved={action.achieved}
-                                location={action.location}
-                                date={action.date}
-                              />
-                            ))}
-                          </Row>
-                        </ListGroup.Item>
-                        <Pagination className="mt-3">
-                          <Pagination.First
-                            onClick={() => {
-                              setPage(1);
-                            }}
-                          />
-                          <Pagination.Prev
-                            onClick={() => {
-                              setPage(page > 1 ? page - 1 : page);
-                            }}
-                          />
-                          <Pagination.Item>{page}</Pagination.Item>
-                          <Pagination.Next
-                            onClick={() => {
-                              setPage(page < totalPages ? page + 1 : page);
-                            }}
-                          />
-                          <Pagination.Last
-                            onClick={() => {
-                              setPage(totalPages);
-                            }}
-                          />
-                        </Pagination>
-                      </>
-                    ) : (
-                      <ListGroup.Item>No results found</ListGroup.Item>
-                    )}
-                  </ListGroup>
-                </Row>
-              </>
-            )}
-          </Container>
-        </Row>
-      </Container>
-    </>
+      )}
+    </Container>
   );
 }

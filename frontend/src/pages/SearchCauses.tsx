@@ -33,6 +33,7 @@ export function SearchCauses() {
 
   const loadCauses = async () => {
     try {
+      // Call Service
       const data = await fetchCauses(page, 9, name, selectedOds, sortBy, sortDirection);
       setCauses(data.data);
       setTotalPages(data.meta.totalPages);
@@ -47,6 +48,13 @@ export function SearchCauses() {
 
   return (
     <Container className="py-5">
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="danger" onClose={() => setError('')} dismissible>
+          {error}
+        </Alert>
+      )}
+
       {/* Header */}
       <Row className="align-items-start mb-5">
         {/* Image left */}
@@ -129,16 +137,6 @@ export function SearchCauses() {
           </Card>
         </Col>
       </Row>
-
-      {error && (
-        <Row className="mb-3">
-          <Col>
-            <Alert variant="danger" dismissible onClose={() => setError('')}>
-              {error}
-            </Alert>
-          </Col>
-        </Row>
-      )}
 
       <hr className="my-4" />
 

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Alert, Image } from 'react-bootstrap';
+import { fetchCommunities } from '../services/community.service';
+import { CommunityDetails } from '../lib/types/community.types';
 import { CommunityCard } from '../components/CommunityCard';
 import { Paginate } from '../components/Pagination';
-import { fetchCommunities, Community } from '../services/community.service';
 import searchImage from '../assets/filter-communities-image-2.png';
 
 export function SearchCommunities() {
@@ -11,7 +12,7 @@ export function SearchCommunities() {
   const [name, setName] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [communities, setCommunities] = useState<Community[]>([]);
+  const [communities, setCommunities] = useState<CommunityDetails[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export function SearchCommunities() {
 
   const loadCommunities = async () => {
     try {
+      // Call Service
       const data = await fetchCommunities(page, 9, name);
       setCommunities(data.data);
       setTotalPages(data.meta.totalPages);
@@ -45,6 +47,13 @@ export function SearchCommunities() {
 
   return (
     <Container className="py-5">
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="danger" onClose={() => setError('')} dismissible>
+          {error}
+        </Alert>
+      )}
+
       <Row className="align-items-center mb-5">
         {/* Image */}
         <Col md={6} className="mb-4 mb-md-0 text-center">
@@ -77,16 +86,6 @@ export function SearchCommunities() {
           </Form>
         </Col>
       </Row>
-
-      {error && (
-        <Row className="mb-3">
-          <Col>
-            <Alert variant="danger" dismissible onClose={() => setError('')}>
-              {error}
-            </Alert>
-          </Col>
-        </Row>
-      )}
 
       <hr className="my-4" />
 

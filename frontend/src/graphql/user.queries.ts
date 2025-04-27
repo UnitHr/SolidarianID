@@ -14,3 +14,14 @@ export const GET_USER_BY_ID = gql`
     }
   }
 `;
+
+export const CREATE_USER = gql`
+  mutation CreateUser($createUserInput: CreateUserInput!) {
+    createUser(createUserInput: $createUserInput) {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+`;

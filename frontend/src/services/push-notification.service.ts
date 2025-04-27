@@ -1,5 +1,10 @@
 import { urlBase64ToUint8Array } from '../utils/base64Utils';
 
+const PUSH_SERVER_URL = 'http://localhost:4000/push';
+
+/**
+ * Registers a service worker and subscribes the user to push notifications.
+ */
 async function registerServiceWorker() {
   try {
     const registration = await navigator.serviceWorker.register('/javascripts/sw.js');
@@ -11,9 +16,12 @@ async function registerServiceWorker() {
   }
 }
 
+/**
+ * Subscribes the user to the Push Manager using the VAPID public key.
+ */
 async function subscribeUserToPushManager(registration: ServiceWorkerRegistration) {
   try {
-    const response = await fetch('http://localhost:4000/push/vapidPublicKey', {
+    const response = await fetch(`${PUSH_SERVER_URL}/vapidPublicKey`, {
       credentials: 'include',
     });
     const vapidPublicKey = await response.text();
@@ -32,9 +40,12 @@ async function subscribeUserToPushManager(registration: ServiceWorkerRegistratio
   }
 }
 
+/**
+ * Registers the subscription on the server.
+ */
 async function registerSubscriptionOnServer(subscription: PushSubscription, userId: string) {
   try {
-    const serverResponse = await fetch('http://localhost:4000/push/register', {
+    const serverResponse = await fetch(`${PUSH_SERVER_URL}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,6 +68,9 @@ async function registerSubscriptionOnServer(subscription: PushSubscription, user
   }
 }
 
+/**
+ * Enables notifications by requesting permission and registering the service worker.
+ */
 export async function enableNotifications() {
   if ('Notification' in window && 'serviceWorker' in navigator) {
     const permission = await Notification.requestPermission();
@@ -69,7 +83,6 @@ export async function enableNotifications() {
 
         await registerSubscriptionOnServer(subscription, userId);
         return true;
-        //setNotificationsEnabled(true); // Actualiza el estado
       } catch (error) {
         console.error('Error during notifications activation:', error);
       }

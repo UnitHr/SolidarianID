@@ -92,7 +92,7 @@ export async function createAction(causeId: string, payload: CreateActionPayload
 export async function fetchCauseSupporters(causeId: string): Promise<string[]> {
   let allSupporters: string[] = [];
   let currentPage = 1;
-  const limit = 10; 
+  const limit = 10;
 
   while (true) {
     const response = await fetch(

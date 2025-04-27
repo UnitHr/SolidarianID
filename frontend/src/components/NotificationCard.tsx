@@ -100,7 +100,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
   const handleHideModal = async () => {
     setShowModal(false);
     await fetchJoinRequestStatus();
-    console.log('Modal closed in card');
+    window.location.reload();
   };
 
   const changeAlertMessage = (value: string) => {

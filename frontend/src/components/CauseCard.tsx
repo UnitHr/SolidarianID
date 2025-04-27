@@ -15,7 +15,8 @@ export function CauseCard({ id, title, description }: CauseCardProps) {
       console.error('No ID found for cause:', { id, title, description });
       return;
     }
-    window.location.href = `http://localhost:3006/causes/${id}`;
+    //window.location.href = `http://localhost:3006/causes/${id}`;
+    navigate(`/causes/${id}`);
   };
 
   return (

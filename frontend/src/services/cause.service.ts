@@ -87,13 +87,34 @@ export async function createAction(causeId: string, payload: CreateActionPayload
 }
 
 /**
- * Fetch actions by cause ID with pagination.
+ * Fetch supports by cause ID with pagination.
  */
 export async function fetchCauseSupporters(causeId: string): Promise<string[]> {
-  const res = await fetch(`${API_URL}/causes/${causeId}/supporters`);
-  if (!res.ok) throw new Error('Failed to fetch supporters');
-  const data = await res.json();
-  return data.data;
+  let allSupporters: string[] = [];
+  let currentPage = 1;
+  const limit = 10; 
+
+  while (true) {
+    const response = await fetch(
+      `${API_URL}/causes/${causeId}/supporters?page=${currentPage}&limit=${limit}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch supporters');
+    }
+
+    const { data, meta } = await response.json();
+
+    allSupporters = [...allSupporters, ...data];
+
+    if (currentPage >= meta.totalPages) {
+      break;
+    }
+
+    currentPage++;
+  }
+
+  return allSupporters;
 }
 
 /**

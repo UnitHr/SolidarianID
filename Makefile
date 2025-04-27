@@ -4,7 +4,7 @@ default: help
 # Docker commands
 run-prod:
 	$(MAKE) -C backend run-prod
-	$(MAKE) -C frontend run-dev
+	$(MAKE) -C frontend run-prod
 	$(MAKE) -C server_push run-prod
 
 run-foreground-prod:

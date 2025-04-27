@@ -1,23 +1,48 @@
 'use strict';
 
-var version = 'v1';
-const currentCache = 'cache-' + version;
+var version = 'v3';
+const CACHE_NAME = 'solidarianid-cache-' + version;
 
-const files = [
-  'https://code.jquery.com/jquery-3.5.1.slim.min.js',
-  'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js',
-  'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js',
-  'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css',
-  '/shell.html',
-  '/stylesheets/style.css',
-  '/javascripts/main.js',
-  '/javascripts/sw.js',
+// Archivos que queremos precachear
+const ASSETS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/styles/index.css',
+  '/styles/links.css',
+  '/styles/profile.css',
+  '/assets/logo-solidarianid.png',
+  '/assets/chico.png',
+  '/assets/chica-solidarianid.png',
+  '/assets/community-logo.png',
+  '/assets/filter-actions-image.png',
+  '/assets/filter-causes-image.png',
+  '/assets/filter-communities-image-2.png',
+  '/assets/filter-community-image.png',
+  // ODS Images
+  '/assets/ods/goal1.gif',
+  '/assets/ods/goal-1.png',
+  '/assets/ods/goal-2.png',
+  '/assets/ods/goal-3.png',
+  '/assets/ods/goal-4.png',
+  '/assets/ods/goal-5.png',
+  '/assets/ods/goal-6.png',
+  '/assets/ods/goal-7.png',
+  '/assets/ods/goal-8.png',
+  '/assets/ods/goal-9.png',
+  '/assets/ods/goal-10.png',
+  '/assets/ods/goal-11.png',
+  '/assets/ods/goal-12.png',
+  '/assets/ods/goal-13.png',
+  '/assets/ods/goal-14.png',
+  '/assets/ods/goal-15.png',
+  '/assets/ods/goal-16.png',
+  '/assets/ods/goal-17.png',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(currentCache).then((cache) => {
-      return cache.addAll(files);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
 });

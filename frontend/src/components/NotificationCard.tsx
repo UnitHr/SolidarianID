@@ -43,6 +43,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
     if (type === 'joinRequest') {
       fetchJoinRequestStatus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, entityId, userId]);
 
   const markAsRead = async () => {

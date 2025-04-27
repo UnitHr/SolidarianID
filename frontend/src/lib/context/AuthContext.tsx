@@ -39,15 +39,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (userData: User) => {
     const expirationTime = new Date();
-    expirationTime.setHours(expirationTime.getHours() + 1); 
+    expirationTime.setHours(expirationTime.getHours() + 1);
 
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', userData.token);
-    
-    Cookies.set('user', JSON.stringify(userData), { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
-    Cookies.set('token', userData.token, { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
-    Cookies.set(isAuthenticated.toString(), 'true', { expires: expirationTime, path: '/', SameSite: 'None', Secure: true });
-    
+
+    Cookies.set('user', JSON.stringify(userData), {
+      expires: expirationTime,
+      path: '/',
+      SameSite: 'None',
+      Secure: true,
+    });
+    Cookies.set('token', userData.token, {
+      expires: expirationTime,
+      path: '/',
+      SameSite: 'None',
+      Secure: true,
+    });
+    Cookies.set(isAuthenticated.toString(), 'true', {
+      expires: expirationTime,
+      path: '/',
+      SameSite: 'None',
+      Secure: true,
+    });
+
     setUser(userData);
     setIsAuthenticated(true);
   };
@@ -61,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const clearAuthData = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    
+
     Cookies.remove('user');
     Cookies.remove('token');
   };
@@ -73,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');

@@ -257,6 +257,7 @@ export function UserHistory() {
     }
     fetchUser();
     fetchHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, page]);
 
   if (loading || !user) {

@@ -13,10 +13,17 @@
     "web-push": "^3.6.7"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "pm2 start server.js --name server_push",
+    "stop": "pm2 stop server_push",
+    "restart": "pm2 restart server_push",
+    "status": "pm2 status server_push",
+    "logs": "pm2 logs server_push"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "pm2": "^6.0.5"
+  }
 }

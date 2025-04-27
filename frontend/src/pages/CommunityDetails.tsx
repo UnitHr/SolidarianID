@@ -148,7 +148,7 @@ export function CommunityDetails() {
               (isMember ? (
                 <p className="text-success fw-semibold small mb-0">✅ You are already a member</p>
               ) : (
-                <Button onClick={() => setShowModal(true)} variant="success">
+                <Button onClick={() => setShowModal(true)} variant="primary" className="mt-2">
                   Join Community
                 </Button>
               ))}

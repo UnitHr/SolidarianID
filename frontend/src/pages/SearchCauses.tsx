@@ -34,7 +34,7 @@ export function SearchCauses() {
   const loadCauses = async () => {
     try {
       // Call Service
-      const data = await fetchCauses(page, 9, name, selectedOds, sortBy, sortDirection);
+      const data = await fetchCauses(page, 6, name, selectedOds, sortBy, sortDirection);
       setCauses(data.data);
       setTotalPages(data.meta.totalPages);
       setError('');

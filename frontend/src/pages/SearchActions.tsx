@@ -32,7 +32,7 @@ export function SearchActions() {
   const loadActions = async () => {
     try {
       // Call Service
-      const response = await fetchActions(page, 9, name, status, sortBy, sortDirection);
+      const response = await fetchActions(page, 6, name, status, sortBy, sortDirection);
       setActions(response.data);
       setTotalPages(response.meta.totalPages);
       setError('');

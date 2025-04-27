@@ -23,7 +23,7 @@ export function SearchCommunities() {
   const loadCommunities = async () => {
     try {
       // Call Service
-      const data = await fetchCommunities(page, 9, name);
+      const data = await fetchCommunities(page, 6, name);
       setCommunities(data.data);
       setTotalPages(data.meta.totalPages);
       setError('');

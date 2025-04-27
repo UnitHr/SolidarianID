@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, Image, Modal, Button } from 'react-bootstrap';
 import { Paginate } from '../components/Pagination';
+import { getUserByIdGraphQL } from '../services/graphql.user.service';
 
 import girlImage from '../assets/chica-solidarianid.png';
 import altImage from '../assets/chico.png';
@@ -16,6 +17,11 @@ type HistoryEntry = {
 
 type Following = {
   followedUserId: string;
+  fullName: string;
+};
+
+type Follower = {
+  followerId: string;
   fullName: string;
 };
 
@@ -34,11 +40,13 @@ export function UserHistory() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [following, setFollowing] = useState<Following[]>([]);
+  const [followers, setFollowers] = useState<Follower[]>([]);
   const [communities, setCommunities] = useState<HistoryEntry[]>([]);
   const [causes, setCauses] = useState<HistoryEntry[]>([]);
   const [supports, setSupports] = useState<HistoryEntry[]>([]);
   const [request, setRequest] = useState<HistoryEntry[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [profileImage, setProfileImage] = useState(girlImage);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showCommunities, setShowCommunities] = useState(false);
@@ -49,6 +57,7 @@ export function UserHistory() {
   const limit = 6;
   const [page, setPage] = useState({
     followingPage: 1,
+    followersPage: 1,
     communitiesPage: 1,
     causesPage: 1,
     supportsPage: 1,
@@ -56,6 +65,7 @@ export function UserHistory() {
   });
   const [totalPages, setTotalPages] = useState({
     followingTotalPage: 0,
+    followersTotalPage: 0,
     communitiesTotalPage: 0,
     causesTotalPage: 0,
     supportsTotalPage: 0,
@@ -63,6 +73,7 @@ export function UserHistory() {
   });
   const [totalCount, setTotalCount] = useState({
     followingTotalCount: 0,
+    followersTotalCount: 0,
     communitiesTotalCount: 0,
     causesTotalCount: 0,
     supportsTotalCount: 0,
@@ -100,20 +111,17 @@ export function UserHistory() {
 
     async function fetchUser() {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/users/${parsedUser.userId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setFullName(data.firstName + ' ' + data.lastName);
-        } else {
-          console.error('Error fetching user data');
-        }
+        const userData = await getUserByIdGraphQL(parsedUser.userId);
+        setFullName(`${userData.firstName} ${userData.lastName}`);
+        console.log('User data:', userData);
+
+        setTotalCount((prev) => ({
+          ...prev,
+          followingTotalCount: userData.followingCount,
+          followersTotalCount: userData.followersCount
+        }));
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching user data:', error);
       }
     }
 
@@ -138,12 +146,31 @@ export function UserHistory() {
             ...prev,
             followingTotalPage: followingsData.meta.totalPages,
           }));
-          setTotalCount((prev) => ({
-            ...prev,
-            followingTotalCount: followingsData.meta.total,
-          }));
         } else {
           console.error('Error fetching followings history');
+        }
+
+        // Get followers history
+        const followersResponse = await fetch(
+          `http://localhost:3000/api/v1/users/${parsedUser.userId}/followers?page=${page.followersPage}&limit=${limit}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${parsedUser.token}`,
+            },
+          }
+        );
+
+        if (followersResponse.ok) {
+          const followersData = await followersResponse.json();
+          setFollowers(followersData.data);
+          setTotalPages((prev) => ({
+            ...prev,
+            followersTotalPage: followersData.meta.totalPages,
+          }));
+        } else {
+          console.error('Error fetching followers history');
         }
 
         // Get communities history
@@ -268,7 +295,13 @@ export function UserHistory() {
     setShowModal(true);
   };
 
+  const handleFollowersClick = () => {
+    setShowFollowersModal(true);
+  };
+
   const handleCloseModal = () => setShowModal(false);
+  
+  const handleCloseFollowersModal = () => setShowFollowersModal(false);
 
   const handleImageClick = () => setShowImageModal(true);
 
@@ -298,6 +331,12 @@ export function UserHistory() {
             <div onClick={handleFollowingClick} className="following-info">
               <div className="fw-bold fs-4 following-number">{totalCount.followingTotalCount}</div>
               <div className="text-muted following-label">Following</div>
+            </div>
+          </Col>
+          <Col xs="auto">
+            <div onClick={handleFollowersClick} className="following-info">
+              <div className="fw-bold fs-4 following-number">{totalCount.followersTotalCount}</div>
+              <div className="text-muted following-label">Followers</div>
             </div>
           </Col>
         </Row>
@@ -531,6 +570,35 @@ export function UserHistory() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showFollowersModal} onHide={handleCloseFollowersModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Followers</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {followers.length > 0 ? (
+            <ul className="list-unstyled mb-0">
+              {followers.map((f) => (
+                <li key={f.followerId} className="mb-2">
+                  <Link
+                    to={`/profile/${f.followerId}`}
+                    onClick={() => (window.location.href = `/profile/${f.followerId}`)}
+                    className="text-decoration-none entity-link"
+                  >
+                    {f.fullName}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>You have no followers yet.</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseFollowersModal}>
             Close
           </Button>
         </Modal.Footer>

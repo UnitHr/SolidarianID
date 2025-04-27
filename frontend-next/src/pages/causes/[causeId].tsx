@@ -9,6 +9,7 @@ import { ActionStatusEnum, ActionTypeEnum } from '@/lib/types/action.types';
 import { format, parseISO } from 'date-fns';
 import Image from 'next/image';
 import odsImages from '@/utils/odsImages';
+import '../../styles/cause.css';
 
 type OdsItem = {
   id: number;
@@ -66,7 +67,6 @@ export default function CauseDetailsPage({
   const [hasSupported, setHasSupported] = useState(initialHasSupported);
   const [supportCount, setSupportCount] = useState(initialSupportCount);
   const [isLoadingActions, setIsLoadingActions] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const fetchActions = async () => {
@@ -190,30 +190,13 @@ export default function CauseDetailsPage({
                 placement="top"
                 overlay={<Tooltip id={`tooltip-ods-${ods.id}`}>{ods.title}: {ods.description}</Tooltip>}
                 >
-                  <div
-                    style={{
-                      width: '60px',
-                      height: '60px',
-                      position: 'relative', 
-                      overflow: 'hidden',
-                      borderRadius: '8px',
-                      border: '1px solid #eee',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
+                  <div className='image-container'>
                     <Image
                           src={odsImages[ods.id].src}
                           alt={ods.title}
-                          className="img-fluid"
+                          className="img-fluid image-border"
                           width={100}
                           height={100}
-                          style={{
-                            borderRadius: '8px',
-                            border: '2px solid #ddd',
-                          }}
                           loading="lazy"
                         />
                   </div>

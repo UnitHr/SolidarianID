@@ -1,8 +1,13 @@
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { CommunityDetails } from '../lib/types/community.types';
 
-export function CommunityCard({ id, name, description }: CommunityDetails) {
+interface CommunityCardProps {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export function CommunityCard({ id, name, description }: CommunityCardProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {

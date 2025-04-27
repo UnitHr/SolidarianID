@@ -1,12 +1,21 @@
 import { Button, Card, ProgressBar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
-  ActionDetails,
   ActionStatusEnum,
   ActionStatusLabels,
   ActionTypeEnum,
   ActionTypeLabels,
 } from '../lib/types/action.types';
+
+interface ActionCardProps {
+  id: string;
+  title: string;
+  description: string;
+  achieved: number;
+  target: number;
+  status: ActionStatusEnum;
+  type: ActionTypeEnum;
+}
 
 export function ActionCard({
   id,
@@ -16,7 +25,7 @@ export function ActionCard({
   target,
   status,
   type,
-}: ActionDetails) {
+}: ActionCardProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {

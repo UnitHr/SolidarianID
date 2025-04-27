@@ -48,17 +48,32 @@ const splitLink = split(
   httpLink
 );
 
+// Create cache with normalization via typePolicies
+const cache = new InMemoryCache({
+  typePolicies: {
+    UserModel: {
+      keyFields: ['id'],
+    },
+    CommunityModel: {
+      keyFields: ['id'],
+    },
+    NotificationModel: {
+      keyFields: ['id'],
+    },
+  },
+});
+
 // Apollo Client instance
 export const apolloClient = new ApolloClient({
   link: from([errorLink, splitLink]),
-  cache: new InMemoryCache(),
+  cache,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-and-network',
       errorPolicy: 'all',
     },
     query: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
       errorPolicy: 'all',
     },
     mutate: {

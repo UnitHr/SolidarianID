@@ -1,11 +1,13 @@
-import { Col, Container, Row, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import Cookies from 'js-cookie';
+import { Col, Container, Row, Image, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import odsImages from '@/utils/odsImages';
 import { Paginate } from '@/components/Pagination';
 import { ThumbsUp } from 'lucide-react';
 import { GetServerSideProps } from 'next';
+import { ActionCard } from '@/components/ActionCard';
+import { ActionStatusEnum, ActionTypeEnum } from '@/lib/types/action.types';
+import { format, parseISO } from 'date-fns';
 
 
 type OdsItem = {
@@ -46,7 +48,9 @@ export default function CauseDetailsPage({
   initialCauseData,
   initialCommunityData,
   initialFullName,
+  initialUser,
   initialSupportCount,
+  initialHasSupported,
 }: any) {
   const router = useRouter();
   const { causeId } = router.query;
@@ -54,48 +58,32 @@ export default function CauseDetailsPage({
   const [cause] = useState<CauseDetails>(initialCauseData);
   const [actions, setActions] = useState<ActionDetails[]>([]);
   const [community] = useState(initialCommunityData);
-  const [supportCount, setSupportCount] = useState(initialSupportCount);
-  const [hasSupported, setHasSupported] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(initialUser);  
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const limit = 2; 
-  const [isLoadingActions, setIsLoadingActions] = useState(false); 
-  const [isClientLoaded, setIsClientLoaded] = useState(false);
+  const limit = 2;
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
-  };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      let userData = Cookies.get('user'); 
-      if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-      }
-  
-      setIsClientLoaded(true);
-    }
-  }, []);
+  const [hasSupported, setHasSupported] = useState(initialHasSupported);
+  const [supportCount, setSupportCount] = useState(initialSupportCount);
+  const [isLoadingActions, setIsLoadingActions] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const fetchActions = async () => {
       setIsLoadingActions(true);
       try {
-        const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/actions?page=${currentPage}&limit=2`);
-        
+        const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/actions?page=${currentPage}&limit=${limit}`);
+
         if (!res.ok) throw new Error('Error fetching actions');
 
         const data = await res.json();
         setTotalPages(data.meta.totalPages);
-        
+
         const detailRequests = data.data.map((id: any) =>
           fetch(`http://localhost:3000/api/v1/actions/${id}`).then((res) => res.json())
         );
         const detailedActions = await Promise.all(detailRequests);
-  
+
         setActions(detailedActions);
       } catch (error) {
         console.error('Error fetching actions:', error);
@@ -108,152 +96,179 @@ export default function CauseDetailsPage({
       fetchActions();
     }
   }, [currentPage, causeId]);
-  
+
   const handleSupport = async () => {
-    if (!causeId || hasSupported) return;
+    if (!causeId) return;
+
+    if (hasSupported) return;
+
     if (!user) {
-      alert('You need to be logged in to support a cause.');
+      alert('You need to be logged in to support this cause.');
       return;
-    }
-    try {
-      const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
 
-      if (!res.ok) throw new Error('Error supporting the cause');
-
-      setHasSupported(true);
-      setSupportCount((prev: number) => prev + 1);
-    } catch (err) {
-      console.error('Support error:', err);
+    }else{
+      try {
+        const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.token}`,
+          },
+        });
+  
+        if (!res.ok){
+          throw new Error('Failed to support the cause');
+        };
+  
+        setHasSupported(true);
+        setSupportCount((prev: number) => prev + 1);
+      } catch (err) {
+        console.error('Support error:', err);
+      }
     }
+    
   };
 
   return (
-    <Container className="mt-4">
-      <Row>
-        <Col md={12}>
-          {cause ? (
-            <div>
-              <Row className="justify-content-center mb-5">
-                {cause.ods && cause.ods.length > 0 &&
-                  cause.ods.map((odsItem) => (
-                    <Col
-                      key={odsItem.id}
-                      xs={6}
-                      sm={4}
-                      md={3}
-                      lg={2}
-                      className="d-flex flex-column align-items-center"
-                    >
-                      <OverlayTrigger
-                        placement="top"
-                        overlay={<Tooltip id={`tooltip-ods-${odsItem.id}`}>{odsItem.title}: {odsItem.description}</Tooltip>}
-                      >
-                        <Image
-                          src={odsImages[odsItem.id].src}
-                          alt={odsItem.title}
-                          className="img-fluid"
-                          width={100}
-                          height={100}
-                          style={{
-                            borderRadius: '8px',
-                            border: '2px solid #ddd',
-                          }}
-                          loading="lazy"
-                        />
-                      </OverlayTrigger>
-                    </Col>
-                  ))
-                }
-              </Row>
-              <h2 className="text-center">{initialCauseData.title}</h2>
-              {community && (
-                <p className="text-center text-muted mt-3">
-                  <a
-                    href={`http://localhost:5173/communities/${community.id}`}
-                    rel="noopener noreferrer"
-                    className="fw-bold text-decoration-none"
-                  >
-                    {community.name}
-                  </a>
-                </p>
-              )}
-              <div className="text-end mb-4">
-                {user && (
-                  <>
-                    <ThumbsUp
-                      size={28}
-                      style={{ cursor: hasSupported ? 'default' : 'pointer' }}
-                      color={hasSupported ? '#facc15' : '#a3a3a3'}
-                      fill={hasSupported ? '#facc15' : 'none'}
-                      onClick={!hasSupported ? handleSupport : undefined}
-                    />
-                    <p className="mt-2 text-muted text-end">{supportCount} Supports</p>
-                  </>
-                )}
-              </div>
-              <hr />
-              <Row>
-                <Col>
-                  <p><strong>Created by:</strong> {initialFullName}</p>
-                  <p><strong>Created on:</strong> {formatDate(cause.createdAt)}</p>
-                  <p><strong>End date:</strong> {formatDate(cause.endDate)}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <h4>Description</h4>
-                  <p>{cause.description}</p>
-                  {isLoadingActions ? (
-                    <p>Loading actions...</p>
-                  ) : (
-                    actions.length > 0 && (
-                      <>
-                        <h4 className="mt-5">Actions</h4>
-                        {actions.map((action: any) => (
-                          <div key={action.id} className="mb-4">
-                            <h5>
-                              <OverlayTrigger
-                                placement="top"
-                                overlay={<Tooltip id={`tooltip-${action.id}`}>Show details</Tooltip>}
-                              >
-                                <a
-                                  href={`http://localhost:5173/actions/${action.id}`}
-                                  rel="noopener noreferrer"
-                                  className="entity-link"
-                                >
-                                  {action.title}
-                                </a>
-                              </OverlayTrigger>
-                            </h5>
-                            <p>{action.description}</p>
-                            <p>Status: {action.status}</p>
-                          </div>
-                        ))}
-                        <Paginate
-                          currentPage={currentPage}
-                          totalPages={totalPages}
-                          onPageChange={(newPage) => setCurrentPage(newPage)}
-                        />
-                      </>
-                    )
-                  )}
-                </Col>
-              </Row>
-            </div>
-          ) : (
-            <p>Data not found.</p>
+    <Container className="py-5">
+      {/* Header */}
+      <Row className="justify-content-center text-center mb-4">
+        <Col md={8}>
+          <h5 className="text-muted mb-2">Cause Details</h5>
+          <h2 className="fw-bold mb-3">{cause.title}</h2>
+          {community && (
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id="tooltip-community">View Community</Tooltip>}
+            >
+              <a
+                href={`http://localhost:5173/communities/${community.id}`} className="text-primary fw-semibold text-decoration-none d-inline-flex align-items-center gap-2"
+              >
+                ← {community.name}
+              </a>
+            </OverlayTrigger>
           )}
         </Col>
       </Row>
+
+      {/* Support */}
+      <div className="d-flex justify-content-end align-items-center gap-2 mb-5">
+        <ThumbsUp
+          size={28}
+          style={{ cursor: hasSupported ? 'default' : 'pointer' }}
+          color={hasSupported ? '#facc15' : '#a3a3a3'}
+          fill={hasSupported ? '#facc15' : 'none'}
+          onClick={handleSupport}
+        />
+        <span className="text-muted">{supportCount} Supports</span>
+      </div>
+
+      <hr className="my-4" />
+
+      {/* Cause Info */}
+      <Row className="justify-content-center text-center mb-5">
+        <Col md={8}>
+          <h5 className="fw-semibold mb-4">Cause Information</h5>
+
+          <div className="d-flex flex-wrap justify-content-center gap-3 mb-4">
+            <Button variant="outline-primary" disabled>
+              👤 {initialFullName}
+            </Button>
+            <Button variant="outline-secondary" disabled>
+              🗓️ {cause.createdAt}
+            </Button>
+            <Button variant="outline-secondary" disabled>
+              ⏳ {cause.endDate}
+            </Button>
+          </div>
+
+          {/* ODS Images */}
+          {cause.ods.length > 0 && (
+            <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
+              {cause.ods.map((ods) => (
+                <OverlayTrigger
+                  key={ods.id}
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-ods-${ods.id}`}>{ods.title}</Tooltip>}
+                >
+                  <div
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      overflow: 'hidden',
+                      borderRadius: '8px',
+                      border: '1px solid #eee',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Image src={odsImages[ods.id].src} alt={ods.title} className="img-fluid" />
+                  </div>
+                </OverlayTrigger>
+              ))}
+            </div>
+          )}
+
+          {/* Description */}
+          <p className="text-muted mt-4">{cause.description}</p>
+        </Col>
+      </Row>
+
+      <hr className="my-4" />
+
+      {/* Related Actions */}
+      <Row className="align-items-center justify-content-between mb-4">
+        <Col xs="auto">
+          <h4 className="fw-semibold mb-0">Related Actions</h4>
+        </Col>
+      </Row>
+
+      {/* Actions List */}
+      <Row className="g-4">
+        {isLoadingActions ? (
+          <Col className="text-center py-5">
+            <div>Loading actions...</div>
+          </Col>
+        ) : actions.length > 0 ? (
+          actions.map((action) => (
+            <Col key={action.id} xs={12} md={6} lg={4}>
+              <ActionCard
+                type={ActionTypeEnum.VOLUNTEER}
+                target={0}
+                unit={''}
+                achieved={0}
+                createdAt={''}
+                updatedAt={''}
+                {...action}
+                status={action.status as ActionStatusEnum}
+              />
+            </Col>
+          ))
+        ) : (
+          <Col className="text-center text-muted py-5">
+            <p>No actions found for this cause.</p>
+          </Col>
+        )}
+      </Row>
+
+      {/* Pagination */}
+      {actions.length > 0 && (
+        <Row className="mt-4">
+          <Col className="d-flex justify-content-center">
+            <Paginate
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(newPage) => setCurrentPage(newPage)}
+            />
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 }
+
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const causeId = context.params?.causeId;
@@ -264,6 +279,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  const cookies = context.req.cookies;
+  const userData = cookies.user ? JSON.parse(cookies.user) : null;
+  
+  // Fetch cause data
   const causeResponse = await fetch(`http://localhost:3000/api/v1/causes/${causeId}`, {
     method: 'GET',
     headers: {
@@ -278,64 +297,84 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const causeData = await causeResponse.json();
+  const formattedCauseData = {
+    ...causeData,
+    createdAt: format(parseISO(causeData.createdAt), 'yyyy-MM-dd'),
+    endDate: format(parseISO(causeData.endDate), 'yyyy-MM-dd'),
+  };
 
-  const supportersResponse = await fetch(
-    `http://localhost:3000/api/v1/causes/${causeId}/supporters`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+ // Fetch all supporters data (paginated)
+ let allSupporters: string[] = [];
+ let currentPage = 1;
+ const limit = 10;
 
-  if (!supportersResponse.ok) {
-    return {
-      notFound: true,
-    };
-  }
+ while (true) {
+   const supportersResponse = await fetch(
+     `http://localhost:3000/api/v1/causes/${causeId}/supporters?page=${currentPage}&limit=${limit}`,
+     {
+       method: 'GET',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+     }
+   );
 
-  const supportersData = await supportersResponse.json();
+   if (!supportersResponse.ok) {
+     return {
+       notFound: true,
+     };
+   }
 
-  const creatorResponse = await fetch(`http://localhost:3000/api/v1/users/${causeData.createdBy}`, {
+   const supportersData = await supportersResponse.json();
+   allSupporters = [...allSupporters, ...supportersData.data];
+
+   // Check if we have fetched all pages
+   if (currentPage >= supportersData.meta.totalPages) {
+     break;
+   }
+
+   currentPage++;
+ }
+
+ const userId = userData?.userId || null;
+ const hasSupported = userId ? allSupporters.includes(userId) : false;
+
+  // Fetch community data
+  const communityResponse = await fetch(`http://localhost:3000/api/v1/communities/${causeData.communityId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
-  if (!creatorResponse.ok) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const creatorData = await creatorResponse.json();
-
-  const communityResponse = await fetch(
-    `http://localhost:3000/api/v1/communities/${causeData.communityId}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
   if (!communityResponse.ok) {
     return {
       notFound: true,
     };
   }
+  const communityData = await communityResponse.json();
 
-  const communityData = await communityResponse.json(); 
-
+  // Fetch creator data
+  const creatorResponse = await fetch(`http://localhost:3000/api/v1/users/${causeData.createdBy}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!creatorResponse.ok) {
+    return {
+      notFound: true,
+    };
+  }
+  const creatorData = await creatorResponse.json();
   return {
     props: {
-      initialCauseData: causeData,
-      initialCommunityData: communityData.data,
-      initialFullName: `${creatorData.firstName} ${creatorData.lastName}`,
-      initialSupportCount: supportersData.data.length,
+      initialCauseData: formattedCauseData,
+      initialCommunityData: communityData.data, 
+      initialFullName: `${creatorData.firstName} ${creatorData.lastName}`, 
+      initialUser: userData,
+      initialSupportCount: allSupporters.length,
+      initialHasSupported: hasSupported,
     },
   };
 };

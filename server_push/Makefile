@@ -13,11 +13,10 @@ restart-prod:
 	npm run restart
 
 status-prod:
-	# Si tienes un comando para verificar el estado, puedes agregarlo aquí
+	npm run status
 
 build-prod:
 	npm install
-	# Si necesitas compilar o hacer algo más, lo añades aquí
 
 clean-prod:
 	rm -rf node_modules

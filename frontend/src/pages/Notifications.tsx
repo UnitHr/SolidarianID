@@ -1,59 +1,60 @@
-import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import '../styles/index.css';
-import {
-  registerServiceWorker,
-  registerSubscriptionOnServer,
-  subscribeUserToPushManager,
-} from '../services/push-notification.service';
+import { enableNotifications } from '../services/push-notification.service';
 import { fetchUserNotifications } from '../services/notificacion.service';
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
-import {
-  approveCommunityRequest,
-  fetchCreateCommunityRequests,
-  rejectCommunityRequest,
-} from '../services/community.service';
+import { fetchCreateCommunityRequests } from '../services/community.service';
 import { NotificationCard } from '../components/NotificationCard';
+import { Paginate } from '../components/Pagination';
+import { NotificationType } from '../lib/types/notification.types';
+import { CreationRequestType } from '../lib/types/community.types';
+import { getStoredUser } from '../services/user.service';
+
+const UserNotificationType = 'user';
+const JoinRequestType = 'joinRequest';
 
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [joinRequests, setJoinRequests] = useState<any[]>([]);
+  const [followedNotifications, setFollowedNotifications] = useState<NotificationType[]>([]);
+  const [joinRequests, setJoinRequests] = useState<NotificationType[]>([]);
+  const [creationRequests, setCreationRequests] = useState<CreationRequestType[]>([]);
 
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState('success');
-  const [creationRequests, setCreationRequests] = useState<any[]>([]);
-  const [followedNotifications, setFollowedNotifications] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  // Estados de paginación independientes
+  const [notificationPage, setNotificationPage] = useState(1);
+  const [joinRequestPage, setJoinRequestPage] = useState(1);
+  const [creationRequestPage, setCreationRequestPage] = useState(1);
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false); // Estado para saber si las notificaciones están activadas
-  const [currentCommunity, setCurrentCommunity] = useState('');
+  const [totalNotificationPages, setTotalNotificationPages] = useState(0);
+  const [totalJoinRequestPages, setTotalJoinRequestPages] = useState(0);
+  const [totalCreationRequestPages, setTotalCreationRequestPages] = useState(0);
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const pageSize = 5;
-
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
-  const [rejectionReason, setRejectionReason] = useState('');
-
-  function handleCommunityChange(event) {
-    setCurrentCommunity(event.target.value);
-  }
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
-      const isAdminRole = userRoles.includes('admin');
+      const storedUser = getStoredUser();
+      if (!storedUser) {
+        console.error('No user found in local storage');
+        return;
+      }
+      const isAdminRole = storedUser.roles.includes('admin');
       setIsAdmin(isAdminRole);
-      const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+      const userId = storedUser.userId;
       try {
         const { userNotifications, joinRequests } = await fetchUserNotifications(userId);
         setFollowedNotifications(userNotifications || []);
+        setTotalNotificationPages(Math.ceil((userNotifications?.length || 0) / pageSize));
+
+        setJoinRequests(joinRequests || []);
+        setTotalJoinRequestPages(Math.ceil((joinRequests?.length || 0) / pageSize));
 
         if (isAdminRole) {
           const creationRequests = await fetchCreateCommunityRequests();
           setCreationRequests(creationRequests || []);
+          setTotalCreationRequestPages(Math.ceil((creationRequests?.length || 0) / pageSize));
         }
-        console.log('Creation Requests:', creationRequests);
-        setJoinRequests(joinRequests || []);
       } catch (error) {
         console.error('Error fetching followed notifications:', error);
       }
@@ -63,231 +64,149 @@ export function Notifications() {
   }, []);
 
   async function handleEnableNotifications() {
-    if ('Notification' in window && 'serviceWorker' in navigator) {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        try {
-          const registration = await registerServiceWorker();
-          const subscription = await subscribeUserToPushManager(registration);
-
-          const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
-          const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
-
-          await registerSubscriptionOnServer(subscription, userId, userRoles);
-
-          setNotificationsEnabled(true); // Actualiza el estado
-        } catch (error) {
-          console.error('Error durante la activación de notificaciones:', error);
-        }
-      } else {
-        console.log('Permiso de notificaciones denegado');
-      }
-    } else {
-      console.log('Notificaciones o Service Workers no son compatibles con este navegador');
-    }
+    const enabled = await enableNotifications();
+    setNotificationsEnabled(enabled);
   }
 
-  // Calculate paginated data
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedRequests = creationRequests.slice(startIndex, startIndex + pageSize);
-
-  // Handle pagination
-  const totalPages = Math.ceil(creationRequests.length / pageSize);
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleOpenRejectModal = (requestId: string) => {
-    setCurrentRequestId(requestId);
-    setRejectionReason('');
-    setShowRejectModal(true);
-  };
-
-  const handleApproveRequest = async (requestId: string) => {
-    const success = await approveCommunityRequest(requestId);
-    if (success) {
-      alert('Request approved successfully!');
-    } else {
-      alert('Failed to approve the request.');
-    }
-  };
-
-  const handleConfirmReject = async () => {
-    if (currentRequestId) {
-      const success = await rejectCommunityRequest(currentRequestId, rejectionReason);
-      if (success) {
-        alert('Request rejected successfully!');
-      } else {
-        alert('Failed to reject the request.');
-      }
-      setShowRejectModal(false);
-    }
-  };
+  // Cálculo de los elementos a mostrar por página
+  const paginatedNotifications = followedNotifications.slice(
+    (notificationPage - 1) * pageSize,
+    notificationPage * pageSize
+  );
+  const paginatedJoinRequests = joinRequests.slice(
+    (joinRequestPage - 1) * pageSize,
+    joinRequestPage * pageSize
+  );
+  const paginatedCreationRequests = creationRequests.slice(
+    (creationRequestPage - 1) * pageSize,
+    creationRequestPage * pageSize
+  );
 
   return (
-    <>
-      {showAlert && (
-        <Alert variant={alertVariant} onClose={() => setShowAlert(false)} dismissible>
-          {alertMessage}
-        </Alert>
-      )}
-      <Container>
-        <Row className="my-3 justify-content-end">
-          <Button
-            variant="warning"
-            onClick={handleEnableNotifications}
-            disabled={notificationsEnabled}
-            style={{
-              fontSize: '0.8rem',
-              padding: '5px 10px',
-              width: 'auto',
-            }}
-          >
-            {notificationsEnabled ? 'Notifications enabled' : 'Enable notifications'}
-          </Button>
-        </Row>
+    <Container>
+      <Row className="my-3 justify-content-end">
+        <Button
+          variant="warning"
+          onClick={handleEnableNotifications}
+          disabled={notificationsEnabled}
+          style={{
+            fontSize: '0.8rem',
+            padding: '5px 10px',
+            width: 'auto',
+          }}
+        >
+          {notificationsEnabled ? 'Notifications enabled' : 'Enable notifications'}
+        </Button>
+      </Row>
 
-        <Row className="my-5">
-          <h1 className="text-center">Notifications</h1>
-        </Row>
+      <Row className="my-5">
+        <h1 className="text-center">Notifications</h1>
+      </Row>
 
-        <Row>
-          {/* Columna izquierda: Followed Notifications */}
-          <Col md={isAdmin ? 4 : 6}>
-            <h4>Your Notifications</h4>
-            {followedNotifications.length > 0 ? (
-              <>
-                {followedNotifications.map((notification) => (
-                  <NotificationCard
-                    key={notification.id}
-                    notificationId={notification.id}
-                    read={notification.read}
-                    date={notification.date}
-                    userId={notification.userId}
-                    userName={notification.userName}
-                    message={notification.notificationMessage}
-                    entityId={notification.entityId}
-                    type="user"
+      <Row>
+        {/* Columna izquierda: Followed Notifications */}
+        <Col md={isAdmin ? 4 : 6}>
+          <h4>Your Notifications</h4>
+          {paginatedNotifications.length > 0 ? (
+            <>
+              {paginatedNotifications.map((notification) => (
+                <NotificationCard
+                  key={notification.id}
+                  notificationId={notification.id}
+                  read={notification.read}
+                  date={notification.date}
+                  userId={notification.userId}
+                  userName={notification.userName}
+                  message={notification.notificationMessage}
+                  entityId={notification.entityId}
+                  type={UserNotificationType}
+                />
+              ))}
+              <Row className="mt-4">
+                <Col className="d-flex justify-content-center">
+                  <Paginate
+                    currentPage={notificationPage}
+                    totalPages={totalNotificationPages}
+                    onPageChange={setNotificationPage}
                   />
-                ))}
-              </>
-            ) : (
-              <p>No new notifications.</p>
-            )}
-          </Col>
-
-          {/* Columna central: Join Requests */}
-          <Col md={isAdmin ? 4 : 6}>
-            <h4>Join Community Requests</h4>
-            {joinRequests.length > 0 ? (
-              <>
-                {joinRequests.map((notification) => (
-                  <NotificationCard
-                    key={notification.id}
-                    notificationId={notification.id}
-                    read={notification.read}
-                    date={notification.date}
-                    userId={notification.userId}
-                    userName={notification.userName}
-                    message={notification.notificationMessage}
-                    entityId={notification.entityId}
-                    type="joinRequest"
-                  />
-                ))}
-              </>
-            ) : (
-              <p>No join community requests.</p>
-            )}
-          </Col>
-
-          {/* Columna derecha: Creation Requests (solo si es admin) */}
-          {isAdmin && (
-            <Col md={4}>
-              <h4>Community Creation Requests</h4>
-              {paginatedRequests.length > 0 ? (
-                <>
-                  <div className="panel">
-                    {paginatedRequests.map((request) => (
-                      <CreateCommunityRequestCard
-                        key={request.id}
-                        communityName={request.communityName}
-                        communityDescription={request.communityDescription}
-                        userId={request.userId}
-                        causeTitle={request.causeTitle}
-                        causeDescription={request.causeDescription}
-                        causeEndDate={request.causeEndDate}
-                        causeOds={request.causeOds}
-                        onApprove={() => handleApproveRequest(request.id)}
-                        onReject={() => handleOpenRejectModal(request.id)}
-                      />
-                    ))}
-                  </div>
-                  <div className="pagination-controls">
-                    <Button
-                      variant="primary"
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <span className="mx-3">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <Button
-                      variant="primary"
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <p>No pending creation requests.</p>
-              )}
-            </Col>
+                </Col>
+              </Row>
+            </>
+          ) : (
+            <p>No new notifications.</p>
           )}
-        </Row>
+        </Col>
 
-        {/* Modales de rechazo y validación */}
-        <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Reject Request</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group controlId="rejectionReason">
-              <Form.Label>Reason for rejection</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                placeholder="Specify the reason for rejection..."
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleConfirmReject}
-              disabled={!rejectionReason.trim()}
-            >
-              Confirm rejection
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
-    </>
+        {/* Columna central: Join Requests */}
+        <Col md={isAdmin ? 4 : 6}>
+          <h4>Join Community Requests</h4>
+          {paginatedJoinRequests.length > 0 ? (
+            <>
+              {paginatedJoinRequests.map((notification) => (
+                <NotificationCard
+                  key={notification.id}
+                  notificationId={notification.id}
+                  read={notification.read}
+                  date={notification.date}
+                  userId={notification.userId}
+                  userName={notification.userName}
+                  message={notification.notificationMessage}
+                  entityId={notification.entityId}
+                  type={JoinRequestType}
+                />
+              ))}
+              <Row className="mt-4">
+                <Col className="d-flex justify-content-center">
+                  <Paginate
+                    currentPage={joinRequestPage}
+                    totalPages={totalJoinRequestPages}
+                    onPageChange={setJoinRequestPage}
+                  />
+                </Col>
+              </Row>
+            </>
+          ) : (
+            <p>No join community requests.</p>
+          )}
+        </Col>
+
+        {/* Creation Requests (only for admin) */}
+        {isAdmin && (
+          <Col md={4}>
+            <h4>New Community Requests</h4>
+            {paginatedCreationRequests.length > 0 ? (
+              <>
+                <div className="panel">
+                  {paginatedCreationRequests.map((request) => (
+                    <CreateCommunityRequestCard
+                      key={request.id}
+                      requestId={request.id}
+                      communityName={request.communityName}
+                      communityDescription={request.communityDescription}
+                      userId={request.userId}
+                      causeTitle={request.causeTitle}
+                      causeDescription={request.causeDescription}
+                      causeEndDate={request.causeEndDate}
+                      causeOds={request.causeOds}
+                    />
+                  ))}
+                </div>
+                <Row className="mt-4">
+                  <Col className="d-flex justify-content-center">
+                    <Paginate
+                      currentPage={creationRequestPage}
+                      totalPages={totalCreationRequestPages}
+                      onPageChange={setCreationRequestPage}
+                    />
+                  </Col>
+                </Row>
+              </>
+            ) : (
+              <p>No pending creation requests.</p>
+            )}
+          </Col>
+        )}
+      </Row>
+    </Container>
   );
 }

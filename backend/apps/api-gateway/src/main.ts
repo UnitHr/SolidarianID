@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { envs } from './config';
@@ -35,16 +35,6 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization', // Allowed headers
     credentials: true, // Allows the use of cookies and credentials
   });
-
-  // ValidationPipe for all routes
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      disableErrorMessages: false,
-    }),
-  );
 
   // Start the application
   await app.listen(envs.apiGatewayPort, envs.apiGatewayHost);

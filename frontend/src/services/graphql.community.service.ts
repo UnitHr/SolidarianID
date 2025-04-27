@@ -1,23 +1,9 @@
 import { ApolloError } from '@apollo/client';
 import { apolloClient } from '../lib/apolloClient';
 import { GET_COMMUNITY_BY_ID } from '../graphql/community.queries';
+import { CommunityDetails } from '../lib/types/community.types';
 
-export interface GraphQLCommunity {
-  id: string;
-  name: string;
-  description: string;
-  adminId: string;
-  admin: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-}
-
-/**
- * Fetches a community by ID using GraphQL, including admin information
- */
-export async function getCommunityByIdGraphQL(id: string): Promise<GraphQLCommunity> {
+export async function getCommunityByIdGraphQL(id: string): Promise<CommunityDetails> {
   try {
     const { data } = await apolloClient.query({
       query: GET_COMMUNITY_BY_ID,

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { registerUser } from '../services/user.service';
+import { registerUserGraphQL } from '../services/graphql.user.service';
 
 export function Register() {
   const navigate = useNavigate();
@@ -18,7 +18,9 @@ export function Register() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
+    const type = e.target.type;
+    const checked = (e.target as HTMLInputElement).checked;
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -28,10 +30,9 @@ export function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await registerUser(formData);
+      await registerUserGraphQL(formData);
       navigate('/login');
     } catch (error) {
-      console.error('Registration error:', error);
       alert(error instanceof Error ? error.message : 'Error during registration');
     }
   };

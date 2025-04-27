@@ -3,20 +3,6 @@ import { urlBase64ToUint8Array } from '../utils/base64Utils';
 const PUSH_SERVER_URL = 'http://localhost:4000/push';
 
 /**
- * Registers a service worker and subscribes the user to push notifications.
- */
-async function registerServiceWorker() {
-  try {
-    const registration = await navigator.serviceWorker.register('/javascripts/sw.js');
-    console.log('Service Worker registrado:', registration);
-    return registration;
-  } catch (error) {
-    console.error('Error al registrar el Service Worker:', error);
-    throw error;
-  }
-}
-
-/**
  * Subscribes the user to the Push Manager using the VAPID public key.
  */
 async function subscribeUserToPushManager(registration: ServiceWorkerRegistration) {
@@ -72,11 +58,11 @@ async function registerSubscriptionOnServer(subscription: PushSubscription, user
  * Enables notifications by requesting permission and registering the service worker.
  */
 export async function enableNotifications() {
-  if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
+  if ('Notification' in window && 'PushManager' in window) {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       try {
-        const registration = await registerServiceWorker();
+        const registration = await navigator.serviceWorker.ready;
         const subscription = await subscribeUserToPushManager(registration);
 
         const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;

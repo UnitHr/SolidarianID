@@ -1,9 +1,0 @@
-{
-  "name": "SolidarianId",
-  "short_name": "Solid-Id",
-  "start_url": "/",
-  "id": "/",
-  "display": "standalone",
-  "background_color": "#2596be",
-  "theme_color": "#2596be"
-}

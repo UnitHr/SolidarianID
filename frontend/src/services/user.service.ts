@@ -1,5 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import { User, RegisterPayload } from '../lib/types/user.types';
+import { enableNotifications } from './push-notification.service';
 
 const API_URL = 'http://localhost:3000/api/v1';
 const STORAGE_TOKEN_KEY = 'token';
@@ -52,6 +53,7 @@ export async function loginUser(email: string, password: string): Promise<User> 
   // Save token and user data to localStorage
   localStorage.setItem(STORAGE_TOKEN_KEY, userData.token);
   localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(userData));
+  enableNotifications();
 
   return userData;
 }

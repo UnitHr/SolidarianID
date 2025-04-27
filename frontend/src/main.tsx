@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './lib/context/AuthContext';
 import { ApolloProvider } from './lib/ApolloProvider';
 import App from './pages/App';
+import ServiceWorkerRegistration from './components/ServiceWorkerRegistration';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -15,5 +16,6 @@ createRoot(document.getElementById('root')!).render(
         </AuthProvider>
       </ApolloProvider>
     </BrowserRouter>
+    <ServiceWorkerRegistration />
   </StrictMode>
 );

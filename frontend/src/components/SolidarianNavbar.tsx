@@ -1,15 +1,73 @@
-import { useNavigate } from 'react-router-dom';
-import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Navbar, Nav, NavDropdown, Container, Badge } from 'react-bootstrap';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
 import { useAuth } from '../lib/context/AuthContext';
+import { useEffect, useState } from 'react';
+import { subscribeToNotifications } from '../services/graphql.notification.service';
 
 export function SolidarianNavbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [notificationCount, setNotificationCount] = useState<number>(0);
+  const isNotificationsPage = location.pathname === '/notifications';
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const savedCount = localStorage.getItem(`notifications_${user.userId}`);
+      if (savedCount && !isNotificationsPage) {
+        setNotificationCount(parseInt(savedCount, 10));
+      } else if (isNotificationsPage) {
+        setNotificationCount(0);
+        localStorage.setItem(`notifications_${user.userId}`, '0');
+      }
+
+      const subscribeToNewNotifications = async () => {
+        try {
+          const subscription = await subscribeToNotifications(user.userId, {
+            onReceived: () => {
+              if (isNotificationsPage) {
+                window.location.reload();
+                return;
+              }
+
+              setNotificationCount((prevCount) => {
+                const newCount = prevCount + 1;
+                localStorage.setItem(`notifications_${user.userId}`, newCount.toString());
+                return newCount;
+              });
+            },
+            onError: (error) => {
+              console.error('Error in notification subscription:', error);
+            },
+          });
+
+          return () => {
+            if (subscription) {
+              subscription.unsubscribe();
+            }
+          };
+        } catch (error) {
+          console.error('Failed to subscribe to notifications:', error);
+        }
+      };
+
+      subscribeToNewNotifications();
+    }
+  }, [isAuthenticated, user, isNotificationsPage]);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // Reset notification count when visiting notifications page
+  const handleNotificationClick = () => {
+    setNotificationCount(0);
+    if (user) {
+      localStorage.setItem(`notifications_${user.userId}`, '0');
+    }
+    navigate('/notifications');
   };
 
   return (
@@ -31,8 +89,18 @@ export function SolidarianNavbar() {
               </>
             ) : (
               <>
-                <Nav.Link href="/notifications">
+                <Nav.Link onClick={handleNotificationClick} className="position-relative">
                   <FaBell size={18} />
+                  {!isNotificationsPage && notificationCount > 0 && (
+                    <Badge
+                      pill
+                      bg="danger"
+                      className="position-absolute top-0 start-100 translate-middle"
+                      style={{ fontSize: '0.6rem' }}
+                    >
+                      {notificationCount > 99 ? '99+' : notificationCount}
+                    </Badge>
+                  )}
                 </Nav.Link>
                 <NavDropdown title={<FaUserCircle size={20} />} id="user-dropdown" align="end">
                   <NavDropdown.Item href="/profile">Hi, {user?.firstName}</NavDropdown.Item>

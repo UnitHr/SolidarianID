@@ -1,9 +1,10 @@
 import { AuthProvider } from '@/lib/context/AuthContext'; 
 import type { AppProps } from 'next/app';
-import {SolidarianNavbar} from '@/components/SolidarianNavbar';
 import {Footer} from '@/components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import Head from 'next/head';
+import SolidarianNavbar from '@/components/SolidarianNavbar';
+
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -11,7 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>SolidarianID</title>
       </Head>
-      <SolidarianNavbar />
+        <SolidarianNavbar />
       <Component {...pageProps} />
       <Footer />
     </AuthProvider>

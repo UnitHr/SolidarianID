@@ -2,8 +2,10 @@ import {
   ActionDetails,
   ActionStatusEnum,
   ActionTypeEnum,
+  CreateContributionPayload,
   FetchActionsResponse,
 } from '../lib/types/action.types';
+import { getToken } from './user.service';
 
 const API_URL = 'http://localhost:3000/api/v1/actions';
 
@@ -48,4 +50,27 @@ export async function fetchActionById(actionId: string): Promise<ActionDetails> 
     status: data.status as ActionStatusEnum,
     type: data.type as ActionTypeEnum,
   };
+}
+
+/**
+ * Contribute to an action.
+ */
+export async function contributeAction(actionId: string, payload: CreateContributionPayload) {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/${actionId}/contributions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create contribution');
+  }
+
+  return response.json();
 }

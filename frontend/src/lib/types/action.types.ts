@@ -58,3 +58,9 @@ export interface CreateActionPayload {
   location?: string;
   date?: string; // ISO string
 }
+
+export type CreateContributionPayload = {
+  date: string; // ISO string
+  amount: number;
+  unit: string;
+};

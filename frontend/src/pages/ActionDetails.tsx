@@ -1,5 +1,15 @@
-import { Container, Row, Col, OverlayTrigger, Tooltip, ProgressBar, Button } from 'react-bootstrap';
-import { useParams, Link } from 'react-router-dom';
+import {
+  Container,
+  Row,
+  Col,
+  OverlayTrigger,
+  Tooltip,
+  ProgressBar,
+  Button,
+  Modal,
+  Form,
+} from 'react-bootstrap';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   ActionStatusEnum,
@@ -8,19 +18,33 @@ import {
   type ActionDetails,
 } from '../lib/types/action.types';
 import { CauseDetails } from '../lib/types/cause.types';
-import { fetchActionById } from '../services/action.service';
+import { User } from '../lib/types/user.types';
+import { contributeAction, fetchActionById } from '../services/action.service';
 import { fetchCauseById } from '../services/cause.service';
+import { getStoredUser } from '../services/user.service';
 import { ArrowLeft } from 'lucide-react';
 
 export function ActionDetails() {
-  const { actionId } = useParams();
+  const navigate = useNavigate();
 
+  const { actionId } = useParams();
   const [action, setAction] = useState<ActionDetails | null>(null);
   const [cause, setCause] = useState<CauseDetails | null>(null);
-
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  const [amount, setAmount] = useState('');
+  const [date] = useState(new Date().toISOString().split('T')[0]);
+
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    // Check if user is logged in
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+
     if (actionId) {
       loadActionData(actionId);
     }
@@ -30,7 +54,6 @@ export function ActionDetails() {
     try {
       setLoading(true);
 
-      // Call services
       const [actionRes, causeRes] = await Promise.all([
         fetchActionById(id),
         (async () => {
@@ -45,6 +68,42 @@ export function ActionDetails() {
       console.error('Error loading action details:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenModal = () => {
+    if (!user) {
+      alert('You need to be logged in to contribute.');
+      navigate('/login');
+      return;
+    }
+
+    if (action?.status === ActionStatusEnum.COMPLETED) {
+      alert('This action is already completed. No more contributions allowed.');
+      return;
+    }
+    setShowModal(true);
+  };
+
+  const handleSubmitContribution = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!actionId || !action || !user) return;
+
+    try {
+      await contributeAction(actionId, {
+        date,
+        amount: Number(amount),
+        unit: action.unit,
+      });
+
+      setShowModal(false);
+      setAmount('');
+
+      // Reload action data to reflect the new contribution
+      await loadActionData(actionId);
+    } catch (error) {
+      console.error('Contribution failed:', error);
+      alert('Contribution failed. Please try again.');
     }
   };
 
@@ -64,7 +123,6 @@ export function ActionDetails() {
     );
   }
 
-  // Calculate progress
   const achieved = action.achieved ?? 0;
   const target = action.target ?? 1;
   const progress = Math.min(Math.round((achieved / target) * 100), 100);
@@ -108,7 +166,6 @@ export function ActionDetails() {
             <Button variant={progressVariant} disabled className="flex-grow-1">
               {ActionStatusLabels[action.status]}
             </Button>
-
             <Button variant="outline-secondary" disabled className="flex-grow-1">
               {ActionTypeLabels[action.type]}
             </Button>
@@ -143,13 +200,51 @@ export function ActionDetails() {
         </Row>
 
         {/* Description */}
-        <Row className="justify-content-center">
+        <Row className="justify-content-center text-center mb-4">
           <Col md={8}>
             <h4 className="fw-semibold mb-3">Description</h4>
             <p className="text-muted">{action.description}</p>
           </Col>
         </Row>
+
+        {/* Contribute Button (only if not completed) */}
+        {user && action.status !== ActionStatusEnum.COMPLETED && (
+          <Row className="justify-content-center">
+            <Col md={4} className="d-flex justify-content-center">
+              <Button onClick={handleOpenModal} variant="primary">
+                + Contribute
+              </Button>
+            </Col>
+          </Row>
+        )}
       </Container>
+
+      {/* Modal for Contribution */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Contribute to {action.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmitContribution}>
+            <Form.Group className="mb-3">
+              <Form.Label>Amount ({action.unit})</Form.Label>
+              <Form.Control
+                type="number"
+                min={1}
+                required
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </Form.Group>
+
+            <div className="d-grid gap-2">
+              <Button variant="primary" type="submit">
+                Confirm Contribution
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }

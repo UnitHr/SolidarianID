@@ -8,7 +8,7 @@ export interface GraphQLUser {
   lastName: string;
   email: string;
   bio?: string;
-  birthDate?: string;
+  age?: string;
   showAge?: boolean;
   showEmail?: boolean;
   followersCount: number;

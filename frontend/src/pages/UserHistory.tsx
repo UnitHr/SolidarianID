@@ -37,10 +37,10 @@ export function UserHistory() {
   const isOwnProfile = storedUser?.userId === effectiveUserId;
 
   useEffect(() => {
-    if (following.some((f) => f.followedUserId === storedUser?.userId)) {
+    if (followers.some((f) => f.followerId === storedUser?.userId)) {
       setIsFollowing(true);
     }
-  }, [following, storedUser]);
+  }, [followers, storedUser]);
 
   if (loading) {
     return (

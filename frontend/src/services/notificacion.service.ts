@@ -1,24 +1,3 @@
-/*
-export async function fetchManagedCommunities() {
-  try {
-    const response = await fetch('http://localhost:3000/api/v1/communities/managed-communities', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch managed communities');
-    }
-
-    const data = await response.json();
-    return data.data; // Devuelve las comunidades gestionadas
-  } catch (error) {
-    console.error('Error al obtener las comunidades gestionadas:', error);
-    throw error;
-  }
-} */
-
 import { getStoredUser, getToken, getUserNameById } from './user.service';
 
 const API_URL = 'http://localhost:3000/api/v1';
@@ -31,6 +10,7 @@ const USER_NOTIFICATION_TYPES = [
   'JOINED_COMMUNITY',
   'CAUSE_SUPPORT',
   'CAUSE_CREATED',
+  'ACTION_CREATED',
   'ACTION_CONTRIBUTED',
   'USER_FOLLOWED',
 ];
@@ -38,6 +18,19 @@ const USER_NOTIFICATION_TYPES = [
 const CREATION_REQUEST_TYPES = ['COMMUNITY_CREATION_REQUEST_SENT'];
 
 const JOIN_REQUEST_TYPES = ['JOIN_COMMUNITY_REQUEST_SENT'];
+
+// declare the Notification type
+export interface Notification {
+  id: string;
+  read: boolean;
+  date: string;
+  type: string;
+  userId: string;
+  userName: string;
+  notificationMessage: string;
+  entityName: string;
+  entityId: string;
+}
 
 // Función principal que fetch las notificaciones y las clasifica
 export async function fetchUserNotifications(userId: string) {
@@ -55,6 +48,7 @@ export async function fetchUserNotifications(userId: string) {
     const data = await response.json();
 
     const detailedNotifications = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data.data.map(async (notification: any) => {
         const { id, read, timestamp, userId, type, entityName } = notification;
         const date = new Date(timestamp).toLocaleDateString('es-ES', {
@@ -86,8 +80,7 @@ export async function fetchUserNotifications(userId: string) {
     );
     // console.log('Detailed Notifications:', detailedNotifications);
 
-    const { userNotifications, creationRequests, joinRequests } =
-      classifyNotifications(detailedNotifications);
+    const { userNotifications, joinRequests } = classifyNotifications(detailedNotifications);
     // console.log('User Notifications from service:', userNotifications);
     // console.log('Pending Requests from service:', pendingRequests);
     return { userNotifications, joinRequests };
@@ -104,7 +97,6 @@ async function fetchNotificationDetails(userId: string, type: string, entityName
     userName,
     notificationMessage,
   };
-  console.log('Notification Details:', notificationDetails);
   return notificationDetails;
 }
 
@@ -124,6 +116,8 @@ const getNotificationMessage = (type: string) => {
       return 'Created a new cause: ';
     case 'ACTION_CONTRIBUTED':
       return 'Contributed to the action: ';
+    case 'ACTION_CREATED':
+      return 'Created a new action: ';
     case 'USER_FOLLOWED':
       return 'Started following you';
     case 'COMMUNITY_CREATION_REQUEST_SENT':
@@ -134,14 +128,12 @@ const getNotificationMessage = (type: string) => {
 };
 
 // Función para clasificar las notificaciones
-function classifyNotifications(notifications: any[]) {
-  const userNotifications: any[] = [];
-  const creationRequests: any[] = [];
-  const joinRequests: any[] = [];
+function classifyNotifications(notifications: Notification[]) {
+  const userNotifications: Notification[] = [];
+  const creationRequests: Notification[] = [];
+  const joinRequests: Notification[] = [];
 
-  console.log('User Notifications from classify start:', notifications);
   notifications.forEach((notification) => {
-    console.log('Notification type:', notification.type);
     if (USER_NOTIFICATION_TYPES.includes(notification.type)) {
       userNotifications.push(notification);
     } else if (CREATION_REQUEST_TYPES.includes(notification.type)) {
@@ -151,8 +143,6 @@ function classifyNotifications(notifications: any[]) {
     }
   });
 
-  // console.log('User Notifications from classify end:', userNotifications);
-  // console.log('Pending Requests from classify end:', pendingRequests);
   return { userNotifications, creationRequests, joinRequests };
 }
 

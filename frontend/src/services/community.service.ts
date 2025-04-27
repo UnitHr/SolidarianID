@@ -214,6 +214,7 @@ export async function fetchCreateCommunityRequests() {
 /**
  * Fetch a join request by its ID.
  */
+
 export async function fetchJoinRequestById(userId: string, communityId: string) {
   const token = getToken();
   try {
@@ -227,29 +228,19 @@ export async function fetchJoinRequestById(userId: string, communityId: string) 
     }
     const requests = await response.json();
 
-    const requestId = requests.data.find((request: any) => request.userId === userId)?.id;
-    if (!requestId) {
-      throw new Error('Join request not found');
+    if (!requests.data || !Array.isArray(requests.data)) {
+      return null;
     }
-    const requestResponse = await fetch(
-      `${COMMUNITY_URL}/${communityId}/join-requests/${requestId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!requestResponse.ok) {
-      throw new Error('Failed to fetch join request details');
-    }
-    const data = await requestResponse.json();
-    return data.data;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const joinRequest = requests.data.find((request: any) => request.userId === userId);
+
+    return joinRequest || null;
   } catch (error) {
-    console.error('Error fetching join request:', error);
-    throw error;
+    console.error(error);
+    return null;
   }
 }
-
 /**
  * Approve a join request by its ID.
  */

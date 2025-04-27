@@ -1,14 +1,14 @@
-import { Col, Container, Row, Image, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import { Col, Container, Row, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import odsImages from '@/utils/odsImages';
 import { Paginate } from '@/components/Pagination';
 import { ThumbsUp } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { ActionCard } from '@/components/ActionCard';
 import { ActionStatusEnum, ActionTypeEnum } from '@/lib/types/action.types';
 import { format, parseISO } from 'date-fns';
-
+import Image from 'next/image';
+import odsImages from '@/utils/odsImages';
 
 type OdsItem = {
   id: number;
@@ -58,7 +58,7 @@ export default function CauseDetailsPage({
   const [cause] = useState<CauseDetails>(initialCauseData);
   const [actions, setActions] = useState<ActionDetails[]>([]);
   const [community] = useState(initialCommunityData);
-  const [user, setUser] = useState<User | null>(initialUser);  
+  const [user, setUser] = useState<User | null>(initialUser);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const limit = 2;
@@ -106,7 +106,7 @@ export default function CauseDetailsPage({
       alert('You need to be logged in to support this cause.');
       return;
 
-    }else{
+    } else {
       try {
         const res = await fetch(`http://localhost:3000/api/v1/causes/${causeId}/supporters`, {
           method: 'POST',
@@ -115,18 +115,18 @@ export default function CauseDetailsPage({
             Authorization: `Bearer ${user?.token}`,
           },
         });
-  
-        if (!res.ok){
+
+        if (!res.ok) {
           throw new Error('Failed to support the cause');
         };
-  
+
         setHasSupported(true);
         setSupportCount((prev: number) => prev + 1);
       } catch (err) {
         console.error('Support error:', err);
       }
     }
-    
+
   };
 
   return (
@@ -187,14 +187,14 @@ export default function CauseDetailsPage({
             <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
               {cause.ods.map((ods) => (
                 <OverlayTrigger
-                  key={ods.id}
-                  placement="top"
-                  overlay={<Tooltip id={`tooltip-ods-${ods.id}`}>{ods.title}</Tooltip>}
+                placement="top"
+                overlay={<Tooltip id={`tooltip-ods-${ods.id}`}>{ods.title}: {ods.description}</Tooltip>}
                 >
                   <div
                     style={{
                       width: '60px',
                       height: '60px',
+                      position: 'relative', 
                       overflow: 'hidden',
                       borderRadius: '8px',
                       border: '1px solid #eee',
@@ -204,7 +204,18 @@ export default function CauseDetailsPage({
                       justifyContent: 'center',
                     }}
                   >
-                    <Image src={odsImages[ods.id].src} alt={ods.title} className="img-fluid" />
+                    <Image
+                          src={odsImages[ods.id].src}
+                          alt={ods.title}
+                          className="img-fluid"
+                          width={100}
+                          height={100}
+                          style={{
+                            borderRadius: '8px',
+                            border: '2px solid #ddd',
+                          }}
+                          loading="lazy"
+                        />
                   </div>
                 </OverlayTrigger>
               ))}
@@ -281,7 +292,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const cookies = context.req.cookies;
   const userData = cookies.user ? JSON.parse(cookies.user) : null;
-  
+
   // Fetch cause data
   const causeResponse = await fetch(`http://localhost:3000/api/v1/causes/${causeId}`, {
     method: 'GET',
@@ -303,41 +314,41 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     endDate: format(parseISO(causeData.endDate), 'yyyy-MM-dd'),
   };
 
- // Fetch all supporters data (paginated)
- let allSupporters: string[] = [];
- let currentPage = 1;
- const limit = 10;
+  // Fetch all supporters data (paginated)
+  let allSupporters: string[] = [];
+  let currentPage = 1;
+  const limit = 10;
 
- while (true) {
-   const supportersResponse = await fetch(
-     `http://localhost:3000/api/v1/causes/${causeId}/supporters?page=${currentPage}&limit=${limit}`,
-     {
-       method: 'GET',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-     }
-   );
+  while (true) {
+    const supportersResponse = await fetch(
+      `http://localhost:3000/api/v1/causes/${causeId}/supporters?page=${currentPage}&limit=${limit}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
-   if (!supportersResponse.ok) {
-     return {
-       notFound: true,
-     };
-   }
+    if (!supportersResponse.ok) {
+      return {
+        notFound: true,
+      };
+    }
 
-   const supportersData = await supportersResponse.json();
-   allSupporters = [...allSupporters, ...supportersData.data];
+    const supportersData = await supportersResponse.json();
+    allSupporters = [...allSupporters, ...supportersData.data];
 
-   // Check if we have fetched all pages
-   if (currentPage >= supportersData.meta.totalPages) {
-     break;
-   }
+    // Check if we have fetched all pages
+    if (currentPage >= supportersData.meta.totalPages) {
+      break;
+    }
 
-   currentPage++;
- }
+    currentPage++;
+  }
 
- const userId = userData?.userId || null;
- const hasSupported = userId ? allSupporters.includes(userId) : false;
+  const userId = userData?.userId || null;
+  const hasSupported = userId ? allSupporters.includes(userId) : false;
 
   // Fetch community data
   const communityResponse = await fetch(`http://localhost:3000/api/v1/communities/${causeData.communityId}`, {
@@ -370,8 +381,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       initialCauseData: formattedCauseData,
-      initialCommunityData: communityData.data, 
-      initialFullName: `${creatorData.firstName} ${creatorData.lastName}`, 
+      initialCommunityData: communityData.data,
+      initialFullName: `${creatorData.firstName} ${creatorData.lastName}`,
       initialUser: userData,
       initialSupportCount: allSupporters.length,
       initialHasSupported: hasSupported,

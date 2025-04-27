@@ -1,6 +1,7 @@
 import { ApolloError } from '@apollo/client';
 import { apolloClient } from '../lib/apolloClient';
 import { GET_USER_BY_ID, CREATE_USER } from '../graphql/user.queries';
+import { USER_EXTENDED_FRAGMENT } from '../graphql/fragments';
 import { UserProfile } from '../lib/types/user-profile.types';
 import { RegisterPayload } from '../lib/types/user.types';
 
@@ -33,6 +34,23 @@ export async function registerUserGraphQL(payload: RegisterPayload): Promise<str
       mutation: CREATE_USER,
       variables: { createUserInput },
       errorPolicy: 'all',
+      update: (cache, { data }) => {
+        if (data?.createUser) {
+          cache.writeFragment({
+            id: cache.identify(data.createUser),
+            fragment: USER_EXTENDED_FRAGMENT,
+            data: data.createUser,
+          });
+
+          cache.writeQuery({
+            query: GET_USER_BY_ID,
+            variables: { id: data.createUser.id },
+            data: {
+              user: data.createUser,
+            },
+          });
+        }
+      },
     });
 
     // Check if we have GraphQL errors

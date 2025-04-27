@@ -22,3 +22,14 @@ export interface CreateCommunityRequestPayload {
     ods: ODSEnum[];
   };
 }
+
+export type CreationRequestType = {
+  id: string;
+  communityName: string;
+  communityDescription: string;
+  userId: string;
+  causeTitle: string;
+  causeDescription: string;
+  causeEndDate: string;
+  causeOds: { title: string }[];
+};

@@ -7,36 +7,18 @@ import { CreateCommunityRequestCard } from '../components/CreateCommunityRequest
 import { fetchCreateCommunityRequests } from '../services/community.service';
 import { NotificationCard } from '../components/NotificationCard';
 import { Paginate } from '../components/Pagination';
-
-interface Notification {
-  id: string;
-  read: boolean;
-  date: string;
-  userId: string;
-  userName: string;
-  notificationMessage: string;
-  entityId: string;
-}
-
-interface CreationRequest {
-  id: string;
-  communityName: string;
-  communityDescription: string;
-  userId: string;
-  causeTitle: string;
-  causeDescription: string;
-  causeEndDate: string;
-  causeOds: { title: string }[];
-}
+import { NotificationType } from '../lib/types/notification.types';
+import { CreationRequestType } from '../lib/types/community.types';
+import { getStoredUser } from '../services/user.service';
 
 const UserNotificationType = 'user';
 const JoinRequestType = 'joinRequest';
 
 export function Notifications() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [followedNotifications, setFollowedNotifications] = useState<Notification[]>([]);
-  const [joinRequests, setJoinRequests] = useState<Notification[]>([]);
-  const [creationRequests, setCreationRequests] = useState<CreationRequest[]>([]);
+  const [followedNotifications, setFollowedNotifications] = useState<NotificationType[]>([]);
+  const [joinRequests, setJoinRequests] = useState<NotificationType[]>([]);
+  const [creationRequests, setCreationRequests] = useState<CreationRequestType[]>([]);
 
   // Estados de paginación independientes
   const [notificationPage, setNotificationPage] = useState(1);
@@ -52,10 +34,14 @@ export function Notifications() {
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      const userRoles = JSON.parse(localStorage.getItem('user') || '{}').roles || [];
-      const isAdminRole = userRoles.includes('admin');
+      const storedUser = getStoredUser();
+      if (!storedUser) {
+        console.error('No user found in local storage');
+        return;
+      }
+      const isAdminRole = storedUser.roles.includes('admin');
       setIsAdmin(isAdminRole);
-      const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+      const userId = storedUser.userId;
       try {
         const { userNotifications, joinRequests } = await fetchUserNotifications(userId);
         setFollowedNotifications(userNotifications || []);

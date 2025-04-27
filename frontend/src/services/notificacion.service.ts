@@ -1,38 +1,16 @@
+import {
+  CREATION_REQUEST_TYPES,
+  JOIN_REQUEST_TYPES,
+  NotificationType,
+  USER_NOTIFICATION_TYPES,
+} from '../lib/types/notification.types';
 import { getStoredUser, getToken, getUserNameById } from './user.service';
 
 const API_URL = 'http://localhost:3000/api/v1';
 
-/** Notification types */
-
-const USER_NOTIFICATION_TYPES = [
-  'COMMUNITY_ADMIN',
-  'JOIN_COMMUNITY_REQUEST_REJECTED',
-  'JOINED_COMMUNITY',
-  'CAUSE_SUPPORT',
-  'CAUSE_CREATED',
-  'ACTION_CREATED',
-  'ACTION_CONTRIBUTED',
-  'USER_FOLLOWED',
-];
-
-const CREATION_REQUEST_TYPES = ['COMMUNITY_CREATION_REQUEST_SENT'];
-
-const JOIN_REQUEST_TYPES = ['JOIN_COMMUNITY_REQUEST_SENT'];
-
-// declare the Notification type
-export interface Notification {
-  id: string;
-  read: boolean;
-  date: string;
-  type: string;
-  userId: string;
-  userName: string;
-  notificationMessage: string;
-  entityName: string;
-  entityId: string;
-}
-
-// Función principal que fetch las notificaciones y las clasifica
+/**
+ * Fetches user notifications from the API.
+ */
 export async function fetchUserNotifications(userId: string) {
   try {
     const response = await fetch(`${API_URL}/users/${userId}/notifications`, {
@@ -65,11 +43,10 @@ export async function fetchUserNotifications(userId: string) {
           entityName
         );
         return {
-          //notification, // Conservamos el type para clasificar luego
           id,
           read,
           date,
-          type,
+          notificationType: type,
           userId,
           userName,
           notificationMessage,
@@ -78,11 +55,8 @@ export async function fetchUserNotifications(userId: string) {
         };
       })
     );
-    // console.log('Detailed Notifications:', detailedNotifications);
 
     const { userNotifications, joinRequests } = classifyNotifications(detailedNotifications);
-    // console.log('User Notifications from service:', userNotifications);
-    // console.log('Pending Requests from service:', pendingRequests);
     return { userNotifications, joinRequests };
   } catch (error) {
     console.error('Error fetching notifications:', error);
@@ -90,6 +64,9 @@ export async function fetchUserNotifications(userId: string) {
   }
 }
 
+/**
+ * Fetches the user name and notification message based on the notification type.
+ */
 async function fetchNotificationDetails(userId: string, type: string, entityName: string) {
   const userName = await getUserNameById(userId);
   const notificationMessage = getNotificationMessage(type) + entityName;
@@ -100,6 +77,10 @@ async function fetchNotificationDetails(userId: string, type: string, entityName
   return notificationDetails;
 }
 
+/**
+ * Returns a notification message based on the notification type.
+
+ */
 const getNotificationMessage = (type: string) => {
   switch (type) {
     case 'COMMUNITY_ADMIN':
@@ -127,18 +108,20 @@ const getNotificationMessage = (type: string) => {
   }
 };
 
-// Función para clasificar las notificaciones
-function classifyNotifications(notifications: Notification[]) {
-  const userNotifications: Notification[] = [];
-  const creationRequests: Notification[] = [];
-  const joinRequests: Notification[] = [];
+/**
+ *  Classify notifications into user notifications, creation requests, and join requests
+ */
+function classifyNotifications(notifications: NotificationType[]) {
+  const userNotifications: NotificationType[] = [];
+  const creationRequests: NotificationType[] = [];
+  const joinRequests: NotificationType[] = [];
 
   notifications.forEach((notification) => {
-    if (USER_NOTIFICATION_TYPES.includes(notification.type)) {
+    if (USER_NOTIFICATION_TYPES.includes(notification.notificationType)) {
       userNotifications.push(notification);
-    } else if (CREATION_REQUEST_TYPES.includes(notification.type)) {
+    } else if (CREATION_REQUEST_TYPES.includes(notification.notificationType)) {
       creationRequests.push(notification);
-    } else if (JOIN_REQUEST_TYPES.includes(notification.type)) {
+    } else if (JOIN_REQUEST_TYPES.includes(notification.notificationType)) {
       joinRequests.push(notification);
     }
   });
@@ -146,7 +129,9 @@ function classifyNotifications(notifications: Notification[]) {
   return { userNotifications, creationRequests, joinRequests };
 }
 
-/** Mark notification as read */
+/**
+ * Mark notification as read
+ * */
 export async function markNotificationAsRead(notificationId: string) {
   const userId = getStoredUser()?.userId;
   const token = getToken();

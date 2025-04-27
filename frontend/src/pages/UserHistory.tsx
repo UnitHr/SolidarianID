@@ -119,7 +119,7 @@ export function UserHistory() {
         setTotalCount((prev) => ({
           ...prev,
           followingTotalCount: userData.followingCount,
-          followersTotalCount: userData.followersCount
+          followersTotalCount: userData.followersCount,
         }));
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -301,7 +301,7 @@ export function UserHistory() {
   };
 
   const handleCloseModal = () => setShowModal(false);
-  
+
   const handleCloseFollowersModal = () => setShowFollowersModal(false);
 
   const handleImageClick = () => setShowImageModal(true);
@@ -563,7 +563,11 @@ export function UserHistory() {
                 <li key={f.followedUserId} className="mb-2">
                   <Link
                     to={`/profile/${f.followedUserId}`}
-                    onClick={() => (window.location.href = `/profile/${f.followedUserId}`)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCloseModal();
+                      navigate(`/profile/${f.followedUserId}`);
+                    }}
                     className="text-decoration-none entity-link"
                   >
                     {f.fullName}
@@ -592,7 +596,11 @@ export function UserHistory() {
                 <li key={f.followerId} className="mb-2">
                   <Link
                     to={`/profile/${f.followerId}`}
-                    onClick={() => (window.location.href = `/profile/${f.followerId}`)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCloseFollowersModal();
+                      navigate(`/profile/${f.followerId}`);
+                    }}
                     className="text-decoration-none entity-link"
                   >
                     {f.fullName}

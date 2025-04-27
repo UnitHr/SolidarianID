@@ -25,11 +25,13 @@ export class CommunityResolver {
   async getCommunity(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<CommunityModel> {
+    this.logger.debug(`Fetching community with ID: ${id}`);
     return this.communityService.getCommunity(id);
   }
 
   @ResolveField('admin', () => UserModel, { nullable: true })
   async getAdmin(@Parent() community: CommunityModel): Promise<UserModel> {
+    this.logger.debug(`Fetching admin for community: ${community.id}`);
     const admin = await this.userService.getUserProfile(community.adminId);
     return {
       id: community.adminId,

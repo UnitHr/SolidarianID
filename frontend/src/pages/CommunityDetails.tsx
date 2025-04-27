@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Container, Row, Col, Image, Button, Modal } from 'react-bootstrap';
 import {
-  getCommunityById,
   getCommunityCauses,
   getTotalCausesPages,
   getCommunityMembers,
   sendJoinRequest,
 } from '../services/community.service';
+import { getCommunityByIdGraphQL, GraphQLCommunity } from '../services/graphql.community.service';
 import { getStoredUser } from '../services/user.service';
-import { CommunityDetails as CommunityType } from '../lib/types/community.types';
 import { CauseDetails } from '../lib/types/cause.types';
 import { User } from '../lib/types/user.types';
 import { Paginate } from '../components/Pagination';
@@ -23,7 +22,7 @@ export function CommunityDetails() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const [community, setCommunity] = useState<CommunityType | null>(null);
+  const [community, setCommunity] = useState<GraphQLCommunity | null>(null);
   const [causes, setCauses] = useState<CauseDetails[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isMember, setIsMember] = useState(false);
@@ -42,7 +41,7 @@ export function CommunityDetails() {
       setLoading(true);
 
       const [communityData, causesData, totalCausesPages] = await Promise.all([
-        getCommunityById(communityId),
+        getCommunityByIdGraphQL(communityId),
         getCommunityCauses(communityId, page),
         getTotalCausesPages(communityId),
       ]);
@@ -123,26 +122,36 @@ export function CommunityDetails() {
               }}
             />
           </Col>
-          <Col xs={12} md className="text-center text-md-start">
-            <h2 className="fw-bold mb-1">{community?.name}</h2>
+          <Col xs={12} md>
+            <div className="text-center text-md-start">
+              <h2 className="fw-bold mb-1">{community?.name}</h2>
+              <p className="text-muted mb-1">{community?.description}</p>
+              {community.admin && (
+                <p className="text-muted small mb-0">
+                  <strong>Admin:</strong>{' '}
+                  <Link
+                    to={`/profile/${community.admin.id}`}
+                    className="text-decoration-none entity-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/profile/${community.admin.id}`);
+                    }}
+                  >
+                    {community.admin.firstName} {community.admin.lastName}
+                  </Link>
+                </p>
+              )}
+            </div>
+          </Col>
+          <Col xs={12} md="auto" className="text-center text-md-end mt-3 mt-md-0">
             {user &&
               (isMember ? (
                 <p className="text-success fw-semibold small mb-0">✅ You are already a member</p>
               ) : (
-                <Button onClick={() => setShowModal(true)} variant="success" className="mt-2">
+                <Button onClick={() => setShowModal(true)} variant="success">
                   Join Community
                 </Button>
               ))}
-          </Col>
-        </Row>
-
-        <hr className="my-4" />
-
-        {/* Description */}
-        <Row className="mb-4">
-          <Col>
-            <h5 className="fw-semibold mb-2">Description</h5>
-            <p className="text-muted">{community?.description}</p>
           </Col>
         </Row>
 

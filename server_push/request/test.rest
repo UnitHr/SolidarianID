@@ -1,7 +1,7 @@
 ### Global variables
 @baseUrl = http://localhost:4000/push
 @contentType = application/json
-
+@userId = 'exampleUserId'
 ### Check if the server is running
 GET {{baseUrl}}
 Accept: text/plain
@@ -29,42 +29,13 @@ Content-Type: {{contentType}}
   }
 }
 
-### Send a notification to a specific subscription
+### Send a notification to a specific user
 POST {{baseUrl}}/sendNotification
 Content-Type: {{contentType}}
 
 {
-  "subscription": {
-    "endpoint": "https://fcm.googleapis.com/fcm/send/example-endpoint",
-    "expirationTime": null,
-    "keys": {
-      "p256dh": "BPxUvEVFM9ctlDqoMNuO8dCyWBOITQr5oVBWAQD5FJ-T9yLTECjBpL-u0vKdeT9khHAxWCwVcPwZFXJIAsLOJb8",
-      "auth": "bZnJvGjW3Xg2i8RhvUJIqQ"
-    }
-  },
+  "userId": {{userId}},
   "payload": "{\"title\":\"Test Notification\",\"body\":\"This is a test notification!\",\"icon\":\"/icon.png\"}",
   "ttl": 86400,
   "delay": 0
 }
-
-### Send a notification to all subscriptions
-POST {{baseUrl}}/sendToAll
-Content-Type: {{contentType}}
-
-{
-  "payload": "{\"title\":\"Mass Notification\",\"body\":\"This notification is sent to all subscribers!\",\"icon\":\"/icon.png\"}",
-  "ttl": 86400
-}
-
-### Send a notification to all admins
-POST {{baseUrl}}/sendToAdmins
-Content-Type: {{contentType}}
-
-{
-  "payload": "{\"title\":\"Admin Notification\",\"body\":\"This notification is sent to all admins!\",\"icon\":\"/icon.png\"}",
-  "ttl": 86400
-}
-
-### Check if a user is subscribed
-GET {{baseUrl}}/subscription/{userId}
-Accept: {{contentType}}

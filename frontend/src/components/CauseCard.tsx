@@ -1,8 +1,13 @@
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { CauseDetails } from '../lib/types/cause.types';
 
-export function CauseCard({ id, title, description }: CauseDetails) {
+interface CauseCardProps {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export function CauseCard({ id, title, description }: CauseCardProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {

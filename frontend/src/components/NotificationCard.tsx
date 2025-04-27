@@ -3,6 +3,7 @@ import { markNotificationAsRead } from '../services/notificacion.service';
 import { AiFillSound, AiFillEye } from 'react-icons/ai';
 import { ModalValidateJoinCommunity } from './ModalValidateJoinCommunity';
 import { fetchJoinRequestById } from '../services/community.service';
+import { Alert } from 'react-bootstrap';
 
 interface NotificationProps {
   notificationId: string;
@@ -12,7 +13,7 @@ interface NotificationProps {
   userId: string;
   read: boolean;
   entityId: string;
-  type: 'user' | 'creationRequest' | 'joinRequest';
+  type: 'user' | 'joinRequest';
 }
 
 interface JoinRequestData {
@@ -38,6 +39,9 @@ export const NotificationCard: React.FC<NotificationProps> = ({
   const [joinRequestData, setJoinRequestData] = useState<JoinRequestData | null>(null);
   const [isPending, setIsPending] = useState(false); // Estado de la solicitud (pendiente o no)
   const [eyeHovered, setEyeHovered] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('info');
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     if (type === 'joinRequest') {
@@ -58,12 +62,16 @@ export const NotificationCard: React.FC<NotificationProps> = ({
   };
 
   const fetchJoinRequestStatus = async () => {
+    let data = null;
     try {
-      const data = await fetchJoinRequestById(userId, entityId);
-      setJoinRequestData(data);
-      setIsPending(data.status === 'pending');
+      data = await fetchJoinRequestById(userId, entityId);
     } catch (error) {
       console.error('Failed to fetch join request:', error);
+    }
+    if (data != null) {
+      setJoinRequestData(data);
+      setIsPending(data.status === 'pending');
+      console.log('status:', data.status);
     }
   };
 
@@ -89,24 +97,38 @@ export const NotificationCard: React.FC<NotificationProps> = ({
     setEyeHovered(true);
   };
 
-  const handleHideModal = () => {
+  const handleHideModal = async () => {
     setShowModal(false);
+    await fetchJoinRequestStatus();
+    console.log('Modal closed in card');
   };
 
   const changeAlertMessage = (value: string) => {
-    console.log('Alert Message:', value);
+    setAlertMessage(value);
   };
 
   const changeAlertVariant = (value: string) => {
-    console.log('Alert Variant:', value);
+    setAlertVariant(value);
   };
 
   const handleAlertShow = () => {
-    console.log('Show Alert');
+    setShowAlert(true);
+    // Opcional: Oculta la alerta después de unos segundos
+    setTimeout(() => setShowAlert(false), 4000);
   };
 
   return (
     <>
+      {showAlert && (
+        <Alert
+          variant={alertVariant}
+          onClose={() => setShowAlert(false)}
+          dismissible
+          style={{ maxWidth: 600, margin: '0 auto 1rem' }}
+        >
+          {alertMessage}
+        </Alert>
+      )}
       <div
         className="notification-card"
         style={{

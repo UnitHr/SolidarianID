@@ -1,45 +1,16 @@
-/*
-export async function fetchManagedCommunities() {
-  try {
-    const response = await fetch('http://localhost:3000/api/v1/communities/managed-communities', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch managed communities');
-    }
-
-    const data = await response.json();
-    return data.data; // Devuelve las comunidades gestionadas
-  } catch (error) {
-    console.error('Error al obtener las comunidades gestionadas:', error);
-    throw error;
-  }
-} */
-
+import {
+  CREATION_REQUEST_TYPES,
+  JOIN_REQUEST_TYPES,
+  NotificationType,
+  USER_NOTIFICATION_TYPES,
+} from '../lib/types/notification.types';
 import { getStoredUser, getToken, getUserNameById } from './user.service';
 
 const API_URL = 'http://localhost:3000/api/v1';
 
-/** Notification types */
-
-const USER_NOTIFICATION_TYPES = [
-  'COMMUNITY_ADMIN',
-  'JOIN_COMMUNITY_REQUEST_REJECTED',
-  'JOINED_COMMUNITY',
-  'CAUSE_SUPPORT',
-  'CAUSE_CREATED',
-  'ACTION_CONTRIBUTED',
-  'USER_FOLLOWED',
-];
-
-const CREATION_REQUEST_TYPES = ['COMMUNITY_CREATION_REQUEST_SENT'];
-
-const JOIN_REQUEST_TYPES = ['JOIN_COMMUNITY_REQUEST_SENT'];
-
-// Función principal que fetch las notificaciones y las clasifica
+/**
+ * Fetches user notifications from the API.
+ */
 export async function fetchUserNotifications(userId: string) {
   try {
     const response = await fetch(`${API_URL}/users/${userId}/notifications`, {
@@ -55,6 +26,7 @@ export async function fetchUserNotifications(userId: string) {
     const data = await response.json();
 
     const detailedNotifications = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data.data.map(async (notification: any) => {
         const { id, read, timestamp, userId, type, entityName } = notification;
         const date = new Date(timestamp).toLocaleDateString('es-ES', {
@@ -71,11 +43,10 @@ export async function fetchUserNotifications(userId: string) {
           entityName
         );
         return {
-          //notification, // Conservamos el type para clasificar luego
           id,
           read,
           date,
-          type,
+          notificationType: type,
           userId,
           userName,
           notificationMessage,
@@ -84,12 +55,8 @@ export async function fetchUserNotifications(userId: string) {
         };
       })
     );
-    // console.log('Detailed Notifications:', detailedNotifications);
 
-    const { userNotifications, creationRequests, joinRequests } =
-      classifyNotifications(detailedNotifications);
-    // console.log('User Notifications from service:', userNotifications);
-    // console.log('Pending Requests from service:', pendingRequests);
+    const { userNotifications, joinRequests } = classifyNotifications(detailedNotifications);
     return { userNotifications, joinRequests };
   } catch (error) {
     console.error('Error fetching notifications:', error);
@@ -97,6 +64,9 @@ export async function fetchUserNotifications(userId: string) {
   }
 }
 
+/**
+ * Fetches the user name and notification message based on the notification type.
+ */
 async function fetchNotificationDetails(userId: string, type: string, entityName: string) {
   const userName = await getUserNameById(userId);
   const notificationMessage = getNotificationMessage(type) + entityName;
@@ -104,10 +74,13 @@ async function fetchNotificationDetails(userId: string, type: string, entityName
     userName,
     notificationMessage,
   };
-  console.log('Notification Details:', notificationDetails);
   return notificationDetails;
 }
 
+/**
+ * Returns a notification message based on the notification type.
+
+ */
 const getNotificationMessage = (type: string) => {
   switch (type) {
     case 'COMMUNITY_ADMIN':
@@ -124,6 +97,8 @@ const getNotificationMessage = (type: string) => {
       return 'Created a new cause: ';
     case 'ACTION_CONTRIBUTED':
       return 'Contributed to the action: ';
+    case 'ACTION_CREATED':
+      return 'Created a new action: ';
     case 'USER_FOLLOWED':
       return 'Started following you';
     case 'COMMUNITY_CREATION_REQUEST_SENT':
@@ -133,30 +108,30 @@ const getNotificationMessage = (type: string) => {
   }
 };
 
-// Función para clasificar las notificaciones
-function classifyNotifications(notifications: any[]) {
-  const userNotifications: any[] = [];
-  const creationRequests: any[] = [];
-  const joinRequests: any[] = [];
+/**
+ *  Classify notifications into user notifications, creation requests, and join requests
+ */
+function classifyNotifications(notifications: NotificationType[]) {
+  const userNotifications: NotificationType[] = [];
+  const creationRequests: NotificationType[] = [];
+  const joinRequests: NotificationType[] = [];
 
-  console.log('User Notifications from classify start:', notifications);
   notifications.forEach((notification) => {
-    console.log('Notification type:', notification.type);
-    if (USER_NOTIFICATION_TYPES.includes(notification.type)) {
+    if (USER_NOTIFICATION_TYPES.includes(notification.notificationType)) {
       userNotifications.push(notification);
-    } else if (CREATION_REQUEST_TYPES.includes(notification.type)) {
+    } else if (CREATION_REQUEST_TYPES.includes(notification.notificationType)) {
       creationRequests.push(notification);
-    } else if (JOIN_REQUEST_TYPES.includes(notification.type)) {
+    } else if (JOIN_REQUEST_TYPES.includes(notification.notificationType)) {
       joinRequests.push(notification);
     }
   });
 
-  // console.log('User Notifications from classify end:', userNotifications);
-  // console.log('Pending Requests from classify end:', pendingRequests);
   return { userNotifications, creationRequests, joinRequests };
 }
 
-/** Mark notification as read */
+/**
+ * Mark notification as read
+ * */
 export async function markNotificationAsRead(notificationId: string) {
   const userId = getStoredUser()?.userId;
   const token = getToken();

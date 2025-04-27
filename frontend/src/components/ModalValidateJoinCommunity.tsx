@@ -77,6 +77,10 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
     }
   };
 
+  const handleSeeUserHistory = () => {
+    window.location.href = `/profile/${props.userId}`;
+  };
+
   return (
     <Modal show={props.show} onHide={props.handleHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
@@ -95,7 +99,9 @@ export function ModalValidateJoinCommunity(props: ComponentProps) {
           <Row className="mt-3">
             <Col></Col>
             <Col sm={6} md={6} lg={6}>
-              <Button variant="info">See user history</Button>
+              <Button variant="info" onClick={handleSeeUserHistory}>
+                See user history
+              </Button>
             </Col>
             <Col></Col>
           </Row>

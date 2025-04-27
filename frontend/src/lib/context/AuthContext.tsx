@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import Cookies from 'js-cookie';
+import { apolloClient } from '../apolloClient';
 
 interface User {
   userId: string;
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       SameSite: 'None',
       Secure: true,
     });
+
     Cookies.set('token', userData.token, {
       expires: expirationTime,
       path: '/',
@@ -68,6 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    apolloClient.resetStore().catch((err) => {
+      console.error('Error resetting Apollo cache during logout:', err);
+    });
+
     clearAuthData();
     setUser(null);
     setIsAuthenticated(false);

@@ -116,9 +116,13 @@ export async function fetchUserById(userId: string): Promise<User> {
 
 /**
  * Get a user name by id.
- * */
+ */
 export const getUserNameById = async (userId: string) => {
   const token = getToken();
+  if (!token) {
+    throw new Error('No token found. Please login.');
+  }
+
   try {
     const response = await fetch(`${API_URL}/users/${userId}`, {
       headers: {
@@ -135,3 +139,25 @@ export const getUserNameById = async (userId: string) => {
     throw error;
   }
 };
+
+/**
+ * Follow a user.
+ */
+export async function followUser(followedId: string): Promise<void> {
+  const token = getToken();
+  if (!token) {
+    throw new Error('No token found. Please login.');
+  }
+
+  const response = await fetch(`${API_URL}/users/${followedId}/followers`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to follow user');
+  }
+}

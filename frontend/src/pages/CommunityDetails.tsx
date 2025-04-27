@@ -7,13 +7,14 @@ import {
   getCommunityMembers,
   sendJoinRequest,
 } from '../services/community.service';
-import { getCommunityByIdGraphQL, GraphQLCommunity } from '../services/graphql.community.service';
+import { getCommunityByIdGraphQL } from '../services/graphql.community.service';
 import { getStoredUser } from '../services/user.service';
 import { CauseDetails } from '../lib/types/cause.types';
 import { User } from '../lib/types/user.types';
 import { Paginate } from '../components/Pagination';
 import { CauseCard } from '../components/CauseCard';
 import communityLogo from '../assets/community-logo.png';
+import type { CommunityDetails as CommunityDetailsType } from '../lib/types/community.types';
 
 export function CommunityDetails() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export function CommunityDetails() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const [community, setCommunity] = useState<GraphQLCommunity | null>(null);
+  const [community, setCommunity] = useState<CommunityDetailsType | null>(null);
   const [causes, setCauses] = useState<CauseDetails[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isMember, setIsMember] = useState(false);
@@ -134,7 +135,7 @@ export function CommunityDetails() {
                     className="text-decoration-none entity-link"
                     onClick={(e) => {
                       e.preventDefault();
-                      navigate(`/profile/${community.admin.id}`);
+                      navigate(`/profile/${community.admin?.id}`);
                     }}
                   >
                     {community.admin.firstName} {community.admin.lastName}

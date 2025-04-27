@@ -33,7 +33,7 @@ make help
 ### Frontend
 
 Location: `frontend/`  
-URL: [http://localhost:3005](http://localhost:3005)
+URL: [http://localhost:5173](http://localhost:5173)
 
 ### Backend
 
@@ -45,6 +45,22 @@ API-Gateway URL: [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
 - **User Microservice Base URL:** [http://localhost:3001/users](http://localhost:3001/users)
 - **Community Microservice Base URL:** [http://localhost:3002/communities](http://localhost:3002/communities)
 - **Statistics Microservice Base URL:** [http://localhost:3003/statistics](http://localhost:3003/statistics)
+
+## Test Data
+
+To load test data into the application, first ensure you have executed `make run-prod`. Then, run the following script:
+
+```sh
+cd scripts/test_data_loader
+python3 test_data_loader.py
+```
+
+The test data created can be found in the `scripts/test_data_loader/data/*.json`.
+
+Admin user credentials:
+
+- **Email:** `admin@admin.com`
+- **Password:** `123456Test*`
 
 ## Public Documentation
 
@@ -166,84 +182,6 @@ graph TB
     CommEventsService -->|"Publishes events"| Kafka
     UserMS -->|"Subscribes to events"| Kafka
     StatMS -->|"Subscribes to events"| Kafka
-```
-
-## Frontend Software Architecture Diagram
-
-```mermaid
-graph TB
-    User((External User))
-    Admin((Admin User))
-
-    subgraph "Frontend Application"
-        direction TB
-        FrontendApp["Frontend App<br>(NestJS)"]
-
-        subgraph "Core Components"
-            AppController["App Controller<br>(NestJS Controller)"]
-            AppService["App Service<br>(NestJS Service)"]
-            ViewEngine["View Engine<br>(Handlebars)"]
-            HelperService["Handlebars Helpers<br>(NestJS Service)"]
-        end
-
-        subgraph "Feature Modules"
-            direction LR
-            subgraph "Reports Module"
-                ReportController["Report Controller<br>(NestJS Controller)"]
-                ReportService["Report Service<br>(NestJS Service)"]
-            end
-
-            subgraph "Statistics Module"
-                StatController["Statistics Controller<br>(NestJS Controller)"]
-                StatService["Statistics Service<br>(NestJS Service)"]
-            end
-
-            subgraph "Validation Module"
-                ValidController["Validation Controller<br>(NestJS Controller)"]
-                ValidService["Validation Service<br>(NestJS Service)"]
-            end
-        end
-
-        subgraph "Client-Side Components"
-            ChartJS["Chart Component<br>(Chart.js)"]
-            ReportGen["Report Generator<br>(JavaScript)"]
-            Validation["Validation Logic<br>(JavaScript)"]
-        end
-    end
-
-    subgraph "External Microservices"
-        CommunityMS["Community Microservice<br>(External Service)"]
-        StatisticsMS["Statistics Microservice<br>(External Service)"]
-    end
-
-    %% User interactions
-    User -->|"Accesses"| FrontendApp
-    Admin -->|"Manages"| FrontendApp
-
-    %% Frontend internal connections
-    FrontendApp -->|"Routes to"| AppController
-    AppController -->|"Uses"| AppService
-    AppController -->|"Renders with"| ViewEngine
-    ViewEngine -->|"Uses"| HelperService
-
-    %% Module connections
-    AppController -->|"Routes to"| ReportController
-    AppController -->|"Routes to"| StatController
-    AppController -->|"Routes to"| ValidController
-
-    ReportController -->|"Uses"| ReportService
-    StatController -->|"Uses"| StatService
-    ValidController -->|"Uses"| ValidService
-
-    %% Client-side connections
-    ViewEngine -->|"Serves"| ChartJS
-    ViewEngine -->|"Serves"| ReportGen
-    ViewEngine -->|"Serves"| Validation
-
-    %% External service connections
-    ReportService -->|"Fetches data"| CommunityMS
-    ValidService -->|"Fetches data"| CommunityMS
-    StatService -->|"Fetches statistics"| StatisticsMS
 ```
 
 ## Requirements

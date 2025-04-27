@@ -238,7 +238,7 @@ export function ActionDetails() {
             </Form.Group>
 
             <div className="d-grid gap-2">
-              <Button variant="primary" type="submit">
+              <Button variant="secondary" type="submit">
                 Confirm Contribution
               </Button>
             </div>

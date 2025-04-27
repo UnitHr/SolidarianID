@@ -1,24 +1,9 @@
 import { ApolloError } from '@apollo/client';
 import { apolloClient } from '../lib/apolloClient';
 import { GET_USER_BY_ID } from '../graphql/user.queries';
+import { UserProfile } from '../lib/types/user-profile.types';
 
-export interface GraphQLUser {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  bio?: string;
-  birthDate?: string;
-  showAge?: boolean;
-  showEmail?: boolean;
-  followersCount: number;
-  followingCount: number;
-}
-
-/**
- * Fetches a user by ID using GraphQL, including followers/following counts
- */
-export async function getUserByIdGraphQL(id: string): Promise<GraphQLUser> {
+export async function getUserByIdGraphQL(id: string): Promise<UserProfile> {
   try {
     const { data } = await apolloClient.query({
       query: GET_USER_BY_ID,

@@ -91,3 +91,4 @@ function getCookie(name: string) {
   return null;
 }
 
+export default SolidarianNavbar;

@@ -54,6 +54,7 @@ export function UserHistory() {
   const [showSupports, setShowSupports] = useState(false);
   const [showRequests, setShowRequests] = useState(false);
   const [fullName, setFullName] = useState('');
+  const [userBio, setUserBio] = useState<string | null>(null);
   const limit = 6;
   const [page, setPage] = useState({
     followingPage: 1,
@@ -113,7 +114,7 @@ export function UserHistory() {
       try {
         const userData = await getUserByIdGraphQL(parsedUser.userId);
         setFullName(`${userData.firstName} ${userData.lastName}`);
-        console.log('User data:', userData);
+        setUserBio(userData.bio || null);
 
         setTotalCount((prev) => ({
           ...prev,
@@ -326,6 +327,12 @@ export function UserHistory() {
           </Col>
           <Col>
             <h4 className="mb-0">{fullName}</h4>
+            <div className="d-flex align-items-center mb-1">
+              <span className="badge bg-light text-secondary" style={{ fontSize: '0.75rem' }}>
+                SolidarianID: {user?.userId || userId}
+              </span>
+            </div>
+            {userBio && <p className="text-muted mb-0 mt-1">{userBio}</p>}
           </Col>
           <Col xs="auto">
             <div onClick={handleFollowingClick} className="following-info">

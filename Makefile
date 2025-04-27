@@ -4,23 +4,28 @@ default: help
 # Docker commands
 run-prod:
 	$(MAKE) -C backend run-prod
-	$(MAKE) -C frontend run-prod
+	$(MAKE) -C frontend run-dev
+	$(MAKE) -C server_push run-prod
 
 run-foreground-prod:
 	$(MAKE) -C backend run-foreground-prod
 	$(MAKE) -C frontend run-foreground-prod
+	$(MAKE) -C server_push run-foreground-prod
 
 stop-prod:
 	$(MAKE) -C backend stop-prod
 	$(MAKE) -C frontend stop-prod
+	$(MAKE) -C server_push stop-prod
 
 restart-prod:
 	$(MAKE) -C backend restart-prod
 	$(MAKE) -C frontend restart-prod
+	$(MAKE) -C server_push restart-prod
 
 status-prod:
 	$(MAKE) -C backend status-prod
 	$(MAKE) -C frontend status-prod
+	$(MAKE) -C server_push status-prod
 
 build-prod:
 	$(MAKE) -C backend build-prod

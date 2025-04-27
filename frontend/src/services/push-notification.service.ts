@@ -32,11 +32,7 @@ export async function subscribeUserToPushManager(registration: ServiceWorkerRegi
   }
 }
 
-export async function registerSubscriptionOnServer(
-  subscription: PushSubscription,
-  userId: string,
-  userRoles: string[]
-) {
+export async function registerSubscriptionOnServer(subscription: PushSubscription, userId: string) {
   try {
     const serverResponse = await fetch('http://localhost:4000/push/register', {
       method: 'POST',
@@ -44,7 +40,7 @@ export async function registerSubscriptionOnServer(
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ subscription, userId, userRoles }),
+      body: JSON.stringify({ subscription, userId }),
     });
 
     if (serverResponse.ok) {

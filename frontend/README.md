@@ -1,54 +1,58 @@
-# React + TypeScript + Vite
+# Frontend SolidarianID
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for the SolidarianID project.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To start the development environment locally, run:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This will start the app at:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+[http://localhost:5173](http://localhost:5173)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+The frontend expects the backend API to be running at [http://localhost:3000](http://localhost:3000).
+
+## Build
+
+To create a production-ready build, run:
+
+```bash
+npm run build
 ```
+
+To preview the production build locally, run:
+
+```bash
+npm run preview
+```
+
+This will serve the built application at:
+
+[http://localhost:4173](http://localhost:4173)
+
+## Useful Commands
+
+| Command                   | Description                      |
+| ------------------------- | -------------------------------- |
+| `npm run dev`             | Start the development server     |
+| `npm run build`           | Build the app for production     |
+| `npm run preview`         | Preview the production build     |
+| `npm run lint:fix`        | Run ESLint checks and fix issues |
+| `npm run prettier:format` | Format code using Prettier       |
+
+## Features
+
+- User Profiles with support for follow/unfollow
+- Communities, Causes, and Actions management
+- Contributions to actions
+- Authentication with JWT
+- GraphQL integration for optimized user fetching
+- Pagination for lists
+- Responsive UI built with React Bootstrap and Lucide
+
+> **Note:** Make sure the backend is running before starting the frontend.

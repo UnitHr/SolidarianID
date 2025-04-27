@@ -72,7 +72,7 @@ async function registerSubscriptionOnServer(subscription: PushSubscription, user
  * Enables notifications by requesting permission and registering the service worker.
  */
 export async function enableNotifications() {
-  if ('Notification' in window && 'serviceWorker' in navigator) {
+  if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       try {

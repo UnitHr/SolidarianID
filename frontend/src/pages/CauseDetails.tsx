@@ -57,7 +57,7 @@ export function CauseDetails() {
       const [causeData, supporterIds, actionsData] = await Promise.all([
         fetchCauseById(causeId),
         fetchCauseSupporters(causeId),
-        fetchActionsByCauseId(causeId, page, 9),
+        fetchActionsByCauseId(causeId, page, 6),
       ]);
 
       setCause(causeData);

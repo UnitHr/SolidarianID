@@ -10,6 +10,9 @@ export class NotificationServiceImpl implements NotificationService {
   constructor(private readonly pubSub: PubSubService) {}
 
   async publishNewNotification(notification: NotificationModel): Promise<void> {
+    this.logger.debug(
+      `Publishing new notification: ${JSON.stringify(notification)}`,
+    );
     await this.pubSub.publish('notificationAdded', notification);
   }
 }

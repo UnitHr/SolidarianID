@@ -54,6 +54,7 @@ export function UserHistory() {
   const [showSupports, setShowSupports] = useState(false);
   const [showRequests, setShowRequests] = useState(false);
   const [fullName, setFullName] = useState('');
+  const [userBio, setUserBio] = useState<string | null>(null);
   const limit = 6;
   const [page, setPage] = useState({
     followingPage: 1,
@@ -113,12 +114,12 @@ export function UserHistory() {
       try {
         const userData = await getUserByIdGraphQL(parsedUser.userId);
         setFullName(`${userData.firstName} ${userData.lastName}`);
-        console.log('User data:', userData);
+        setUserBio(userData.bio || null);
 
         setTotalCount((prev) => ({
           ...prev,
           followingTotalCount: userData.followingCount,
-          followersTotalCount: userData.followersCount
+          followersTotalCount: userData.followersCount,
         }));
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -300,7 +301,7 @@ export function UserHistory() {
   };
 
   const handleCloseModal = () => setShowModal(false);
-  
+
   const handleCloseFollowersModal = () => setShowFollowersModal(false);
 
   const handleImageClick = () => setShowImageModal(true);
@@ -326,6 +327,12 @@ export function UserHistory() {
           </Col>
           <Col>
             <h4 className="mb-0">{fullName}</h4>
+            <div className="d-flex align-items-center mb-1">
+              <span className="badge bg-light text-secondary" style={{ fontSize: '0.75rem' }}>
+                SolidarianID: {user?.userId || userId}
+              </span>
+            </div>
+            {userBio && <p className="text-muted mb-0 mt-1">{userBio}</p>}
           </Col>
           <Col xs="auto">
             <div onClick={handleFollowingClick} className="following-info">
@@ -556,7 +563,11 @@ export function UserHistory() {
                 <li key={f.followedUserId} className="mb-2">
                   <Link
                     to={`/profile/${f.followedUserId}`}
-                    onClick={() => (window.location.href = `/profile/${f.followedUserId}`)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCloseModal();
+                      navigate(`/profile/${f.followedUserId}`);
+                    }}
                     className="text-decoration-none entity-link"
                   >
                     {f.fullName}
@@ -585,7 +596,11 @@ export function UserHistory() {
                 <li key={f.followerId} className="mb-2">
                   <Link
                     to={`/profile/${f.followerId}`}
-                    onClick={() => (window.location.href = `/profile/${f.followerId}`)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCloseFollowersModal();
+                      navigate(`/profile/${f.followerId}`);
+                    }}
                     className="text-decoration-none entity-link"
                   >
                     {f.fullName}

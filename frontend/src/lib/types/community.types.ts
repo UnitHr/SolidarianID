@@ -5,6 +5,11 @@ export type CommunityDetails = {
   name: string;
   description: string;
   adminId: string;
+  admin?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
 };
 
 export interface FetchCommunitiesResponse {

@@ -12,7 +12,7 @@ import {
   fetchSupportsHistory,
 } from '../../services/user-history.service';
 
-export function useUserHistory() {
+export function useUserHistory(refreshTrigger?: boolean) {
   const navigate = useNavigate();
   const { userId: urlUserId } = useParams<{ userId: string }>();
 
@@ -118,6 +118,8 @@ export function useUserHistory() {
 
         setTotalCount((prev) => ({
           ...prev,
+          following: followingData.meta.total,
+          followers: followersData.meta.total,
           communities: communitiesData.meta.total,
           causes: causesData.meta.total,
           supports: supportsData.meta.total,
@@ -131,7 +133,7 @@ export function useUserHistory() {
     }
 
     loadUserHistory();
-  }, [navigate, urlUserId, page]);
+  }, [navigate, urlUserId, page, refreshTrigger]);
 
   return {
     effectiveUserId,

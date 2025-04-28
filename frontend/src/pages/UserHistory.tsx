@@ -7,6 +7,9 @@ import { useUserHistory } from '../lib/hooks/useUserHistory';
 import { UserCircle } from 'lucide-react';
 
 export function UserHistory() {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const storedUser = getStoredUser();
+
   const {
     effectiveUserId,
     userFullName,
@@ -24,15 +27,12 @@ export function UserHistory() {
     page,
     loading,
     setPage,
-  } = useUserHistory();
+  } = useUserHistory(isFollowing);
 
   const navigate = useNavigate();
   const [showFollowingModal, setShowFollowingModal] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [view, setView] = useState<'communities' | 'causes' | 'supports' | 'requests' | null>(null);
-
-  const [isFollowing, setIsFollowing] = useState(false);
-  const storedUser = getStoredUser();
 
   const isOwnProfile = storedUser?.userId === effectiveUserId;
 
@@ -40,7 +40,7 @@ export function UserHistory() {
     if (followers.some((f) => f.followerId === storedUser?.userId)) {
       setIsFollowing(true);
     }
-  }, [followers, storedUser]);
+  }, [followers, storedUser, isFollowing]);
 
   if (loading) {
     return (
@@ -60,10 +60,8 @@ export function UserHistory() {
     if (!effectiveUserId || isFollowing) return;
 
     try {
-      // Call service
       await followUser(effectiveUserId);
       setIsFollowing(true);
-      alert('Now following this user!');
     } catch (error) {
       console.error('Error following user:', error);
       alert('Failed to follow. Please try again.');

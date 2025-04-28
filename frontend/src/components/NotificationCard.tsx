@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { markNotificationAsRead } from '../services/notificacion.service';
+import { markNotificationAsRead } from '../services/notification.service';
 import { AiFillSound, AiFillEye } from 'react-icons/ai';
 import { ModalValidateJoinCommunity } from './ModalValidateJoinCommunity';
 import { fetchJoinRequestById } from '../services/community.service';

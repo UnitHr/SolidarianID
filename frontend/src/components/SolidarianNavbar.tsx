@@ -2,8 +2,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown, Container, Badge } from 'react-bootstrap';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
 import { useAuth } from '../lib/context/AuthContext';
-import { useEffect, useState } from 'react';
-import { subscribeToNotifications } from '../services/graphql.notification.service';
+import { useEffect, useState, useCallback } from 'react';
+import { useNotificationSubscription } from '../lib/hooks/useNotification';
 
 export function SolidarianNavbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -11,6 +11,33 @@ export function SolidarianNavbar() {
   const location = useLocation();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const isNotificationsPage = location.pathname === '/notifications';
+
+  const handleNotificationReceived = useCallback(() => {
+    if (isNotificationsPage) {
+      window.location.reload();
+      return;
+    }
+
+    setNotificationCount((prevCount) => {
+      const newCount = prevCount + 1;
+      if (user) {
+        localStorage.setItem(`notifications_${user.userId}`, newCount.toString());
+      }
+      return newCount;
+    });
+  }, [isNotificationsPage, user]);
+
+  // Handler for notification subscription errors
+  const handleSubscriptionError = useCallback((error: Error) => {
+    console.error('Error in notification subscription:', error);
+  }, []);
+
+  // Use hook for notification subscriptions
+  useNotificationSubscription(
+    user?.userId || '',
+    handleNotificationReceived,
+    handleSubscriptionError
+  );
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -21,38 +48,6 @@ export function SolidarianNavbar() {
         setNotificationCount(0);
         localStorage.setItem(`notifications_${user.userId}`, '0');
       }
-
-      const subscribeToNewNotifications = async () => {
-        try {
-          const subscription = await subscribeToNotifications(user.userId, {
-            onReceived: () => {
-              if (isNotificationsPage) {
-                window.location.reload();
-                return;
-              }
-
-              setNotificationCount((prevCount) => {
-                const newCount = prevCount + 1;
-                localStorage.setItem(`notifications_${user.userId}`, newCount.toString());
-                return newCount;
-              });
-            },
-            onError: (error) => {
-              console.error('Error in notification subscription:', error);
-            },
-          });
-
-          return () => {
-            if (subscription) {
-              subscription.unsubscribe();
-            }
-          };
-        } catch (error) {
-          console.error('Failed to subscribe to notifications:', error);
-        }
-      };
-
-      subscribeToNewNotifications();
     }
   }, [isAuthenticated, user, isNotificationsPage]);
 

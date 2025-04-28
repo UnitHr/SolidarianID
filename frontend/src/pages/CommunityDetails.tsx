@@ -7,23 +7,23 @@ import {
   getCommunityMembers,
   sendJoinRequest,
 } from '../services/community.service';
-import { getCommunityByIdGraphQL } from '../services/graphql.community.service';
+import { useCommunityById } from '../lib/hooks/useCommunity';
 import { getStoredUser } from '../services/user.service';
 import { CauseDetails } from '../lib/types/cause.types';
 import { User } from '../lib/types/user.types';
 import { Paginate } from '../components/Pagination';
 import { CauseCard } from '../components/CauseCard';
 import communityLogo from '../assets/community-logo.png';
-import type { CommunityDetails as CommunityDetailsType } from '../lib/types/community.types';
 
 export function CommunityDetails() {
   const navigate = useNavigate();
   const { communityId } = useParams();
 
+  // Use the community hook to fetch community data
+  const { loading: communityLoading, community } = useCommunityById(communityId || '');
+
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-
-  const [community, setCommunity] = useState<CommunityDetailsType | null>(null);
   const [causes, setCauses] = useState<CauseDetails[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isMember, setIsMember] = useState(false);
@@ -31,40 +31,37 @@ export function CommunityDetails() {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    if (communityId) {
-      loadCommunityData(communityId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [communityId, page]);
+    const loadCauseAndMembershipData = async (communityId: string) => {
+      try {
+        setLoading(true);
 
-  const loadCommunityData = async (communityId: string) => {
-    try {
-      setLoading(true);
+        const [causesData, totalCausesPages] = await Promise.all([
+          getCommunityCauses(communityId, page),
+          getTotalCausesPages(communityId),
+        ]);
 
-      const [communityData, causesData, totalCausesPages] = await Promise.all([
-        getCommunityByIdGraphQL(communityId),
-        getCommunityCauses(communityId, page),
-        getTotalCausesPages(communityId),
-      ]);
+        setCauses(causesData);
+        setTotalPages(totalCausesPages);
 
-      setCommunity(communityData);
-      setCauses(causesData);
-      setTotalPages(totalCausesPages);
+        const storedUser = getStoredUser();
+        if (storedUser) {
+          setUser(storedUser);
 
-      const storedUser = getStoredUser();
-      if (storedUser) {
-        setUser(storedUser);
-
-        // Check membership only if logged in
-        const memberIds = await getCommunityMembers(communityId);
-        setIsMember(memberIds.includes(storedUser.userId));
+          // Check membership only if logged in
+          const memberIds = await getCommunityMembers(communityId);
+          setIsMember(memberIds.includes(storedUser.userId));
+        }
+      } catch (error) {
+        console.error('Error loading community details:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading community details:', error);
-    } finally {
-      setLoading(false);
+    };
+
+    if (communityId) {
+      loadCauseAndMembershipData(communityId);
     }
-  };
+  }, [communityId, page, community]);
 
   const handleJoin = async () => {
     if (!communityId || !user) return;
@@ -88,7 +85,9 @@ export function CommunityDetails() {
     }
   };
 
-  if (loading) {
+  const isLoadingAll = loading || communityLoading;
+
+  if (isLoadingAll) {
     return (
       <Container className="py-5 text-center">
         <div>Loading...</div>

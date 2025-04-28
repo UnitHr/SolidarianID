@@ -29,19 +29,25 @@ export const useRegisterUser = () => {
   const [mutate, { loading, error, data }] = useMutation(CREATE_USER, {
     update: (cache, { data }) => {
       if (data?.createUser) {
-        // Write to fragment cache
+        const completeUserData = {
+          ...data.createUser,
+          // Add default values for fields that might be missing but are in the fragment
+          age: data.createUser.age ?? 0,
+          followersCount: data.createUser.followersCount ?? 0,
+          followingCount: data.createUser.followingCount ?? 0,
+        };
+
         cache.writeFragment({
           id: cache.identify(data.createUser),
           fragment: USER_EXTENDED_FRAGMENT,
-          data: data.createUser,
+          data: completeUserData,
         });
 
-        // Update query cache
         cache.writeQuery({
           query: GET_USER_BY_ID,
           variables: { id: data.createUser.id },
           data: {
-            user: data.createUser,
+            user: completeUserData,
           },
         });
       }

@@ -22,7 +22,6 @@ export function useUserHistory(refreshTrigger?: boolean) {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userAge, setUserAge] = useState<string | null>(null);
 
-  // User data from our new hook (initialized with empty string to prevent initial API call)
   const { user: userData, loading: userDataLoading } = useUserById(effectiveUserId || '');
 
   const [following, setFollowing] = useState<Following[]>([]);
@@ -84,8 +83,8 @@ export function useUserHistory(refreshTrigger?: boolean) {
 
       setTotalCount((prev) => ({
         ...prev,
-        following: userData.followingCount,
-        followers: userData.followersCount,
+        following: userData.followingCount ?? 0,
+        followers: userData.followersCount ?? 0,
       }));
     }
   }, [userData]);

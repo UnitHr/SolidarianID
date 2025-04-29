@@ -10,11 +10,11 @@ export function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-   const emailRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
-   useEffect(() => {
-     emailRef.current?.focus();
-   }, []);
+  useEffect(() => {
+    emailRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

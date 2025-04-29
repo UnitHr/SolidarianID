@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { registerUserGraphQL } from '../services/graphql.user.service';
+import { Button, Card, Col, Container, Form, Row, Spinner, Alert } from 'react-bootstrap';
+import { useRegisterUser } from '../lib/hooks/useUser';
 
 export function Register() {
   const navigate = useNavigate();
+  const { registerUser, loading } = useRegisterUser();
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -29,11 +31,13 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRegistrationError(null);
+
     try {
-      await registerUserGraphQL(formData);
+      await registerUser(formData);
       navigate('/login');
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Error during registration');
+      setRegistrationError(error instanceof Error ? error.message : 'Error during registration');
     }
   };
 
@@ -48,6 +52,9 @@ export function Register() {
           <Card className="shadow-sm border-primary" bg="light">
             <Card.Body>
               <h2 className="text-center mb-4">Register</h2>
+
+              {registrationError && <Alert variant="danger">{registrationError}</Alert>}
+
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formFirstName">
                   <Form.Label>First Name</Form.Label>
@@ -58,6 +65,7 @@ export function Register() {
                     onChange={handleChange}
                     required
                     placeholder="Enter your first name"
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -70,6 +78,7 @@ export function Register() {
                     onChange={handleChange}
                     required
                     placeholder="Enter your last name"
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -83,6 +92,7 @@ export function Register() {
                     required
                     placeholder="Enter your email"
                     autoComplete="email"
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -94,6 +104,7 @@ export function Register() {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -105,6 +116,7 @@ export function Register() {
                     value={formData.birthDate}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -117,6 +129,7 @@ export function Register() {
                     value={formData.bio}
                     onChange={handleChange}
                     placeholder="Tell us a bit about you"
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -128,6 +141,7 @@ export function Register() {
                     label="Show Age"
                     checked={formData.showAge}
                     onChange={handleChange}
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -139,14 +153,33 @@ export function Register() {
                     label="Show Email"
                     checked={formData.showEmail}
                     onChange={handleChange}
+                    disabled={loading}
                   />
                 </Form.Group>
 
                 <div className="d-grid gap-2">
-                  <Button variant="secondary" type="submit">
-                    Register
+                  <Button variant="secondary" type="submit" disabled={loading}>
+                    {loading ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                        />
+                        <span className="ms-2">Registering...</span>
+                      </>
+                    ) : (
+                      'Register'
+                    )}
                   </Button>
-                  <Button variant="dark" type="button" onClick={handleBackToLogin}>
+                  <Button
+                    variant="dark"
+                    type="button"
+                    onClick={handleBackToLogin}
+                    disabled={loading}
+                  >
                     Back to Login
                   </Button>
                 </div>

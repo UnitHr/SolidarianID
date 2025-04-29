@@ -1,7 +1,8 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import '../styles/index.css';
-import { fetchUserNotifications } from '../services/notificacion.service';
+import { enableNotifications } from '../services/push-notification.service';
+import { fetchUserNotifications } from '../services/notification.service';
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
 import { fetchCreateCommunityRequests } from '../services/community.service';
 import { NotificationCard } from '../components/NotificationCard';

@@ -237,7 +237,7 @@ export function CauseDetails() {
 
       {/* Actions List */}
       <Row className="g-4">
-        {actions.length > 0 ? (
+        {actions && actions.length > 0 ? (
           actions.map((action) => (
             <Col key={action.id} xs={12} md={6} lg={4}>
               <ActionCard {...action} />
@@ -251,7 +251,7 @@ export function CauseDetails() {
       </Row>
 
       {/* Pagination */}
-      {actions.length > 0 && (
+      {actions && actions.length > 0 && (
         <Row className="mt-4">
           <Col className="d-flex justify-content-center">
             <Paginate

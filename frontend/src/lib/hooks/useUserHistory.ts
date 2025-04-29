@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Follower, Following, HistoryEntry } from '../types/user-history.types';
 import { getStoredUser } from '../../services/user.service';
-import { getUserByIdGraphQL } from '../../services/graphql.user.service';
+import { useUserById } from './useUser';
 import {
   fetchCausesHistory,
   fetchCommunitiesHistory,
@@ -12,7 +12,7 @@ import {
   fetchSupportsHistory,
 } from '../../services/user-history.service';
 
-export function useUserHistory() {
+export function useUserHistory(refreshTrigger?: boolean) {
   const navigate = useNavigate();
   const { userId: urlUserId } = useParams<{ userId: string }>();
 
@@ -21,6 +21,8 @@ export function useUserHistory() {
   const [userBio, setUserBio] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userAge, setUserAge] = useState<string | null>(null);
+
+  const { user: userData, loading: userDataLoading } = useUserById(effectiveUserId || '');
 
   const [following, setFollowing] = useState<Following[]>([]);
   const [followers, setFollowers] = useState<Follower[]>([]);
@@ -58,32 +60,43 @@ export function useUserHistory() {
     requests: 0,
   });
 
+  // First effect to set the effective user ID
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    if (!storedUser) {
+      navigate('/login');
+      return;
+    }
+
+    // Own profile or another user
+    const idToUse = urlUserId || storedUser.userId;
+    setEffectiveUserId(idToUse);
+  }, [navigate, urlUserId]);
+
+  // Effect to update user info when userData changes
+  useEffect(() => {
+    if (userData) {
+      setUserFullName(`${userData.firstName} ${userData.lastName}`);
+      setUserBio(userData.bio || null);
+      setUserEmail((userData.showEmail ?? (userData.email || null)) as string | null);
+      setUserAge((userData.showAge ?? (userData.age || null)) as string | null);
+
+      setTotalCount((prev) => ({
+        ...prev,
+        following: userData.followingCount ?? 0,
+        followers: userData.followersCount ?? 0,
+      }));
+    }
+  }, [userData]);
+
+  // Effect to load other user data
   useEffect(() => {
     async function loadUserHistory() {
-      const storedUser = getStoredUser();
-      if (!storedUser) {
-        navigate('/login');
+      if (!effectiveUserId || userDataLoading) {
         return;
       }
 
-      // Own profile or another user
-      const idToUse = urlUserId || storedUser.userId;
-      setEffectiveUserId(idToUse);
-
       try {
-        const userData = await getUserByIdGraphQL(idToUse);
-
-        setUserFullName(`${userData.firstName} ${userData.lastName}`);
-        setUserBio(userData.bio || null);
-        setUserEmail((userData.showEmail ?? (userData.email || null)) as string | null);
-        setUserAge((userData.showAge ?? (userData.age || null)) as string | null);
-
-        setTotalCount((prev) => ({
-          ...prev,
-          following: userData.followingCount,
-          followers: userData.followersCount,
-        }));
-
         const [
           followingData,
           followersData,
@@ -92,12 +105,12 @@ export function useUserHistory() {
           supportsData,
           requestsData,
         ] = await Promise.all([
-          fetchFollowing(idToUse, page.followingPage),
-          fetchFollowers(idToUse, page.followersPage),
-          fetchCommunitiesHistory(idToUse, page.communitiesPage),
-          fetchCausesHistory(idToUse, page.causesPage),
-          fetchSupportsHistory(idToUse, page.supportsPage),
-          fetchRequestsHistory(idToUse, page.requestsPage),
+          fetchFollowing(effectiveUserId, page.followingPage),
+          fetchFollowers(effectiveUserId, page.followersPage),
+          fetchCommunitiesHistory(effectiveUserId, page.communitiesPage),
+          fetchCausesHistory(effectiveUserId, page.causesPage),
+          fetchSupportsHistory(effectiveUserId, page.supportsPage),
+          fetchRequestsHistory(effectiveUserId, page.requestsPage),
         ]);
 
         setFollowing(followingData.data);
@@ -118,6 +131,8 @@ export function useUserHistory() {
 
         setTotalCount((prev) => ({
           ...prev,
+          following: followingData.meta.total,
+          followers: followersData.meta.total,
           communities: communitiesData.meta.total,
           causes: causesData.meta.total,
           supports: supportsData.meta.total,
@@ -131,7 +146,7 @@ export function useUserHistory() {
     }
 
     loadUserHistory();
-  }, [navigate, urlUserId, page]);
+  }, [effectiveUserId, userDataLoading, page, refreshTrigger]);
 
   return {
     effectiveUserId,
@@ -148,7 +163,7 @@ export function useUserHistory() {
     totalPages,
     totalCount,
     page,
-    loading,
+    loading: loading || userDataLoading,
     setPage,
   };
 }

@@ -7,6 +7,6 @@ export interface UserProfile {
   age?: string;
   showAge?: boolean;
   showEmail?: boolean;
-  followersCount: number;
-  followingCount: number;
+  followersCount?: number;
+  followingCount?: number;
 }

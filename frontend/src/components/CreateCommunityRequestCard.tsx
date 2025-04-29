@@ -109,7 +109,10 @@ export const CreateCommunityRequestCard: React.FC<CreateCommunityRequestCardProp
           </li>
           <li>
             <span style={{ fontSize: '0.8em' }}>
-              ODS: {causeOds.map((ods) => ods.title).join(', ')}
+              ODS:
+              {causeOds && Array.isArray(causeOds)
+                ? causeOds.map((ods) => ods.title).join(', ')
+                : ''}
             </span>
           </li>
         </ul>

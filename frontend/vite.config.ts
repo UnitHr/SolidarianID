@@ -12,7 +12,6 @@ export default defineConfig({
       injectManifest: {
         swSrc: 'src/service-worker.js',
         swDest: 'dist/service-worker.js',
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         maximumFileSizeToCacheInBytes: 3000000,
       },
       registerType: 'autoUpdate',

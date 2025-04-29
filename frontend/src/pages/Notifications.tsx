@@ -1,7 +1,6 @@
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import '../styles/index.css';
-import { enableNotifications } from '../services/push-notification.service';
 import { fetchUserNotifications } from '../services/notification.service';
 import { CreateCommunityRequestCard } from '../components/CreateCommunityRequestCard';
 import { fetchCreateCommunityRequests } from '../services/community.service';
@@ -29,7 +28,6 @@ export function Notifications() {
   const [totalJoinRequestPages, setTotalJoinRequestPages] = useState(0);
   const [totalCreationRequestPages, setTotalCreationRequestPages] = useState(0);
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const pageSize = 5;
 
   useEffect(() => {
@@ -63,11 +61,6 @@ export function Notifications() {
     fetchNotifications();
   }, []);
 
-  async function handleEnableNotifications() {
-    const enabled = await enableNotifications();
-    setNotificationsEnabled(enabled);
-  }
-
   // Cálculo de los elementos a mostrar por página
   const paginatedNotifications = followedNotifications.slice(
     (notificationPage - 1) * pageSize,
@@ -84,21 +77,6 @@ export function Notifications() {
 
   return (
     <Container>
-      <Row className="my-3 justify-content-end">
-        <Button
-          variant="warning"
-          onClick={handleEnableNotifications}
-          disabled={notificationsEnabled}
-          style={{
-            fontSize: '0.8rem',
-            padding: '5px 10px',
-            width: 'auto',
-          }}
-        >
-          {notificationsEnabled ? 'Notifications enabled' : 'Enable notifications'}
-        </Button>
-      </Row>
-
       <Row className="my-5">
         <h1 className="text-center">Notifications</h1>
       </Row>

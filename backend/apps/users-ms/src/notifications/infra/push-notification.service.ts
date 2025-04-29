@@ -14,10 +14,7 @@ export class PushNotificationService {
         credentials: 'include',
         body: JSON.stringify({
           userId,
-          payload: JSON.stringify({
-            title: 'New Notification',
-            body: 'You have a new notification.',
-          }),
+          payload: 'New notification',
           ttl: 86400,
           delay: 0,
         }),

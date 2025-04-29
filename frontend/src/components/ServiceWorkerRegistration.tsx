@@ -3,7 +3,7 @@ import { Workbox } from 'workbox-window';
 
 const ServiceWorkerRegistration = () => {
   useEffect(() => {
-    if ('serviceWorker' in navigator && import.meta.env.PROD) {
+    if ('serviceWorker' in navigator) {
       const wb = new Workbox('/service-worker.js');
 
       wb.register()

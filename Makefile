@@ -30,11 +30,13 @@ status-prod:
 build-prod:
 	$(MAKE) -C backend build-prod
 	$(MAKE) -C frontend build-prod
+	$(MAKE) -C server_push build-prod
 
 # Cleaning
 clean-prod:
 	$(MAKE) -C backend clean-prod
 	$(MAKE) -C frontend clean-prod
+	$(MAKE) -C server_push clean-prod
 
 # Network
 create-network:

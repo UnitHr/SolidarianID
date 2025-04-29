@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  server_push:
+    build: .
+    container_name: server_push
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    networks:
+      - solidarianid-network
+
+networks:
+  solidarianid-network:
+    driver: bridge
+    external: true

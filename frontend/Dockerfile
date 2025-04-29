@@ -14,8 +14,9 @@ RUN npm install
 COPY . .
 
 # Expose the port where Vite runs
-EXPOSE 5173
+EXPOSE 4173
 
 # Command to start the development server
-# TODO: Use the prod commands
-CMD ["npm", "run", "dev", "--", "--host"]
+RUN npm run build
+
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]

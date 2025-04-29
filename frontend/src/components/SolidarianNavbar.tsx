@@ -1,7 +1,7 @@
 import { useNavigate, useLocation, NavLink } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown, Container, Badge } from 'react-bootstrap';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
-import { useAuth } from '../lib/context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useEffect, useState, useCallback } from 'react';
 import { useNotificationSubscription } from '../lib/hooks/useNotification';
 
@@ -72,9 +72,15 @@ export function SolidarianNavbar() {
         <Navbar.Toggle aria-controls="navbar" />
         <Navbar.Collapse id="navbar">
           <Nav className="me-auto">
-          <Nav.Link as={NavLink} to="/communities">Communities</Nav.Link>
-          <Nav.Link as={NavLink} to="/causes">Causes</Nav.Link>
-          <Nav.Link as={NavLink} to="/actions">Actions</Nav.Link>
+            <Nav.Link as={NavLink} to="/communities">
+              Communities
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/causes">
+              Causes
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/actions">
+              Actions
+            </Nav.Link>
           </Nav>
           <Nav className="align-items-center">
             {!isAuthenticated ? (

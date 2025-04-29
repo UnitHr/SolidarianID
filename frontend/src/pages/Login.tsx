@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Col, Container, Form, Row, Card } from 'react-bootstrap';
-import { useAuth } from '../lib/context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { loginUser } from '../services/user.service';
 
 export function Login() {
@@ -20,7 +20,7 @@ export function Login() {
     e.preventDefault();
     try {
       const userData = await loginUser(email, password); // Login service
-      login(userData); // Login AuthContext
+      login(userData); // Login with Redux
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);

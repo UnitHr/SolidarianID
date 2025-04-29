@@ -1,6 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 import { User, RegisterPayload } from '../lib/types/user.types';
 import { enableNotifications } from './push-notification.service';
+import store from '../store';
+import { logout as logoutAction } from '../store/slices/authSlice';
 
 const API_URL = 'http://localhost:3000/api/v1';
 const STORAGE_TOKEN_KEY = 'token';
@@ -81,16 +83,24 @@ export async function registerUser(payload: RegisterPayload): Promise<void> {
 
 /**
  * Clear saved auth data.
+ * Includes logout action to Redux
  */
 export function clearAuthData() {
   localStorage.removeItem(STORAGE_TOKEN_KEY);
   localStorage.removeItem(STORAGE_USER_KEY);
+  store.dispatch(logoutAction());
 }
 
 /**
  * Get current token.
  */
 export function getToken(): string | null {
+  // First check Redux state
+  const state = store.getState();
+  if (state.auth.user?.token) {
+    return state.auth.user.token;
+  }
+  // Fallback to localStorage
   return localStorage.getItem(STORAGE_TOKEN_KEY);
 }
 
@@ -98,6 +108,13 @@ export function getToken(): string | null {
  * Get current stored user.
  */
 export function getStoredUser(): User | null {
+  // First check Redux state
+  const state = store.getState();
+  if (state.auth.user) {
+    return state.auth.user;
+  }
+
+  // Fallback to localStorage
   const user = localStorage.getItem(STORAGE_USER_KEY);
   if (!user) return null;
   try {

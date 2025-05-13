@@ -1,0 +1,15 @@
+services:
+  ej-1:
+    container_name: causes-recomendation
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6000:6000"
+    networks:
+      - solidarianid-network
+
+networks:
+  solidarianid-network:
+    driver: bridge
+    external: true

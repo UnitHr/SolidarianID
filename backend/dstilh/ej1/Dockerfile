@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y \
     clang \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN wget -O embeddings-s-model.bin https://valencia.inf.um.es/dlpln/embeddings-s-model.bin -O embeddings-s-model.bin
+
 # Instalar dependencias
 RUN pip install -r requirements.txt
 

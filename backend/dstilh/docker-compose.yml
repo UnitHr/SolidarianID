@@ -2,10 +2,10 @@ services:
   ej-1:
     container_name: causes-recomendation
     build:
-      context: .
+      context: ./ej1
       dockerfile: Dockerfile
     ports:
-      - "6000:6000"
+      - '6000:6000'
     networks:
       - solidarianid-network
 

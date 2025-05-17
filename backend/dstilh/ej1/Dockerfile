@@ -21,4 +21,4 @@ RUN wget -O embeddings-s-model.bin https://valencia.inf.um.es/dlpln/embeddings-s
 RUN pip install -r requirements.txt
 
 # Ejecutar el script
-CMD ["python", "main.py"]
+CMD ["python", "main.py", "--model", "bert"]

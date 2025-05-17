@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     cmake \
     make \
     clang \
+    wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN wget -O embeddings-s-model.bin https://valencia.inf.um.es/dlpln/embeddings-s-model.bin -O embeddings-s-model.bin

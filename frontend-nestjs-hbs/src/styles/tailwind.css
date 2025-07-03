@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.chart-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
+}
+
+.chart-container {
+  justify-content: center;
+  align-items: center;
+  flex-basis: 45%;
+  max-width: 45%;
+  height: auto;
+  margin: 10px 10px;
+}
+
+canvas {
+  display: block; /* Ensures the canvas is not an inline element */
+  max-width: 100%; /* Dynamically scales within the container */
+  height: auto; /* Maintains the aspect ratio */
+}
+
+/* Styles for tablets (minimum width of 768px) */
+@media (max-width: 1024px) {
+  .chart-wrapper {
+    justify-content: center;
+  }
+  .chart-container {
+    flex-basis: 48%;
+    max-width: 48%;
+  }
+}
+
+/* Styles for mobile devices (width less than 640px) */
+@media (max-width: 639px) {
+  .chart-wrapper {
+    justify-content: center;
+  }
+  .chart-container {
+    flex-basis: 100%;
+    max-width: 100%;
+    margin: 10px 0;
+  }
+}
+
+@media (max-width: 767px) {
+  #navbar {
+    display: none;
+  }
+  #dashboard {
+    display: none;
+  }
+}
